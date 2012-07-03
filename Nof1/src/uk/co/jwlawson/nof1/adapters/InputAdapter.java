@@ -1,4 +1,4 @@
-package com.example.test.activities.adapters;
+package uk.co.jwlawson.nof1.adapters;
 
 import java.util.ArrayList;
 import java.util.List;

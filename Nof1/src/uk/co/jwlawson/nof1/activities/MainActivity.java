@@ -1,4 +1,4 @@
-package com.example.test.activities;
+package uk.co.jwlawson.nof1.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
