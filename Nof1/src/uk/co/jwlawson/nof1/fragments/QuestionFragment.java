@@ -36,12 +36,15 @@ public class QuestionFragment extends SherlockFragment {
 
 	@Override
 	public void onCreate(Bundle savedState) {
-		if (savedState.containsKey("QuesFrag" + mId + "Question"))
-			mQuestion = savedState.getString("QuesFrag" + mId + "Question");
-		if (savedState.containsKey("QuesFrag" + mId + "Min"))
-			mMin = savedState.getString("QuesFrag" + mId + "Min");
-		if (savedState.containsKey("QuesFrag" + mId + "Max"))
-			mMax = savedState.getString("QuesFrag" + mId + "Max");
+		super.onCreate(savedState);
+		if (savedState != null) {
+			if (savedState.containsKey("QuesFrag" + mId + "Question"))
+				mQuestion = savedState.getString("QuesFrag" + mId + "Question");
+			if (savedState.containsKey("QuesFrag" + mId + "Min"))
+				mMin = savedState.getString("QuesFrag" + mId + "Min");
+			if (savedState.containsKey("QuesFrag" + mId + "Max"))
+				mMax = savedState.getString("QuesFrag" + mId + "Max");
+		}
 	}
 
 	@Override
@@ -74,4 +77,16 @@ public class QuestionFragment extends SherlockFragment {
 		mMax = savedState.getString("QuesFrag" + mId + "Max");
 	}
 
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (BuildConfig.DEBUG) Log.d(getClass().getName(), "Destroyed");
+		COUNT = 0;
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		if (BuildConfig.DEBUG) Log.d(getClass().getName(), "Stopped");
+	}
 }
