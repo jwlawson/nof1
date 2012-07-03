@@ -1,4 +1,4 @@
-package uk.co.jwlawson.nof1trial.adapters;
+package uk.co.jwlawson.nof1.adapters;
 
 import java.util.ArrayList;
 import java.util.List;

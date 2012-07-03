@@ -1,4 +1,4 @@
-package uk.co.jwlawson.nof1trial.fragments;
+package uk.co.jwlawson.nof1.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

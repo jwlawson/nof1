@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:theme="@style/Theme.Sherlock.Light.ForceOverflow" >
         <activity
-            android:name="com.example.test.activities.MainActivity"
+            android:name=".activities.FragActivity"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,7 +22,7 @@
         </activity>
         
         <activity
-            android:name="com.example.test.activities.ListActivityActivity"
+            android:name=".activities.ListActivityActivity"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

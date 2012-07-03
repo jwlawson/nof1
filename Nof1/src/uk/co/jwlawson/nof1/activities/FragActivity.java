@@ -1,10 +1,12 @@
-package uk.co.jwlawson.nof1trial.activities;
+package uk.co.jwlawson.nof1.activities;
 
+import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
-import uk.co.jwlawson.nof1trial.fragments.QuestionFragment;
+import uk.co.jwlawson.nof1.fragments.QuestionFragment;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 
@@ -25,6 +27,8 @@ public class FragActivity extends SherlockFragmentActivity {
 		ft.add(R.id.data_input_fragment_layout, frag1, "fragment1");
 		ft.add(R.id.data_input_fragment_layout, frag2, "fragment2");
 		ft.commit();
+		
+		if (BuildConfig.DEBUG) Log.d(this.getClass().getName(), "Fragments created and added to view");
 	}
 	
 }
