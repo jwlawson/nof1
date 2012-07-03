@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="layout" name="mock_layout_data_input">@layout/mock_layout_data_input_dual</item>
+    
+</resources>

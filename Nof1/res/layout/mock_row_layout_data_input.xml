@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:padding="@dimen/padding_small"
+        android:paddingLeft="@dimen/padding_large"
+        android:paddingTop="@dimen/padding_large_minus_vsmall"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -59,16 +60,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RadioGroup>
-
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/radioGroup1"
         android:layout_below="@+id/radioGroup1"
+        android:paddingBottom="@dimen/padding_vsmall"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
@@ -76,6 +78,7 @@
         android:layout_alignBaseline="@+id/textView2"
         android:layout_alignBottom="@+id/textView2"
         android:layout_alignRight="@+id/radioGroup1"
+        android:paddingBottom="@dimen/padding_vsmall"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 

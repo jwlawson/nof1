@@ -26,11 +26,18 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical" >
             </LinearLayout>
-
+
             <LinearLayout
                 android:id="@+id/data_input_button_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
+
+                <Button
+                    android:id="@+id/button2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/cancel" />
 
                 <Button
                     android:id="@+id/button1"
@@ -39,14 +46,10 @@
                     android:layout_weight="1"
                     android:text="@string/ok" />
 
-                <Button
-                    android:id="@+id/button2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/cancel" />
             </LinearLayout>
+
         </LinearLayout>
+
     </ScrollView>
 
 </RelativeLayout>
