@@ -1,4 +1,4 @@
-package uk.co.jwlawson.nof1.adapters;
+package uk.co.jwlawson.nof1trial.adapters;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.example.test.R;
+import uk.co.jwlawson.nof1.R;
 
 public class InputAdapter extends ArrayAdapter<String> {
 

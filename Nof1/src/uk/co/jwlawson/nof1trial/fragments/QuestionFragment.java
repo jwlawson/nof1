@@ -1,4 +1,4 @@
-package uk.co.jwlawson.nof1.fragments;
+package uk.co.jwlawson.nof1trial.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
-import com.example.test.R;
+import uk.co.jwlawson.nof1.R;
 
 public class QuestionFragment extends SherlockFragment {
 	

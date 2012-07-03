@@ -1,10 +1,10 @@
-package uk.co.jwlawson.nof1.activities;
+package uk.co.jwlawson.nof1trial.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 
-import com.example.test.R;
+import uk.co.jwlawson.nof1.R;
 
 public class MainActivity extends Activity {
 
