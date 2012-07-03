@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Window;
 
 public class FragActivity extends SherlockFragmentActivity {
 
@@ -19,11 +20,17 @@ public class FragActivity extends SherlockFragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.mock_layout_data_input);
 
 		// I think that if the state is saved, fragments are kept
 		// Need to try this out
 		if (savedInstanceState == null) {
+			if (BuildConfig.DEBUG) Log.d(getClass().getName(), "Fragments being loaded.");
+
+			// Set indeterminate spinner
+			setSupportProgressBarIndeterminateVisibility(true);
+
 			// Load fragments in data input view in background
 			new FragLoader().execute();
 		}
@@ -38,6 +45,7 @@ public class FragActivity extends SherlockFragmentActivity {
 		protected Void doInBackground(Void... params) {
 
 			// Will read these from the config file
+			// File i/o can stall, hence why AsyncTask is required.
 			String[] qus = new String[] {
 					"On average, in comparison to your usual episodes, how long were the attacks?",
 					"On average, in comparison with your usual episodes, how severe were the attacks?",
@@ -76,5 +84,9 @@ public class FragActivity extends SherlockFragmentActivity {
 			return null;
 		}
 
+		protected void onPostExecute(Void v) {
+			if (BuildConfig.DEBUG) Log.d(getClass().getName(), "Fragments finished loading");
+			setSupportProgressBarIndeterminateVisibility(false);
+		}
 	}
 }
