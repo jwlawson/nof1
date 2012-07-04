@@ -22,7 +22,9 @@ package uk.co.jwlawson.nof1.fragments;
 
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -54,18 +56,7 @@ public class QuestionFragment extends SherlockFragment implements
 	public QuestionFragment() {
 		mId = COUNT;
 		COUNT++;
-		/*
-		 * if (sDimInit) {
-		 * if (BuildConfig.DEBUG) Log.d(TAG, "Loading dimension data");
-		 * DisplayMetrics metrics = new DisplayMetrics();
-		 * getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics
-		 * );
-		 * int h = metrics.heightPixels;
-		 * int w = metrics.widthPixels;
-		 * sDim = h > w ? w : h;
-		 * sDimInit = false;
-		 * }
-		 */
+
 	}
 
 	public int getSelected() {
@@ -82,10 +73,17 @@ public class QuestionFragment extends SherlockFragment implements
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		// TODO if the view is too narrow to hold all 7 radiobuttons, swap for a
-		// slider?
-
 		if (!init) mySetArguments(savedInstanceState);
+
+		if (sDimInit) {
+			if (BuildConfig.DEBUG) Log.d(TAG, "Loading dimension data");
+			DisplayMetrics metrics = new DisplayMetrics();
+			getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			int h = metrics.heightPixels;
+			int w = metrics.widthPixels;
+			sDim = h > w ? w : h;
+			sDimInit = false;
+		}
 
 		View view = inflater.inflate(R.layout.mock_row_layout_data_input, container, false);
 
@@ -100,12 +98,11 @@ public class QuestionFragment extends SherlockFragment implements
 		RadioGroup radio = (RadioGroup) view.findViewById(R.id.radioGroup1);
 		SeekBar seek = (SeekBar) view.findViewById(R.id.seekBar1);
 
-		if (BuildConfig.DEBUG)
-			Log.d(TAG, "" + container.getMeasuredWidth() + " " + container.getMeasuredHeight());
+		if (BuildConfig.DEBUG) Log.d(TAG, "" + container.getMeasuredWidth() + " " + sDim);
 
 		// At first run, container.getMeasuredWidth() returns correct value, but
 		// after rotate only returns 0;
-		boolean wide = (container.getMeasuredWidth() > RADIOWIDTH);
+		boolean wide = (sDim / 2 > RADIOWIDTH);
 
 		// Wide is assumed, so all relations are set up for this
 		if (wide) {
@@ -124,6 +121,14 @@ public class QuestionFragment extends SherlockFragment implements
 			lp.addRule(RelativeLayout.ALIGN_RIGHT, R.id.seekBar1);
 			lp.addRule(RelativeLayout.BELOW, R.id.seekBar1);
 			max.setLayoutParams(lp);
+
+			// Fix the spacing of min and max.
+			// Currently the seekbar view fills screen, despite having padding.
+			Resources res = getResources();
+			min.setPadding((int) res.getDimension(R.dimen.padding_large), 0, 0,
+					(int) res.getDimension(R.dimen.padding_vsmall));
+			max.setPadding(0, 0, (int) res.getDimension(R.dimen.padding_large),
+					(int) res.getDimension(R.dimen.padding_vsmall));
 		}
 
 		return view;
