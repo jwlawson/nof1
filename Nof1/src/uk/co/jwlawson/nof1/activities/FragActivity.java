@@ -64,19 +64,33 @@ public class FragActivity extends SherlockFragmentActivity {
 			// Check whether the device is large enough for 2 columns
 			boolean dualCol = (findViewById(R.id.data_input_fragment_layout2) != null);
 			if (dualCol) Log.d("FragAct", "Dual columns found");
+			int column = 0;
 
-			// Add the fragments to the window
+			Bundle a = new Bundle();
 			for (int i = 0; i < qus.length; i++) {
-
-				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-				ft.add(R.id.data_input_fragment_layout,
-						new QuestionFragment(qus[i], min[i], max[i]), "fragment" + i);
-				if (dualCol)
-					ft.add(R.id.data_input_fragment_layout2, new QuestionFragment(qus[qus.length
-							- 1 - i], min[qus.length - 1 - i], max[qus.length - 1 - i]),
-							"fragment2" + i);
-				ft.commit();
+				a.putString("QuesFrag" + i + "Question", qus[i]);
+				a.putString("QuesFrag" + i + "Min", min[i]);
+				a.putString("QuesFrag" + i + "Max", max[i]);
 			}
+
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			for (int i = 0; i < qus.length; i++) {
+				QuestionFragment frag = new QuestionFragment();
+				frag.setArguments(a);
+				switch (column) {
+				case 0:
+					ft.add(R.id.data_input_fragment_layout, frag, "quesFrag" + i);
+					break;
+				case 1:
+					ft.add(R.id.data_input_fragment_layout2, frag, "quesFrag" + i);
+					break;
+				}
+				if (dualCol) {
+					column++;
+					column %= 2;
+				}
+			}
+			ft.commit();
 
 			// Add some checkboxes
 			String[] qus2 = new String[] { "Have you suffered a seizure today?",
@@ -93,14 +107,14 @@ public class FragActivity extends SherlockFragmentActivity {
 			chkFrag2.setArguments(b);
 
 			// add fragments to window
-			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.add(R.id.data_input_fragment_layout, chkFrag1, "chkfrag1");
+			FragmentTransaction ft0 = getSupportFragmentManager().beginTransaction();
+			ft0.add(R.id.data_input_fragment_layout, chkFrag1, "chkfrag1");
 			if (dualCol) {
-				ft.add(R.id.data_input_fragment_layout2, chkFrag2, "chkfrag2");
+				ft0.add(R.id.data_input_fragment_layout2, chkFrag2, "chkfrag2");
 			} else {
-				ft.add(R.id.data_input_fragment_layout, chkFrag2, "chkfrag2");
+				ft0.add(R.id.data_input_fragment_layout, chkFrag2, "chkfrag2");
 			}
-			ft.commit();
+			ft0.commit();
 			if (BuildConfig.DEBUG) Log.d("FA", "Radios created");
 
 			// Add number fragments
