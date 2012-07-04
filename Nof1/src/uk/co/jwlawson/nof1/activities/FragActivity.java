@@ -24,6 +24,8 @@ public class FragActivity extends SherlockFragmentActivity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.mock_layout_data_input);
 
+		setSupportProgressBarIndeterminateVisibility(false);
+
 		// I think that if the state is saved, fragments are kept
 		// Need to try this out
 		if (savedInstanceState == null) {
