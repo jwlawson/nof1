@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent" xmlns:android="http://schemas.android.com/apk/res/android">
-
+
     <TextView
         android:id="@+id/data_input_checkbox_txt_question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/data_input_checkbox_chk"
         android:paddingBottom="@dimen/padding_vsmall"
         android:paddingLeft="@dimen/padding_large"
         android:paddingTop="@dimen/padding_large_minus_vsmall"
         android:text="@string/question"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <CheckBox
         android:id="@+id/data_input_checkbox_chk"
         android:layout_width="wrap_content"
@@ -22,6 +23,7 @@
         android:layout_alignBottom="@+id/data_input_checkbox_txt_question"
         android:layout_alignParentRight="true"
         android:paddingBottom="@dimen/padding_vsmall"
+        android:paddingRight="@dimen/padding_large"
         android:text="@string/yes" />
 
 </RelativeLayout>
