@@ -50,6 +50,9 @@ public class QuestionFragment extends SherlockFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+		// TODO if the view is too narrow to hold all 7 radiobuttons, swap for a
+		// slider?
+
 		View view = inflater.inflate(R.layout.mock_row_layout_data_input, container, false);
 
 		((TextView) view.findViewById(R.id.textView1)).setText(mQuestion);
