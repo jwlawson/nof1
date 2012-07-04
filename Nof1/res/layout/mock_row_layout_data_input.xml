@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nof1 Trails helper, making life easier for clinicians and patients in N of 1 trials.
+  Copyright (C) 2012  WMG, University of Warwick
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  
+  Contributors:
+      John Lawson - initial API and implementation
+-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
@@ -17,13 +37,20 @@
         android:text="@string/question"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
+
+
+
+
     <SeekBar
         android:id="@+id/seekBar1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/textView1"
         android:layout_centerHorizontal="true"
-        android:max="6" />
+        android:max="6"
+        android:paddingLeft="@dimen/padding_seekbar_large"
+        android:paddingRight="@dimen/padding_seekbar_large"
+        android:progress="3" />
 
     <RadioGroup
         android:id="@+id/radioGroup1"
