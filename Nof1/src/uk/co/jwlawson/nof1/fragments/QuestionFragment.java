@@ -7,44 +7,38 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
-public class QuestionFragment extends SherlockFragment {
+public class QuestionFragment extends SherlockFragment implements
+		RadioGroup.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
 
-	public static int COUNT = 0;
+	private static final String TAG = "QuestionFragment";
+	private static int COUNT = 0;
 
 	private String mQuestion;
 	private String mMin;
 	private String mMax;
+	private int mSelected;
+	private boolean init = false;
 	private int mId;
 
-	public QuestionFragment(String question, String min, String max) {
-		mQuestion = question;
-		mMin = min;
-		mMax = max;
+	public QuestionFragment() {
 		mId = COUNT;
 		COUNT++;
 	}
 
-	public QuestionFragment() {
-		if (BuildConfig.DEBUG) Log.d(getClass().getName(), "New QuestionFragment" + mQuestion);
-		mId = COUNT;
-		COUNT++;
+	public int getSelected() {
+		return mSelected;
 	}
 
 	@Override
 	public void onCreate(Bundle savedState) {
 		super.onCreate(savedState);
-		if (savedState != null) {
-			if (savedState.containsKey("QuesFrag" + mId + "Question"))
-				mQuestion = savedState.getString("QuesFrag" + mId + "Question");
-			if (savedState.containsKey("QuesFrag" + mId + "Min"))
-				mMin = savedState.getString("QuesFrag" + mId + "Min");
-			if (savedState.containsKey("QuesFrag" + mId + "Max"))
-				mMax = savedState.getString("QuesFrag" + mId + "Max");
-		}
+		if (!init) mySetArguments(savedState);
 	}
 
 	@Override
@@ -53,11 +47,26 @@ public class QuestionFragment extends SherlockFragment {
 		// TODO if the view is too narrow to hold all 7 radiobuttons, swap for a
 		// slider?
 
+		if (!init) mySetArguments(savedInstanceState);
+
 		View view = inflater.inflate(R.layout.mock_row_layout_data_input, container, false);
 
 		((TextView) view.findViewById(R.id.textView1)).setText(mQuestion);
 		((TextView) view.findViewById(R.id.textView2)).setText(mMin);
 		((TextView) view.findViewById(R.id.textView3)).setText(mMax);
+
+		RadioGroup radio = (RadioGroup) view.findViewById(R.id.radioGroup1);
+		SeekBar seek = (SeekBar) view.findViewById(R.id.seekBar1);
+
+		boolean wide = (container.getWidth() > radio.getWidth());
+
+		if (wide) {
+			radio.setOnCheckedChangeListener(this);
+			seek.setVisibility(View.GONE);
+		} else {
+			seek.setOnSeekBarChangeListener(this);
+			radio.setVisibility(View.GONE);
+		}
 
 		return view;
 
@@ -74,22 +83,52 @@ public class QuestionFragment extends SherlockFragment {
 	}
 
 	@Override
-	public void setArguments(Bundle savedState) {
-		mQuestion = savedState.getString("QuesFrag" + mId + "Question");
-		mMin = savedState.getString("QuesFrag" + mId + "Min");
-		mMax = savedState.getString("QuesFrag" + mId + "Max");
+	public void setArguments(Bundle args) {
+		super.setArguments(args);
+		mySetArguments(args);
+	}
+
+	private void mySetArguments(Bundle args) {
+		if (args != null) {
+			if (args.containsKey("QuesFrag" + mId + "Question"))
+				mQuestion = args.getString("QuesFrag" + mId + "Question");
+			if (args.containsKey("QuesFrag" + mId + "Min"))
+				mMin = args.getString("QuesFrag" + mId + "Min");
+			if (args.containsKey("QuesFrag" + mId + "Max"))
+				mMax = args.getString("QuesFrag" + mId + "Max");
+		}
+		init = true;
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		if (BuildConfig.DEBUG) Log.d(getClass().getName(), "Destroyed");
-		COUNT = 0;
+		COUNT--;
 	}
 
 	@Override
-	public void onStop() {
-		super.onStop();
-		if (BuildConfig.DEBUG) Log.d(getClass().getName(), "Stopped");
+	public void onCheckedChanged(RadioGroup group, int checkedId) {
+		// checkedId gives currently selected button
+		if (BuildConfig.DEBUG) Log.d(TAG, "RadioButton selected: " + checkedId);
+		mSelected = checkedId;
 	}
+
+	@Override
+	public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+		// progress is value between 0 and 7
+		if (BuildConfig.DEBUG) Log.d(TAG, "Seekbar at " + progress);
+		mSelected = progress;
+	}
+
+	@Override
+	public void onStartTrackingTouch(SeekBar seekBar) {
+		// Not needed
+	}
+
+	@Override
+	public void onStopTrackingTouch(SeekBar seekBar) {
+		// Not needed
+	}
+
 }
