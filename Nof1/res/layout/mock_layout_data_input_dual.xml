@@ -13,7 +13,6 @@
         android:layout_alignParentTop="true"
         android:fillViewport="true" >
 
-
         <LinearLayout
             android:id="@+id/data_input_scroll_layout"
             android:layout_width="match_parent"
@@ -27,7 +26,7 @@
                 android:layout_weight="1"
                 android:baselineAligned="false"
                 android:orientation="horizontal" >
-
+
                 <LinearLayout
                     android:id="@+id/data_input_fragment_layout"
                     android:layout_width="0dp"
@@ -36,9 +35,8 @@
                     android:orientation="vertical"
                     android:paddingLeft="@dimen/padding_vsmall"
                     android:paddingRight="@dimen/padding_vsmall" >
-
                 </LinearLayout>
-
+
                 <LinearLayout
                     android:id="@+id/data_input_fragment_layout2"
                     android:layout_width="0dp"
@@ -47,9 +45,15 @@
                     android:orientation="vertical"
                     android:paddingLeft="@dimen/padding_vsmall"
                     android:paddingRight="@dimen/padding_vsmall" >
-
                 </LinearLayout>
             </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/data_input_comment_frame"
+                android:layout_width="0dp"
+                android:layout_height="0dp" >
+
+            </FrameLayout>
 
             <LinearLayout
                 android:id="@+id/data_input_button_bar"
