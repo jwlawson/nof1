@@ -101,6 +101,7 @@ public class FragActivity extends SherlockFragmentActivity {
 				ft.add(R.id.data_input_fragment_layout, chkFrag2, "chkfrag2");
 			}
 			ft.commit();
+			if (BuildConfig.DEBUG) Log.d("FA", "Radios created");
 
 			// Add number fragments
 			NumberFragment num1 = new NumberFragment();
@@ -110,6 +111,7 @@ public class FragActivity extends SherlockFragmentActivity {
 					"On average how many metres can you walk without getting out of breath?");
 			num1.setArguments(b);
 			num2.setArguments(b);
+
 			FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
 			ft2.add(R.id.data_input_fragment_layout, num1, "num1");
 			if (dualCol) {
@@ -118,16 +120,18 @@ public class FragActivity extends SherlockFragmentActivity {
 				ft2.add(R.id.data_input_fragment_layout, num2, "num2");
 			}
 			ft2.commit();
+			if (BuildConfig.DEBUG) Log.d("FA", "Nums created");
 
 			// Add comment fragment
 			CommentFragment com = new CommentFragment();
 			FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
-			if (dualCol) {
-				ft1.add(R.id.data_input_dualcol_layout, com, "com");
-			} else {
-				ft1.add(R.id.data_input_fragment_layout, com, "com");
-			}
+			// if (dualCol) {
+			ft1.add(R.id.data_input_comment_frame, com, "com");
+			// } else {
+			// ft1.add(R.id.data_input_fragment_layout, com, "com");
+			// }
 			ft1.commit();
+			if (BuildConfig.DEBUG) Log.d("FA", "Comment created");
 			return null;
 		}
 
