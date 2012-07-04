@@ -1,7 +1,9 @@
 package uk.co.jwlawson.nof1.fragments;
 
+import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +13,8 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockFragment;
 
 public class CheckFragment extends SherlockFragment {
+
+	private static final String TAG = "CheckFragment";
 
 	private static int COUNT = 0;
 
@@ -40,6 +44,8 @@ public class CheckFragment extends SherlockFragment {
 
 		TextView txt = (TextView) view.findViewById(R.id.data_input_checkbox_txt_question);
 		txt.setText(mQuestion);
+
+		if (BuildConfig.DEBUG) Log.d(TAG, mId + " view created");
 
 		return view;
 	}
