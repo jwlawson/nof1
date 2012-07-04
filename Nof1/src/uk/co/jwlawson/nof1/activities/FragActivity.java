@@ -91,6 +91,7 @@ public class FragActivity extends SherlockFragmentActivity {
 			} else {
 				ft.add(R.id.data_input_fragment_layout, chkFrag2, "chkfrag2");
 			}
+			ft.commit();
 			return null;
 		}
 
