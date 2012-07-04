@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * Nof1 Trails helper, making life easier for clinicians and patients in N of 1 trials.
+ * Copyright (C) 2012  WMG, University of Warwick
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ *     John Lawson - initial API and implementation
+ ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
 import uk.co.jwlawson.nof1.BuildConfig;
@@ -8,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -17,7 +38,11 @@ public class QuestionFragment extends SherlockFragment implements
 		RadioGroup.OnCheckedChangeListener, SeekBar.OnSeekBarChangeListener {
 
 	private static final String TAG = "QuestionFragment";
+	private static final int RADIOWIDTH = 450;
 	private static int COUNT = 0;
+
+	private static int sDim;
+	private static boolean sDimInit = true;
 
 	private String mQuestion;
 	private String mMin;
@@ -29,6 +54,18 @@ public class QuestionFragment extends SherlockFragment implements
 	public QuestionFragment() {
 		mId = COUNT;
 		COUNT++;
+		/*
+		 * if (sDimInit) {
+		 * if (BuildConfig.DEBUG) Log.d(TAG, "Loading dimension data");
+		 * DisplayMetrics metrics = new DisplayMetrics();
+		 * getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics
+		 * );
+		 * int h = metrics.heightPixels;
+		 * int w = metrics.widthPixels;
+		 * sDim = h > w ? w : h;
+		 * sDimInit = false;
+		 * }
+		 */
 	}
 
 	public int getSelected() {
@@ -39,6 +76,7 @@ public class QuestionFragment extends SherlockFragment implements
 	public void onCreate(Bundle savedState) {
 		super.onCreate(savedState);
 		if (!init) mySetArguments(savedState);
+		if (sDimInit) Log.d(TAG, "Oops");
 	}
 
 	@Override
@@ -52,20 +90,40 @@ public class QuestionFragment extends SherlockFragment implements
 		View view = inflater.inflate(R.layout.mock_row_layout_data_input, container, false);
 
 		((TextView) view.findViewById(R.id.textView1)).setText(mQuestion);
-		((TextView) view.findViewById(R.id.textView2)).setText(mMin);
-		((TextView) view.findViewById(R.id.textView3)).setText(mMax);
+
+		TextView min = (TextView) view.findViewById(R.id.textView2);
+		min.setText(mMin);
+
+		TextView max = (TextView) view.findViewById(R.id.textView3);
+		max.setText(mMax);
 
 		RadioGroup radio = (RadioGroup) view.findViewById(R.id.radioGroup1);
 		SeekBar seek = (SeekBar) view.findViewById(R.id.seekBar1);
 
-		boolean wide = (container.getWidth() > radio.getWidth());
+		if (BuildConfig.DEBUG)
+			Log.d(TAG, "" + container.getMeasuredWidth() + " " + container.getMeasuredHeight());
 
+		// At first run, container.getMeasuredWidth() returns correct value, but
+		// after rotate only returns 0;
+		boolean wide = (container.getMeasuredWidth() > RADIOWIDTH);
+
+		// Wide is assumed, so all relations are set up for this
 		if (wide) {
 			radio.setOnCheckedChangeListener(this);
 			seek.setVisibility(View.GONE);
 		} else {
 			seek.setOnSeekBarChangeListener(this);
 			radio.setVisibility(View.GONE);
+
+			RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(min.getLayoutParams());
+			lp.addRule(RelativeLayout.ALIGN_LEFT, R.id.seekBar1);
+			lp.addRule(RelativeLayout.BELOW, R.id.seekBar1);
+			min.setLayoutParams(lp);
+
+			lp = new RelativeLayout.LayoutParams(max.getLayoutParams());
+			lp.addRule(RelativeLayout.ALIGN_RIGHT, R.id.seekBar1);
+			lp.addRule(RelativeLayout.BELOW, R.id.seekBar1);
+			max.setLayoutParams(lp);
 		}
 
 		return view;
