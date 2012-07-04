@@ -2,6 +2,7 @@ package uk.co.jwlawson.nof1.activities;
 
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.fragments.CheckFragment;
 import uk.co.jwlawson.nof1.fragments.QuestionFragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -70,16 +71,25 @@ public class FragActivity extends SherlockFragmentActivity {
 				ft.commit();
 			}
 
-			for (int i = 0; i < qus.length; i++) {
+			String[] qus2 = new String[] { "Have you suffered a seizure today?",
+					"Were you able to go to work?" };
+			Bundle b = new Bundle();
+			b.putBoolean("CheckFrag0Checked", false);
+			b.putString("CheckFrag0Question", qus2[0]);
+			b.putBoolean("CheckFrag1Checked", true);
+			b.putString("CheckFrag1Question", qus2[1]);
+			CheckFragment chkFrag1 = new CheckFragment();
+			CheckFragment chkFrag2 = new CheckFragment();
 
-				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-				ft.add(R.id.data_input_fragment_layout,
-						new QuestionFragment(qus[i], min[i], max[i]), "fragment" + i);
-				if (dualCol)
-					ft.add(R.id.data_input_fragment_layout2, new QuestionFragment(qus[qus.length
-							- 1 - i], min[qus.length - 1 - i], max[qus.length - 1 - i]),
-							"fragment2" + i);
-				ft.commit();
+			chkFrag1.setArguments(b);
+			chkFrag2.setArguments(b);
+
+			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+			ft.add(R.id.data_input_fragment_layout, chkFrag1, "chkfrag1");
+			if (dualCol) {
+				ft.add(R.id.data_input_fragment_layout2, chkFrag2, "chkfrag2");
+			} else {
+				ft.add(R.id.data_input_fragment_layout, chkFrag2, "chkfrag2");
 			}
 			return null;
 		}
