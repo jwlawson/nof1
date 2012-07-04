@@ -3,6 +3,8 @@ package uk.co.jwlawson.nof1.activities;
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.fragments.CheckFragment;
+import uk.co.jwlawson.nof1.fragments.CommentFragment;
+import uk.co.jwlawson.nof1.fragments.NumberFragment;
 import uk.co.jwlawson.nof1.fragments.QuestionFragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -99,6 +101,33 @@ public class FragActivity extends SherlockFragmentActivity {
 				ft.add(R.id.data_input_fragment_layout, chkFrag2, "chkfrag2");
 			}
 			ft.commit();
+
+			// Add number fragments
+			NumberFragment num1 = new NumberFragment();
+			NumberFragment num2 = new NumberFragment();
+			b.putString("NumFrag0Question", "How many times have you fallen over today?");
+			b.putString("NumFrag1Question",
+					"On average how many metres can you walk without getting out of breath?");
+			num1.setArguments(b);
+			num2.setArguments(b);
+			FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+			ft2.add(R.id.data_input_fragment_layout, num1, "num1");
+			if (dualCol) {
+				ft2.add(R.id.data_input_fragment_layout2, num2, "num2");
+			} else {
+				ft2.add(R.id.data_input_fragment_layout, num2, "num2");
+			}
+			ft2.commit();
+
+			// Add comment fragment
+			CommentFragment com = new CommentFragment();
+			FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
+			if (dualCol) {
+				ft1.add(R.id.data_input_dualcol_layout, com, "com");
+			} else {
+				ft1.add(R.id.data_input_fragment_layout, com, "com");
+			}
+			ft1.commit();
 			return null;
 		}
 
