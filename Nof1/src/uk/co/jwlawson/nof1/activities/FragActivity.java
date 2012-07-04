@@ -47,6 +47,8 @@ public class FragActivity extends SherlockFragmentActivity {
 
 			// Will read these from the config file
 			// File i/o can stall, hence why AsyncTask is required.
+
+			// Add some questions
 			String[] qus = new String[] {
 					"On average, in comparison to your usual episodes, how long were the attacks?",
 					"On average, in comparison with your usual episodes, how severe were the attacks?",
@@ -59,6 +61,7 @@ public class FragActivity extends SherlockFragmentActivity {
 			boolean dualCol = (findViewById(R.id.data_input_fragment_layout2) != null);
 			if (dualCol) Log.d("FragAct", "Dual columns found");
 
+			// Add the fragments to the window
 			for (int i = 0; i < qus.length; i++) {
 
 				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -71,6 +74,7 @@ public class FragActivity extends SherlockFragmentActivity {
 				ft.commit();
 			}
 
+			// Add some checkboxes
 			String[] qus2 = new String[] { "Have you suffered a seizure today?",
 					"Were you able to go to work?" };
 			Bundle b = new Bundle();
@@ -84,6 +88,7 @@ public class FragActivity extends SherlockFragmentActivity {
 			chkFrag1.setArguments(b);
 			chkFrag2.setArguments(b);
 
+			// add fragments to window
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.add(R.id.data_input_fragment_layout, chkFrag1, "chkfrag1");
 			if (dualCol) {
