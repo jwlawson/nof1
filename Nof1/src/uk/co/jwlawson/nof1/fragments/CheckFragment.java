@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
@@ -15,6 +16,7 @@ public class CheckFragment extends SherlockFragment {
 
 	private boolean mChecked;
 	private String mQuestion;
+	private boolean init = false;
 	private final int mId;
 
 	public CheckFragment() {
@@ -31,18 +33,15 @@ public class CheckFragment extends SherlockFragment {
 
 		View view = inflater.inflate(R.layout.row_layout_data_checkbox, container, false);
 
-		if (savedInstanceState != null) {
-			if (savedInstanceState.containsKey("CheckFrag" + mId + "Checked")) {
-				mChecked = savedInstanceState.getBoolean("CheckFrag" + mId + "Checked");
-			}
-			if (savedInstanceState.containsKey("CheckFrag" + mId + "Question")) {
-				mQuestion = savedInstanceState.getString("CheckFrag" + mId + "Checked");
-			}
-		}
+		if (!init) mySetArgs(savedInstanceState);
+
 		CheckBox chk = (CheckBox) view.findViewById(R.id.data_input_checkbox_chk);
 		chk.setChecked(mChecked);
 
-		return super.onCreateView(inflater, container, savedInstanceState);
+		TextView txt = (TextView) view.findViewById(R.id.data_input_checkbox_txt_question);
+		txt.setText(mQuestion);
+
+		return view;
 	}
 
 	@Override
@@ -55,14 +54,7 @@ public class CheckFragment extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		if (savedInstanceState != null) {
-			if (savedInstanceState.containsKey("CheckFrag" + mId + "Checked")) {
-				mChecked = savedInstanceState.getBoolean("CheckFrag" + mId + "Checked");
-			}
-			if (savedInstanceState.containsKey("CheckFrag" + mId + "Question")) {
-				mQuestion = savedInstanceState.getString("CheckFrag" + mId + "Question");
-			}
-		}
+		if (!init) mySetArgs(savedInstanceState);
 	}
 
 	@Override
@@ -72,17 +64,22 @@ public class CheckFragment extends SherlockFragment {
 		outState.putString("CheckFrag" + mId + "Question", mQuestion);
 	};
 
-	@Override
-	public void setArguments(Bundle args) {
-		super.setArguments(args);
+	private void mySetArgs(Bundle args) {
 		if (args != null) {
 			if (args.containsKey("CheckFrag" + mId + "Checked")) {
 				mChecked = args.getBoolean("CheckFrag" + mId + "Checked");
 			}
 			if (args.containsKey("CheckFrag" + mId + "Question")) {
-				mQuestion = args.getString("CheckFrag" + mId + "Checked");
+				mQuestion = args.getString("CheckFrag" + mId + "Question");
 			}
 		}
+		init = true;
+	}
+
+	@Override
+	public void setArguments(Bundle args) {
+		super.setArguments(args);
+		mySetArgs(args);
 	}
 
 }
