@@ -20,9 +20,9 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
-import uk.co.jwlawson.nof1.R;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -35,41 +35,58 @@ import android.widget.Button;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 
+import uk.co.jwlawson.nof1.R;
+
 public class MainActivity extends SherlockActivity {
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		Button btnNotification = (Button) findViewById(R.id.main_btn_noti);
 		btnNotification.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
-				Notification noti = new NotificationCompat.Builder(getBaseContext()).setContentTitle("Plese fill in a form").setContentText("Nof1 Trails")
-						.setSmallIcon(R.drawable.ic_launcher).setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher)).getNotification();
-				
-				((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1, noti);
+
+				Intent i = new Intent(getBaseContext(), FragActivity.class);
+				PendingIntent pi = PendingIntent.getActivity(getBaseContext(), 0, i,
+						PendingIntent.FLAG_CANCEL_CURRENT);
+
+				Notification noti = new NotificationCompat.Builder(getBaseContext())
+						.setContentTitle("Plese fill in a form")
+						.setContentText("Nof1 Trails")
+						.setSmallIcon(R.drawable.ic_launcher)
+						.setContentIntent(pi)
+						.setLargeIcon(
+								BitmapFactory
+										.decodeResource(getResources(), R.drawable.ic_launcher))
+						.getNotification();
+
+				noti.flags |= Notification.FLAG_AUTO_CANCEL;
+
+				((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1,
+						noti);
 			}
 		});
-		
+
 		Button btnData = (Button) findViewById(R.id.main_btn_data);
 		btnData.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(getBaseContext(), FragActivity.class);
 				startActivity(i);
 			}
 		});
-		
+
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
-	
+
 }
