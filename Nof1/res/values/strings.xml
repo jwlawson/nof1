@@ -39,5 +39,6 @@
         <item >2 Hours</item>
         <item >4 Hours</item>
     </string-array>
+        <string name="reschedule">Reschedule</string>
 
 </resources>

@@ -40,18 +40,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
-
+
             <LinearLayout
                 android:id="@+id/data_input_fragment_layout"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical" >
-            </LinearLayout>
 
+            </LinearLayout>
+
             <FrameLayout
                 android:id="@+id/data_input_comment_frame"
-                android:layout_width="0dp"
-                android:layout_height="0dp" >
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
             </FrameLayout>
 
             <LinearLayout

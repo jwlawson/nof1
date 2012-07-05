@@ -39,11 +39,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
-
+
             <LinearLayout
                 android:id="@+id/data_input_dualcol_layout"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:baselineAligned="false"
                 android:orientation="horizontal" >
 
@@ -80,13 +80,13 @@
                 android:id="@+id/data_input_button_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
-
+
                 <Button
                     android:id="@+id/data_input_button_cancel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/cancel" />
+                    android:text="@string/reschedule" />
 
                 <Button
                     android:id="@+id/data_input_button_ok"
