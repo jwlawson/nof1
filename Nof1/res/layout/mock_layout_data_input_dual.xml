@@ -17,7 +17,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
+
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -39,7 +40,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
-
+
+
             <LinearLayout
                 android:id="@+id/data_input_dualcol_layout"
                 android:layout_width="match_parent"
@@ -69,7 +71,10 @@
                     android:paddingRight="@dimen/padding_vsmall" >
                 </LinearLayout>
             </LinearLayout>
-
+
+
+
+
             <FrameLayout
                 android:id="@+id/data_input_comment_frame"
                 android:layout_width="match_parent"
@@ -88,7 +93,8 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/ok" />
-
+
+
                 <Button
                     android:id="@+id/data_input_button_cancel"
                     android:layout_width="0dp"
