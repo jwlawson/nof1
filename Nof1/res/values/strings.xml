@@ -31,5 +31,13 @@
     <string name="max">Max</string>
     <string name="yes">Yes</string>
     <string name="comment">Comment</string>
+    <string name="schedule_reminder">"Remind me again in "</string>
+    <string-array name="reminder_spinner_options">
+        <item >10 Mins</item>
+        <item >30 Mins</item>
+        <item >1 Hour</item>
+        <item >2 Hours</item>
+        <item >4 Hours</item>
+    </string-array>
 
 </resources>
