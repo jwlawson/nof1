@@ -20,6 +20,5 @@
       John Lawson - initial API and implementation
 -->
 <resources>
-    <item type="layout" name="mock_layout_data_input">@layout/mock_layout_data_input_dual</item>
     
 </resources>
