@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   Nof1 Trails helper, making life easier for clinicians and patients in N of 1 trials.
   Copyright (C) 2012  WMG, University of Warwick
@@ -19,25 +20,6 @@
       John Lawson - initial API and implementation
 -->
 <resources>
-
-    <string name="app_name">Nof1 Trail Helper</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">Data Input</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="question">Question</string>
-    <string name="min">Min</string>
-    <string name="max">Max</string>
-    <string name="yes">Yes</string>
-    <string name="comment">Comment</string>
-    <string name="schedule_reminder">"Remind me again in "</string>
-    <string-array name="reminder_spinner_options">
-        <item >10 Mins</item>
-        <item >30 Mins</item>
-        <item >1 Hour</item>
-        <item >2 Hours</item>
-        <item >4 Hours</item>
-    </string-array>
-
+    <item type="layout" name="mock_layout_data_input">@layout/mock_layout_data_input_dual</item>
+    
 </resources>
