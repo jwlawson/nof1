@@ -25,37 +25,38 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
 
-public class NumberFragment extends QuestionFragment {
-	private static final String TAG = "NumberFragment";
+public class RadioFragment extends QuestionFragment implements RadioGroup.OnCheckedChangeListener {
 
+	private static final String TAG = "RadioFragment";
 	private static int COUNT = 0;
+
 	private String mQuestion;
-	private EditText mText;
-	private String mNumber;
+	private String mMin;
+	private String mMax;
+	private int mSelected;
 	private boolean init = false;
 	private final int mId;
 
-	public NumberFragment() {
+	public RadioFragment() {
 		mId = COUNT;
 		COUNT++;
+
+	}
+
+	public int getSelected() {
+		return mSelected;
 	}
 
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		COUNT--;
-	}
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		if (!init) mySetArguments(savedInstanceState);
+	public void onCreate(Bundle savedState) {
+		super.onCreate(savedState);
+		if (!init) mySetArguments(savedState);
 	}
 
 	@Override
@@ -63,24 +64,31 @@ public class NumberFragment extends QuestionFragment {
 
 		if (!init) mySetArguments(savedInstanceState);
 
-		View view = inflater.inflate(R.layout.row_layout_data_number, container, false);
+		View view = inflater.inflate(R.layout.row_layout_data_radio, container, false);
 
-		TextView text = (TextView) view.findViewById(R.id.data_input_number_text);
-		text.setText(mQuestion);
+		((TextView) view.findViewById(R.id.data_input_radio_text_question)).setText(mQuestion);
 
-		mText = (EditText) view.findViewById(R.id.data_input_number_edittext);
-		if (mNumber != null) mText.setText(mNumber);
+		TextView min = (TextView) view.findViewById(R.id.data_input_radio_text_min);
+		min.setText(mMin);
 
-		if (BuildConfig.DEBUG) Log.d(TAG, mId + " view created");
+		TextView max = (TextView) view.findViewById(R.id.data_input_radio_text_max);
+		max.setText(mMax);
+
+		RadioGroup radio = (RadioGroup) view.findViewById(R.id.data_input_radio_radiogroup);
+		radio.setOnCheckedChangeListener(this);
 
 		return view;
+
 	}
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putString("NumFrag" + mId + "Question", mQuestion);
-		outState.putString("NumFrag" + mId + "Number", mNumber);
+		// For each questionFragment, add its strings to the bundle
+		// Use Id to differentiate.
+		outState.putString("QuesFrag" + mId + "Question", mQuestion);
+		outState.putString("QuesFrag" + mId + "Min", mMin);
+		outState.putString("QuesFrag" + mId + "Max", mMax);
 	}
 
 	@Override
@@ -91,14 +99,33 @@ public class NumberFragment extends QuestionFragment {
 
 	private void mySetArguments(Bundle args) {
 		if (args != null) {
-			mQuestion = args.getString("NumFrag" + mId + "Question");
-			mNumber = args.getString("NumFrag" + mId + "Number");
-			init = true;
+			if (args.containsKey("QuesFrag" + mId + "Question"))
+				mQuestion = args.getString("QuesFrag" + mId + "Question");
+			if (args.containsKey("QuesFrag" + mId + "Min"))
+				mMin = args.getString("QuesFrag" + mId + "Min");
+			if (args.containsKey("QuesFrag" + mId + "Max"))
+				mMax = args.getString("QuesFrag" + mId + "Max");
 		}
+		init = true;
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (BuildConfig.DEBUG) Log.d(getClass().getName(), "Destroyed");
+		COUNT--;
+	}
+
+	@Override
+	public void onCheckedChanged(RadioGroup group, int checkedId) {
+		// checkedId gives currently selected button
+		if (BuildConfig.DEBUG) Log.d(TAG, "RadioButton selected: " + checkedId);
+		mSelected = checkedId;
 	}
 
 	@Override
 	public Object getResult() {
-		return mNumber;
+		return mSelected;
 	}
+
 }

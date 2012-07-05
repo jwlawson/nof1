@@ -20,8 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
-import uk.co.jwlawson.nof1.BuildConfig;
-import uk.co.jwlawson.nof1.R;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,9 +28,10 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import uk.co.jwlawson.nof1.BuildConfig;
+import uk.co.jwlawson.nof1.R;
 
-public class CheckFragment extends SherlockFragment {
+public class CheckFragment extends QuestionFragment {
 
 	private static final String TAG = "CheckFragment";
 
@@ -106,6 +105,11 @@ public class CheckFragment extends SherlockFragment {
 	public void setArguments(Bundle args) {
 		super.setArguments(args);
 		mySetArgs(args);
+	}
+
+	@Override
+	public Object getResult() {
+		return mChecked;
 	}
 
 }

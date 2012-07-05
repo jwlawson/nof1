@@ -25,7 +25,7 @@ import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.fragments.CheckFragment;
 import uk.co.jwlawson.nof1.fragments.CommentFragment;
 import uk.co.jwlawson.nof1.fragments.NumberFragment;
-import uk.co.jwlawson.nof1.fragments.QuestionFragment;
+import uk.co.jwlawson.nof1.fragments.RadioFragment;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
@@ -137,7 +137,7 @@ public class FragActivity extends SherlockFragmentActivity {
 			
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			for (int i = 0; i < qus.length; i++) {
-				QuestionFragment frag = new QuestionFragment();
+				RadioFragment frag = new RadioFragment();
 				frag.setArguments(a);
 				switch (column) {
 				case 0:

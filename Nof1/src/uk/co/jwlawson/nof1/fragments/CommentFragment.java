@@ -20,8 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
-import uk.co.jwlawson.nof1.BuildConfig;
-import uk.co.jwlawson.nof1.R;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,16 +27,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import uk.co.jwlawson.nof1.BuildConfig;
+import uk.co.jwlawson.nof1.R;
 
-public class CommentFragment extends SherlockFragment {
+public class CommentFragment extends QuestionFragment {
 
 	private static final String TAG = "CommentFragment";
 	private static int COUNT;
 	private String mComment;
 	private EditText mText;
 	private boolean init = false;
-	private int mId;
+	private final int mId;
 
 	public CommentFragment() {
 		mId = COUNT;
@@ -90,5 +89,10 @@ public class CommentFragment extends SherlockFragment {
 			mComment = args.getString("CommentFrag" + mId + "Comment");
 		}
 		init = true;
+	}
+
+	@Override
+	public Object getResult() {
+		return mComment;
 	}
 }
