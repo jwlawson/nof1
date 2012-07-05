@@ -17,7 +17,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -26,11 +26,10 @@
     android:layout_height="match_parent"
     tools:context=".activities.ListActivity" >
 
-
     <ScrollView
         android:id="@+id/scrollView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:fillViewport="true"
@@ -45,16 +44,14 @@
             <LinearLayout
                 android:id="@+id/data_input_fragment_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
                 android:orientation="vertical" >
             </LinearLayout>
 
-
             <FrameLayout
                 android:id="@+id/data_input_comment_frame"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" >
-
+                android:layout_width="0dp"
+                android:layout_height="0dp" >
             </FrameLayout>
 
             <LinearLayout
@@ -74,7 +71,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/cancel" />
+                    android:text="@string/reschedule" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
