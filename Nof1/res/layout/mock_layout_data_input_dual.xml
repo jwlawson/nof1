@@ -94,7 +94,6 @@
                     android:layout_weight="1"
                     android:text="@string/ok" />
 
-
                 <Button
                     android:id="@+id/data_input_button_cancel"
                     android:layout_width="0dp"
