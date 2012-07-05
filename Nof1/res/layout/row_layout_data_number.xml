@@ -35,7 +35,7 @@
         android:paddingTop="@dimen/padding_large_minus_vsmall"
         android:text="@string/question"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <EditText
         android:id="@+id/data_input_number_edittext"
         android:layout_width="wrap_content"
@@ -43,11 +43,11 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/data_input_number_text"
+        android:layout_marginBottom="@dimen/padding_vsmall"
+        android:layout_marginLeft="@dimen/padding_large"
+        android:layout_marginRight="@dimen/padding_large"
         android:ems="10"
-        android:inputType="number"
-        android:paddingBottom="@dimen/padding_vsmall"
-        android:paddingLeft="@dimen/padding_large"
-        android:paddingRight="@dimen/padding_large" >
+        android:inputType="number" >
 
     </EditText>
 
