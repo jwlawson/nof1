@@ -26,7 +26,7 @@
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/data_input_radio_text_question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -37,26 +37,11 @@
         android:text="@string/question"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-
-
-
-
-    <SeekBar
-        android:id="@+id/seekBar1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textView1"
-        android:layout_centerHorizontal="true"
-        android:max="6"
-        android:paddingLeft="@dimen/padding_seekbar_large"
-        android:paddingRight="@dimen/padding_seekbar_large"
-        android:progress="3" />
-
     <RadioGroup
-        android:id="@+id/radioGroup1"
+        android:id="@+id/data_input_radio_radiogroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textView1"
+        android:layout_below="@id/data_input_radio_text_question"
         android:layout_centerHorizontal="true"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/padding_small"
@@ -99,22 +84,22 @@
     </RadioGroup>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/data_input_radio_text_min"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/radioGroup1"
-        android:layout_below="@+id/radioGroup1"
+        android:layout_alignLeft="@+id/data_input_radio_radiogroup"
+        android:layout_below="@+id/data_input_radio_radiogroup"
         android:paddingBottom="@dimen/padding_vsmall"
         android:text="@string/min"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/data_input_radio_text_max"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/textView2"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_alignRight="@+id/radioGroup1"
+        android:layout_alignBaseline="@+id/data_input_radio_text_min"
+        android:layout_alignBottom="@+id/data_input_radio_text_min"
+        android:layout_alignRight="@+id/data_input_radio_radiogroup"
         android:paddingBottom="@dimen/padding_vsmall"
         android:text="@string/max"
         android:textAppearance="?android:attr/textAppearanceSmall" />
