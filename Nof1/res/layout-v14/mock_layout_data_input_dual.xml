@@ -17,7 +17,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -31,7 +31,8 @@
         android:layout_height="fill_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:fillViewport="true" >
+        android:fillViewport="true"
+        tools:ignore="UselessParent" >
 
         <LinearLayout
             android:id="@+id/data_input_scroll_layout"
@@ -43,9 +44,10 @@
                 android:id="@+id/data_input_dualcol_layout"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:baselineAligned="false"
                 android:orientation="horizontal" >
+
+                <!-- android:layout_weight="1" -->
 
                 <LinearLayout
                     android:id="@+id/data_input_fragment_layout"
@@ -67,14 +69,11 @@
                     android:paddingRight="@dimen/padding_vsmall" >
                 </LinearLayout>
             </LinearLayout>
-            
-
 
             <FrameLayout
                 android:id="@+id/data_input_comment_frame"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
             </FrameLayout>
 
             <LinearLayout
@@ -83,14 +82,14 @@
                 android:layout_height="wrap_content" >
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/data_input_button_cancel"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="@string/cancel" />
 
                 <Button
-                    android:id="@+id/button1"
+                    android:id="@+id/data_input_button_ok"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
