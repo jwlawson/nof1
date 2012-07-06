@@ -26,6 +26,7 @@ import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.Vec2;
 import uk.co.jwlawson.nof1.views.GraphView;
 import android.os.Bundle;
+import android.widget.LinearLayout;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
@@ -42,6 +43,8 @@ public class GraphActivity extends SherlockActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.graph_layout);
+
+		LinearLayout scr = (LinearLayout) findViewById(R.id.graph_scroll);
 
 		GraphView view = (GraphView) findViewById(R.id.graphView1);
 
@@ -62,6 +65,56 @@ public class GraphActivity extends SherlockActivity {
 		list.add(new Vec2(38, 0));
 
 		view.setVecList(list);
+
+		GraphView g = new GraphView(this);
+		g.setMaxX(40);
+		g.setMaxY(2);
+
+		ArrayList<Vec2> l1 = new ArrayList<Vec2>();
+		l1.add(new Vec2(1, 0));
+		l1.add(new Vec2(4, 1));
+		l1.add(new Vec2(7, 0));
+		l1.add(new Vec2(8, 0));
+		l1.add(new Vec2(9, 1));
+		l1.add(new Vec2(12, 1));
+		l1.add(new Vec2(15, 1));
+		l1.add(new Vec2(18, 0));
+		l1.add(new Vec2(23, 0));
+		l1.add(new Vec2(25, 1));
+		l1.add(new Vec2(28, 0));
+		l1.add(new Vec2(31, 1));
+		l1.add(new Vec2(35, 1));
+		l1.add(new Vec2(37, 1));
+		l1.add(new Vec2(40, 0));
+
+		g.setVecList(l1);
+
+		scr.addView(g);
+
+		GraphView g1 = new GraphView(this);
+		g1.setMaxX(40);
+		g1.setMaxY(7);
+
+		ArrayList<Vec2> l11 = new ArrayList<Vec2>();
+		l11.add(new Vec2(1, 3));
+		l11.add(new Vec2(4, 4));
+		l11.add(new Vec2(7, 2));
+		l11.add(new Vec2(8, 5));
+		l11.add(new Vec2(9, 6));
+		l11.add(new Vec2(12, 5));
+		l11.add(new Vec2(15, 7));
+		l11.add(new Vec2(18, 6));
+		l11.add(new Vec2(23, 3));
+		l11.add(new Vec2(25, 4));
+		l11.add(new Vec2(28, 1));
+		l11.add(new Vec2(31, 2));
+		l11.add(new Vec2(35, 3));
+		l11.add(new Vec2(37, 2));
+		l11.add(new Vec2(40, 5));
+
+		g1.setVecList(l11);
+
+		scr.addView(g1);
 
 		// TODO add some data points etc
 		// TODO read data from database
