@@ -20,7 +20,10 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import java.util.ArrayList;
+
 import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.Vec2;
 import uk.co.jwlawson.nof1.views.GraphView;
 import android.os.Bundle;
 
@@ -31,22 +34,37 @@ import com.actionbarsherlock.app.SherlockActivity;
  * 
  */
 public class GraphActivity extends SherlockActivity {
-	
+
 	public GraphActivity() {
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.graph_layout);
-		
+
 		GraphView view = (GraphView) findViewById(R.id.graphView1);
-		
-		view.setMaxX(50);
+
+		view.setMaxX(40);
 		view.setMaxY(7);
-		
+
+		ArrayList<Vec2> list = new ArrayList<Vec2>();
+		list.add(new Vec2(1, 1));
+		list.add(new Vec2(4, 3));
+		list.add(new Vec2(7, 2));
+		list.add(new Vec2(10, 4));
+		list.add(new Vec2(15, 1));
+		list.add(new Vec2(19, 6));
+		list.add(new Vec2(20, 7));
+		list.add(new Vec2(23, 5));
+		list.add(new Vec2(26, 3));
+		list.add(new Vec2(30, 2));
+		list.add(new Vec2(38, 0));
+
+		view.setVecList(list);
+
 		// TODO add some data points etc
 		// TODO read data from database
 	}
-	
+
 }
