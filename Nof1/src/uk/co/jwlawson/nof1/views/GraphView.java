@@ -22,9 +22,6 @@ package uk.co.jwlawson.nof1.views;
 
 import java.util.ArrayList;
 
-import uk.co.jwlawson.nof1.Label;
-import uk.co.jwlawson.nof1.Line;
-import uk.co.jwlawson.nof1.Vec2;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
