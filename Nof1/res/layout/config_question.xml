@@ -37,12 +37,13 @@
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/config_input_type"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <Spinner
         android:id="@+id/config_question_spinner_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/config_question_text_input"
+        android:layout_alignRight="@+id/config_question_edit_text"
         android:layout_below="@+id/config_question_text_input"
         android:entries="@array/config_input_type_array" />
 
