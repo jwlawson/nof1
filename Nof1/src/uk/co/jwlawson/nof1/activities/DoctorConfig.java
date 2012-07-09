@@ -21,11 +21,7 @@
 package uk.co.jwlawson.nof1.activities;
 
 import uk.co.jwlawson.nof1.R;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -47,26 +43,7 @@ public class DoctorConfig extends SherlockActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.config_doctor);
-		
-		SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
-		
-		if(sp.getBoolean("first_run", true)){
-			// First time the app has been run. Set up doctor login.
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			View view = getLayoutInflater().inflate(R.layout.config_doctor_first_login, null, false);
-			
-			EditText email = (EditText) view.findViewById(R.id.config_docto)
-			
-			builder.setView(view)
-			.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					
-				}
-			});
-			builder.create().show();
-		}
-		
+
 	}
 
 	@Override
