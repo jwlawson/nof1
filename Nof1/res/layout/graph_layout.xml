@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,20 +9,19 @@
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-        
-        <LinearLayout
-        android:id="@+id/graph_scroll"
-        
-        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical" >
+        tools:ignore="UselessParent" >
 
-        <uk.co.jwlawson.nof1.views.GraphView
-            android:id="@+id/graphView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-            
+        <LinearLayout
+            android:id="@+id/graph_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <uk.co.jwlawson.nof1.views.GraphView
+                android:id="@+id/graphView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
 
