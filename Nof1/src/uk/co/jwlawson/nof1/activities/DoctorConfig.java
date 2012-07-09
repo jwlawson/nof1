@@ -23,9 +23,10 @@ package uk.co.jwlawson.nof1.activities;
 import uk.co.jwlawson.nof1.R;
 import android.os.Bundle;
 
-import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 
 /**
  * Configuration activity that starts with a login for the doctor, then allows
@@ -34,7 +35,7 @@ import com.actionbarsherlock.view.MenuItem;
  * @author John Lawson
  * 
  */
-public class DoctorConfig extends SherlockActivity {
+public class DoctorConfig extends SherlockFragmentActivity {
 
 	public DoctorConfig() {
 	}
@@ -42,8 +43,10 @@ public class DoctorConfig extends SherlockActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.config_doctor);
 
+		setSupportProgressBarIndeterminateVisibility(false);
 	}
 
 	@Override
