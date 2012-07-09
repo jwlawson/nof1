@@ -4,9 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/config_question_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -17,37 +17,91 @@
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/config_question_text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
-    <EditText
-        android:id="@+id/editText1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_alignRight="@+id/textView1"
-        android:layout_below="@+id/textView1"
-        android:ems="10"
-        android:inputType="textCapSentences" >
 
-        <requestFocus />
-    </EditText>
-
-    <TextView
-        android:id="@+id/textView2"
+    <EditText
+        android:id="@+id/config_question_edit_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/editText1"
-        android:layout_below="@+id/editText1"
+        android:layout_alignLeft="@+id/config_question_text"
+        android:layout_alignRight="@+id/config_question_text"
+        android:layout_below="@+id/config_question_text"
+        android:ems="10"
+        android:inputType="textCapSentences" />
+
+    <TextView
+        android:id="@+id/config_question_text_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_question_edit_text"
+        android:layout_below="@+id/config_question_edit_text"
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/config_input_type"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <Spinner
-        android:id="@+id/spinner1"
+        android:id="@+id/config_question_spinner_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView2"
-        android:layout_alignRight="@+id/editText1"
-        android:layout_below="@+id/textView2"
+        android:layout_alignLeft="@+id/config_question_text_input"
+        android:layout_below="@+id/config_question_text_input"
         android:entries="@array/config_input_type_array" />
+
+    <TextView
+        android:id="@+id/config_question_text_type_explain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_question_spinner_type"
+        android:layout_alignRight="@+id/config_question_edit_text"
+        android:layout_below="@+id/config_question_spinner_type"
+        android:layout_marginTop="@dimen/padding_medium"
+        android:text="@string/config_question_type_explain"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <RelativeLayout
+        android:id="@+id/config_question_minmax_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_question_text_type_explain"
+        android:layout_alignRight="@+id/config_question_text_type_explain"
+        android:layout_below="@+id/config_question_text_type_explain" >
+
+        <TextView
+            android:id="@+id/config_question_text_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_medium"
+            android:text="@string/config_min_hint"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/config_question_edit_min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/config_question_text_min"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/config_question_text_min"
+            android:ems="10"
+            android:inputType="textCapSentences" />
+
+        <TextView
+            android:id="@+id/config_question_text_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/config_question_edit_min"
+            android:layout_below="@+id/config_question_edit_min"
+            android:layout_marginTop="@dimen/padding_large"
+            android:text="@string/config_max_hint"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/config_question_edit_max"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/config_question_text_max"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/config_question_text_max"
+            android:ems="10"
+            android:inputType="textCapSentences" />
+    </RelativeLayout>
 
 </RelativeLayout>
