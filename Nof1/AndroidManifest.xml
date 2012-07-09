@@ -65,6 +65,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.DoctorLogin"
+            android:label="@string/configuration"
             android:permission="signiature">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
