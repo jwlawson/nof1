@@ -40,5 +40,13 @@
         <item >4 Hours</item>
     </string-array>
         <string name="reschedule">Reschedule</string>
+        <string name="patient_preferences">Patient preferences</string>
+        <string name="doctor_preferences">Doctor preferences</string>
+        <string name="patient_name">Patient name</string>
+        <string name="patien_name_summary">What would you like to be known as?</string>
+        <string name="prefs_patient_name"></string>
+        <string name="doctor_config">Doctor config</string>
+        <string name="doctor_config_summary">Load the doctor\'s configuration utility.</string>
+        <string name="settings">Settings</string>
 
 </resources>
