@@ -76,5 +76,6 @@
         <item>Checkbox</item>
     </string-array>
         <string name="done">Done</string>
+        <string name="login_details">Login details</string>
 
 </resources>
