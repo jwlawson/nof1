@@ -55,7 +55,7 @@ public class MainActivity extends SherlockActivity {
 						PendingIntent.FLAG_CANCEL_CURRENT);
 
 				Notification noti = new NotificationCompat.Builder(getBaseContext())
-						.setContentTitle("Plese fill in a form")
+						.setContentTitle("Please fill in a form")
 						.setContentText("Nof1 Trails")
 						.setSmallIcon(R.drawable.ic_launcher)
 						.setContentIntent(pi)
