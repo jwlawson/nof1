@@ -48,6 +48,7 @@ public class DoctorConfig extends SherlockActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.menu_doctor_config, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
