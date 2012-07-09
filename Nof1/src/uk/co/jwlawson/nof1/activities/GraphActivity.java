@@ -23,8 +23,8 @@ package uk.co.jwlawson.nof1.activities;
 import java.util.ArrayList;
 
 import uk.co.jwlawson.nof1.R;
-import uk.co.jwlawson.nof1.Vec2;
 import uk.co.jwlawson.nof1.views.GraphView;
+import uk.co.jwlawson.nof1.views.Vec2;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 

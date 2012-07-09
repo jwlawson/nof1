@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="@string/patient_preferences" >
+        <EditTextPreference
+            android:dialogTitle="@string/patien_name_summary"
+            android:key="prefs_patient_name"
+            android:summary="@string/patien_name_summary"
+            android:title="@string/patient_name" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/doctor_preferences" >
+        <PreferenceScreen android:summary="@string/doctor_config_summary" android:title="@string/doctor_config">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://www.android.com" />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+</PreferenceScreen>

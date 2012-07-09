@@ -22,9 +22,6 @@ package uk.co.jwlawson.nof1.views;
 
 import java.util.ArrayList;
 
-import uk.co.jwlawson.nof1.Label;
-import uk.co.jwlawson.nof1.Line;
-import uk.co.jwlawson.nof1.Vec2;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -55,7 +52,7 @@ public class GraphView extends View {
 	private static final int LEFT_PAD = 25;
 	private static final int RIGHT_PAD = 10;
 
-	private static final float RATIO = 0.5625f;// 9 / 16;
+	private static final float RATIO = 0.43f;
 
 	/** List of each data point. */
 	private ArrayList<Vec2> mVecList;
@@ -98,8 +95,6 @@ public class GraphView extends View {
 
 	private float[] floatarr;
 
-	private Context mContext;
-
 	public GraphView(Context context) {
 		this(context, null, 0);
 	}
@@ -111,8 +106,6 @@ public class GraphView extends View {
 	public GraphView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 
-		mContext = context;
-
 		mVecList = new ArrayList<Vec2>();
 		mXAxisList = new ArrayList<Line>();
 		mXLabelList = new ArrayList<Label>();
@@ -120,7 +113,7 @@ public class GraphView extends View {
 		mYLabelList = new ArrayList<Label>();
 
 		mVecPaint = new Paint();
-		mVecPaint.setColor(Color.BLUE);
+		mVecPaint.setColor(0xFF33B5E5);
 		mVecPaint.setAntiAlias(true);
 		mVecPaint.setStyle(Style.STROKE);
 		mVecPaint.setStrokeWidth(0);
@@ -217,11 +210,9 @@ public class GraphView extends View {
 		super.onDraw(canvas);
 
 		canvas.save();
-
-		canvas.translate(LEFT_PAD, -BOTTOM_PAD);
-
 		// Move canvas before drawing axes, so when canvas restored
 		// there is room to label axes
+		canvas.translate(LEFT_PAD, -BOTTOM_PAD);
 
 		if (DEBUG) Log.d(TAG, "Drawing x-axis");
 		for (Line line : mXAxisList) {

@@ -18,7 +18,7 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package uk.co.jwlawson.nof1;
+package uk.co.jwlawson.nof1.views;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;

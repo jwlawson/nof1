@@ -18,43 +18,46 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package uk.co.jwlawson.nof1;
-
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.util.Log;
+package uk.co.jwlawson.nof1.views;
 
 /**
- * Simple class for string and drawing a line
+ * Simple class to hold two integers as coordinates
  * 
  * @author John Lawson
  * 
  */
-public class Line {
+public class Vec2 {
 
-	private static final boolean DEBUG = false;
+	private int x;
+	private int y;
 
-	private Vec2 start;
-	private Vec2 end;
-
-	public Line(Vec2 start, Vec2 end) {
-		this.start = start;
-		this.end = end;
+	public Vec2() {
+		this(0, 0);
 	}
 
-	public void draw(Canvas c, Paint paint) {
-		if (DEBUG)
-			Log.d("Line",
-					"drawing line " + start.getX() + " , " + start.getY() + " , " + end.getX()
-							+ " , " + end.getY());
-		c.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), paint);
+	public Vec2(int x, int y) {
+		this.setX(x);
+		this.setY(y);
 	}
 
-	public void draw(Canvas c, float scaleX, float scaleY, Paint paint) {
-		if (DEBUG)
-			Log.d("Line", "drawing line " + start.getX() * scaleX + " , " + start.getY() * scaleY
-					+ " , " + end.getX() * scaleX + " , " + end.getY() * scaleY);
-		c.drawLine(start.getX() * scaleX, start.getY() * scaleY, end.getX() * scaleX, end.getY()
-				* scaleY, paint);
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	@Override
+	public String toString() {
+		return "Vec2 ( " + x + " , " + y + " )";
 	}
 }

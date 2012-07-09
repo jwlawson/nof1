@@ -20,6 +20,7 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import uk.co.jwlawson.nof1.R;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -34,8 +35,6 @@ import android.widget.Button;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
-
-import uk.co.jwlawson.nof1.R;
 
 public class MainActivity extends SherlockActivity {
 
@@ -77,6 +76,26 @@ public class MainActivity extends SherlockActivity {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(getBaseContext(), FragActivity.class);
+				startActivity(i);
+			}
+		});
+
+		Button btnGraphs = (Button) findViewById(R.id.main_btn_graphs);
+		btnGraphs.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getBaseContext(), GraphActivity.class);
+				startActivity(i);
+			}
+		});
+
+		Button btnPrefs = (Button) findViewById(R.id.main_btn_settings);
+		btnPrefs.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getBaseContext(), UserPrefs.class);
 				startActivity(i);
 			}
 		});

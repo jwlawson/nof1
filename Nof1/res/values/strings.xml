@@ -16,7 +16,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <resources>
 
@@ -32,13 +32,46 @@
     <string name="yes">Yes</string>
     <string name="comment">Comment</string>
     <string name="schedule_reminder">"Remind me again in "</string>
+
     <string-array name="reminder_spinner_options">
-        <item >10 Mins</item>
-        <item >30 Mins</item>
-        <item >1 Hour</item>
-        <item >2 Hours</item>
-        <item >4 Hours</item>
+        <item>10 Mins</item>
+        <item>30 Mins</item>
+        <item>1 Hour</item>
+        <item>2 Hours</item>
+        <item>4 Hours</item>
     </string-array>
-        <string name="reschedule">Reschedule</string>
+
+    <string name="reschedule">Reschedule</string>
+    <string name="patient_preferences">Patient preferences</string>
+    <string name="doctor_preferences">Doctor preferences</string>
+    <string name="patient_name">Patient name</string>
+    <string name="patien_name_summary">What would you like to be known as?</string>
+    <string name="prefs_patient_name"></string>
+    <string name="doctor_config">Doctor config</string>
+    <string name="doctor_config_summary">Load the doctor\'s configuration utility.</string>
+    <string name="settings">Settings</string>
+    <string name="doctor_email">Doctor\'s email</string>
+    <string name="pharmacist_email">Pharmacist\'s email</string>
+    <string name="config_email_use">The doctor\'s and pharmacist\'s email is required to send a copy of this questionaire and any other information about the trial. They will not be used for any other purpose.</string>
+    <string name="config_question_text">Question text</string>
+    <string name="config_input_type">Input type</string>
+    <string-array name="config_input_type_array">
+        <item >Scale</item>
+        <item >Number</item>
+        <item >Checkbox</item>
+    </string-array>
+        <string name="login_first_explain">Please enter an email address and any password you would like to use for this app. This will only be required for accessing the doctor configuration utilities.</string>
+        <string name="email">Email</string>
+        <string name="password">Password</string>
+        <string name="repeat_password">Repeat password</string>
+        <string name="config_question_type_explain">Scale gives a 7 point scale to choose from. Please ensure that all questions are consistent with either high being good or high being bad. Number allows the patient to enter an discrete value. Checkbox is for a yes or no type question.</string>
+        <string name="config_min_hint">Minimum hint</string>
+        <string name="config_max_hint">Maximum hint</string>
+        <string name="treatment_period">Treatment period</string>
+        <string name="config_treatment_period_explain">The number of days in a block that each treatment is trialed for.</string>
+        <string name="config_no_treatment_periods">Number of treatment periods</string>
+        <string name="config_no_treatment_periods_explain">The number of pairs of treatment periods planned for the trial.</string>
+        <string name="config_days_record">Days to record data</string>
+        <string name="config_days_record_explain">The days in each treatment period for the patient to fill in the questionaire.</string>
 
 </resources>
