@@ -71,6 +71,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.DoctorConfig"
+            android:windowSoftInputMode="stateHidden"
             android:exported="false">
             <intent-filter></intent-filter>
         </activity>
