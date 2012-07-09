@@ -2,9 +2,10 @@ package uk.co.jwlawson.nof1.activities;
 
 import uk.co.jwlawson.nof1.R;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 
-public class UserPrefs extends PreferenceActivity {
+import com.actionbarsherlock.app.SherlockPreferenceActivity;
+
+public class UserPrefs extends SherlockPreferenceActivity {
 
 	public UserPrefs() {
 
