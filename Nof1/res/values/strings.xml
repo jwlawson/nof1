@@ -75,5 +75,6 @@
         <item>Number</item>
         <item>Checkbox</item>
     </string-array>
+        <string name="done">Done</string>
 
 </resources>
