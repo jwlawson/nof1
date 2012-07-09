@@ -96,6 +96,7 @@ public class DoctorLogin extends SherlockActivity {
 									new String(Hex.encodeHex(DigestUtils.sha512(emailStr1))));
 							editor.putString("pass_hash",
 									new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
+							editor.putBoolean("first_run", false);
 							editor.commit();
 
 							launch();
