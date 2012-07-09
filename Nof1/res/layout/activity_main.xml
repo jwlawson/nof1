@@ -38,5 +38,23 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/main_btn_noti"
         android:text="Data input" />
+
+    <Button
+        android:id="@+id/main_btn_graphs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/main_btn_data"
+        android:text="View graphs" />
+
+    <Button
+        android:id="@+id/main_btn_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/main_btn_graphs"
+        android:text="Settings" />
 
 </RelativeLayout>
