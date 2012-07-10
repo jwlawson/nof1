@@ -50,23 +50,15 @@ public class MainActivity extends SherlockActivity {
 			public void onClick(View v) {
 
 				Intent i = new Intent(getBaseContext(), FragActivity.class);
-				PendingIntent pi = PendingIntent.getActivity(getBaseContext(), 0, i,
-						PendingIntent.FLAG_CANCEL_CURRENT);
+				PendingIntent pi = PendingIntent.getActivity(getBaseContext(), 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
-				Notification noti = new NotificationCompat.Builder(getBaseContext())
-						.setContentTitle("Please fill in a form")
-						.setContentText("Nof1 Trails")
-						.setSmallIcon(R.drawable.ic_launcher)
-						.setContentIntent(pi)
-						.setLargeIcon(
-								BitmapFactory
-										.decodeResource(getResources(), R.drawable.ic_launcher))
-						.getNotification();
+				Notification noti = new NotificationCompat.Builder(getBaseContext()).setContentTitle("Please fill in a form")
+						.setContentText("Nof1 Trials").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pi)
+						.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher)).getNotification();
 
 				noti.flags |= Notification.FLAG_AUTO_CANCEL;
 
-				((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1,
-						noti);
+				((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1, noti);
 			}
 		});
 
@@ -95,7 +87,7 @@ public class MainActivity extends SherlockActivity {
 
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent(getBaseContext(), UserPrefs.class);
+				Intent i = new Intent(getBaseContext(), FormBuilder1.class);
 				startActivity(i);
 			}
 		});

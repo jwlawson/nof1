@@ -16,7 +16,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uk.co.jwlawson.nof1"
@@ -24,7 +24,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="11"
         android:targetSdkVersion="15" />
 
     <application
@@ -33,8 +33,8 @@
         android:theme="@style/Theme.Sherlock.Light.ForceOverflow" >
         <activity
             android:name=".activities.FragActivity"
-            android:label="@string/title_activity_main"
-            android:exported="false" >
+            android:exported="true"
+            android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -50,32 +50,48 @@
         </activity>
         <activity
             android:name=".activities.GraphActivity"
-            android:label="@string/app_name"
-            android:exported="false" >
+            android:exported="true"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
         <activity
             android:name=".activities.UserPrefs"
-            android:label="@string/settings" 
-            android:exported="false">
+            android:exported="true"
+            android:label="@string/settings" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.DoctorLogin"
-            android:label="@string/configuration"
-            android:exported="false">
+        <activity
+            android:name=".activities.DoctorLogin"
+            android:exported="true"
+            android:label="@string/configuration" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.DoctorConfig"
-            android:windowSoftInputMode="stateHidden"
-            android:exported="false">
-            <intent-filter></intent-filter>
+        <activity
+            android:name=".activities.DoctorConfig"
+            android:exported="true"
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+            </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.FormBuilder1"
+            android:exported="true"
+            android:uiOptions="splitActionBarWhenNarrow"
+            android:windowSoftInputMode="stateHidden" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="uk.co.jwlawson.nof1.activities.DoctorConfig" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        
     </application>
 
 </manifest>
