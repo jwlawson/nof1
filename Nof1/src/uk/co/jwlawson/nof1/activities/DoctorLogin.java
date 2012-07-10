@@ -29,6 +29,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -43,6 +44,8 @@ import com.actionbarsherlock.app.SherlockActivity;
  * 
  */
 public class DoctorLogin extends SherlockActivity {
+
+	private static final int THEME = R.style.dialog_theme;
 
 	public DoctorLogin() {
 	}
@@ -67,7 +70,7 @@ public class DoctorLogin extends SherlockActivity {
 	private void firstLogin(final SharedPreferences sharedPrefs, String emailStr) {
 
 		// First time the app has been run. Set up doctor login.
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, THEME));
 		View view = getLayoutInflater().inflate(R.layout.config_doctor_first_login, null, false);
 
 		final EditText email = (EditText) view.findViewById(R.id.config_doctor_first_edit_email);
@@ -113,7 +116,7 @@ public class DoctorLogin extends SherlockActivity {
 
 	private void login(final SharedPreferences sharedPrefs, String emailStr) {
 		// Not the first time run, check login against sharedprefs.
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, THEME));
 
 		View view = getLayoutInflater().inflate(R.layout.config_doctor_login, null, false);
 
