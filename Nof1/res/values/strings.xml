@@ -16,7 +16,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <resources>
 
@@ -75,7 +75,10 @@
         <item>Number</item>
         <item>Checkbox</item>
     </string-array>
-        <string name="done">Done</string>
-        <string name="login_details">Login details</string>
+
+    <string name="done">Done</string>
+    <string name="login_details">Login details</string>
+    <string name="title_question_detail">Question Detail</string>
+    <string name="title_question_list">Questions</string>
 
 </resources>

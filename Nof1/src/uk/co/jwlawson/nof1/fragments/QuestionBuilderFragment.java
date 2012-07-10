@@ -20,48 +20,74 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
+import java.security.InvalidParameterException;
+
 import uk.co.jwlawson.nof1.R;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.app.SherlockDialogFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
 
 /**
  * Fragment containing a number of input fields to allow clinician to build a
- * question.
+ * question. Can be displayed as either a dialog or a view.
  * 
  * @author John Lawson
  * 
  */
-public class QuestionBuilderFragment extends SherlockFragment implements
-		AdapterView.OnItemSelectedListener {
+public class QuestionBuilderFragment extends SherlockDialogFragment implements AdapterView.OnItemSelectedListener {
+
+	private static final String TAG = "QuestionBuilderFragment";
+	private static final boolean DEBUG = true;
+
+	public static final int DIALOG = 0;
+	public static final int VIEW = 1;
 
 	private static int COUNT = 1;
 
 	private final int mId;
 
 	private RelativeLayout mScaleLayout;
+	private boolean mDialog;
 
 	public QuestionBuilderFragment() {
 		mId = COUNT;
 		COUNT++;
 	}
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+	public static QuestionBuilderFragment newInstance(int viewType) {
+		if (DEBUG) Log.d(TAG, "New QuestionBuilderFragment instanced");
+		QuestionBuilderFragment qbf = new QuestionBuilderFragment();
+
+		switch (viewType) {
+		case DIALOG:
+			qbf.setDialog(true);
+			break;
+		case VIEW:
+			qbf.setDialog(false);
+			break;
+		default:
+			throw new InvalidParameterException(TAG + " viewType should be either DIALOG or VIEW");
+		}
+
+		if (qbf.mDialog) qbf.setStyle(STYLE_NO_TITLE, 0);
+		return qbf;
 	}
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	private View makeView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		View view = inflater.inflate(R.layout.config_question, container);
+		View view = inflater.inflate(R.layout.config_question, container, false);
 
 		TextView txtQuest = (TextView) view.findViewById(R.id.config_question_text);
 		txtQuest.setText("Question " + mId);
@@ -72,7 +98,48 @@ public class QuestionBuilderFragment extends SherlockFragment implements
 		Spinner spnInput = (Spinner) view.findViewById(R.id.config_question_spinner_type);
 		spnInput.setOnItemSelectedListener(this);
 
+		if (!mDialog) {
+			LinearLayout buttonBar = (LinearLayout) view.findViewById(R.id.config_question_button_bar);
+			buttonBar.setVisibility(View.INVISIBLE);
+		} else {
+			Button btnOK = (Button) view.findViewById(R.id.config_question_button_ok);
+
+			Button btnCan = (Button) view.findViewById(R.id.config_question_button_cancel);
+		}
+
 		return view;
+	}
+
+	private void setDialog(boolean bool) {
+		mDialog = bool;
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		if (!mDialog) {
+			setHasOptionsMenu(true);
+		}
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+		if (DEBUG) Log.d(TAG, "View created");
+
+		View view = makeView(inflater, container, savedInstanceState);
+
+		return view;
+	}
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+
+		if (DEBUG) Log.d(TAG, "Menu size " + menu.size());
+		inflater.inflate(R.menu.menu_config_questions, menu);
+		if (DEBUG) Log.d(TAG, "new menu size " + menu.size());
+		super.onCreateOptionsMenu(menu, inflater);
 	}
 
 	@Override

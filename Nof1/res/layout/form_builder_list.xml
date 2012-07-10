@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <fragment
+        android:id="@+id/form_builder_list_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="uk.co.jwlawson.nof1.fragments.FormBuilderList" />
+
+</FrameLayout>
