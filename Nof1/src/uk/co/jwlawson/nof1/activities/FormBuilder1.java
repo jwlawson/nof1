@@ -49,13 +49,22 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 	private static final String TAG = "FormBuilder1";
 	private static final boolean DEBUG = true;
 
+	/** ListFragment */
 	private FormBuilderList mList;
-	private boolean mInActionMode = false;
-	private boolean mDualPane;
-	private int mListSelected;
 
+	/** true when the actionmode is active */
+	private boolean mInActionMode = false;
+
+	/** True if using dual pane layout */
+	private boolean mDualPane;
+
+	/** Tracks the selected ietm in the ListFragment */
+	private int mListSelected = -1;
+
+	/** List of questions passed on to ListFragment */
 	private ArrayList<Question> mQuestionList;
 
+	/** Currently selected or last instanced QuestionBuilder */
 	private QuestionBuilderFragment mQuestionBuilder;
 
 	public FormBuilder1() {
@@ -173,6 +182,8 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 				edit(mListSelected);
 				break;
 			case R.id.action_mode_form_builder_delete:
+				mQuestionList.remove(mListSelected);
+				((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
 				break;
 			case R.id.action_mode_form_builder_move_up:
 				Question q = mQuestionList.get(mListSelected);

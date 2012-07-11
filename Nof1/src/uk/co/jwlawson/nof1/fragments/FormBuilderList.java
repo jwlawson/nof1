@@ -73,6 +73,12 @@ public class FormBuilderList extends SherlockListFragment {
 	}
 
 	@Override
+	public void setSelection(int position) {
+		super.setSelection(position);
+		mSelectedPosition = position;
+	}
+
+	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
