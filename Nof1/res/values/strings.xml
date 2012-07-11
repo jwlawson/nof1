@@ -20,7 +20,7 @@
 -->
 <resources>
 
-    <string name="app_name">Nof1 Trail Helper</string>
+    <string name="app_name">Nof1 Trial Helper</string>
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">Data Input</string>
