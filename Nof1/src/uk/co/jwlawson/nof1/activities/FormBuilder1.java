@@ -55,6 +55,8 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 
 	private ArrayList<Question> mQuestionList;
 
+	private QuestionBuilderFragment mQuestionBuilder;
+
 	public FormBuilder1() {
 		mQuestionList = new ArrayList<Question>();
 	}
@@ -136,6 +138,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 			// Shows fragment as dialog
 			q.show(getSupportFragmentManager(), "dialog");
 		}
+		mQuestionBuilder = q;
 	}
 
 	/**
@@ -147,6 +150,10 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 		@Override
 		public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 			getSupportMenuInflater().inflate(R.menu.form_builder_action_mode, menu);
+			if (mDualPane) {
+				menu.removeItem(R.id.action_mode_form_builder_edit);
+				getSupportMenuInflater().inflate(R.menu.menu_config_questions, menu);
+			}
 			mInActionMode = true;
 			return true;
 		}
@@ -164,6 +171,13 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 				edit(mListSelected);
 				break;
 			case R.id.action_mode_form_builder_delete:
+				break;
+			case R.id.action_mode_form_builder_move_up:
+				break;
+			case R.id.action_mode_form_builder_move_down:
+				break;
+			case R.id.menu_config_questions_save:
+				mQuestionBuilder.save();
 				break;
 
 			}

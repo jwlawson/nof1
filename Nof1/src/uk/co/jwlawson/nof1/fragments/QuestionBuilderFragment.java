@@ -67,12 +67,16 @@ public class QuestionBuilderFragment extends SherlockDialogFragment implements A
 	/** Activity interface which gets callback */
 	private OnQuestionEditedListener mListener;
 
+	/** Text field holding the question */
 	private EditText mEditQuestion;
 
+	/** Text field holding the minimum hint. Only valid for SCALE questions */
 	private EditText mEditMin;
 
+	/** Text field holding the maximum hint. Only valid for SCALE questions */
 	private EditText mEditMax;
 
+	/** The input type of the question. */
 	private int mInputType;
 
 	public QuestionBuilderFragment() {
@@ -219,7 +223,7 @@ public class QuestionBuilderFragment extends SherlockDialogFragment implements A
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void save() {
+	public void save() {
 		if (DEBUG) Log.d(TAG, "Saving edited question");
 		mListener.onQuestionEdited(getQuestion());
 	}
