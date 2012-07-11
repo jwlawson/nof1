@@ -90,7 +90,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 		// Find list fragment
 		mList = (FormBuilderList) getSupportFragmentManager().findFragmentById(R.id.form_builder_list_fragment);
 
-		// Fill mQuestionList and set as the array for mList
+		// TODO Fill mQuestionList and set as the array for mList
 		for (int i = 0; i < 5; i++) {
 			Question q = new Question(Question.SCALE, "Question " + i);
 			mQuestionList.add(q);
@@ -111,7 +111,12 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 		if (DEBUG) Log.d(TAG, "DualPane = " + mDualPane);
 
 		if (savedInstanceState != null) {
+			// Get selected item from saved state
 			setListSelected(savedInstanceState.getInt(TAG + "listSelection"));
+		} else if (mDualPane) {
+			// Otherwise, load up the first item on the list
+			setListSelected(0);
+			edit(0);
 		}
 	}
 
@@ -121,6 +126,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 		return true;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
@@ -133,7 +139,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 			edit(mListSelected);
 			return true;
 		case R.id.menu_form_builder_preview:
-			// Build and preview a questionnaire
+			// TODO Build and preview a questionnaire
 			return true;
 		default:
 			return super.onMenuItemSelected(featureId, item);
@@ -198,6 +204,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 			return false;
 		}
 
+		@SuppressWarnings("rawtypes")
 		@Override
 		public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 
@@ -239,6 +246,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void onQuestionEdited(Question question) {
 		mQuestionList.remove(mListSelected);
