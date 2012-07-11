@@ -25,16 +25,16 @@ package uk.co.jwlawson.nof1.containers;
  * 
  */
 public class Question {
-	
+
 	private static final int SCALE = 0;
 	private static final int NUMBER = 1;
 	private static final int CHECK = 2;
-	
+
 	private int mInputType;
 	private String mQuestionStr;
 	private String mMin;
 	private String mMax;
-	
+
 	/**
 	 * @param inputType The type of input for the Question. SCALE, NUMBER or CHECK.
 	 * @param question The text of the question.
@@ -46,9 +46,10 @@ public class Question {
 		mInputType = inputType;
 		mQuestionStr = question;
 	}
-	
+
 	/**
-	 * Set the max and min hints for those questions of type SCALE. Throws UnsupportedOperationException if the question is not SCALE.
+	 * Set the max and min hints for those questions of type SCALE. Throws UnsupportedOperationException if the question
+	 * is not SCALE.
 	 * 
 	 * @param min
 	 * @param max
@@ -60,20 +61,24 @@ public class Question {
 		mMin = min;
 		mMax = max;
 	}
-	
+
 	public String getQuestionStr() {
 		return mQuestionStr;
 	}
-	
+
 	public void setQuestionStr(String questionStr) {
 		mQuestionStr = questionStr;
 	}
-	
+
 	public String getMin() {
 		return mMin;
 	}
-	
+
 	public String getMax() {
 		return mMax;
+	}
+
+	public String toString() {
+		return mQuestionStr;
 	}
 }
