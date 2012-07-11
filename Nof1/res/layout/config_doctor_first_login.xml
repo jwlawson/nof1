@@ -1,8 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
+  Copyright (C) 2012  WMG, University of Warwick
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You may obtain a copy of the GNU General Public License at  
+  <http://www.gnu.org/licenses/>.
+  
+  Contributors:
+      John Lawson - initial API and implementation
+-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+
+
+
+
+
+
+
+
+
     <TextView
         android:id="@+id/config_doctor_first_text_email"
         android:layout_width="wrap_content"
@@ -15,7 +43,10 @@
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/email"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
+
+
+
     <EditText
         android:id="@+id/config_doctor_first_edit_email"
         android:layout_width="wrap_content"
@@ -28,7 +59,9 @@
 
         <requestFocus />
     </EditText>
-
+
+
+
     <TextView
         android:id="@+id/config_doctor_first_text_pass"
         android:layout_width="wrap_content"
@@ -38,7 +71,8 @@
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/password"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
+
     <EditText
         android:id="@+id/config_doctor_first_edit_pass"
         android:layout_width="wrap_content"
@@ -48,7 +82,9 @@
         android:layout_below="@+id/config_doctor_first_text_pass"
         android:ems="10"
         android:inputType="textPassword" />
-
+
+
+
     <TextView
         android:id="@+id/config_doctor_first_text_pass2"
         android:layout_width="wrap_content"
@@ -58,7 +94,8 @@
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/repeat_password"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
+
     <EditText
         android:id="@+id/config_doctor_first_edit_pass2"
         android:layout_width="wrap_content"
@@ -68,7 +105,11 @@
         android:layout_below="@+id/config_doctor_first_text_pass2"
         android:ems="10"
         android:inputType="textPassword" />
-
+
+
+
+
+
     <TextView
         android:id="@+id/config_doctor_first_explain"
         android:layout_width="wrap_content"

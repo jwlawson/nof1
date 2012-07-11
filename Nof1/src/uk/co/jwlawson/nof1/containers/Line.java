@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Nof1 Trails helper, making life easier for clinicians and patients in N of 1 trials.
+ * Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
  * Copyright (C) 2012  WMG, University of Warwick
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -12,42 +12,49 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You may obtain a copy of the GNU General Public License at  
+ * <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package uk.co.jwlawson.nof1.views;
+package uk.co.jwlawson.nof1.containers;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.Log;
 
 /**
- * @author lawson_j
+ * Simple class for string and drawing a line
+ * 
+ * @author John Lawson
  * 
  */
-public class Label {
+public class Line {
 
 	private static final boolean DEBUG = false;
 
-	private String name;
-	private Vec2 position;
+	private Vec2 start;
+	private Vec2 end;
 
-	public Label(String name, Vec2 position) {
-		this.name = name;
-		this.position = position;
+	public Line(Vec2 start, Vec2 end) {
+		this.start = start;
+		this.end = end;
 	}
 
 	public void draw(Canvas c, Paint paint) {
-		c.drawText(name, position.getX(), position.getY(), paint);
+		if (DEBUG)
+			Log.d("Line",
+					"drawing line " + start.getX() + " , " + start.getY() + " , " + end.getX()
+							+ " , " + end.getY());
+		c.drawLine(start.getX(), start.getY(), end.getX(), end.getY(), paint);
 	}
 
 	public void draw(Canvas c, float scaleX, float scaleY, Paint paint) {
-		c.drawText(name, position.getX() * scaleX, position.getY() * scaleY, paint);
 		if (DEBUG)
-			Log.d("Label", "Drawing " + name + position.getX() * scaleX + " , " + position.getY()
-					* scaleY);
+			Log.d("Line", "drawing line " + start.getX() * scaleX + " , " + start.getY() * scaleY
+					+ " , " + end.getX() * scaleX + " , " + end.getY() * scaleY);
+		c.drawLine(start.getX() * scaleX, start.getY() * scaleY, end.getX() * scaleX, end.getY()
+				* scaleY, paint);
 	}
 }
