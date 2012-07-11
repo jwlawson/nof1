@@ -26,6 +26,7 @@ import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.containers.Question;
 import uk.co.jwlawson.nof1.fragments.FormBuilderList;
 import uk.co.jwlawson.nof1.fragments.QuestionBuilderDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -49,7 +50,26 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 
 	private static final String TAG = "FormBuilder";
 	private static final boolean DEBUG = true;
-	private static final String PREFS_NAME = "questions";
+
+	private static final int REQUEST_PREVIEW = 10;;
+
+	/** Name of shared preferences holding the questions */
+	public static final String PREFS_NAME = "questions";
+
+	/** Shared preference key with question text. Append with required question number. */
+	public static final String PREFS_TEXT = "questionText";
+
+	/** Shared preference key with question type. Append with required question number. */
+	public static final String PREFS_TYPE = "inputType";
+
+	/** Shared preference key with minimum hint. Append with required question number. */
+	public static final String PREFS_MIN = "questionMin";
+
+	/** Shared preference key with maximum hint. Append with required question number. */
+	public static final String PREFS_MAX = "questionMax";
+
+	/** Intent key for preview mode */
+	public static final String INTENT_PREVIEW = "preview";
 
 	/** ListFragment */
 	private FormBuilderList mList;
@@ -95,15 +115,15 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		mList = (FormBuilderList) getSupportFragmentManager().findFragmentById(R.id.form_builder_list_fragment);
 
 		// TODO Fill mQuestionList and set as the array for mList
-		for (int i = 1; sp.contains("questionText" + i); i++) {
+		for (int i = 1; sp.contains(PREFS_TEXT + i); i++) {
 
-			int inputType = sp.getInt("inputType" + i, Question.SCALE);
-			String text = sp.getString("questionText" + i, "Questiontext");
+			int inputType = sp.getInt(PREFS_TYPE + i, Question.SCALE);
+			String text = sp.getString(PREFS_TEXT + i, "Questiontext");
 
 			Question q = new Question(inputType, text);
 			if (inputType == Question.SCALE) {
-				String min = sp.getString("questionMin" + i, "");
-				String max = sp.getString("questionMax" + i, "");
+				String min = sp.getString(PREFS_MIN + i, "");
+				String max = sp.getString(PREFS_MAX + i, "");
 				q.setMinMax(min, max);
 			}
 
@@ -147,6 +167,9 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		case R.id.menu_form_builder_preview:
 			// TODO Build and preview a questionnaire
 			saveToFile();
+			Intent i = new Intent(this, Questionnaire.class);
+			i.putExtra(INTENT_PREVIEW, true);
+			startActivityForResult(i, REQUEST_PREVIEW);
 			return true;
 		default:
 			return super.onMenuItemSelected(featureId, item);
@@ -200,6 +223,33 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			}
 		}
 		editor.commit();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case REQUEST_PREVIEW:
+			if (resultCode == Questionnaire.RESULT_DONE) {
+				// Doctor happy with questionnaire, return to DoctorConfig
+				setResult(RESULT_OK);
+				finish();
+
+			} else if (resultCode == Questionnaire.RESULT_BACK) {
+				// Doctor not happy with questionnaire, stay here.
+
+			}
+			return;
+		}
+		// Not my request.
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public void onQuestionEdited(Question question) {
+		mQuestionList.remove(mListSelected);
+		mQuestionList.add(mListSelected, question);
+		((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
 	}
 
 	/**
@@ -264,14 +314,6 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			mInActionMode = false;
 		}
 
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void onQuestionEdited(Question question) {
-		mQuestionList.remove(mListSelected);
-		mQuestionList.add(mListSelected, question);
-		((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
 	}
 
 }

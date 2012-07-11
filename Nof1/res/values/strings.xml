@@ -81,5 +81,7 @@
     <string name="title_question_detail">Question Detail</string>
     <string name="title_question_list">Questions</string>
     <string name="preview">Preview</string>
+    <string name="questionnaire_preview_explain">This is a preview of the questionnaire the patient will have to fill in. Please check any details, spelling etc and if you are happy press Save, otherwise Cancel will take you back to the previous screen.</string>
+    <string name="save">Save</string>
 
 </resources>
