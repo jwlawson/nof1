@@ -47,7 +47,7 @@ public class FormBuilderList extends SherlockListFragment {
 	private static final boolean DEBUG = true;
 
 	private OnListItemSelectedListener mListener;
-	private int mSelectedPosition;
+	private int mSelectedPosition = -1;
 
 	public FormBuilderList() {
 		if (DEBUG) Log.d(TAG, "New FormBuilderList created");

@@ -58,7 +58,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 	/** True if using dual pane layout */
 	private boolean mDualPane;
 
-	/** Tracks the selected ietm in the ListFragment */
+	/** Tracks the selected item in the ListFragment */
 	private int mListSelected = -1;
 
 	/** List of questions passed on to ListFragment */
@@ -69,6 +69,15 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 
 	public FormBuilder1() {
 		mQuestionList = new ArrayList<Question>();
+	}
+
+	/** Set the currently selected item. Also sets it in ListFragment */
+	private void setListSelected(int listSelected) {
+		mListSelected = listSelected;
+		if (mList != null) {
+			mList.setSelection(listSelected);
+		}
+
 	}
 
 	@Override
@@ -102,11 +111,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 		if (DEBUG) Log.d(TAG, "DualPane = " + mDualPane);
 
 		if (savedInstanceState != null) {
-			mListSelected = savedInstanceState.getInt(TAG + "listSelection");
-
-			if (mDualPane) {
-				mList.setSelection(mListSelected);
-			}
+			setListSelected(savedInstanceState.getInt(TAG + "listSelection"));
 		}
 	}
 
@@ -124,7 +129,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 			Question q = new Question(Question.SCALE);
 			mQuestionList.add(q);
 			((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
-			mListSelected = mQuestionList.indexOf(q);
+			setListSelected(mQuestionList.indexOf(q));
 			edit(mListSelected);
 			return true;
 		case R.id.menu_form_builder_preview:
