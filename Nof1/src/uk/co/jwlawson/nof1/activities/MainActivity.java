@@ -87,7 +87,7 @@ public class MainActivity extends SherlockActivity {
 
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent(getBaseContext(), FormBuilder1.class);
+				Intent i = new Intent(getBaseContext(), FormBuilder.class);
 				startActivity(i);
 			}
 		});

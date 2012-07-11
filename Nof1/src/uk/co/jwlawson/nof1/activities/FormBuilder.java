@@ -43,10 +43,10 @@ import com.actionbarsherlock.view.MenuItem;
  * @author John Lawson
  * 
  */
-public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilderList.OnListItemSelectedListener,
+public class FormBuilder extends SherlockFragmentActivity implements FormBuilderList.OnListItemSelectedListener,
 		QuestionBuilderFragment.OnQuestionEditedListener {
 
-	private static final String TAG = "FormBuilder1";
+	private static final String TAG = "FormBuilder";
 	private static final boolean DEBUG = true;
 
 	/** ListFragment */
@@ -67,7 +67,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 	/** Currently selected or last instanced QuestionBuilder */
 	private QuestionBuilderFragment mQuestionBuilder;
 
-	public FormBuilder1() {
+	public FormBuilder() {
 		mQuestionList = new ArrayList<Question>();
 	}
 

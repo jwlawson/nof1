@@ -80,7 +80,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.FormBuilder1"
+            android:name=".activities.FormBuilder"
             android:exported="true"
             android:uiOptions="splitActionBarWhenNarrow"
             android:windowSoftInputMode="stateHidden" >
