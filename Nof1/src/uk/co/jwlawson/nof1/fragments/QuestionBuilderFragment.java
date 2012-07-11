@@ -166,7 +166,7 @@ public class QuestionBuilderFragment extends SherlockDialogFragment implements A
 
 		// Layout containing extra information for SCALE type questions. Hidden for other types.
 		mScaleLayout = (RelativeLayout) view.findViewById(R.id.config_question_minmax_layout);
-		mScaleLayout.setVisibility(View.INVISIBLE);
+		mScaleLayout.setVisibility(View.GONE);
 
 		// Set initial text in question fields
 		mEditQuestion = (EditText) view.findViewById(R.id.config_question_edit_text);
@@ -186,7 +186,7 @@ public class QuestionBuilderFragment extends SherlockDialogFragment implements A
 		// If shown as dialog, set button click Listeners, otherwise hide buttons
 		if (!mDialog) {
 			LinearLayout buttonBar = (LinearLayout) view.findViewById(R.id.config_question_button_bar);
-			buttonBar.setVisibility(View.INVISIBLE);
+			buttonBar.setVisibility(View.GONE);
 		} else {
 			Button btnOK = (Button) view.findViewById(R.id.config_question_button_ok);
 			btnOK.setOnClickListener(new OnClickListener() {
