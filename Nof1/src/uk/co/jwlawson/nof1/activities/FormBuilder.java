@@ -22,6 +22,7 @@ package uk.co.jwlawson.nof1.activities;
 
 import java.util.ArrayList;
 
+import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.containers.Question;
 import uk.co.jwlawson.nof1.fragments.FormBuilderList;
@@ -49,7 +50,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		QuestionBuilderDialog.OnQuestionEditedListener {
 
 	private static final String TAG = "FormBuilder";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 
 	private static final int REQUEST_PREVIEW = 10;;
 
@@ -115,10 +116,10 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		mList = (FormBuilderList) getSupportFragmentManager().findFragmentById(R.id.form_builder_list_fragment);
 
 		// TODO Fill mQuestionList and set as the array for mList
-		for (int i = 1; sp.contains(PREFS_TEXT + i); i++) {
+		for (int i = 0; sp.contains(PREFS_TEXT + i); i++) {
 
 			int inputType = sp.getInt(PREFS_TYPE + i, Question.SCALE);
-			String text = sp.getString(PREFS_TEXT + i, "Questiontext");
+			String text = sp.getString(PREFS_TEXT + i, "");
 
 			Question q = new Question(inputType, text);
 			if (inputType == Question.SCALE) {
@@ -139,7 +140,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		if (savedInstanceState != null) {
 			// Get selected item from saved state
 			setListSelected(savedInstanceState.getInt(TAG + "listSelection"));
-		} else if (mDualPane) {
+		} else if (mDualPane && mQuestionList.size() > 0) {
 			// Otherwise, load up the first item on the list
 			setListSelected(0);
 			edit(0);
@@ -158,7 +159,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		switch (item.getItemId()) {
 		case R.id.menu_form_builder_add:
 			// Add new question to bottom of the list and load new QuestionBuilder
-			Question q = new Question(Question.SCALE);
+			Question q = new Question(Question.SCALE, "");
 			mQuestionList.add(q);
 			((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
 			setListSelected(mQuestionList.indexOf(q));
@@ -213,15 +214,22 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	}
 
 	private void saveToFile() {
+		// Open SharedPrefences editor
 		SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
 
+		// Mark to remove all previous entries.
+		editor.clear();
+
+		// For each question, load into editor
 		for (int i = 0; i < mQuestionList.size(); i++) {
 			Question q = mQuestionList.get(i);
-			editor.putString("questionText" + i, q.getQuestionStr()).putInt("inputType" + i, q.getInputType());
+			editor.putString(PREFS_TEXT + i, q.getQuestionStr()).putInt(PREFS_TYPE + i, q.getInputType());
 			if (q.getInputType() == Question.SCALE) {
-				editor.putString("questionMin", q.getMin()).putString("questionMax", q.getMax());
+				editor.putString(PREFS_MIN + i, q.getMin()).putString(PREFS_MAX + i, q.getMax());
 			}
+			if (DEBUG) Log.d(TAG, q.getQuestionStr() + ": " + q.getInputType());
 		}
+		// Save changes
 		editor.commit();
 	}
 

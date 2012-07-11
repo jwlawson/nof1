@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -73,6 +74,8 @@ public class Questionnaire extends SherlockFragmentActivity {
 
 		setProgressBarIndeterminateVisibility(false);
 
+		mQuestionList = new ArrayList<QuestionFragment>();
+
 		if (savedInstanceState == null) {
 			// Need to load fragments
 			new Loader().execute();
@@ -98,6 +101,7 @@ public class Questionnaire extends SherlockFragmentActivity {
 		});
 
 		if (mPreview) {
+			Log.d(TAG, "Building questionnaire in preview mode");
 			btnOk.setText(R.string.save);
 			btnCan.setText(R.string.cancel);
 			Toast.makeText(this, R.string.questionnaire_preview_explain, Toast.LENGTH_LONG).show();
@@ -133,9 +137,19 @@ public class Questionnaire extends SherlockFragmentActivity {
 
 			SharedPreferences sp = getSharedPreferences(FormBuilder.PREFS_NAME, MODE_PRIVATE);
 
+			// Check whether the device is large enough for 2 columns
+			boolean dualCol = (findViewById(R.id.data_input_fragment_layout2) != null);
+			if (dualCol) Log.d("FragAct", "Dual columns found");
+			int column = 0;
+
 			for (int i = 0; sp.contains(FormBuilder.PREFS_TEXT + i); i++) {
+
+				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
 				QuestionFragment q;
+
 				int inputType = sp.getInt(FormBuilder.PREFS_TYPE + i, Question.SCALE);
+
 				switch (inputType) {
 				case Question.SCALE:
 					q = RadioFragment.newInstance(sp.getString(FormBuilder.PREFS_TEXT + i, null), sp.getString(FormBuilder.PREFS_MIN + i, null),
@@ -145,7 +159,7 @@ public class Questionnaire extends SherlockFragmentActivity {
 					q = NumberFragment.newInstance(sp.getString(FormBuilder.PREFS_TEXT + i, null));
 					break;
 				case Question.CHECK:
-					q = CheckFragment.newInstance(sp.getString(FormBuilder.PREFS_TEXT, null), false);
+					q = CheckFragment.newInstance(sp.getString(FormBuilder.PREFS_TEXT + i, null), false);
 					break;
 				default:
 					// Should never happen
@@ -154,7 +168,24 @@ public class Questionnaire extends SherlockFragmentActivity {
 				}
 				mQuestionList.add(q);
 
+				// Add the questionFragment to the layout.
+				switch (column) {
+				case 0:
+					ft.add(R.id.data_input_fragment_layout, q, "quesFrag" + i);
+					break;
+				case 1:
+					ft.add(R.id.data_input_fragment_layout2, q, "quesFrag" + i);
+					break;
+				}
+				if (dualCol) {
+					column++;
+					column %= 2;
+				}
+
+				ft.commit();
+
 			}
+
 			return null;
 		}
 
