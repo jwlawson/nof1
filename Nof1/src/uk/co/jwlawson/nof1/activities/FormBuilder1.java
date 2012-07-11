@@ -20,7 +20,10 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import java.util.ArrayList;
+
 import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.containers.Question;
 import uk.co.jwlawson.nof1.fragments.FormBuilderList;
 import uk.co.jwlawson.nof1.fragments.QuestionBuilderFragment;
 import android.os.Bundle;
@@ -39,7 +42,8 @@ import com.actionbarsherlock.view.MenuItem;
  * @author John Lawson
  * 
  */
-public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilderList.OnListItemSelectedListener {
+public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilderList.OnListItemSelectedListener,
+		QuestionBuilderFragment.OnQuestionEditedListener {
 
 	private static final String TAG = "FormBuilder1";
 	private static final boolean DEBUG = true;
@@ -49,7 +53,10 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 	private boolean mDualPane;
 	private int mListSelected;
 
+	private ArrayList<Question> mQuestionList;
+
 	public FormBuilder1() {
+		mQuestionList = new ArrayList<Question>();
 	}
 
 	@Override
@@ -59,7 +66,23 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 		// Load layout. This will change depending on the screen size
 		setContentView(R.layout.form_builder_list);
 
+		// Find list fragment
 		mList = (FormBuilderList) getSupportFragmentManager().findFragmentById(R.id.form_builder_list_fragment);
+
+		// Fill mQuestionList and set as the array for mList
+		for (int i = 0; i < 5; i++) {
+			Question q = new Question(Question.SCALE, "Question " + i);
+			mQuestionList.add(q);
+		}
+		for (int i = 0; i < 5; i++) {
+			Question q = new Question(Question.NUMBER, "Question " + i);
+			mQuestionList.add(q);
+		}
+		for (int i = 0; i < 5; i++) {
+			Question q = new Question(Question.CHECK, "Question " + i);
+			mQuestionList.add(q);
+		}
+		mList.setArrayList(mQuestionList);
 
 		// See if the layout has a frame for the second pane.
 		FrameLayout frame = (FrameLayout) findViewById(R.id.form_builder_details_frame);
@@ -73,6 +96,12 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 				mList.setSelection(mListSelected);
 			}
 		}
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.form_builder_menu, menu);
+		return true;
 	}
 
 	@Override
@@ -96,13 +125,13 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 		QuestionBuilderFragment q;
 		if (mDualPane) {
 
-			q = QuestionBuilderFragment.newInstance(QuestionBuilderFragment.VIEW);
+			q = QuestionBuilderFragment.newInstance(QuestionBuilderFragment.VIEW, mQuestionList.get(selection));
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(R.id.form_builder_details_frame, q, "view");
 			ft.commit();
 
 		} else {
-			q = QuestionBuilderFragment.newInstance(QuestionBuilderFragment.DIALOG);
+			q = QuestionBuilderFragment.newInstance(QuestionBuilderFragment.DIALOG, mQuestionList.get(selection));
 
 			// Shows fragment as dialog
 			q.show(getSupportFragmentManager(), "dialog");
@@ -149,6 +178,10 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 			mInActionMode = false;
 		}
 
+	}
+
+	@Override
+	public void onQuestionEdited(Question question) {
 	}
 
 }

@@ -22,6 +22,7 @@ package uk.co.jwlawson.nof1.fragments;
 
 import java.util.ArrayList;
 
+import uk.co.jwlawson.nof1.containers.Question;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
@@ -61,19 +62,15 @@ public class FormBuilderList extends SherlockListFragment {
 		public void onListItemSelected(ListView l, View v, int position, long id);
 	}
 
+	public void setArrayList(ArrayList<Question> list) {
+		ArrayAdapter<Question> adapter = new ArrayAdapter<Question>(getActivity(), android.R.layout.simple_expandable_list_item_1,
+				android.R.id.text1, list);
+		setListAdapter(adapter);
+	}
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-
-		ArrayList<String> list = new ArrayList<String>();
-		for (int i = 1; i < 11; i++) {
-			list.add("Item " + i);
-		}
-
-		ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_expandable_list_item_1, android.R.id.text1,
-				list);
-
-		setListAdapter(adapter);
 
 		getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 		if (DEBUG) Log.d(TAG, "Activity created and list adapter set");
