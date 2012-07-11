@@ -20,7 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,72 +31,60 @@ import android.widget.TextView;
 
 public class NumberFragment extends QuestionFragment {
 	private static final String TAG = "NumberFragment";
-	
-	private static int COUNT = 0;
-	private String mQuestion;
+	private static final boolean DEBUG = true;
+
+	private static final String ARGS_TEXT = "argsText";
+
 	private EditText mText;
-	private String mNumber;
-	private boolean init = false;
-	private final int mId;
-	
+
 	public NumberFragment() {
-		mId = COUNT;
-		COUNT++;
 	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		COUNT--;
+
+	public static NumberFragment newInstance(String text) {
+
+		NumberFragment frag = new NumberFragment();
+
+		Bundle args = new Bundle();
+		args.putString(ARGS_TEXT, text);
+
+		frag.setArguments(args);
+
+		if (DEBUG) Log.d(TAG, "New instance created");
+
+		return frag;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		if (!init) mySetArguments(savedInstanceState);
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
-		if (!init) mySetArguments(savedInstanceState);
-		
+
 		View view = inflater.inflate(R.layout.row_layout_data_number, container, false);
-		
+
+		Bundle args = getArguments();
+
 		TextView text = (TextView) view.findViewById(R.id.data_input_number_text);
-		text.setText(mQuestion);
-		
+		text.setText(args.getString(ARGS_TEXT));
+
 		mText = (EditText) view.findViewById(R.id.data_input_number_edittext);
-		if (mNumber != null) mText.setText(mNumber);
-		
-		if (BuildConfig.DEBUG) Log.d(TAG, mId + " view created");
-		
+
+		if (DEBUG) Log.d(TAG, "View created");
+
 		return view;
 	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putString("NumFrag" + mId + "Question", mQuestion);
-		outState.putString("NumFrag" + mId + "Number", mNumber);
-	}
-	
-	@Override
-	public void setArguments(Bundle args) {
-		super.setArguments(args);
-		mySetArguments(args);
-	}
-	
-	private void mySetArguments(Bundle args) {
-		if (args != null) {
-			mQuestion = args.getString("NumFrag" + mId + "Question");
-			mNumber = args.getString("NumFrag" + mId + "Number");
-			init = true;
-		}
-	}
-	
+
 	@Override
 	public int getResult() {
-		return Integer.parseInt(mNumber);
+		int result = -1;
+		try {
+			result = Integer.parseInt(mText.getText().toString());
+		} catch (NumberFormatException e) {
+			// TODO something to handle error
+			Log.e(TAG, "Incorrect number entry");
+		}
+		return result;
 	}
 }
