@@ -18,36 +18,46 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package uk.co.jwlawson.nof1.views;
-
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.util.Log;
+package uk.co.jwlawson.nof1.containers;
 
 /**
- * @author lawson_j
+ * Simple class to hold two integers as coordinates
+ * 
+ * @author John Lawson
  * 
  */
-public class Label {
+public class Vec2 {
 
-	private static final boolean DEBUG = false;
+	private int x;
+	private int y;
 
-	private String name;
-	private Vec2 position;
-
-	public Label(String name, Vec2 position) {
-		this.name = name;
-		this.position = position;
+	public Vec2() {
+		this(0, 0);
 	}
 
-	public void draw(Canvas c, Paint paint) {
-		c.drawText(name, position.getX(), position.getY(), paint);
+	public Vec2(int x, int y) {
+		this.setX(x);
+		this.setY(y);
 	}
 
-	public void draw(Canvas c, float scaleX, float scaleY, Paint paint) {
-		c.drawText(name, position.getX() * scaleX, position.getY() * scaleY, paint);
-		if (DEBUG)
-			Log.d("Label", "Drawing " + name + position.getX() * scaleX + " , " + position.getY()
-					* scaleY);
+	public int getX() {
+		return x;
+	}
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+	@Override
+	public String toString() {
+		return "Vec2 ( " + x + " , " + y + " )";
 	}
 }
