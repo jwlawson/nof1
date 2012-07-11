@@ -33,7 +33,7 @@
         android:theme="@style/Theme.Sherlock.Light.ForceOverflow" >
         <activity
             android:name=".activities.FragActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
