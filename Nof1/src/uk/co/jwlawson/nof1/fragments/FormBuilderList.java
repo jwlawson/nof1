@@ -21,12 +21,15 @@
 package uk.co.jwlawson.nof1.fragments;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import uk.co.jwlawson.nof1.containers.Question;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -44,7 +47,7 @@ public class FormBuilderList extends SherlockListFragment {
 	private static final boolean DEBUG = true;
 
 	private OnListItemSelectedListener mListener;
-	private View mSelectedView = null;
+	private int mSelectedPosition;
 
 	public FormBuilderList() {
 		if (DEBUG) Log.d(TAG, "New FormBuilderList created");
@@ -62,8 +65,9 @@ public class FormBuilderList extends SherlockListFragment {
 		public void onListItemSelected(ListView l, View v, int position, long id);
 	}
 
+	/** Creates the arrayAdapter for the list and sets the arraylist */
 	public void setArrayList(ArrayList<Question> list) {
-		ArrayAdapter<Question> adapter = new ArrayAdapter<Question>(getActivity(), android.R.layout.simple_expandable_list_item_1,
+		HighlightArrayAdapter<Question> adapter = new HighlightArrayAdapter<Question>(getActivity(), android.R.layout.simple_expandable_list_item_1,
 				android.R.id.text1, list);
 		setListAdapter(adapter);
 	}
@@ -82,8 +86,7 @@ public class FormBuilderList extends SherlockListFragment {
 
 		// Clear previously clicked view and colour this clicked view
 		clearSelected();
-		mSelectedView = v;
-		mSelectedView.setBackgroundColor(0xFF33B5E5);
+		mSelectedPosition = position;
 		getListView().setItemChecked(position, true);
 
 		// Pass click on to activity
@@ -108,10 +111,35 @@ public class FormBuilderList extends SherlockListFragment {
 	 */
 	public void clearSelected() {
 		if (DEBUG) Log.d(TAG, "Clearing selection");
+
+		// Clear saved position
+		mSelectedPosition = -1;
+
+		// Clear the background of all views
 		ListView lv = getListView();
 		for (int i = 0; i < lv.getChildCount(); i++) {
 			lv.getChildAt(i).setBackgroundResource(0);
 		}
 	}
 
+	/** Simple ArrayAdapter wrapper that persistently keeps the last selected view highlighted */
+	private class HighlightArrayAdapter<T> extends ArrayAdapter<T> {
+
+		public HighlightArrayAdapter(Context context, int resource, int textViewResourceId, List<T> objects) {
+			super(context, resource, textViewResourceId, objects);
+		}
+
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
+			View view = super.getView(position, convertView, parent);
+
+			if (position == mSelectedPosition) {
+				view.setBackgroundColor(0xFF33B5E5);
+			} else {
+				view.setBackgroundColor(0x00000000);
+			}
+
+			return view;
+		}
+	}
 }
