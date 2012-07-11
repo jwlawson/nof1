@@ -1,7 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
+  Copyright (C) 2012  WMG, University of Warwick
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You may obtain a copy of the GNU General Public License at  
+  <http://www.gnu.org/licenses/>.
+  
+  Contributors:
+      John Lawson - initial API and implementation
+-->
 <RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent" xmlns:android="http://schemas.android.com/apk/res/android">
-
+
+
+
+
+
+
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
@@ -14,7 +40,9 @@
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/patient_name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
+
+
     <EditText
         android:id="@+id/editText1"
         android:layout_width="wrap_content"
@@ -25,9 +53,10 @@
         android:ems="10"
         android:inputType="textPersonName" >
 
-        <requestFocus />
+        
     </EditText>
-
+
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
@@ -37,7 +66,8 @@
         android:layout_marginTop="16dp"
         android:text="@string/doctor_email"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
+
     <EditText
         android:id="@+id/editText2"
         android:layout_width="wrap_content"
@@ -47,7 +77,8 @@
         android:layout_below="@+id/textView2"
         android:ems="10"
         android:inputType="textEmailAddress" />
-
+
+
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
@@ -57,7 +88,8 @@
         android:layout_marginTop="16dp"
         android:text="@string/pharmacist_email"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
+
     <EditText
         android:id="@+id/editText3"
         android:layout_width="wrap_content"
@@ -67,7 +99,9 @@
         android:layout_below="@+id/textView3"
         android:ems="10"
         android:inputType="textEmailAddress" />
-
+
+
+
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"

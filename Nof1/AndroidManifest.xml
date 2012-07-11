@@ -1,5 +1,5 @@
 <!--
-  Nof1 Trails helper, making life easier for clinicians and patients in N of 1 trials.
+  Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
   Copyright (C) 2012  WMG, University of Warwick
   
   This program is free software: you can redistribute it and/or modify
@@ -12,11 +12,11 @@
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
   
-  You should have received a copy of the GNU General Public License
-  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  You may obtain a copy of the GNU General Public License at  
+  <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uk.co.jwlawson.nof1"
@@ -26,6 +26,7 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="15" />
+    <permission android:protectionLevel="signature" android:name="uk.co.jwlawson.nof1.permission.SIGNATURE"></permission>
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -34,7 +35,7 @@
         <activity
             android:name=".activities.FragActivity"
             android:label="@string/title_activity_main"
-            android:permission="signiature" >
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -51,7 +52,7 @@
         <activity
             android:name=".activities.GraphActivity"
             android:label="@string/app_name"
-            android:permission="signiature" >
+            android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -59,10 +60,22 @@
         <activity
             android:name=".activities.UserPrefs"
             android:label="@string/settings" 
-            android:permission="signiature">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
+        </activity>
+        <activity android:name=".activities.DoctorLogin"
+            android:label="@string/configuration"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activities.DoctorConfig"
+            android:windowSoftInputMode="stateHidden"
+            android:exported="false">
+            <intent-filter></intent-filter>
         </activity>
     </application>
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Nof1 Trails helper, making life easier for clinicians and patients in N of 1 trials.
+ * Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
  * Copyright (C) 2012  WMG, University of Warwick
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -12,13 +12,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You may obtain a copy of the GNU General Public License at  
+ * <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package uk.co.jwlawson.nof1.views;
+package uk.co.jwlawson.nof1.containers;
 
 /**
  * Simple class to hold two integers as coordinates
