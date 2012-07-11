@@ -213,9 +213,7 @@ public class QuestionBuilderFragment extends SherlockDialogFragment implements A
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 
-		if (DEBUG) Log.d(TAG, "Menu size " + menu.size());
 		inflater.inflate(R.menu.menu_config_questions, menu);
-		if (DEBUG) Log.d(TAG, "new menu size " + menu.size());
 		super.onCreateOptionsMenu(menu, inflater);
 	}
 
