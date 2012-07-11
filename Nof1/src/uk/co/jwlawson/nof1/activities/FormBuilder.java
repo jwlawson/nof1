@@ -26,6 +26,7 @@ import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.containers.Question;
 import uk.co.jwlawson.nof1.fragments.FormBuilderList;
 import uk.co.jwlawson.nof1.fragments.QuestionBuilderDialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -48,6 +49,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 
 	private static final String TAG = "FormBuilder";
 	private static final boolean DEBUG = true;
+	private static final String PREFS_NAME = "questions";
 
 	/** ListFragment */
 	private FormBuilderList mList;
@@ -84,6 +86,8 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+
 		// Load layout. This will change depending on the screen size
 		setContentView(R.layout.form_builder_list);
 
@@ -91,16 +95,18 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		mList = (FormBuilderList) getSupportFragmentManager().findFragmentById(R.id.form_builder_list_fragment);
 
 		// TODO Fill mQuestionList and set as the array for mList
-		for (int i = 0; i < 5; i++) {
-			Question q = new Question(Question.SCALE, "Question " + i);
-			mQuestionList.add(q);
-		}
-		for (int i = 0; i < 5; i++) {
-			Question q = new Question(Question.NUMBER, "Question " + i);
-			mQuestionList.add(q);
-		}
-		for (int i = 0; i < 5; i++) {
-			Question q = new Question(Question.CHECK, "Question " + i);
+		for (int i = 1; sp.contains("questionText" + i); i++) {
+
+			int inputType = sp.getInt("inputType" + i, Question.SCALE);
+			String text = sp.getString("questionText" + i, "Questiontext");
+
+			Question q = new Question(inputType, text);
+			if (inputType == Question.SCALE) {
+				String min = sp.getString("questionMin" + i, "");
+				String max = sp.getString("questionMax" + i, "");
+				q.setMinMax(min, max);
+			}
+
 			mQuestionList.add(q);
 		}
 		mList.setArrayList(mQuestionList);
@@ -140,6 +146,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			return true;
 		case R.id.menu_form_builder_preview:
 			// TODO Build and preview a questionnaire
+			saveToFile();
 			return true;
 		default:
 			return super.onMenuItemSelected(featureId, item);
@@ -180,6 +187,19 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			q.show(getSupportFragmentManager(), "dialog");
 		}
 		mQuestionBuilder = q;
+	}
+
+	private void saveToFile() {
+		SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+
+		for (int i = 0; i < mQuestionList.size(); i++) {
+			Question q = mQuestionList.get(i);
+			editor.putString("questionText" + i, q.getQuestionStr()).putInt("inputType" + i, q.getInputType());
+			if (q.getInputType() == Question.SCALE) {
+				editor.putString("questionMin", q.getMin()).putString("questionMax", q.getMax());
+			}
+		}
+		editor.commit();
 	}
 
 	/**
