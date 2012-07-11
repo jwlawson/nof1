@@ -48,9 +48,9 @@ import com.actionbarsherlock.view.MenuItem;
  * @author John Lawson
  * 
  */
-public class QuestionBuilderFragment extends SherlockDialogFragment implements AdapterView.OnItemSelectedListener {
+public class QuestionBuilderDialog extends SherlockDialogFragment implements AdapterView.OnItemSelectedListener {
 
-	private static final String TAG = "QuestionBuilderFragment";
+	private static final String TAG = "QuestionBuilderDialog";
 	private static final boolean DEBUG = true;
 
 	/** View type. Show fragment as a dialog */
@@ -79,7 +79,7 @@ public class QuestionBuilderFragment extends SherlockDialogFragment implements A
 	/** The input type of the question. */
 	private int mInputType;
 
-	public QuestionBuilderFragment() {
+	public QuestionBuilderDialog() {
 	}
 
 	public interface OnQuestionEditedListener {
@@ -92,9 +92,9 @@ public class QuestionBuilderFragment extends SherlockDialogFragment implements A
 		public void onQuestionEdited(Question question);
 	}
 
-	public static QuestionBuilderFragment newInstance(int viewType, Question q) {
-		if (DEBUG) Log.d(TAG, "New QuestionBuilderFragment instanced");
-		QuestionBuilderFragment qbf = new QuestionBuilderFragment();
+	public static QuestionBuilderDialog newInstance(int viewType, Question q) {
+		if (DEBUG) Log.d(TAG, "New QuestionBuilderDialog instanced");
+		QuestionBuilderDialog qbf = new QuestionBuilderDialog();
 
 		// Set arguments for new fragment
 		Bundle args = new Bundle();

@@ -42,7 +42,7 @@
             layout="@layout/config_timescale" />
 
         <fragment
-            android:name="uk.co.jwlawson.nof1.fragments.QuestionBuilderFragment"
+            android:name="uk.co.jwlawson.nof1.fragments.QuestionBuilderDialog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout="@layout/config_question" />

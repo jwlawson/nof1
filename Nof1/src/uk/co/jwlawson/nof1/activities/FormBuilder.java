@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.containers.Question;
 import uk.co.jwlawson.nof1.fragments.FormBuilderList;
-import uk.co.jwlawson.nof1.fragments.QuestionBuilderFragment;
+import uk.co.jwlawson.nof1.fragments.QuestionBuilderDialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -44,7 +44,7 @@ import com.actionbarsherlock.view.MenuItem;
  * 
  */
 public class FormBuilder extends SherlockFragmentActivity implements FormBuilderList.OnListItemSelectedListener,
-		QuestionBuilderFragment.OnQuestionEditedListener {
+		QuestionBuilderDialog.OnQuestionEditedListener {
 
 	private static final String TAG = "FormBuilder";
 	private static final boolean DEBUG = true;
@@ -65,7 +65,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	private ArrayList<Question> mQuestionList;
 
 	/** Currently selected or last instanced QuestionBuilder */
-	private QuestionBuilderFragment mQuestionBuilder;
+	private QuestionBuilderDialog mQuestionBuilder;
 
 	public FormBuilder() {
 		mQuestionList = new ArrayList<Question>();
@@ -165,16 +165,16 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 
 	/** Show the selected question in some editable form */
 	private void edit(int selection) {
-		QuestionBuilderFragment q;
+		QuestionBuilderDialog q;
 		if (mDualPane) {
 
-			q = QuestionBuilderFragment.newInstance(QuestionBuilderFragment.VIEW, mQuestionList.get(selection));
+			q = QuestionBuilderDialog.newInstance(QuestionBuilderDialog.VIEW, mQuestionList.get(selection));
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(R.id.form_builder_details_frame, q, "view");
 			ft.commit();
 
 		} else {
-			q = QuestionBuilderFragment.newInstance(QuestionBuilderFragment.DIALOG, mQuestionList.get(selection));
+			q = QuestionBuilderDialog.newInstance(QuestionBuilderDialog.DIALOG, mQuestionList.get(selection));
 
 			// Shows fragment as dialog
 			q.show(getSupportFragmentManager(), "dialog");
