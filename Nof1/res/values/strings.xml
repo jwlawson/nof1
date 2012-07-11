@@ -80,5 +80,6 @@
     <string name="login_details">Login details</string>
     <string name="title_question_detail">Question Detail</string>
     <string name="title_question_list">Questions</string>
+    <string name="preview">Preview</string>
 
 </resources>
