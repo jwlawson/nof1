@@ -168,9 +168,15 @@ public class QuestionBuilderFragment extends SherlockDialogFragment implements A
 		mScaleLayout = (RelativeLayout) view.findViewById(R.id.config_question_minmax_layout);
 		mScaleLayout.setVisibility(View.INVISIBLE);
 
+		// Set initial text in question fields
 		mEditQuestion = (EditText) view.findViewById(R.id.config_question_edit_text);
+		mEditQuestion.setText(args.getString("questionText"));
+
 		mEditMin = (EditText) view.findViewById(R.id.config_question_edit_min);
+		mEditMin.setText(args.getString("questionMin"));
+
 		mEditMax = (EditText) view.findViewById(R.id.config_question_edit_max);
+		mEditMax.setText(args.getString("questionMax"));
 
 		// Set the spinner listener and initial position
 		Spinner spnInput = (Spinner) view.findViewById(R.id.config_question_spinner_type);
