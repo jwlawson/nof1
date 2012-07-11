@@ -49,7 +49,7 @@ public class NumberFragment extends QuestionFragment {
 
 		frag.setArguments(args);
 
-		if (DEBUG) Log.d(TAG, "NEw instance created");
+		if (DEBUG) Log.d(TAG, "New instance created");
 
 		return frag;
 	}

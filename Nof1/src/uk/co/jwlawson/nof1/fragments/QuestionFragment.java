@@ -23,21 +23,22 @@ package uk.co.jwlawson.nof1.fragments;
 import com.actionbarsherlock.app.SherlockFragment;
 
 /**
- * Abstract class to hold any question for data collection. The question should have an integer for an answer (or boolean mapped to 0 / 1 )
+ * Abstract class to hold any question for data collection. The question should have an integer for an answer (or
+ * boolean mapped to 0 / 1 )
  * 
  * @author John
  * 
  */
 public abstract class QuestionFragment extends SherlockFragment {
-	
+
 	public QuestionFragment() {
 	}
-	
+
 	/**
 	 * Class questions any UI element and return answer to question.
 	 * 
 	 * @return Answer to the fragment's question
 	 */
 	public abstract int getResult();
-	
+
 }

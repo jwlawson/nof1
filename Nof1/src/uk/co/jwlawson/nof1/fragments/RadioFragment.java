@@ -90,7 +90,7 @@ public class RadioFragment extends QuestionFragment implements RadioGroup.OnChec
 
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
-		// checkedId gives currently selected button
+		// TODO checkedId gives currently selected button
 		if (DEBUG) Log.d(TAG, "RadioButton selected: " + checkedId);
 		mSelected = checkedId;
 	}

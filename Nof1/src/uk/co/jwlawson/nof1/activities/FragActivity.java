@@ -180,13 +180,9 @@ public class FragActivity extends SherlockFragmentActivity {
 			if (BuildConfig.DEBUG) Log.d(TAG, "Nums created");
 
 			// Add comment fragment
-			CommentFragment com = new CommentFragment();
+			CommentFragment com = CommentFragment.newInstance();
 			FragmentTransaction ft1 = getSupportFragmentManager().beginTransaction();
-			// if (dualCol) {
 			ft1.add(R.id.data_input_comment_frame, com, "com");
-			// } else {
-			// ft1.add(R.id.data_input_fragment_layout, com, "com");
-			// }
 			ft1.commit();
 			if (BuildConfig.DEBUG) Log.d(TAG, "Comment created");
 			return null;
