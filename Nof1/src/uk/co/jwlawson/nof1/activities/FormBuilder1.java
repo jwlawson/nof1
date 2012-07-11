@@ -30,6 +30,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
@@ -123,6 +124,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 		outState.putInt(TAG + "listSelection", mListSelected);
 	}
 
+	/** Show the selected question in some editable form */
 	private void edit(int selection) {
 		QuestionBuilderFragment q;
 		if (mDualPane) {
@@ -173,8 +175,16 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 			case R.id.action_mode_form_builder_delete:
 				break;
 			case R.id.action_mode_form_builder_move_up:
+				Question q = mQuestionList.get(mListSelected);
+				mQuestionList.remove(mListSelected);
+				mQuestionList.add(mListSelected - 1, q);
+				((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
 				break;
 			case R.id.action_mode_form_builder_move_down:
+				Question q1 = mQuestionList.get(mListSelected);
+				mQuestionList.remove(mListSelected);
+				mQuestionList.add(mListSelected + 1, q1);
+				((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
 				break;
 			case R.id.menu_config_questions_save:
 				mQuestionBuilder.save();
@@ -188,7 +198,7 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 		@Override
 		public void onDestroyActionMode(ActionMode mode) {
 			if (DEBUG) Log.d(TAG, "Actionmode closed");
-			if (mDualPane) mList.clearSelected();
+			if (!mDualPane) mList.clearSelected();
 			mInActionMode = false;
 		}
 
@@ -196,6 +206,9 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 
 	@Override
 	public void onQuestionEdited(Question question) {
+		mQuestionList.remove(mListSelected);
+		mQuestionList.add(mListSelected, question);
+		((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
 	}
 
 }
