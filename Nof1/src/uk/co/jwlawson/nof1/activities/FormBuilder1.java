@@ -117,6 +117,25 @@ public class FormBuilder1 extends SherlockFragmentActivity implements FormBuilde
 	}
 
 	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_form_builder_add:
+			// Add new question to bottom of the list and load new QuestionBuilder
+			Question q = new Question(Question.SCALE);
+			mQuestionList.add(q);
+			((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
+			mListSelected = mQuestionList.indexOf(q);
+			edit(mListSelected);
+			return true;
+		case R.id.menu_form_builder_preview:
+			// Build and preview a questionnaire
+			return true;
+		default:
+			return super.onMenuItemSelected(featureId, item);
+		}
+	}
+
+	@Override
 	public void onListItemSelected(ListView l, View v, int position, long id) {
 		mListSelected = position;
 		if (!mInActionMode) {
