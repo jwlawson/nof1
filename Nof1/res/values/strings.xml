@@ -55,7 +55,7 @@
     <string name="config_email_use">The doctor\'s and pharmacist\'s email is required to send a copy of this questionaire and any other information about the trial. They will not be used for any other purpose.</string>
     <string name="config_question_text">Question text</string>
     <string name="config_input_type">Input type</string>
-    <string name="login_first_explain">Please enter an email address and any password you would like to use for this app. This will only be required for accessing the doctor configuration utilities.</string>
+    <string name="login_first_explain">Please enter an email address and any password you would like to use for this app. This will only be required for accessing the doctor configuration utilities. You are recommended not to use the password linked to your email account.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="repeat_password">Repeat password</string>
