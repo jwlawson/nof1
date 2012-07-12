@@ -173,11 +173,13 @@ public class QuestionBuilderDialog extends SherlockDialogFragment implements Ada
 
 		Bundle args = getArguments();
 
-		mLayout = (RelativeLayout) view.findViewById(R.id.config_question_layout);
-
 		// Layout containing extra information for SCALE type questions. Hidden for other types.
 		mScaleLayout = (RelativeLayout) view.findViewById(R.id.config_question_minmax_layout);
 		mScaleLayout.setVisibility(View.GONE);
+
+		// For some reason findViewById always returns null for the layout, so get it this way...
+		mLayout = (RelativeLayout) mScaleLayout.getParent();
+		Log.d(TAG, "" + mLayout);
 
 		// Set initial text in question fields
 		mEditQuestion = (EditText) view.findViewById(R.id.config_question_edit_text);
