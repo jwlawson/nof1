@@ -23,6 +23,7 @@ package uk.co.jwlawson.nof1.activities;
 import java.util.ArrayList;
 
 import uk.co.jwlawson.nof1.BuildConfig;
+import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.containers.Question;
 import uk.co.jwlawson.nof1.fragments.FormBuilderList;
@@ -52,25 +53,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	private static final String TAG = "FormBuilder";
 	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 
-	private static final int REQUEST_PREVIEW = 10;;
-
-	/** Name of shared preferences holding the questions */
-	public static final String PREFS_NAME = "questions";
-
-	/** Shared preference key with question text. Append with required question number. */
-	public static final String PREFS_TEXT = "questionText";
-
-	/** Shared preference key with question type. Append with required question number. */
-	public static final String PREFS_TYPE = "inputType";
-
-	/** Shared preference key with minimum hint. Append with required question number. */
-	public static final String PREFS_MIN = "questionMin";
-
-	/** Shared preference key with maximum hint. Append with required question number. */
-	public static final String PREFS_MAX = "questionMax";
-
-	/** Intent key for preview mode */
-	public static final String INTENT_PREVIEW = "preview";
+	private static final int REQUEST_PREVIEW = 10;
 
 	/** ListFragment */
 	private FormBuilderList mList;
@@ -107,7 +90,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		SharedPreferences sp = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+		SharedPreferences sp = getSharedPreferences(Keys.PREFS_NAME, MODE_PRIVATE);
 
 		// Load layout. This will change depending on the screen size
 		setContentView(R.layout.form_builder_list);
@@ -116,15 +99,15 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		mList = (FormBuilderList) getSupportFragmentManager().findFragmentById(R.id.form_builder_list_fragment);
 
 		// Fill mQuestionList and set as the array for mList
-		for (int i = 0; sp.contains(PREFS_TEXT + i); i++) {
+		for (int i = 0; sp.contains(Keys.PREFS_TEXT + i); i++) {
 
-			int inputType = sp.getInt(PREFS_TYPE + i, Question.SCALE);
-			String text = sp.getString(PREFS_TEXT + i, "");
+			int inputType = sp.getInt(Keys.PREFS_TYPE + i, Question.SCALE);
+			String text = sp.getString(Keys.PREFS_TEXT + i, "");
 
 			Question q = new Question(inputType, text);
 			if (inputType == Question.SCALE) {
-				String min = sp.getString(PREFS_MIN + i, "");
-				String max = sp.getString(PREFS_MAX + i, "");
+				String min = sp.getString(Keys.PREFS_MIN + i, "");
+				String max = sp.getString(Keys.PREFS_MAX + i, "");
 				q.setMinMax(min, max);
 			}
 
@@ -169,7 +152,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			// TODO Build and preview a questionnaire
 			saveToFile();
 			Intent i = new Intent(this, Questionnaire.class);
-			i.putExtra(INTENT_PREVIEW, true);
+			i.putExtra(Keys.INTENT_PREVIEW, true);
 			startActivityForResult(i, REQUEST_PREVIEW);
 			return true;
 		default:
@@ -215,7 +198,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 
 	private void saveToFile() {
 		// Open SharedPrefences editor
-		SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+		SharedPreferences.Editor editor = getSharedPreferences(Keys.PREFS_NAME, MODE_PRIVATE).edit();
 
 		// Mark to remove all previous entries.
 		editor.clear();
@@ -223,9 +206,9 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		// For each question, load into editor
 		for (int i = 0; i < mQuestionList.size(); i++) {
 			Question q = mQuestionList.get(i);
-			editor.putString(PREFS_TEXT + i, q.getQuestionStr()).putInt(PREFS_TYPE + i, q.getInputType());
+			editor.putString(Keys.PREFS_TEXT + i, q.getQuestionStr()).putInt(Keys.PREFS_TYPE + i, q.getInputType());
 			if (q.getInputType() == Question.SCALE) {
-				editor.putString(PREFS_MIN + i, q.getMin()).putString(PREFS_MAX + i, q.getMax());
+				editor.putString(Keys.PREFS_MIN + i, q.getMin()).putString(Keys.PREFS_MAX + i, q.getMax());
 			}
 			if (DEBUG) Log.d(TAG, q.getQuestionStr() + ": " + q.getInputType());
 		}
