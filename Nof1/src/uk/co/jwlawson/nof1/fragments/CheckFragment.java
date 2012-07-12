@@ -21,7 +21,9 @@
 package uk.co.jwlawson.nof1.fragments;
 
 import uk.co.jwlawson.nof1.R;
+import android.app.Activity;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,7 +68,7 @@ public class CheckFragment extends QuestionFragment {
 		Bundle args = getArguments();
 
 		CheckBox chk = (CheckBox) view.findViewById(R.id.data_input_checkbox_chk);
-		chk.setChecked(args.getBoolean(ARGS_DEFAULT));
+		chk.setChecked(args.getBoolean(ARGS_DEFAULT, false));
 
 		TextView txt = (TextView) view.findViewById(R.id.data_input_checkbox_txt_question);
 		txt.setText(args.getString(ARGS_TEXT));
@@ -74,6 +76,11 @@ public class CheckFragment extends QuestionFragment {
 		if (DEBUG) Log.d(TAG, "View created");
 
 		return view;
+	}
+
+	@Override
+	public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
+		super.onInflate(activity, attrs, savedInstanceState);
 	}
 
 	@Override
