@@ -25,12 +25,19 @@ import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
+/**
+ * Shows the user preferences, which are accessible with getDefaultPreferences(Context)
+ * Also provides access to doctor config.
+ * 
+ * @author John Lawson
+ * 
+ */
 public class UserPrefs extends SherlockPreferenceActivity {
 
 	public UserPrefs() {
-
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
