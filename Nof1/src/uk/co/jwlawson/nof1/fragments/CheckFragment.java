@@ -40,7 +40,7 @@ public class CheckFragment extends QuestionFragment {
 	public static final String ARGS_TEXT = "argsText";
 	public static final String ARGS_DEFAULT = "argsDefault";
 
-	private boolean mChecked;
+	private CheckBox mCheck;
 
 	public CheckFragment() {
 	}
@@ -68,8 +68,8 @@ public class CheckFragment extends QuestionFragment {
 		Bundle args = getArguments();
 		if (DEBUG && args == null) Log.d(TAG, "CHeckFragment view created with null args");
 
-		CheckBox chk = (CheckBox) view.findViewById(R.id.data_input_checkbox_chk);
-		if (args != null) chk.setChecked(args.getBoolean(ARGS_DEFAULT, false));
+		mCheck = (CheckBox) view.findViewById(R.id.data_input_checkbox_chk);
+		if (args != null) mCheck.setChecked(args.getBoolean(ARGS_DEFAULT, false));
 
 		TextView txt = (TextView) view.findViewById(R.id.data_input_checkbox_txt_question);
 		if (args != null) txt.setText(args.getString(ARGS_TEXT));
@@ -97,7 +97,7 @@ public class CheckFragment extends QuestionFragment {
 
 	@Override
 	public int getResult() {
-		if (mChecked) return 1;
+		if (mCheck.isChecked()) return 1;
 		else return 0;
 	}
 
