@@ -113,18 +113,42 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		mPatientName.setText(sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 
 		mPeriodLength = (EditText) findViewById(R.id.config_timescale_edit_period);
-		int saved = sp.getInt(Keys.CONFIG_PERIOD_LENGTH, -1);
-		if (saved >= 0) mPeriodLength.setText(saved);
-
-		mPeriodNumber = (EditText) findViewById(R.id.config_timescale_edit_number_periods);
-		int saved1 = sp.getInt(Keys.CONFIG_NUMBER_PERIODS, -1);
-		if (saved1 >= 0) mPeriodNumber.setText(saved1);
-
 		Spinner spinLength = (Spinner) findViewById(R.id.config_timescale_spinner_length);
 		spinLength.setOnItemSelectedListener(this);
 
+		int saved = sp.getInt(Keys.CONFIG_PERIOD_LENGTH, -1);
+		boolean flag = true;
+		// Go through spinner, if the value is in the spinner set to that
+		for (int j = 0; j < spinLength.getCount() && flag; j++) {
+			if (((String) spinLength.getItemAtPosition(j)).equals("" + saved)) {
+				spinLength.setSelection(j);
+				flag = false;
+			}
+		}
+		// Otherwise if the value is valid, set spinner to "other" and use edittext
+		if (saved >= 0 && flag) {
+			spinLength.setSelection(spinLength.getCount() - 1);
+			mPeriodLength.setText("" + saved);
+		}
+
+		mPeriodNumber = (EditText) findViewById(R.id.config_timescale_edit_number_periods);
 		Spinner spinNumber = (Spinner) findViewById(R.id.config_timescale_spinner_periods);
 		spinNumber.setOnItemSelectedListener(this);
+
+		int saved1 = sp.getInt(Keys.CONFIG_NUMBER_PERIODS, -1);
+		flag = true;
+		// Go through spinner, if the value is in the spinner set to that
+		for (int j = 0; j < spinNumber.getCount() && flag; j++) {
+			if (((String) spinNumber.getItemAtPosition(j)).equals("" + saved1)) {
+				spinNumber.setSelection(j);
+				flag = false;
+			}
+		}
+		// Otherwise if the value is valid, set spinner to "other" and use edittext
+		if (saved1 >= 0 && flag) {
+			spinNumber.setSelection(spinNumber.getCount() - 1);
+			mPeriodNumber.setText("" + saved1);
+		}
 
 		mTimescaleLayout = (RelativeLayout) findViewById(R.id.config_timescale_layout);
 
