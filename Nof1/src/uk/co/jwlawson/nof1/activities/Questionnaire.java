@@ -137,7 +137,7 @@ public class Questionnaire extends SherlockFragmentActivity {
 			if (DEBUG) Log.d(TAG, "AsyncTask Loader started");
 			setSupportProgressBarIndeterminateVisibility(true);
 
-			SharedPreferences sp = getSharedPreferences(Keys.PREFS_NAME, MODE_PRIVATE);
+			SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 
 			// Check whether the device is large enough for 2 columns
 			boolean dualCol = (findViewById(R.id.data_input_fragment_layout2) != null);
@@ -145,25 +145,25 @@ public class Questionnaire extends SherlockFragmentActivity {
 			int column = 0;
 
 			// Go through question shared preference and extract each question
-			for (int i = 0; sp.contains(Keys.PREFS_TEXT + i); i++) {
+			for (int i = 0; sp.contains(Keys.QUES_TEXT + i); i++) {
 
 				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
 				QuestionFragment q;
 
-				int inputType = sp.getInt(Keys.PREFS_TYPE + i, Question.SCALE);
+				int inputType = sp.getInt(Keys.QUES_TYPE + i, Question.SCALE);
 
 				// Make QuestionFragment
 				switch (inputType) {
 				case Question.SCALE:
-					q = RadioFragment.newInstance(sp.getString(Keys.PREFS_TEXT + i, null), sp.getString(Keys.PREFS_MIN + i, null),
-							sp.getString(Keys.PREFS_MAX + i, null));
+					q = RadioFragment.newInstance(sp.getString(Keys.QUES_TEXT + i, null), sp.getString(Keys.QUES_MIN + i, null),
+							sp.getString(Keys.QUES_MAX + i, null));
 					break;
 				case Question.NUMBER:
-					q = NumberFragment.newInstance(sp.getString(Keys.PREFS_TEXT + i, null));
+					q = NumberFragment.newInstance(sp.getString(Keys.QUES_TEXT + i, null));
 					break;
 				case Question.CHECK:
-					q = CheckFragment.newInstance(sp.getString(Keys.PREFS_TEXT + i, null), false);
+					q = CheckFragment.newInstance(sp.getString(Keys.QUES_TEXT + i, null), false);
 					break;
 				default:
 					// Should never happen

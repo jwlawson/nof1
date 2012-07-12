@@ -90,7 +90,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		SharedPreferences sp = getSharedPreferences(Keys.PREFS_NAME, MODE_PRIVATE);
+		SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 
 		// Load layout. This will change depending on the screen size
 		setContentView(R.layout.form_builder_list);
@@ -99,15 +99,15 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		mList = (FormBuilderList) getSupportFragmentManager().findFragmentById(R.id.form_builder_list_fragment);
 
 		// Fill mQuestionList and set as the array for mList
-		for (int i = 0; sp.contains(Keys.PREFS_TEXT + i); i++) {
+		for (int i = 0; sp.contains(Keys.QUES_TEXT + i); i++) {
 
-			int inputType = sp.getInt(Keys.PREFS_TYPE + i, Question.SCALE);
-			String text = sp.getString(Keys.PREFS_TEXT + i, "");
+			int inputType = sp.getInt(Keys.QUES_TYPE + i, Question.SCALE);
+			String text = sp.getString(Keys.QUES_TEXT + i, "");
 
 			Question q = new Question(inputType, text);
 			if (inputType == Question.SCALE) {
-				String min = sp.getString(Keys.PREFS_MIN + i, "");
-				String max = sp.getString(Keys.PREFS_MAX + i, "");
+				String min = sp.getString(Keys.QUES_MIN + i, "");
+				String max = sp.getString(Keys.QUES_MAX + i, "");
 				q.setMinMax(min, max);
 			}
 
@@ -198,7 +198,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 
 	private void saveToFile() {
 		// Open SharedPrefences editor
-		SharedPreferences.Editor editor = getSharedPreferences(Keys.PREFS_NAME, MODE_PRIVATE).edit();
+		SharedPreferences.Editor editor = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE).edit();
 
 		// Mark to remove all previous entries.
 		editor.clear();
@@ -206,9 +206,9 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		// For each question, load into editor
 		for (int i = 0; i < mQuestionList.size(); i++) {
 			Question q = mQuestionList.get(i);
-			editor.putString(Keys.PREFS_TEXT + i, q.getQuestionStr()).putInt(Keys.PREFS_TYPE + i, q.getInputType());
+			editor.putString(Keys.QUES_TEXT + i, q.getQuestionStr()).putInt(Keys.QUES_TYPE + i, q.getInputType());
 			if (q.getInputType() == Question.SCALE) {
-				editor.putString(Keys.PREFS_MIN + i, q.getMin()).putString(Keys.PREFS_MAX + i, q.getMax());
+				editor.putString(Keys.QUES_MIN + i, q.getMin()).putString(Keys.QUES_MAX + i, q.getMax());
 			}
 			if (DEBUG) Log.d(TAG, q.getQuestionStr() + ": " + q.getInputType());
 		}

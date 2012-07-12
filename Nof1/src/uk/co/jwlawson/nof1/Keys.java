@@ -29,21 +29,36 @@ package uk.co.jwlawson.nof1;
 public class Keys {
 
 	/** Name of shared preferences holding the questions */
-	public static final String PREFS_NAME = "questions";
+	public static final String QUES_NAME = "questions";
 
 	/** Shared preference key with question text. Append with required question number. */
-	public static final String PREFS_TEXT = "questionText";
+	public static final String QUES_TEXT = "questionText";
 
 	/** Shared preference key with question type. Append with required question number. */
-	public static final String PREFS_TYPE = "inputType";
+	public static final String QUES_TYPE = "inputType";
 
 	/** Shared preference key with minimum hint. Append with required question number. */
-	public static final String PREFS_MIN = "questionMin";
+	public static final String QUES_MIN = "questionMin";
 
 	/** Shared preference key with maximum hint. Append with required question number. */
-	public static final String PREFS_MAX = "questionMax";
+	public static final String QUES_MAX = "questionMax";
 
 	/** Intent key for preview mode */
 	public static final String INTENT_PREVIEW = "preview";
+
+	/** Intent key for email string */
+	public static final String INTENT_EMAIL = "email";
+
+	/** SharedPrefernces holding config data */
+	public static final String CONFIG_NAME = "config";
+
+	/** Shared preferences key for hashed email */
+	public static final String CONFIG_EMAIL = "email_hash";
+
+	/** Shared preference key for whether this is the first time doctor has logged in */
+	public static final String CONFIG_FIRST = "first_run";
+
+	/** Shared preferences key for hashed password */
+	public static final String CONFIG_PASS = "pass_hash";
 
 }
