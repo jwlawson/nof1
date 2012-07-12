@@ -138,7 +138,6 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		args.putString(CheckFragment.ARGS_TEXT, "Include a comment box?");
 		args.putBoolean(CheckFragment.ARGS_DEFAULT, false);
 		mCommentFrag.setArguments(args);
-		mCommentFrag.
 	}
 
 	@Override
