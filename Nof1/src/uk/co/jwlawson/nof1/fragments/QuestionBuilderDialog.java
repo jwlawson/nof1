@@ -79,6 +79,9 @@ public class QuestionBuilderDialog extends SherlockDialogFragment implements Ada
 	/** The input type of the question. */
 	private int mInputType;
 
+	/** The layout containing the whole QBF */
+	private RelativeLayout mLayout;
+
 	public QuestionBuilderDialog() {
 	}
 
@@ -92,6 +95,12 @@ public class QuestionBuilderDialog extends SherlockDialogFragment implements Ada
 		public void onQuestionEdited(Question question);
 	}
 
+	/**
+	 * Create a new questionBuilderFragment which holds the information held in Question q
+	 * 
+	 * @param viewType The type of QBF wanted DIALOG or VIEW
+	 * @param q The question to copy into the new QBF
+	 */
 	public static QuestionBuilderDialog newInstance(int viewType, Question q) {
 		if (DEBUG) Log.d(TAG, "New QuestionBuilderDialog instanced");
 		QuestionBuilderDialog qbf = new QuestionBuilderDialog();
@@ -183,6 +192,8 @@ public class QuestionBuilderDialog extends SherlockDialogFragment implements Ada
 		spnInput.setOnItemSelectedListener(this);
 		spnInput.setSelection(args.getInt("questionType", 0));
 
+		mLayout = (RelativeLayout) view.findViewById(R.id.config_question_layout);
+
 		// If shown as dialog, set button click Listeners, otherwise hide buttons
 		if (!mDialog) {
 			LinearLayout buttonBar = (LinearLayout) view.findViewById(R.id.config_question_button_bar);
@@ -241,12 +252,6 @@ public class QuestionBuilderDialog extends SherlockDialogFragment implements Ada
 	}
 
 	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-
-	}
-
-	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 		switch (parent.getId()) {
 		case R.id.config_question_spinner_type:
@@ -256,12 +261,13 @@ public class QuestionBuilderDialog extends SherlockDialogFragment implements Ada
 				mScaleLayout.setVisibility(View.VISIBLE);
 				mInputType = Question.SCALE;
 			} else if (item.equalsIgnoreCase("number")) {
-				mScaleLayout.setVisibility(View.INVISIBLE);
+				mScaleLayout.setVisibility(View.GONE);
 				mInputType = Question.NUMBER;
 			} else {
-				mScaleLayout.setVisibility(View.INVISIBLE);
+				mScaleLayout.setVisibility(View.GONE);
 				mInputType = Question.CHECK;
 			}
+			mLayout.requestLayout();
 			break;
 
 		}
