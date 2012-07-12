@@ -20,6 +20,7 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
+import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,7 +33,7 @@ import android.widget.TextView;
 public class RadioFragment extends QuestionFragment implements RadioGroup.OnCheckedChangeListener {
 
 	private static final String TAG = "RadioFragment";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 
 	private static final String ARGS_TEXT = "argsText";
 	private static final String ARGS_MIN = "argsMin";
@@ -90,9 +91,38 @@ public class RadioFragment extends QuestionFragment implements RadioGroup.OnChec
 
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
-		// TODO checkedId gives currently selected button
-		if (DEBUG) Log.d(TAG, "RadioButton selected: " + checkedId);
-		mSelected = checkedId;
+		// checkedId gives currently selected button
+		if (DEBUG) Log.d(TAG, "RadioButton selected, ID: " + checkedId);
+		switch (checkedId) {
+		case R.id.radio0:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 0);
+			mSelected = 0;
+			break;
+		case R.id.radio1:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 1);
+			mSelected = 1;
+			break;
+		case R.id.radio2:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 2);
+			mSelected = 2;
+			break;
+		case R.id.radio3:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 3);
+			mSelected = 3;
+			break;
+		case R.id.radio4:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 4);
+			mSelected = 4;
+			break;
+		case R.id.radio5:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 5);
+			mSelected = 5;
+			break;
+		case R.id.radio6:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 6);
+			mSelected = 6;
+			break;
+		}
 	}
 
 	@Override
