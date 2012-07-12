@@ -23,6 +23,7 @@ package uk.co.jwlawson.nof1.activities;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -56,9 +57,9 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		SharedPreferences sharedPrefs = getSharedPreferences("config", MODE_PRIVATE);
+		SharedPreferences sharedPrefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
-		if (sharedPrefs.getBoolean("first_run", true)) {
+		if (sharedPrefs.getBoolean(Keys.CONFIG_FIRST, true)) {
 
 			// First time the app has been run.
 			firstLogin(sharedPrefs, null);
@@ -85,7 +86,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 
 		final EditText pass2 = (EditText) view.findViewById(R.id.config_doctor_first_edit_pass2);
 
-		builder.setTitle("Set up login details").setView(view).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		builder.setTitle(R.string.new_login_details).setView(view).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String passStr = pass.getText().toString();
@@ -99,15 +100,15 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 					// This will be what we check against at further
 					// logins.
 					SharedPreferences.Editor editor = sharedPrefs.edit();
-					editor.putString("email_hash", new String(Hex.encodeHex(DigestUtils.sha512(emailStr1))));
-					editor.putString("pass_hash", new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
-					editor.putBoolean("first_run", false);
+					editor.putString(Keys.CONFIG_EMAIL, new String(Hex.encodeHex(DigestUtils.sha512(emailStr1))));
+					editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
+					editor.putBoolean(Keys.CONFIG_FIRST, false);
 					editor.commit();
 
 					launch(emailStr1);
 				} else {
 					// Password fields don't match.
-					Toast.makeText(getBaseContext(), "Passwords don't match", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getBaseContext(), R.string.passwords_not_equal, Toast.LENGTH_SHORT).show();
 					firstLogin(sharedPrefs, emailStr1);
 				}
 			}
@@ -127,7 +128,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 
 		final EditText pass = (EditText) view.findViewById(R.id.config_doctor_login_edit_pass);
 
-		builder.setView(view).setTitle("Login").setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		builder.setView(view).setTitle(R.string.login).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -135,12 +136,13 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 				String emailHash = new String(Hex.encodeHex(DigestUtils.sha512(emailStr)));
 				String passHash = new String(Hex.encodeHex(DigestUtils.sha512(pass.getText().toString())));
 
-				if (emailHash.equals(sharedPrefs.getString("email_hash", null)) && passHash.equals(sharedPrefs.getString("pass_hash", null))) {
+				if (emailHash.equals(sharedPrefs.getString(Keys.CONFIG_EMAIL, null))
+						&& passHash.equals(sharedPrefs.getString(Keys.CONFIG_PASS, null))) {
 					// Login correct
 					launch(emailStr);
 				} else {
 					// Incorrect login
-					Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), R.string.login_failed, Toast.LENGTH_SHORT).show();
 					login(sharedPrefs, emailStr);
 				}
 			}
@@ -152,7 +154,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 	private void launch(String emailStr) {
 		// Launch DoctorConfig activity
 		Intent i = new Intent(this, DoctorConfig.class);
-		i.putExtra("email", emailStr);
+		i.putExtra(Keys.INTENT_EMAIL, emailStr);
 		startActivity(i);
 		finish();
 	}
