@@ -173,6 +173,8 @@ public class QuestionBuilderDialog extends SherlockDialogFragment implements Ada
 
 		Bundle args = getArguments();
 
+		mLayout = (RelativeLayout) view.findViewById(R.id.config_question_layout);
+
 		// Layout containing extra information for SCALE type questions. Hidden for other types.
 		mScaleLayout = (RelativeLayout) view.findViewById(R.id.config_question_minmax_layout);
 		mScaleLayout.setVisibility(View.GONE);
@@ -191,8 +193,6 @@ public class QuestionBuilderDialog extends SherlockDialogFragment implements Ada
 		Spinner spnInput = (Spinner) view.findViewById(R.id.config_question_spinner_type);
 		spnInput.setOnItemSelectedListener(this);
 		spnInput.setSelection(args.getInt("questionType", 0));
-
-		mLayout = (RelativeLayout) view.findViewById(R.id.config_question_layout);
 
 		// If shown as dialog, set button click Listeners, otherwise hide buttons
 		if (!mDialog) {
