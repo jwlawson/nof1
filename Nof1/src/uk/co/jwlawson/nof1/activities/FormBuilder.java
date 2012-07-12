@@ -26,6 +26,7 @@ import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.containers.Question;
+import uk.co.jwlawson.nof1.fragments.CheckFragment;
 import uk.co.jwlawson.nof1.fragments.FormBuilderList;
 import uk.co.jwlawson.nof1.fragments.QuestionBuilderDialog;
 import android.content.Intent;
@@ -72,6 +73,9 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 
 	/** Currently selected or last instanced QuestionBuilder */
 	private QuestionBuilderDialog mQuestionBuilder;
+
+	/** CheckFragment asking whether to show a comment box */
+	private CheckFragment mCommentFrag;
 
 	public FormBuilder() {
 		mQuestionList = new ArrayList<Question>();
@@ -128,6 +132,12 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			setListSelected(0);
 			edit(0);
 		}
+
+		mCommentFrag = (CheckFragment) getSupportFragmentManager().findFragmentById(R.id.form_builder_check_fragment);
+		Bundle args = new Bundle();
+		args.putString(CheckFragment.ARGS_TEXT, "Include a comment box?");
+		args.putBoolean(CheckFragment.ARGS_DEFAULT, false);
+		mCommentFrag.setArguments(args);
 	}
 
 	@Override
@@ -149,7 +159,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			edit(mListSelected);
 			return true;
 		case R.id.menu_form_builder_preview:
-			// TODO Build and preview a questionnaire
+			// Build and preview a questionnaire
 			saveToFile();
 			Intent i = new Intent(this, Questionnaire.class);
 			i.putExtra(Keys.INTENT_PREVIEW, true);
@@ -211,6 +221,10 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 				editor.putString(Keys.QUES_MIN + i, q.getMin()).putString(Keys.QUES_MAX + i, q.getMax());
 			}
 			if (DEBUG) Log.d(TAG, q.getQuestionStr() + ": " + q.getInputType());
+		}
+
+		if (mCommentFrag.getResult() == 1) {
+			editor.putBoolean(Keys.COMMENT, true);
 		}
 		// Save changes
 		editor.commit();

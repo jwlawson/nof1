@@ -26,6 +26,7 @@ import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.containers.Question;
 import uk.co.jwlawson.nof1.fragments.CheckFragment;
+import uk.co.jwlawson.nof1.fragments.CommentFragment;
 import uk.co.jwlawson.nof1.fragments.NumberFragment;
 import uk.co.jwlawson.nof1.fragments.QuestionFragment;
 import uk.co.jwlawson.nof1.fragments.RadioFragment;
@@ -188,6 +189,11 @@ public class Questionnaire extends SherlockFragmentActivity {
 
 				ft.commit();
 
+			}
+			// If should show comment fragment, add to layout
+			if (sp.getBoolean(Keys.COMMENT, false)) {
+				CommentFragment q = CommentFragment.newInstance();
+				getSupportFragmentManager().beginTransaction().add(R.id.data_input_comment_frame, q, "com").commit();
 			}
 
 			return null;

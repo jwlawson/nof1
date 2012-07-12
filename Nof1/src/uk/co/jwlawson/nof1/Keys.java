@@ -43,6 +43,9 @@ public class Keys {
 	/** Shared preference key with maximum hint. Append with required question number. */
 	public static final String QUES_MAX = "questionMax";
 
+	/** Shared preference key for comment bool. True = show comment */
+	public static final String COMMENT = "comment";
+
 	/** Intent key for preview mode */
 	public static final String INTENT_PREVIEW = "preview";
 
