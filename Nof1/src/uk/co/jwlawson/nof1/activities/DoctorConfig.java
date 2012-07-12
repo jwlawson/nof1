@@ -21,12 +21,13 @@
 package uk.co.jwlawson.nof1.activities;
 
 import uk.co.jwlawson.nof1.R;
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.EditText;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.actionbarsherlock.view.Window;
 
 /**
  * Configuration activity that starts with a login for the doctor, then allows
@@ -37,16 +38,41 @@ import com.actionbarsherlock.view.Window;
  */
 public class DoctorConfig extends SherlockFragmentActivity {
 
+	/** EditText with doctor's email */
+	private EditText mDocEmail;
+
+	/** EditText with pharmacist's email */
+	private EditText mPharmEmail;
+
+	/** EditText with patient name */
+	private EditText mPatientName;
+
+	/** EditText with number of days in treatment period */
+	private EditText mPeriodLength;
+
+	/** EditText with number of treatment periods */
+	private EditText mPeriodNumber;
+
 	public DoctorConfig() {
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.config_doctor);
 
-		setSupportProgressBarIndeterminateVisibility(false);
+		Intent i = getIntent();
+		String email = i.getStringExtra("email");
+
+		mDocEmail = (EditText) findViewById(R.id.config_doctor_details_edit_doc_email);
+		mDocEmail.setText(email);
+
+		mPharmEmail = (EditText) findViewById(R.id.config_doctor_details_edit_pharm_email);
+		mPatientName = (EditText) findViewById(R.id.config_doctor_details_edit_pharm_email);
+
+		mPeriodLength = (EditText) findViewById(R.id.config_timescale_edit_period);
+		mPeriodNumber = (EditText) findViewById(R.id.config_timescale_edit_number_periods);
+
 	}
 
 	@Override
