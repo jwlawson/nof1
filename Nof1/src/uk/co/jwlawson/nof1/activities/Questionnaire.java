@@ -72,7 +72,7 @@ public class Questionnaire extends SherlockFragmentActivity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.mock_layout_data_input);
 
-		setProgressBarIndeterminateVisibility(false);
+		setSupportProgressBarIndeterminateVisibility(false);
 
 		mQuestionList = new ArrayList<QuestionFragment>();
 
@@ -133,15 +133,17 @@ public class Questionnaire extends SherlockFragmentActivity {
 
 		@Override
 		protected Void doInBackground(Void... params) {
-			setProgressBarIndeterminateVisibility(true);
+			if (DEBUG) Log.d(TAG, "AsyncTask Loader started");
+			setSupportProgressBarIndeterminateVisibility(true);
 
 			SharedPreferences sp = getSharedPreferences(FormBuilder.PREFS_NAME, MODE_PRIVATE);
 
 			// Check whether the device is large enough for 2 columns
 			boolean dualCol = (findViewById(R.id.data_input_fragment_layout2) != null);
-			if (dualCol) Log.d("FragAct", "Dual columns found");
+			if (dualCol) Log.d(TAG, "Dual columns found");
 			int column = 0;
 
+			// Go through question shared preference and extract each question
 			for (int i = 0; sp.contains(FormBuilder.PREFS_TEXT + i); i++) {
 
 				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -150,6 +152,7 @@ public class Questionnaire extends SherlockFragmentActivity {
 
 				int inputType = sp.getInt(FormBuilder.PREFS_TYPE + i, Question.SCALE);
 
+				// Make QuestionFragment
 				switch (inputType) {
 				case Question.SCALE:
 					q = RadioFragment.newInstance(sp.getString(FormBuilder.PREFS_TEXT + i, null), sp.getString(FormBuilder.PREFS_MIN + i, null),
@@ -192,7 +195,8 @@ public class Questionnaire extends SherlockFragmentActivity {
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			setProgressBarIndeterminateVisibility(false);
+			if (DEBUG) Log.d(TAG, "AsyncTask Loader finished");
+			setSupportProgressBarIndeterminateVisibility(false);
 		}
 
 	}
