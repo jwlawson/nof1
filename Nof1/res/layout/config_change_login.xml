@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/config_change_login_text_cur_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/config_change_login_text_explain"
+        android:layout_marginLeft="@dimen/padding_large"
+        android:layout_marginRight="@dimen/padding_large"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/current_email"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/config_change_login_edit_cur_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_change_login_text_cur_email"
+        android:layout_alignRight="@+id/config_change_login_text_cur_email"
+        android:layout_below="@+id/config_change_login_text_cur_email"
+        android:ems="10"
+        android:inputType="textEmailAddress" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/config_change_login_text_new_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_change_login_edit_cur_email"
+        android:layout_below="@+id/config_change_login_edit_cur_email"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/new_email"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/config_change_login_edit_new_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_change_login_text_new_email"
+        android:layout_alignRight="@+id/config_change_login_edit_cur_email"
+        android:layout_below="@+id/config_change_login_text_new_email"
+        android:ems="10"
+        android:inputType="textEmailAddress" />
+
+    <TextView
+        android:id="@+id/config_change_login_text_cur_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_change_login_edit_new_email"
+        android:layout_alignRight="@+id/config_change_login_edit_new_email"
+        android:layout_below="@+id/config_change_login_edit_new_email"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/current_password"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/config_change_login_edit_cur_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_change_login_text_cur_password"
+        android:layout_alignRight="@+id/config_change_login_text_cur_password"
+        android:layout_below="@+id/config_change_login_text_cur_password"
+        android:ems="10"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/config_change_login_text_new_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_change_login_edit_cur_password"
+        android:layout_alignRight="@+id/config_change_login_edit_cur_password"
+        android:layout_below="@+id/config_change_login_edit_cur_password"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/new_password"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/config_change_login_edit_new_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_change_login_text_new_password"
+        android:layout_alignRight="@+id/config_change_login_text_new_password"
+        android:layout_below="@+id/config_change_login_text_new_password"
+        android:ems="10"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/config_change_login_text_new_pass2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_change_login_edit_new_password"
+        android:layout_below="@+id/config_change_login_edit_new_password"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/repeat_password"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/config_change_login_edit_new_pass2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_change_login_text_new_pass2"
+        android:layout_alignRight="@+id/config_change_login_edit_new_password"
+        android:layout_below="@+id/config_change_login_text_new_pass2"
+        android:ems="10"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/config_change_login_text_explain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_change_login_text_cur_email"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/config_change_login_text_cur_email"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/login_change_explain"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+</RelativeLayout>
