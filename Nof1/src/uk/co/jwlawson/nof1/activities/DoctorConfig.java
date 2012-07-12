@@ -20,9 +20,11 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.EditText;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -37,6 +39,9 @@ import com.actionbarsherlock.view.MenuItem;
  * 
  */
 public class DoctorConfig extends SherlockFragmentActivity {
+
+	private static final String TAG = "DoctorConfig";
+	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 
 	/** EditText with doctor's email */
 	private EditText mDocEmail;
@@ -83,7 +88,16 @@ public class DoctorConfig extends SherlockFragmentActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		if (DEBUG) Log.d(TAG, "Menu item selected: " + item.getTitle());
+		switch (item.getItemId()) {
+		case R.id.menu_doctor_config_done:
+			// TODO Config done. Save data and email stuff away.
+			return true;
+		case R.id.menu_doctor_config_login:
+			// TODO Change login details
+			return true;
+
+		}
 		return super.onOptionsItemSelected(item);
 	}
-
 }
