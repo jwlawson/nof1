@@ -20,8 +20,18 @@
       John Lawson - initial API and implementation
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/menu_doctor_config_done" android:icon="@drawable/ic_action_done" android:title="@string/done" android:showAsAction="always|withText"></item>
-    <item android:id="@+id/menu_doctor_config_login" android:showAsAction="never|withText" android:icon="@drawable/ic_action_login" android:title="@string/login_details"></item>
-    
+
+    <item
+        android:id="@+id/menu_doctor_config_done"
+        android:icon="@drawable/ic_action_done"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/done">
+    </item>
+    <item
+        android:id="@+id/menu_doctor_config_login"
+        android:icon="@drawable/ic_action_login"
+        android:showAsAction="never|withText"
+        android:title="@string/login_details">
+    </item>
 
 </menu>

@@ -20,9 +20,11 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
+import android.app.Activity;
+import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,85 +33,74 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class CheckFragment extends QuestionFragment {
-	
+
 	private static final String TAG = "CheckFragment";
-	
-	private static int COUNT = 0;
-	
-	private boolean mChecked;
-	private String mQuestion;
-	private boolean init = false;
-	private final int mId;
-	
+	private static final boolean DEBUG = true;
+
+	public static final String ARGS_TEXT = "argsText";
+	public static final String ARGS_DEFAULT = "argsDefault";
+
+	private CheckBox mCheck;
+
 	public CheckFragment() {
-		mId = COUNT;
-		COUNT++;
 	}
-	
-	public boolean isChecked() {
-		return mChecked;
+
+	public static CheckFragment newInstance(String questionText, boolean def) {
+
+		CheckFragment frag = new CheckFragment();
+
+		Bundle args = new Bundle();
+		args.putString(ARGS_TEXT, questionText);
+		args.putBoolean(ARGS_DEFAULT, def);
+
+		frag.setArguments(args);
+
+		if (DEBUG) Log.d(TAG, "New instance created");
+
+		return frag;
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
+
 		View view = inflater.inflate(R.layout.row_layout_data_checkbox, container, false);
-		
-		if (!init) mySetArgs(savedInstanceState);
-		
-		CheckBox chk = (CheckBox) view.findViewById(R.id.data_input_checkbox_chk);
-		chk.setChecked(mChecked);
-		
+
+		Bundle args = getArguments();
+		if (DEBUG && args == null) Log.d(TAG, "CHeckFragment view created with null args");
+
+		mCheck = (CheckBox) view.findViewById(R.id.data_input_checkbox_chk);
+		if (args != null) mCheck.setChecked(args.getBoolean(ARGS_DEFAULT, false));
+
 		TextView txt = (TextView) view.findViewById(R.id.data_input_checkbox_txt_question);
-		txt.setText(mQuestion);
-		
-		if (BuildConfig.DEBUG) Log.d(TAG, mId + " view created");
-		
+		if (args != null) txt.setText(args.getString(ARGS_TEXT));
+
+		if (DEBUG) Log.d(TAG, "View created");
+
 		return view;
 	}
-	
+
 	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		COUNT--;
-	}
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-		if (!init) mySetArgs(savedInstanceState);
-	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putBoolean("CheckFrag" + mId + "Checked", mChecked);
-		outState.putString("CheckFrag" + mId + "Question", mQuestion);
-	};
-	
-	private void mySetArgs(Bundle args) {
-		if (args != null) {
-			if (args.containsKey("CheckFrag" + mId + "Checked")) {
-				mChecked = args.getBoolean("CheckFrag" + mId + "Checked");
-			}
-			if (args.containsKey("CheckFrag" + mId + "Question")) {
-				mQuestion = args.getString("CheckFrag" + mId + "Question");
-			}
+	public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
+		super.onInflate(activity, attrs, savedInstanceState);
+		if (DEBUG) Log.d(TAG, "CheckFragment inflated");
+
+		if (getArguments() == null) {
+			Bundle args = new Bundle();
+
+			TypedArray a = activity.obtainStyledAttributes(attrs, R.styleable.CheckFragmentArguments);
+			args.putString(ARGS_TEXT, (String) a.getText(R.styleable.CheckFragmentArguments_android_label));
+			args.putBoolean(ARGS_DEFAULT, a.getBoolean(R.styleable.CheckFragmentArguments_android_checked, false));
+
+			a.recycle();
+
+			setArguments(args);
 		}
-		init = true;
 	}
-	
-	@Override
-	public void setArguments(Bundle args) {
-		super.setArguments(args);
-		mySetArgs(args);
-	}
-	
+
 	@Override
 	public int getResult() {
-		if (mChecked) return 1;
+		if (mCheck.isChecked()) return 1;
 		else return 0;
 	}
-	
+
 }

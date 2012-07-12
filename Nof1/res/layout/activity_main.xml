@@ -62,5 +62,32 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/main_btn_graphs"
         android:text="Settings" />
+
+    <Button
+        android:id="@+id/main_btn_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/main_btn_settings"
+        android:text="Doctor Login" />
+
+    <Button
+        android:id="@+id/main_btn_config"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/main_btn_login"
+        android:text="Doctor Config" />
+
+    <Button
+        android:id="@+id/main_btn_builder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/main_btn_config"
+        android:text="Form builder" />
 
 </RelativeLayout>

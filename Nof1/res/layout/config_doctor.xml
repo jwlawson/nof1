@@ -40,12 +40,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/config_timescale" />
-
-        <fragment
-            android:name="uk.co.jwlawson.nof1.fragments.QuestionBuilderFragment"
+
+        <Button
+            android:id="@+id/config_doctor_btn_create"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:layout="@layout/config_question" />
+            android:layout_margin="@dimen/padding_large"
+            android:text="@string/create_questionnaire" />
+
     </LinearLayout>
 
 </ScrollView>

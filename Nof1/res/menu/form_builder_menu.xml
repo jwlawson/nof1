@@ -27,5 +27,6 @@
         android:showAsAction="always|withText"
         android:title="Add">
     </item>
+    <item android:id="@+id/menu_form_builder_preview" android:title="@string/preview" android:icon="@drawable/ic_action_preview" android:showAsAction="ifRoom|withText"></item>
 
 </menu>

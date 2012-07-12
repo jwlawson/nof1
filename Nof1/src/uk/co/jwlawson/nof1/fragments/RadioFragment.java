@@ -31,97 +31,103 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 public class RadioFragment extends QuestionFragment implements RadioGroup.OnCheckedChangeListener {
-	
+
 	private static final String TAG = "RadioFragment";
-	private static int COUNT = 0;
-	
-	private String mQuestion;
-	private String mMin;
-	private String mMax;
+	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+
+	private static final String ARGS_TEXT = "argsText";
+	private static final String ARGS_MIN = "argsMin";
+	private static final String ARGS_MAX = "argsMax";
+
 	private int mSelected;
-	private boolean init = false;
-	private final int mId;
-	
+
 	public RadioFragment() {
-		mId = COUNT;
-		COUNT++;
-		
 	}
-	
-	public int getSelected() {
-		return mSelected;
+
+	public static RadioFragment newInstance(String question, String min, String max) {
+
+		Bundle args = new Bundle();
+		args.putString(ARGS_TEXT, question);
+		args.putString(ARGS_MIN, min);
+		args.putString(ARGS_MAX, max);
+
+		RadioFragment frag = new RadioFragment();
+		frag.setArguments(args);
+
+		if (DEBUG) Log.d(TAG, "New instance created");
+
+		return frag;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedState) {
 		super.onCreate(savedState);
-		if (!init) mySetArguments(savedState);
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
-		if (!init) mySetArguments(savedInstanceState);
-		
+
 		View view = inflater.inflate(R.layout.row_layout_data_radio, container, false);
-		
-		((TextView) view.findViewById(R.id.data_input_radio_text_question)).setText(mQuestion);
-		
+
+		Bundle args = getArguments();
+
+		TextView text = (TextView) view.findViewById(R.id.data_input_radio_text_question);
+		text.setText(args.getString(ARGS_TEXT));
+
 		TextView min = (TextView) view.findViewById(R.id.data_input_radio_text_min);
-		min.setText(mMin);
-		
+		min.setText(args.getString(ARGS_MIN));
+
 		TextView max = (TextView) view.findViewById(R.id.data_input_radio_text_max);
-		max.setText(mMax);
-		
+		max.setText(args.getString(ARGS_MAX));
+
 		RadioGroup radio = (RadioGroup) view.findViewById(R.id.data_input_radio_radiogroup);
 		radio.setOnCheckedChangeListener(this);
-		
+
+		if (DEBUG) Log.d(TAG, "View created");
+
 		return view;
-		
+
 	}
-	
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		// For each questionFragment, add its strings to the bundle
-		// Use Id to differentiate.
-		outState.putString("QuesFrag" + mId + "Question", mQuestion);
-		outState.putString("QuesFrag" + mId + "Min", mMin);
-		outState.putString("QuesFrag" + mId + "Max", mMax);
-	}
-	
-	@Override
-	public void setArguments(Bundle args) {
-		super.setArguments(args);
-		mySetArguments(args);
-	}
-	
-	private void mySetArguments(Bundle args) {
-		if (args != null) {
-			if (args.containsKey("QuesFrag" + mId + "Question")) mQuestion = args.getString("QuesFrag" + mId + "Question");
-			if (args.containsKey("QuesFrag" + mId + "Min")) mMin = args.getString("QuesFrag" + mId + "Min");
-			if (args.containsKey("QuesFrag" + mId + "Max")) mMax = args.getString("QuesFrag" + mId + "Max");
-		}
-		init = true;
-	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-		if (BuildConfig.DEBUG) Log.d(getClass().getName(), "Destroyed");
-		COUNT--;
-	}
-	
+
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
 		// checkedId gives currently selected button
-		if (BuildConfig.DEBUG) Log.d(TAG, "RadioButton selected: " + checkedId);
-		mSelected = checkedId;
+		if (DEBUG) Log.d(TAG, "RadioButton selected, ID: " + checkedId);
+		switch (checkedId) {
+		case R.id.radio0:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 0);
+			mSelected = 0;
+			break;
+		case R.id.radio1:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 1);
+			mSelected = 1;
+			break;
+		case R.id.radio2:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 2);
+			mSelected = 2;
+			break;
+		case R.id.radio3:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 3);
+			mSelected = 3;
+			break;
+		case R.id.radio4:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 4);
+			mSelected = 4;
+			break;
+		case R.id.radio5:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 5);
+			mSelected = 5;
+			break;
+		case R.id.radio6:
+			if (DEBUG) Log.d(TAG, "RadioButton selected: " + 6);
+			mSelected = 6;
+			break;
+		}
 	}
-	
+
 	@Override
 	public int getResult() {
 		return mSelected;
 	}
-	
+
 }

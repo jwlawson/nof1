@@ -55,7 +55,7 @@
     <string name="config_email_use">The doctor\'s and pharmacist\'s email is required to send a copy of this questionaire and any other information about the trial. They will not be used for any other purpose.</string>
     <string name="config_question_text">Question text</string>
     <string name="config_input_type">Input type</string>
-    <string name="login_first_explain">Please enter an email address and any password you would like to use for this app. This will only be required for accessing the doctor configuration utilities.</string>
+    <string name="login_first_explain">Please enter an email address and any password you would like to use for this app. This will only be required for accessing the doctor configuration utilities. You are recommended not to use the password linked to your email account.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="repeat_password">Repeat password</string>
@@ -75,7 +75,38 @@
         <item>Number</item>
         <item>Checkbox</item>
     </string-array>
-        <string name="done">Done</string>
-        <string name="login_details">Login details</string>
+
+    <string name="done">Done</string>
+    <string name="login_details">Login details</string>
+    <string name="title_question_detail">Question Detail</string>
+    <string name="title_question_list">Questions</string>
+    <string name="preview">Preview</string>
+    <string name="questionnaire_preview_explain">This is a preview of the questionnaire the patient will have to fill in. Please check any details, spelling etc and if you are happy press Save, otherwise Cancel will take you back to the previous screen.</string>
+    <string name="save">Save</string>
+    <string name="current_email">Current email</string>
+    <string name="new_email">New email</string>
+    <string name="current_password">Current password</string>
+    <string name="new_password">New password</string>
+    <string name="login_change_explain">Input your current login details and either a new email or new password you would like to use.</string>
+    <string name="change_login_details">Change login details</string>
+    <string name="new_login_details">Set up new login details</string>
+    <string name="passwords_not_equal">Passwords do not match</string>
+    <string name="login">Login</string>
+    <string name="login_failed">Login failed</string>
+    <string name="create_questionnaire">Create questionnaire</string>
+    <string-array name="treatment_period">
+        <item >5</item>
+        <item >6</item>
+        <item >7</item>
+        <item >8</item>
+        <item >9</item>
+        <item >10</item>
+        <item >11</item>
+        <item >12</item>
+        <item >13</item>
+        <item >14</item>
+        <item >15</item>
+        <item >Other</item>
+    </string-array>
 
 </resources>

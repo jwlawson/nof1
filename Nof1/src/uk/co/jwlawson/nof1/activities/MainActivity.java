@@ -50,23 +50,15 @@ public class MainActivity extends SherlockActivity {
 			public void onClick(View v) {
 
 				Intent i = new Intent(getBaseContext(), FragActivity.class);
-				PendingIntent pi = PendingIntent.getActivity(getBaseContext(), 0, i,
-						PendingIntent.FLAG_CANCEL_CURRENT);
+				PendingIntent pi = PendingIntent.getActivity(getBaseContext(), 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
 
-				Notification noti = new NotificationCompat.Builder(getBaseContext())
-						.setContentTitle("Please fill in a form")
-						.setContentText("Nof1 Trails")
-						.setSmallIcon(R.drawable.ic_launcher)
-						.setContentIntent(pi)
-						.setLargeIcon(
-								BitmapFactory
-										.decodeResource(getResources(), R.drawable.ic_launcher))
-						.getNotification();
+				Notification noti = new NotificationCompat.Builder(getBaseContext()).setContentTitle("Please fill in a form")
+						.setContentText("Nof1 Trials").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pi)
+						.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher)).getNotification();
 
 				noti.flags |= Notification.FLAG_AUTO_CANCEL;
 
-				((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1,
-						noti);
+				((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1, noti);
 			}
 		});
 
@@ -96,6 +88,36 @@ public class MainActivity extends SherlockActivity {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(getBaseContext(), UserPrefs.class);
+				startActivity(i);
+			}
+		});
+
+		Button btnLogin = (Button) findViewById(R.id.main_btn_login);
+		btnLogin.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getBaseContext(), DoctorLogin.class);
+				startActivity(i);
+			}
+		});
+
+		Button btnConfig = (Button) findViewById(R.id.main_btn_config);
+		btnConfig.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getBaseContext(), DoctorConfig.class);
+				startActivity(i);
+			}
+		});
+
+		Button btnBuilder = (Button) findViewById(R.id.main_btn_builder);
+		btnBuilder.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getBaseContext(), FormBuilder.class);
 				startActivity(i);
 			}
 		});

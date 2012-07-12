@@ -1,36 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
-  Copyright (C) 2012  WMG, University of Warwick
-  
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-  
-  You may obtain a copy of the GNU General Public License at  
-  <http://www.gnu.org/licenses/>.
-  
-  Contributors:
-      John Lawson - initial API and implementation
--->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/config_question_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/padding_large" >
-
+
     <RelativeLayout
-        android:id="@+id/config_question_layout"
+        android:id="@+id/RelativeLayout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-
+
         <TextView
             android:id="@+id/config_question_text"
             android:layout_width="wrap_content"
@@ -80,15 +60,14 @@
             android:layout_marginTop="@dimen/padding_medium"
             android:text="@string/config_question_type_explain"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
         <RelativeLayout
             android:id="@+id/config_question_minmax_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/config_question_text_type_explain"
             android:layout_alignRight="@+id/config_question_text_type_explain"
-            android:layout_below="@+id/config_question_text_type_explain"
-            android:visibility="gone" >
+            android:layout_below="@+id/config_question_text_type_explain" >
 
             <TextView
                 android:id="@+id/config_question_text_min"
@@ -128,22 +107,15 @@
                 android:ems="10"
                 android:inputType="textCapSentences" />
         </RelativeLayout>
-
-
+
         <LinearLayout
             android:id="@+id/config_question_button_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignLeft="@+id/config_question_text"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:layout_below="@id/config_question_minmax_layout" >
-
-            <Button
-                android:id="@+id/config_question_button_ok"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/ok" />
 
             <Button
                 android:id="@+id/config_question_button_cancel"
@@ -151,7 +123,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/cancel" />
+
+            <Button
+                android:id="@+id/config_question_button_ok"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/ok" />
 
         </LinearLayout>
     </RelativeLayout>
+
 </ScrollView>
