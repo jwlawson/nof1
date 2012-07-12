@@ -52,6 +52,9 @@ public class Keys {
 	/** SharedPrefernces holding config data */
 	public static final String CONFIG_NAME = "config";
 
+	/** Shared preference key for whether the questionnaire is built */
+	public static final String CONFIG_BUILT = "config_built";
+
 	/** Shared preferences key for hashed email */
 	public static final String CONFIG_EMAIL = "email_hash";
 
@@ -61,7 +64,7 @@ public class Keys {
 	/** Shared preferences key for hashed password */
 	public static final String CONFIG_PASS = "pass_hash";
 
-	/** Shared preferences key for doctor inputted patient name */
+	/** Shared preferences key for doctor inputed patient name */
 	public static final String CONFIG_PATIENT_NAME = "patient_name";
 
 	/** Shared preferences key for number of days per treatment period */
