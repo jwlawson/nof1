@@ -22,6 +22,7 @@ package uk.co.jwlawson.nof1.fragments;
 
 import uk.co.jwlawson.nof1.R;
 import android.app.Activity;
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -40,7 +41,6 @@ public class CheckFragment extends QuestionFragment {
 	public static final String ARGS_DEFAULT = "argsDefault";
 
 	private boolean mChecked;
-	private String mQuestion;
 
 	public CheckFragment() {
 	}
@@ -66,12 +66,13 @@ public class CheckFragment extends QuestionFragment {
 		View view = inflater.inflate(R.layout.row_layout_data_checkbox, container, false);
 
 		Bundle args = getArguments();
+		if (DEBUG && args == null) Log.d(TAG, "CHeckFragment view created with null args");
 
 		CheckBox chk = (CheckBox) view.findViewById(R.id.data_input_checkbox_chk);
-		chk.setChecked(args.getBoolean(ARGS_DEFAULT, false));
+		if (args != null) chk.setChecked(args.getBoolean(ARGS_DEFAULT, false));
 
 		TextView txt = (TextView) view.findViewById(R.id.data_input_checkbox_txt_question);
-		txt.setText(args.getString(ARGS_TEXT));
+		if (args != null) txt.setText(args.getString(ARGS_TEXT));
 
 		if (DEBUG) Log.d(TAG, "View created");
 
@@ -81,17 +82,17 @@ public class CheckFragment extends QuestionFragment {
 	@Override
 	public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
 		super.onInflate(activity, attrs, savedInstanceState);
-	}
+		if (DEBUG) Log.d(TAG, "CheckFragment inflated");
 
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
+		Bundle args = new Bundle();
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		TypedArray a = activity.obtainStyledAttributes(attrs, R.styleable.CheckFragmentArguments);
+		args.putString(ARGS_TEXT, (String) a.getText(R.styleable.CheckFragmentArguments_android_label));
+		args.putBoolean(ARGS_DEFAULT, a.getBoolean(R.styleable.CheckFragmentArguments_android_checked, false));
 
+		a.recycle();
+
+		setArguments(args);
 	}
 
 	@Override

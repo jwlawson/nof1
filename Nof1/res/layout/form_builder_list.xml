@@ -3,7 +3,7 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+
     <fragment
         android:id="@+id/form_builder_list_fragment"
         android:layout_width="match_parent"
@@ -13,10 +13,12 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         class="uk.co.jwlawson.nof1.fragments.FormBuilderList" />
-
+
     <fragment
         android:id="@+id/form_builder_check_fragment"
         android:name="uk.co.jwlawson.nof1.fragments.CheckFragment"
+		android:label="Include a comment box at the bottom of the questionnaire?"
+		android:checked="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
