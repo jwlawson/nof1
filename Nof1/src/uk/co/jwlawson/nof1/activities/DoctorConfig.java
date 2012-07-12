@@ -37,7 +37,11 @@ import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -51,10 +55,12 @@ import com.actionbarsherlock.view.MenuItem;
  * @author John Lawson
  * 
  */
-public class DoctorConfig extends SherlockFragmentActivity {
+public class DoctorConfig extends SherlockFragmentActivity implements AdapterView.OnItemSelectedListener {
 
 	private static final String TAG = "DoctorConfig";
 	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+
+	private static final int REQUEST_FORM = 12;
 
 	/** EditText with doctor's email */
 	private EditText mDocEmail;
@@ -68,8 +74,20 @@ public class DoctorConfig extends SherlockFragmentActivity {
 	/** EditText with number of days in treatment period */
 	private EditText mPeriodLength;
 
+	/** Integer value of number of days in treatment period. Check whether mPeriodLength is visible before using this */
+	private int mIntPeriodLength;
+
 	/** EditText with number of treatment periods */
 	private EditText mPeriodNumber;
+
+	/** Integer value of number of treatment periods. Check whether mPeriodNumber is visible before using this */
+	private int mIntPeriodNumber;
+
+	/** True if the questionnaire form is built */
+	private boolean mFormBuilt;
+
+	/** Layout containing timescale config info */
+	private RelativeLayout mTimescaleLayout;
 
 	public DoctorConfig() {
 	}
@@ -80,6 +98,8 @@ public class DoctorConfig extends SherlockFragmentActivity {
 		setContentView(R.layout.config_doctor);
 
 		SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+		mFormBuilt = sp.getBoolean(Keys.CONFIG_BUILT, false);
 
 		Intent i = getIntent();
 		String email = i.getStringExtra(Keys.INTENT_EMAIL);
@@ -93,10 +113,29 @@ public class DoctorConfig extends SherlockFragmentActivity {
 		mPatientName.setText(sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 
 		mPeriodLength = (EditText) findViewById(R.id.config_timescale_edit_period);
-		mPeriodLength.setText(sp.getString(Keys.CONFIG_PERIOD_LENGTH, ""));
+		int saved = sp.getInt(Keys.CONFIG_PERIOD_LENGTH, -1);
+		if (saved >= 0) mPeriodLength.setText(saved);
 
 		mPeriodNumber = (EditText) findViewById(R.id.config_timescale_edit_number_periods);
-		mPeriodNumber.setText(sp.getString(Keys.CONFIG_NUMBER_PERIODS, ""));
+		int saved1 = sp.getInt(Keys.CONFIG_NUMBER_PERIODS, -1);
+		if (saved1 >= 0) mPeriodNumber.setText(saved1);
+
+		Spinner spinLength = (Spinner) findViewById(R.id.config_timescale_spinner_length);
+		spinLength.setOnItemSelectedListener(this);
+
+		Spinner spinNumber = (Spinner) findViewById(R.id.config_timescale_spinner_periods);
+		spinNumber.setOnItemSelectedListener(this);
+
+		mTimescaleLayout = (RelativeLayout) findViewById(R.id.config_timescale_layout);
+
+		Button btnCreate = (Button) findViewById(R.id.config_doctor_btn_create);
+		btnCreate.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(DoctorConfig.this, FormBuilder.class);
+				startActivityForResult(i, REQUEST_FORM);
+			}
+		});
 
 	}
 
@@ -112,9 +151,18 @@ public class DoctorConfig extends SherlockFragmentActivity {
 		switch (item.getItemId()) {
 		case R.id.menu_doctor_config_done:
 			// Config done. Save data and email stuff away.
-			save();
-			makeTreatmentPlan();
-			email();
+			// TODO Check that all config is actually done
+			if (mFormBuilt) {
+				save();
+				makeTreatmentPlan();
+				email();
+				setResult(RESULT_OK);
+				finish();
+			} else {
+				// Questionnaire not built yet
+				Toast.makeText(this, "You must create the questionnaire first", Toast.LENGTH_LONG).show();
+			}
+
 			return true;
 		case R.id.menu_doctor_config_login:
 			// Change login details
@@ -123,6 +171,24 @@ public class DoctorConfig extends SherlockFragmentActivity {
 
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+
+		case REQUEST_FORM:
+			// FormBuilder result
+			if (resultCode == RESULT_OK) {
+				mFormBuilt = true;
+			}
+			return;
+
+		default:
+			// Not my request
+			super.onActivityResult(requestCode, resultCode, data);
+		}
+
 	}
 
 	/** Create a random treatment plan, which must stay hidden but sent to the pharmacist. */
@@ -134,9 +200,27 @@ public class DoctorConfig extends SherlockFragmentActivity {
 	private void save() {
 		// Put config data into shared preferences editor
 		SharedPreferences.Editor editor = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE).edit();
+
 		editor.putString(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
-		editor.putString(Keys.CONFIG_NUMBER_PERIODS, mPeriodNumber.getText().toString());
-		editor.putString(Keys.CONFIG_PERIOD_LENGTH, mPeriodLength.getText().toString());
+		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
+			try {
+				editor.putInt(Keys.CONFIG_NUMBER_PERIODS, Integer.parseInt(mPeriodNumber.getText().toString()));
+			} catch (NumberFormatException e) {
+				Toast.makeText(this, "Invalid input type for number of treatment periods", Toast.LENGTH_LONG).show();
+			}
+		} else {
+			editor.putInt(Keys.CONFIG_NUMBER_PERIODS, mIntPeriodNumber);
+		}
+		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
+			try {
+				editor.putInt(Keys.CONFIG_PERIOD_LENGTH, Integer.parseInt(mPeriodLength.getText().toString()));
+			} catch (NumberFormatException e) {
+				Toast.makeText(this, "Invalid input type for length of treatment periods", Toast.LENGTH_LONG).show();
+			}
+		} else {
+			editor.putInt(Keys.CONFIG_PERIOD_LENGTH, mIntPeriodLength);
+		}
+		editor.putBoolean(Keys.CONFIG_BUILT, mFormBuilt);
 
 		// Save changes
 		editor.commit();
@@ -231,5 +315,44 @@ public class DoctorConfig extends SherlockFragmentActivity {
 			inflater = this.getLayoutInflater();
 		}
 		return inflater;
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		String item;
+
+		switch (parent.getId()) {
+
+		case R.id.config_timescale_spinner_length:
+			// Length spinner
+			item = (String) parent.getItemAtPosition(position);
+			if (item.equalsIgnoreCase("other")) {
+				mPeriodLength.setVisibility(View.VISIBLE);
+				mIntPeriodLength = -1;
+			} else {
+				mPeriodLength.setVisibility(View.GONE);
+				mIntPeriodLength = Integer.parseInt(item);
+			}
+			mTimescaleLayout.requestLayout();
+			break;
+
+		case R.id.config_timescale_spinner_periods:
+			// Number spinner
+			item = (String) parent.getItemAtPosition(position);
+			if (item.equalsIgnoreCase("other")) {
+				mPeriodNumber.setVisibility(View.VISIBLE);
+				mIntPeriodNumber = -1;
+			} else {
+				mPeriodNumber.setVisibility(View.GONE);
+				mIntPeriodNumber = Integer.parseInt(item);
+			}
+			mTimescaleLayout.requestLayout();
+			break;
+		}
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> arg0) {
+		// Don't care
 	}
 }
