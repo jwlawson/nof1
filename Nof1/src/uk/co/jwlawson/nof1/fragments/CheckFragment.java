@@ -34,8 +34,8 @@ public class CheckFragment extends QuestionFragment {
 	private static final String TAG = "CheckFragment";
 	private static final boolean DEBUG = true;
 
-	private static final String ARGS_TEXT = "argsText";
-	private static final String ARGS_DEFAULT = "argsDefault";
+	public static final String ARGS_TEXT = "argsText";
+	public static final String ARGS_DEFAULT = "argsDefault";
 
 	private boolean mChecked;
 	private String mQuestion;
