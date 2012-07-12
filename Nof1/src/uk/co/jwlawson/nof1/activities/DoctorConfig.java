@@ -79,6 +79,8 @@ public class DoctorConfig extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.config_doctor);
 
+		SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
 		Intent i = getIntent();
 		String email = i.getStringExtra(Keys.INTENT_EMAIL);
 
@@ -86,10 +88,15 @@ public class DoctorConfig extends SherlockFragmentActivity {
 		mDocEmail.setText(email);
 
 		mPharmEmail = (EditText) findViewById(R.id.config_doctor_details_edit_pharm_email);
+
 		mPatientName = (EditText) findViewById(R.id.config_doctor_details_edit_pharm_email);
+		mPatientName.setText(sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 
 		mPeriodLength = (EditText) findViewById(R.id.config_timescale_edit_period);
+		mPeriodLength.setText(sp.getString(Keys.CONFIG_PERIOD_LENGTH, ""));
+
 		mPeriodNumber = (EditText) findViewById(R.id.config_timescale_edit_number_periods);
+		mPeriodNumber.setText(sp.getString(Keys.CONFIG_NUMBER_PERIODS, ""));
 
 	}
 
@@ -104,7 +111,10 @@ public class DoctorConfig extends SherlockFragmentActivity {
 		if (DEBUG) Log.d(TAG, "Menu item selected: " + item.getTitle());
 		switch (item.getItemId()) {
 		case R.id.menu_doctor_config_done:
-			// TODO Config done. Save data and email stuff away.
+			// Config done. Save data and email stuff away.
+			save();
+			makeTreatmentPlan();
+			email();
 			return true;
 		case R.id.menu_doctor_config_login:
 			// Change login details
@@ -117,19 +127,29 @@ public class DoctorConfig extends SherlockFragmentActivity {
 
 	/** Create a random treatment plan, which must stay hidden but sent to the pharmacist. */
 	private void makeTreatmentPlan() {
-
+		// TODO
 	}
 
 	/** Save the data to file. */
 	private void save() {
+		// Put config data into shared preferences editor
+		SharedPreferences.Editor editor = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE).edit();
+		editor.putString(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
+		editor.putString(Keys.CONFIG_NUMBER_PERIODS, mPeriodNumber.getText().toString());
+		editor.putString(Keys.CONFIG_PERIOD_LENGTH, mPeriodLength.getText().toString());
 
+		// Save changes
+		editor.commit();
 	}
 
 	/** email the information to the doctor and pharmacist */
 	private void email() {
-
+		// TODO
+		String pharmEmail = mPharmEmail.getText().toString();
+		String docEmail = mDocEmail.getText().toString();
 	}
 
+	/** Loads AlertDialog to change the login details of doctor */
 	private void changeLogin() {
 
 		final SharedPreferences sharedPrefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
@@ -152,8 +172,7 @@ public class DoctorConfig extends SherlockFragmentActivity {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				String emailStr = email.getText().toString();
-				String emailHash = new String(Hex.encodeHex(DigestUtils.sha512(emailStr)));
+				String emailHash = new String(Hex.encodeHex(DigestUtils.sha512(email.getText().toString())));
 				String passHash = new String(Hex.encodeHex(DigestUtils.sha512(pass.getText().toString())));
 
 				if (emailHash.equals(sharedPrefs.getString(Keys.CONFIG_EMAIL, null))
@@ -188,12 +207,14 @@ public class DoctorConfig extends SherlockFragmentActivity {
 		builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				// Close dialog
 				dialog.cancel();
 			}
 		});
 		builder.create().show();
 	}
 
+	/** Used to set the email field in EditText from an onClick call */
 	private void setEmail(String email) {
 		mDocEmail.setText(email);
 	}

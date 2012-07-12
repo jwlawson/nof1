@@ -61,4 +61,13 @@ public class Keys {
 	/** Shared preferences key for hashed password */
 	public static final String CONFIG_PASS = "pass_hash";
 
+	/** Shared preferences key for doctor inputted patient name */
+	public static final String CONFIG_PATIENT_NAME = "patient_name";
+
+	/** Shared preferences key for number of days per treatment period */
+	public static final String CONFIG_PERIOD_LENGTH = "period_length";
+
+	/** Shared preferences key for number of treatment periods in trial */
+	public static final String CONFIG_NUMBER_PERIODS = "number_periods";
+
 }
