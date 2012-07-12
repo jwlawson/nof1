@@ -115,7 +115,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		// Find list fragment
 		mList = (FormBuilderList) getSupportFragmentManager().findFragmentById(R.id.form_builder_list_fragment);
 
-		// TODO Fill mQuestionList and set as the array for mList
+		// Fill mQuestionList and set as the array for mList
 		for (int i = 0; sp.contains(PREFS_TEXT + i); i++) {
 
 			int inputType = sp.getInt(PREFS_TYPE + i, Question.SCALE);
@@ -231,6 +231,13 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		}
 		// Save changes
 		editor.commit();
+	}
+
+	@Override
+	protected void onDestroy() {
+		// Save when activity is destroyed. Ensures the list is kept on config changes.
+		saveToFile();
+		super.onDestroy();
 	}
 
 	@Override
