@@ -20,12 +20,25 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
+
 import uk.co.jwlawson.nof1.BuildConfig;
+import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -67,7 +80,7 @@ public class DoctorConfig extends SherlockFragmentActivity {
 		setContentView(R.layout.config_doctor);
 
 		Intent i = getIntent();
-		String email = i.getStringExtra("email");
+		String email = i.getStringExtra(Keys.INTENT_EMAIL);
 
 		mDocEmail = (EditText) findViewById(R.id.config_doctor_details_edit_doc_email);
 		mDocEmail.setText(email);
@@ -94,10 +107,108 @@ public class DoctorConfig extends SherlockFragmentActivity {
 			// TODO Config done. Save data and email stuff away.
 			return true;
 		case R.id.menu_doctor_config_login:
-			// TODO Change login details
+			// Change login details
+			changeLogin();
 			return true;
 
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	/** Create a random treatment plan, which must stay hidden but sent to the pharmacist. */
+	private void makeTreatmentPlan() {
+
+	}
+
+	/** Save the data to file. */
+	private void save() {
+
+	}
+
+	/** email the information to the doctor and pharmacist */
+	private void email() {
+
+	}
+
+	private void changeLogin() {
+
+		final SharedPreferences sharedPrefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.dialog_theme));
+
+		View view = getInflater().inflate(R.layout.config_change_login, null, false);
+
+		final EditText email = (EditText) view.findViewById(R.id.config_change_login_edit_cur_email);
+		email.setText(mDocEmail.getText().toString());
+
+		final EditText newEmail = (EditText) view.findViewById(R.id.config_change_login_edit_new_email);
+
+		final EditText pass = (EditText) view.findViewById(R.id.config_change_login_edit_cur_password);
+
+		final EditText newPass = (EditText) view.findViewById(R.id.config_change_login_edit_new_password);
+		final EditText newPass2 = (EditText) view.findViewById(R.id.config_change_login_edit_new_pass2);
+
+		builder.setView(view).setTitle(R.string.change_login_details).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String emailStr = email.getText().toString();
+				String emailHash = new String(Hex.encodeHex(DigestUtils.sha512(emailStr)));
+				String passHash = new String(Hex.encodeHex(DigestUtils.sha512(pass.getText().toString())));
+
+				if (emailHash.equals(sharedPrefs.getString(Keys.CONFIG_EMAIL, null))
+						&& passHash.equals(sharedPrefs.getString(Keys.CONFIG_PASS, null))) {
+					// Login correct
+
+					String passStr = newPass.getText().toString();
+					SharedPreferences.Editor editor = sharedPrefs.edit();
+
+					if (passStr != "" && passStr != null && passStr.equals(newPass2.getText().toString())) {
+						// Change password
+
+						editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
+
+					}
+
+					String newEmailStr = newEmail.getText().toString();
+					if (newEmailStr != null && newEmailStr != "") {
+						// Change email
+						editor.putString(Keys.CONFIG_EMAIL, new String(Hex.encodeHex(DigestUtils.sha512(newEmailStr))));
+						setEmail(newEmailStr);
+					}
+					// Save changes
+					editor.commit();
+				} else {
+					// Incorrect login
+					Toast.makeText(getApplicationContext(), "Incorrect login details", Toast.LENGTH_SHORT).show();
+					changeLogin();
+				}
+			}
+		});
+		builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		builder.create().show();
+	}
+
+	private void setEmail(String email) {
+		mDocEmail.setText(email);
+	}
+
+	/** Nasty hack to ensure text in alertdialog is readable */
+	private LayoutInflater getInflater() {
+		LayoutInflater inflater;
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+			// Old devices use nasty dark AlertDialog theme, so inflater needs to make text white.
+			// ApplicationContext for some reason doesn't have the light theme applied, so will do nicely.
+			inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		} else {
+			// Newer devices use shiny holo light dialogs. Easy.
+			inflater = this.getLayoutInflater();
+		}
+		return inflater;
 	}
 }
