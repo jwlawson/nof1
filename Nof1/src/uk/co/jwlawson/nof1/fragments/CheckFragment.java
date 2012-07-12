@@ -84,15 +84,17 @@ public class CheckFragment extends QuestionFragment {
 		super.onInflate(activity, attrs, savedInstanceState);
 		if (DEBUG) Log.d(TAG, "CheckFragment inflated");
 
-		Bundle args = new Bundle();
+		if (getArguments() == null) {
+			Bundle args = new Bundle();
 
-		TypedArray a = activity.obtainStyledAttributes(attrs, R.styleable.CheckFragmentArguments);
-		args.putString(ARGS_TEXT, (String) a.getText(R.styleable.CheckFragmentArguments_android_label));
-		args.putBoolean(ARGS_DEFAULT, a.getBoolean(R.styleable.CheckFragmentArguments_android_checked, false));
+			TypedArray a = activity.obtainStyledAttributes(attrs, R.styleable.CheckFragmentArguments);
+			args.putString(ARGS_TEXT, (String) a.getText(R.styleable.CheckFragmentArguments_android_label));
+			args.putBoolean(ARGS_DEFAULT, a.getBoolean(R.styleable.CheckFragmentArguments_android_checked, false));
 
-		a.recycle();
+			a.recycle();
 
-		setArguments(args);
+			setArguments(args);
+		}
 	}
 
 	@Override
