@@ -192,6 +192,7 @@ public class Questionnaire extends SherlockFragmentActivity {
 			}
 			// If should show comment fragment, add to layout
 			if (sp.getBoolean(Keys.COMMENT, false)) {
+				if (DEBUG) Log.d(TAG, "Adding comment fragment");
 				CommentFragment q = CommentFragment.newInstance();
 				getSupportFragmentManager().beginTransaction().add(R.id.data_input_comment_frame, q, "com").commit();
 			}
