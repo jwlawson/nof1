@@ -104,7 +104,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 					editor.putBoolean("first_run", false);
 					editor.commit();
 
-					launch();
+					launch(emailStr1);
 				} else {
 					// Password fields don't match.
 					Toast.makeText(getBaseContext(), "Passwords don't match", Toast.LENGTH_SHORT).show();
@@ -137,7 +137,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 
 				if (emailHash.equals(sharedPrefs.getString("email_hash", null)) && passHash.equals(sharedPrefs.getString("pass_hash", null))) {
 					// Login correct
-					launch();
+					launch(emailStr);
 				} else {
 					// Incorrect login
 					Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_SHORT).show();
@@ -145,12 +145,14 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 				}
 			}
 		});
+		builder.setOnCancelListener(this);
 		builder.create().show();
 	}
 
-	private void launch() {
+	private void launch(String emailStr) {
 		// Launch DoctorConfig activity
 		Intent i = new Intent(this, DoctorConfig.class);
+		i.putExtra("email", emailStr);
 		startActivity(i);
 		finish();
 	}
@@ -173,6 +175,8 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 	public void onCancel(DialogInterface dialog) {
 		// When a dialog is closed, finish the activity.
 		// Otherwise users are left with a blank screen
+		dialog.dismiss();
+		setResult(RESULT_CANCELED);
 		this.finish();
 	}
 }
