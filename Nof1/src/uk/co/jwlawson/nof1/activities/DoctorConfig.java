@@ -245,6 +245,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	private void save() {
 		// Put config data into shared preferences editor
 		SharedPreferences.Editor editor = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE).edit();
+		editor.clear();
 
 		editor.putString(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
 		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
@@ -266,6 +267,12 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			editor.putInt(Keys.CONFIG_PERIOD_LENGTH, mIntPeriodLength);
 		}
 		editor.putBoolean(Keys.CONFIG_BUILT, mFormBuilt);
+
+		// TODO save checked boxes
+		int[] arr = mArray.getSelected();
+		for (int i : arr) {
+			editor.putBoolean(Keys.CONFIG_DAY + i, true);
+		}
 
 		// Save changes
 		editor.commit();

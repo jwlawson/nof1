@@ -79,4 +79,7 @@ public class Keys {
 	/** Shared preferences key for number of treatment periods in trial */
 	public static final String CONFIG_NUMBER_PERIODS = "number_periods";
 
+	/** Shared preferences key prefix for whether to fill in questionnaire on this day */
+	public static final String CONFIG_DAY = "day";
+
 }
