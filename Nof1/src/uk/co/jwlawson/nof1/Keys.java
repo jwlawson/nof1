@@ -28,6 +28,9 @@ package uk.co.jwlawson.nof1;
  */
 public class Keys {
 
+	/** Name of default shared preferences */
+	public static final String DEFAULT_PREFS = "uk.co.jwlawson.nof1_preferences";
+
 	/** Name of shared preferences holding the questions */
 	public static final String QUES_NAME = "questions";
 
