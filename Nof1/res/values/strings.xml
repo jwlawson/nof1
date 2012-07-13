@@ -112,5 +112,8 @@
 
     <string name="include_comment">Include a comment box at the end of the questionnaire?</string>
     <string name="enter_login_details">Please enter login details</string>
+    <string name="config_timescale_check_prefix">Day </string>
+    <string name="invalid_period_input">Invalid input type for number of treatment periods</string>
+    <string name="invalid_length_input">Invalid input type for length of treatment periods</string>
 
 </resources>

@@ -5,5 +5,9 @@
         <attr name="android:label" />
         <attr name="android:checked" />
     </declare-styleable>
+    
+    <declare-styleable name="CheckArrayArguments">
+        <attr name="android:label" />
+    </declare-styleable>
 
 </resources>

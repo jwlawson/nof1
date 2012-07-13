@@ -17,9 +17,10 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/config_timescale_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -46,7 +47,7 @@
         android:layout_below="@+id/config_timescale_text_period"
         android:text="@string/config_treatment_period_explain"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
     <EditText
         android:id="@+id/config_timescale_edit_period"
         android:layout_width="wrap_content"
@@ -57,7 +58,6 @@
         android:ems="10"
         android:inputType="number"
         android:visibility="gone" >
-
     </EditText>
 
     <TextView
@@ -79,7 +79,7 @@
         android:layout_below="@+id/config_timescale_text_number_periods"
         android:text="@string/config_no_treatment_periods_explain"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
     <EditText
         android:id="@+id/config_timescale_edit_number_periods"
         android:layout_width="wrap_content"
@@ -129,5 +129,16 @@
         android:layout_alignRight="@+id/config_timescale_text_period"
         android:layout_below="@+id/config_timescale_text_period_explain"
         android:entries="@array/treatment_period" />
+
+    <fragment
+        android:name="uk.co.jwlawson.nof1.fragments.CheckArray"
+        android:id="@+id/config_timescale_check_array"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_timescale_text_days_record_explain"
+        android:layout_alignRight="@+id/config_timescale_text_days_record_explain"
+        android:layout_below="@+id/config_timescale_text_days_record_explain"
+        android:label="@string/config_timescale_check_prefix"
+        tools:layout="@layout/check_array" />
 
 </RelativeLayout>

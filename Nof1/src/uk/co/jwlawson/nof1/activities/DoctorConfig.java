@@ -26,6 +26,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.fragments.CheckArray;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -92,6 +93,8 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	/** Most recently shown dialog. Kept so it can be closed if activity detroyed */
 	private Dialog mDialog;
+
+	private CheckArray mArray;
 
 	public DoctorConfig() {
 	}
@@ -170,6 +173,8 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			}
 		});
 
+		mArray = (CheckArray) getSupportFragmentManager().findFragmentById(R.id.config_timescale_check_array);
+
 	}
 
 	@Override
@@ -202,6 +207,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			changeLogin();
 			return true;
 
+			// TODO handle "up" on older versions of android
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -245,7 +251,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			try {
 				editor.putInt(Keys.CONFIG_NUMBER_PERIODS, Integer.parseInt(mPeriodNumber.getText().toString()));
 			} catch (NumberFormatException e) {
-				Toast.makeText(this, "Invalid input type for number of treatment periods", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, R.string.invalid_period_input, Toast.LENGTH_LONG).show();
 			}
 		} else {
 			editor.putInt(Keys.CONFIG_NUMBER_PERIODS, mIntPeriodNumber);
@@ -254,7 +260,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			try {
 				editor.putInt(Keys.CONFIG_PERIOD_LENGTH, Integer.parseInt(mPeriodLength.getText().toString()));
 			} catch (NumberFormatException e) {
-				Toast.makeText(this, "Invalid input type for length of treatment periods", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, R.string.invalid_length_input, Toast.LENGTH_LONG).show();
 			}
 		} else {
 			editor.putInt(Keys.CONFIG_PERIOD_LENGTH, mIntPeriodLength);
@@ -381,8 +387,10 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			} else {
 				mPeriodLength.setVisibility(View.GONE);
 				mIntPeriodLength = Integer.parseInt(item);
+				mArray.setNumber(mIntPeriodLength);
 			}
 			mTimescaleLayout.requestLayout();
+
 			break;
 
 		case R.id.config_timescale_spinner_periods:
