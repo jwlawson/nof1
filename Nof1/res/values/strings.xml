@@ -21,7 +21,6 @@
 <resources>
 
     <string name="app_name">Nof1 Trial Helper</string>
-    <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">Data Input</string>
     <string name="ok">OK</string>
@@ -46,7 +45,6 @@
     <string name="doctor_preferences">Doctor preferences</string>
     <string name="patient_name">Patient name</string>
     <string name="patien_name_summary">What would you like to be known as?</string>
-    <string name="prefs_patient_name"></string>
     <string name="doctor_config">Doctor config</string>
     <string name="doctor_config_summary">Load the doctor\'s configuration utility.</string>
     <string name="settings">Settings</string>
@@ -78,8 +76,6 @@
 
     <string name="done">Done</string>
     <string name="login_details">Login details</string>
-    <string name="title_question_detail">Question Detail</string>
-    <string name="title_question_list">Questions</string>
     <string name="preview">Preview</string>
     <string name="questionnaire_preview_explain">This is a preview of the questionnaire the patient will have to fill in. Please check any details, spelling etc and if you are happy press Save, otherwise Cancel will take you back to the previous screen.</string>
     <string name="save">Save</string>
