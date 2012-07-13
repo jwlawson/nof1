@@ -95,11 +95,11 @@ public class FragActivity extends SherlockFragmentActivity {
 		View view = getLayoutInflater().inflate(R.layout.dialog_reminder_entry, null);
 		final Spinner spin = (Spinner) view.findViewById(R.id.reminder_dialog_spinner);
 
-		builder.setTitle("Remind me again in ");
+		builder.setTitle(R.string.schedule_reminder);
 
 		builder.setView(view);
 
-		builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				// TODO schedule new reminder
