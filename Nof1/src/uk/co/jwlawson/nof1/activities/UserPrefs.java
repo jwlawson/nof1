@@ -20,7 +20,9 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
@@ -46,4 +48,16 @@ public class UserPrefs extends SherlockPreferenceActivity {
 		addPreferencesFromResource(R.xml.user_preferences);
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+		if (!sp.contains(Keys.DEFAULT_FIRST)) {
+			// TODO First time run - schedule first notification
+
+			// Add key, to prevent this running again
+			sp.edit().putBoolean(Keys.DEFAULT_FIRST, true).commit();
+		}
+	}
 }
