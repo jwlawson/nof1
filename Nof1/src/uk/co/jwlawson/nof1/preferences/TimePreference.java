@@ -103,8 +103,8 @@ public class TimePreference extends DialogPreference {
 				// Save preference
 				persistString(time);
 			}
-		}
-		if (DEBUG) Log.d(TAG, "TimePref closed");
+			if (DEBUG) Log.d(TAG, "TimePref closed. Time set: " + time);
+		} else if (DEBUG) Log.d(TAG, "TimePref closed. Time not set");
 	}
 
 	@Override
