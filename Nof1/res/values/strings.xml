@@ -108,5 +108,6 @@
         <item >15</item>
         <item >Other</item>
     </string-array>
+    <string name="include_comment">Include a comment box at the end of the questionnaire?</string>
 
 </resources>
