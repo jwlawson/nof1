@@ -3,11 +3,12 @@
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+
     <fragment
         android:id="@+id/form_builder_list_fragment"
         android:layout_width="300dp"
         android:layout_height="match_parent"
+        android:layout_above="@+id/form_builder_check_fragment"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         class="uk.co.jwlawson.nof1.fragments.FormBuilderList" />
@@ -22,5 +23,14 @@
         android:layout_toRightOf="@+id/form_builder_list_fragment" >
 
     </FrameLayout>
+
+    <fragment
+        android:id="@+id/form_builder_check_fragment"
+        android:name="uk.co.jwlawson.nof1.fragments.CheckFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/form_builder_list_fragment" />
 
 </RelativeLayout>
