@@ -31,6 +31,15 @@ public class Keys {
 	/** Name of default shared preferences */
 	public static final String DEFAULT_PREFS = "uk.co.jwlawson.nof1_preferences";
 
+	/** Shared preference key for Patient name */
+	public static final String DEFAULT_PATIENT_NAME = "prefs_patient_name";
+
+	/** Shared preference key for reminder time */
+	public static final String DEFAULT_TIME = "prefs_reminder_time";
+
+	/** Shared preference key for first time bool */
+	public static final String DEFAULT_FIRST = "prefs_first";
+
 	/** Name of shared preferences holding the questions */
 	public static final String QUES_NAME = "questions";
 
