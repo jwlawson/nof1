@@ -146,6 +146,11 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.menu_form_builder_done:
+			// User happy with questionnaire
+			setResult(RESULT_OK);
+			finish();
+			return true;
 		case R.id.menu_form_builder_add:
 			// Add new question to bottom of the list and load new QuestionBuilder
 			Question q = new Question(Question.SCALE, "");
