@@ -27,6 +27,7 @@ import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -88,6 +89,9 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	/** Layout containing timescale config info */
 	private RelativeLayout mTimescaleLayout;
+
+	/** Most recently shown dialog. Kept so it can be closed if activity detroyed */
+	private Dialog mDialog;
 
 	public DoctorConfig() {
 	}
@@ -319,7 +323,17 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 				dialog.cancel();
 			}
 		});
-		builder.create().show();
+		mDialog = builder.create();
+		mDialog.show();
+	}
+
+	@Override
+	protected void onDestroy() {
+		// Close dialog if open to prevent leak
+		if (mDialog != null) {
+			mDialog.dismiss();
+		}
+		super.onDestroy();
 	}
 
 	/** Used to set the email field in EditText from an onClick call */

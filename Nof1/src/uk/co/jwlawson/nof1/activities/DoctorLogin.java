@@ -26,6 +26,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -50,6 +51,8 @@ import com.actionbarsherlock.app.SherlockActivity;
 public class DoctorLogin extends SherlockActivity implements DialogInterface.OnCancelListener {
 
 	private static final int THEME = R.style.dialog_theme;
+
+	private Dialog mDialog;
 
 	public DoctorLogin() {
 	}
@@ -114,7 +117,8 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 			}
 		});
 		builder.setOnCancelListener(this);
-		builder.create().show();
+		mDialog = builder.create();
+		mDialog.show();
 	}
 
 	private void login(final SharedPreferences sharedPrefs, String emailStr) {
@@ -148,7 +152,8 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 			}
 		});
 		builder.setOnCancelListener(this);
-		builder.create().show();
+		mDialog = builder.create();
+		mDialog.show();
 	}
 
 	private void launch(String emailStr) {
@@ -171,6 +176,15 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 			inflater = this.getLayoutInflater();
 		}
 		return inflater;
+	}
+
+	@Override
+	protected void onDestroy() {
+		// Close dialog if open to prevent leak
+		if (mDialog != null) {
+			mDialog.dismiss();
+		}
+		super.onDestroy();
 	}
 
 	@Override
