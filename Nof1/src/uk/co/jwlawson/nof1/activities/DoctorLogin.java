@@ -96,22 +96,30 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 				String pass2Str = pass2.getText().toString();
 				String emailStr1 = email.getText().toString();
 
-				if (passStr.equals(pass2Str)) {
+				// Check fields aren't empty
+				if (passStr != "" && emailStr1 != "") {
 
-					// Hash the email and password, then add to
-					// sharedpreferences.
-					// This will be what we check against at further
-					// logins.
-					SharedPreferences.Editor editor = sharedPrefs.edit();
-					editor.putString(Keys.CONFIG_EMAIL, new String(Hex.encodeHex(DigestUtils.sha512(emailStr1))));
-					editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
-					editor.putBoolean(Keys.CONFIG_FIRST, false);
-					editor.commit();
+					if (passStr.equals(pass2Str)) {
 
-					launch(emailStr1);
+						// Hash the email and password, then add to
+						// sharedpreferences.
+						// This will be what we check against at further
+						// logins.
+						SharedPreferences.Editor editor = sharedPrefs.edit();
+						editor.putString(Keys.CONFIG_EMAIL, new String(Hex.encodeHex(DigestUtils.sha512(emailStr1))));
+						editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
+						editor.putBoolean(Keys.CONFIG_FIRST, false);
+						editor.commit();
+
+						launch(emailStr1);
+					} else {
+						// Password fields don't match.
+						Toast.makeText(getBaseContext(), R.string.passwords_not_equal, Toast.LENGTH_SHORT).show();
+						firstLogin(sharedPrefs, emailStr1);
+					}
 				} else {
-					// Password fields don't match.
-					Toast.makeText(getBaseContext(), R.string.passwords_not_equal, Toast.LENGTH_SHORT).show();
+					// Empty email and password
+					Toast.makeText(getApplicationContext(), R.string.enter_login_details, Toast.LENGTH_SHORT).show();
 					firstLogin(sharedPrefs, emailStr1);
 				}
 			}

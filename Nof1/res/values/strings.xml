@@ -16,7 +16,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <resources>
 
@@ -94,20 +94,23 @@
     <string name="login">Login</string>
     <string name="login_failed">Login failed</string>
     <string name="create_questionnaire">Create questionnaire</string>
+
     <string-array name="treatment_period">
-        <item >5</item>
-        <item >6</item>
-        <item >7</item>
-        <item >8</item>
-        <item >9</item>
-        <item >10</item>
-        <item >11</item>
-        <item >12</item>
-        <item >13</item>
-        <item >14</item>
-        <item >15</item>
-        <item >Other</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>Other</item>
     </string-array>
+
     <string name="include_comment">Include a comment box at the end of the questionnaire?</string>
+    <string name="enter_login_details">Please enter login details</string>
 
 </resources>
