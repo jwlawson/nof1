@@ -105,8 +105,13 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 		mFormBuilt = sp.getBoolean(Keys.CONFIG_BUILT, false);
 
-		Intent i = getIntent();
-		String email = i.getStringExtra(Keys.INTENT_EMAIL);
+		if (mFormBuilt) {
+			// If config is already filled in, allow user to go back
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		}
+
+		Intent intent = getIntent();
+		String email = intent.getStringExtra(Keys.INTENT_EMAIL);
 
 		mDocEmail = (EditText) findViewById(R.id.config_doctor_details_edit_doc_email);
 		mDocEmail.setText(email);
@@ -132,7 +137,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		// Otherwise if the value is valid, set spinner to "other" and use edittext
 		if (saved >= 0 && flag) {
 			spinLength.setSelection(spinLength.getCount() - 1);
-			mPeriodLength.setText("" + saved);
+			mPeriodLength.setText("" + saved); // string cat needed, otherwise android thinks its an R.id.*
 		}
 
 		mPeriodNumber = (EditText) findViewById(R.id.config_timescale_edit_number_periods);
@@ -217,6 +222,12 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		// If config not finished, don't want to allow user to go back
 	}
 
 	/** Create a random treatment plan, which must stay hidden but sent to the pharmacist. */
