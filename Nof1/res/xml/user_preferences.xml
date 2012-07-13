@@ -27,6 +27,11 @@
             android:key="prefs_patient_name"
             android:summary="@string/patien_name_summary"
             android:title="@string/patient_name" />
+        <uk.co.jwlawson.nof1.preferences.TimePreference
+            android:key="prefs_reminder_time"
+            android:dialogTitle="Questionnaire time"
+            android:summary="What time would you like to be reminded to fill in a questionnaire?"
+            android:title="Questionnaire time" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/doctor_preferences" >
         <PreferenceScreen
