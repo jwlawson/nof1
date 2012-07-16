@@ -51,7 +51,8 @@ public class Receiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
-		if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+		// intent.getAction() could be null
+		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
 			if (DEBUG) Log.d(TAG, "Boot_complete broadcast caught");
 
 			Intent i = new Intent(context, Scheduler.class);
