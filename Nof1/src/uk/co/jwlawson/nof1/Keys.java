@@ -80,10 +80,13 @@ public class Keys {
 	public static final String INTENT_BOOT = "uk.co.jwlawson.nof1.boot";
 
 	/** Intent key for alarm bool */
-	public static final String INTENT_ALRAM = "uk.co.jwlawson.nof1.alarm";
+	public static final String INTENT_ALARM = "uk.co.jwlawson.nof1.alarm";
 
 	/** Intent key for first run */
 	public static final String INTENT_FIRST = "uk.co.jwlawson.nof1.first";
+
+	/** Intent key for mins to reschedule */
+	public static final String INTENT_RESCHEDULE = "uk.co.jwlawson.nof1.reschedule";
 
 	/** SharedPrefernces holding config data */
 	public static final String CONFIG_NAME = "config";
@@ -126,5 +129,11 @@ public class Keys {
 
 	/** Shared preference key for the current treatment period in, starts at 1 */
 	public static final String SCHED_CUR_PERIOD = "cur_period";
+
+	public static final String SCHED_LAST_DAY = "last_day";
+
+	public static final String SCHED_LAST_DATE = "last_date";
+
+	public static final String SCHED_LAST_PERIOD = "last_period";
 
 }
