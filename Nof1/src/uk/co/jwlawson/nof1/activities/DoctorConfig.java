@@ -20,6 +20,8 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import java.util.Calendar;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -27,6 +29,7 @@ import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.fragments.CheckArray;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -106,6 +109,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	public DoctorConfig() {
 	}
 
+	@SuppressLint("NewApi")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -281,6 +285,11 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		}
 		editor.putBoolean(Keys.CONFIG_BUILT, mFormBuilt);
 
+		Calendar cal = Calendar.getInstance();
+		String date = cal.get(Calendar.DAY_OF_MONTH) + ":" + cal.get(Calendar.MONTH) + ":" + cal.get(Calendar.YEAR);
+		if (DEBUG) Log.d(TAG, "Saving current date: " + date);
+		editor.putString(Keys.CONFIG_START, date);
+
 		// save checked boxes
 		int[] arr = mArray.getSelected();
 		for (int i : arr) {
@@ -297,7 +306,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	@TargetApi(8)
 	private void backup() {
 		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			if (DEBUG) Log.d(TAG, "REquesting backup");
+			if (DEBUG) Log.d(TAG, "Requesting backup");
 			mBackupManager.dataChanged();
 		}
 	}

@@ -97,4 +97,7 @@ public class Keys {
 	/** Shared preferences key prefix for whether to fill in questionnaire on this day */
 	public static final String CONFIG_DAY = "day";
 
+	/** Shared preference key for start date */
+	public static final String CONFIG_START = "start";
+
 }
