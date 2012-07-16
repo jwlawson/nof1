@@ -46,6 +46,10 @@ public class RescheduleDialog extends SherlockDialogFragment {
 	private static final String TAG = "RescheduleDialog";
 	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 
+	private static final String ARGS_SPINNER = TAG + "Spinner";
+
+	private Spinner mSpinner;
+
 	public RescheduleDialog() {
 	}
 
@@ -69,19 +73,22 @@ public class RescheduleDialog extends SherlockDialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-		View view = getLayoutInflater(savedInstanceState).inflate(R.layout.dialog_reminder_entry, null, false);
+		View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_reminder_entry, null, false);
 
-		final Spinner spin = (Spinner) view.findViewById(R.id.reminder_dialog_spinner);
+		mSpinner = (Spinner) view.findViewById(R.id.reminder_dialog_spinner);
+		if (savedInstanceState != null) {
+			mSpinner.setSelection(savedInstanceState.getInt(ARGS_SPINNER));
+		}
 
 		builder.setView(view);
 		builder.setTitle(R.string.reschedule);
 		builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				if (DEBUG) Log.d(TAG, "Rescheduling in " + spin.getSelectedItem());
+				if (DEBUG) Log.d(TAG, "Rescheduling in " + mSpinner.getSelectedItem());
 				// Spinner options are 10 mins, 30mins, 1, 2, or 4 hours
 				int mins = 0;
-				switch (spin.getSelectedItemPosition()) {
+				switch (mSpinner.getSelectedItemPosition()) {
 				case 0:
 					mins = 10;
 					break;
@@ -112,5 +119,11 @@ public class RescheduleDialog extends SherlockDialogFragment {
 
 		return builder.create();
 
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(ARGS_SPINNER, mSpinner.getSelectedItemPosition());
 	}
 }
