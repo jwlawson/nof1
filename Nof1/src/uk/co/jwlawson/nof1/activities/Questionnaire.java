@@ -220,4 +220,12 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			finish();
 		}
 	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		// Dismiss any open dialogs to prevent leaks
+		RescheduleDialog dialog = (RescheduleDialog) getSupportFragmentManager().findFragmentByTag("dialog");
+		if (dialog != null) dialog.dismiss();
+	}
 }
