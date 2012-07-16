@@ -40,6 +40,9 @@ public class Keys {
 	/** Shared preference key for first time bool */
 	public static final String DEFAULT_FIRST = "prefs_first";
 
+	/** Shared preference key for back up bool */
+	public static final String DEFAULT_BACKUP = "prefs_backup";
+
 	/** Name of shared preferences holding the questions */
 	public static final String QUES_NAME = "questions";
 

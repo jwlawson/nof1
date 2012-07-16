@@ -32,6 +32,7 @@
             android:dialogTitle="Questionnaire time"
             android:summary="What time would you like to be reminded to fill in a questionnaire?"
             android:title="Questionnaire time" />
+        <CheckBoxPreference android:summary="Store a backup of the app data in the cloud?" android:summaryOn="Data will be backed up" android:summaryOff="Data will not be backed up" android:title="Backup data" android:key="prefs_backup"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/doctor_preferences" >
         <PreferenceScreen

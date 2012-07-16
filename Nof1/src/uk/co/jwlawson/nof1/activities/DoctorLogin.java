@@ -27,6 +27,7 @@ import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -54,6 +55,10 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 
 	private Dialog mDialog;
 
+	private BackupManager mBackupManager;
+
+	private boolean mBackup;
+
 	public DoctorLogin() {
 	}
 
@@ -61,6 +66,13 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		SharedPreferences sharedPrefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+		SharedPreferences userPrefs = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+		mBackup = userPrefs.getBoolean(Keys.DEFAULT_BACKUP, false);
+
+		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mBackupManager = new BackupManager(this);
+		}
 
 		if (sharedPrefs.getBoolean(Keys.CONFIG_FIRST, true)) {
 
@@ -110,6 +122,10 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 						editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
 						editor.putBoolean(Keys.CONFIG_FIRST, false);
 						editor.commit();
+
+						if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+							mBackupManager.dataChanged();
+						}
 
 						launch(emailStr1);
 					} else {

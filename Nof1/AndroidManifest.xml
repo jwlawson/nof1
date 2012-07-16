@@ -16,7 +16,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uk.co.jwlawson.nof1"
@@ -30,7 +30,13 @@
     <application
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme.Sherlock.Light.ForceOverflow" >
+        android:theme="@style/Theme.Sherlock.Light.ForceOverflow"
+        android:backupAgent="Backup"
+        android:restoreAnyVersion="false" >
+        <meta-data
+            android:name="com.google.android.backup.api_key"
+            android:value="AEdPqrEAAAAILXceBam-jxJYOgMQvg6TFIy7qQj2CNE1Tj_Kmg" />
+
         <activity
             android:name=".activities.FragActivity"
             android:exported="true"
@@ -38,6 +44,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -58,6 +65,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -69,6 +77,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -80,6 +89,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -91,6 +101,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
+
             <intent-filter>
             </intent-filter>
         </activity>
@@ -102,6 +113,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.DoctorConfig" />
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
@@ -114,9 +126,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
-            
         </activity>
-        
     </application>
 
 </manifest>

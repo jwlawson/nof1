@@ -27,8 +27,10 @@ import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.fragments.CheckArray;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -95,6 +97,11 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	private Dialog mDialog;
 
 	private CheckArray mArray;
+
+	/** Backup manager instance */
+	private BackupManager mBackupManager;
+
+	private boolean mBackup;
 
 	public DoctorConfig() {
 	}
@@ -175,6 +182,12 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 		mArray = (CheckArray) getSupportFragmentManager().findFragmentById(R.id.config_timescale_check_array);
 
+		SharedPreferences userPrefs = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+		mBackup = userPrefs.getBoolean(Keys.DEFAULT_BACKUP, false);
+
+		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mBackupManager = new BackupManager(this);
+		}
 	}
 
 	@Override
@@ -268,7 +281,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		}
 		editor.putBoolean(Keys.CONFIG_BUILT, mFormBuilt);
 
-		// TODO save checked boxes
+		// save checked boxes
 		int[] arr = mArray.getSelected();
 		for (int i : arr) {
 			editor.putBoolean(Keys.CONFIG_DAY + i, true);
@@ -276,6 +289,16 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 		// Save changes
 		editor.commit();
+		// Ask for backup
+		backup();
+	}
+
+	/** Helper to ask for backup, if supported */
+	@TargetApi(8)
+	private void backup() {
+		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mBackupManager.dataChanged();
+		}
 	}
 
 	/** email the information to the doctor and pharmacist */
@@ -333,6 +356,8 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 					}
 					// Save changes
 					editor.commit();
+					// Request backup
+					backup();
 				} else {
 					// Incorrect login
 					Toast.makeText(getApplicationContext(), "Incorrect login details", Toast.LENGTH_SHORT).show();
