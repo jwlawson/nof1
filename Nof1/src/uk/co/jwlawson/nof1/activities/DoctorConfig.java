@@ -297,6 +297,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	@TargetApi(8)
 	private void backup() {
 		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			if (DEBUG) Log.d(TAG, "REquesting backup");
 			mBackupManager.dataChanged();
 		}
 	}
