@@ -20,8 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
-import java.util.Calendar;
-
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -29,6 +27,7 @@ import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.fragments.CheckArray;
+import uk.co.jwlawson.nof1.fragments.StartDate;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -104,7 +103,11 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	/** Backup manager instance */
 	private BackupManager mBackupManager;
 
+	/** True if want backup */
 	private boolean mBackup;
+
+	/** StartDate fragment instance */
+	private StartDate mDate;
 
 	public DoctorConfig() {
 	}
@@ -185,6 +188,8 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		});
 
 		mArray = (CheckArray) getSupportFragmentManager().findFragmentById(R.id.config_timescale_check_array);
+
+		mDate = (StartDate) getSupportFragmentManager().findFragmentById(R.id.config_doctor_date_frag);
 
 		SharedPreferences userPrefs = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
 		mBackup = userPrefs.getBoolean(Keys.DEFAULT_BACKUP, false);
@@ -285,10 +290,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		}
 		editor.putBoolean(Keys.CONFIG_BUILT, mFormBuilt);
 
-		Calendar cal = Calendar.getInstance();
-		String date = cal.get(Calendar.DAY_OF_MONTH) + ":" + cal.get(Calendar.MONTH) + ":" + cal.get(Calendar.YEAR);
-		if (DEBUG) Log.d(TAG, "Saving current date: " + date);
-		editor.putString(Keys.CONFIG_START, date);
+		editor.putString(Keys.CONFIG_START, mDate.getDate());
 
 		// save checked boxes
 		int[] arr = mArray.getSelected();
