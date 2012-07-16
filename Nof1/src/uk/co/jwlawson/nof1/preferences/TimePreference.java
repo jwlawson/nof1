@@ -36,7 +36,7 @@ import android.widget.TimePicker;
 public class TimePreference extends DialogPreference {
 
 	private static final String TAG = "Time Preference";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false && BuildConfig.DEBUG;
 
 	private int mLastHour = 0;
 	private int mLastMinute = 0;
