@@ -73,7 +73,7 @@ public class Scheduler extends Service {
 			Thread thread = new Thread(mBootSchedule);
 			thread.start();
 
-		} else if (intent.getBooleanExtra(Keys.INTENT_ALRAM, false)) {
+		} else if (intent.getBooleanExtra(Keys.INTENT_ALARM, false)) {
 			if (DEBUG) Log.d(TAG, "Scheduler started to schedule new alarm");
 
 			Thread thread = new Thread(mNotiSchedule);
@@ -83,6 +83,18 @@ public class Scheduler extends Service {
 			if (DEBUG) Log.d(TAG, "Scheduler run for the first time");
 
 			Thread thread = new Thread(mFirstRun);
+			thread.start();
+
+		} else if (intent.hasExtra(Keys.INTENT_RESCHEDULE)) {
+			// Reschedule alarm to go again
+			final int mins = intent.getIntExtra(Keys.INTENT_RESCHEDULE, 0);
+
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					reschedule(mins);
+				}
+			});
 			thread.start();
 
 		}
@@ -98,6 +110,41 @@ public class Scheduler extends Service {
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
+	}
+
+	public void reschedule(int mins) {
+		// Work out when next to set the alarm, set it and save in preferences
+		SharedPreferences schedPrefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
+		SharedPreferences.Editor schedEdit = schedPrefs.edit();
+
+		// Roll back settings in preferences
+		schedEdit.putInt(Keys.SCHED_NEXT_DAY, schedPrefs.getInt(Keys.SCHED_LAST_DAY, 0));
+		schedEdit.putInt(Keys.SCHED_CUR_PERIOD, schedPrefs.getInt(Keys.SCHED_LAST_PERIOD, 0));
+		schedEdit.putString(Keys.SCHED_NEXT_DATE, schedPrefs.getString(Keys.SCHED_LAST_DATE, null));
+
+		// Get the new date to set the alarm on
+		String lastDate = schedPrefs.getString(Keys.SCHED_NEXT_DATE, null);
+		String[] lastArr = lastDate.split(":");
+		int[] lastInt = new int[] { Integer.parseInt(lastArr[0]), Integer.parseInt(lastArr[1]), Integer.parseInt(lastArr[2]) };
+		Calendar cal = Calendar.getInstance();
+		cal.set(lastInt[2], lastInt[1], lastInt[0]);
+		cal.add(Calendar.MINUTE, mins);
+
+		StringBuilder sb = new StringBuilder();
+		sb.append(cal.get(Calendar.DAY_OF_MONTH)).append(":");
+		sb.append(cal.get(Calendar.MONTH)).append(":");
+		sb.append(cal.get(Calendar.YEAR));
+
+		schedEdit.putString(Keys.SCHED_NEXT_DATE, sb.toString());
+
+		schedEdit.commit();
+		backup();
+
+		// Finally, use the new values to set an alarm
+		setAlarmFromPrefs();
+
+		// Close service once done
+		Scheduler.this.stopSelf();
 	}
 
 	/** Load next date to set alarm from preferences and set alarm for then */
@@ -123,7 +170,7 @@ public class Scheduler extends Service {
 		cal.set(dateInt[2], dateInt[1], dateInt[0], timeInt[0], timeInt[1]);
 
 		Intent intent = new Intent(Scheduler.this, Receiver.class);
-		intent.putExtra(Keys.INTENT_ALRAM, true);
+		intent.putExtra(Keys.INTENT_ALARM, true);
 
 		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -131,6 +178,7 @@ public class Scheduler extends Service {
 		if (DEBUG) Log.d(TAG, "Scheduled alarm for: " + dateInt[2] + " " + dateInt[1] + " " + dateInt[0] + " " + timeInt[0] + " " + timeInt[1]);
 	}
 
+	/** Load first date to set alarm from preferences and set alarm for then */
 	private void setFirstAlarm() {
 		SharedPreferences sp = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 
@@ -186,12 +234,20 @@ public class Scheduler extends Service {
 			if (nextDay < 0) {
 				throw new RuntimeException("Invalid config settings");
 			}
+			int period = schedPrefs.getInt(Keys.SCHED_CUR_PERIOD, 1);
 			if (nextDay < lastDay) {
 				// Moving into next treatment period
-				schedEdit.putInt(Keys.SCHED_CUR_PERIOD, schedPrefs.getInt(Keys.SCHED_CUR_PERIOD, 1));
+				if (period + 1 > configPrefs.getInt(Keys.CONFIG_NUMBER_PERIODS, Integer.MAX_VALUE)) {
+					// TODO Finished trial!
+					return;
+				}
+				schedEdit.putInt(Keys.SCHED_CUR_PERIOD, period + 1);
 			}
+			schedEdit.putInt(Keys.SCHED_LAST_PERIOD, period);
+
 			// Save next day to set alarm
 			schedEdit.putInt(Keys.SCHED_NEXT_DAY, nextDay);
+			schedEdit.putInt(Keys.SCHED_LAST_DAY, lastDay);
 
 			// Get the new date to set the alarm on
 			String lastDate = schedPrefs.getString(Keys.SCHED_NEXT_DATE, null);
@@ -207,6 +263,7 @@ public class Scheduler extends Service {
 			sb.append(cal.get(Calendar.YEAR));
 
 			schedEdit.putString(Keys.SCHED_NEXT_DATE, sb.toString());
+			schedEdit.putString(Keys.SCHED_LAST_DATE, lastDate);
 
 			schedEdit.commit();
 			backup();

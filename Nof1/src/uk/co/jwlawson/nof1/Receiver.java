@@ -28,6 +28,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -59,7 +60,7 @@ public class Receiver extends BroadcastReceiver {
 			i.putExtra(Keys.INTENT_BOOT, true);
 			context.startService(i);
 
-		} else if (intent.getBooleanExtra(Keys.INTENT_ALRAM, false)) {
+		} else if (intent.getBooleanExtra(Keys.INTENT_ALARM, false)) {
 			if (DEBUG) Log.d(TAG, "AlarmManager alarm caught");
 
 			// Show notification
@@ -68,7 +69,7 @@ public class Receiver extends BroadcastReceiver {
 			// Pass to scheduler
 			Intent i = new Intent(context, Scheduler.class);
 			i.putExtra(Keys.INTENT_BOOT, false);
-			i.putExtra(Keys.INTENT_ALRAM, true);
+			i.putExtra(Keys.INTENT_ALARM, true);
 			context.startService(i);
 
 		} else if (intent.getBooleanExtra(Keys.INTENT_FIRST, false)) {
@@ -80,7 +81,7 @@ public class Receiver extends BroadcastReceiver {
 			// Pass to scheduler
 			Intent i = new Intent(context, Scheduler.class);
 			i.putExtra(Keys.INTENT_BOOT, false);
-			i.putExtra(Keys.INTENT_ALRAM, true);
+			i.putExtra(Keys.INTENT_ALARM, true); // Really want to use INTENT_ALARM, not INTENT_FIRST
 			context.startService(i);
 		}
 	}
@@ -97,21 +98,24 @@ public class Receiver extends BroadcastReceiver {
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		builder.setContentIntent(pi).setContentTitle("N-of-1 Trials").setContentText("Please fill in the questionnnaire").setAutoCancel(true)
-				.setSmallIcon(R.drawable.ic_noti);
+				.setSmallIcon(R.drawable.ic_noti).setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_noti));
 
 		if (sp.getBoolean(Keys.DEFAULT_LOUD, false)) {
 			// Notification makes noise
 			builder.setDefaults(Notification.DEFAULT_SOUND);
+			if (DEBUG) Log.d(TAG, "Loud Notification");
 		}
 
 		if (sp.getBoolean(Keys.DEFAULT_FLASH, false)) {
 			// Notification to flash
 			builder.setDefaults(Notification.DEFAULT_LIGHTS);
+			if (DEBUG) Log.d(TAG, "Flashy Notification");
 		}
 
 		if (sp.getBoolean(Keys.DEFAULT_VIBE, false)) {
 			// Notification to vibrate
 			builder.setDefaults(Notification.DEFAULT_VIBRATE);
+			if (DEBUG) Log.d(TAG, "Vibrating Notification");
 		}
 
 		Notification noti = builder.getNotification();
@@ -134,21 +138,25 @@ public class Receiver extends BroadcastReceiver {
 		PendingIntent pi = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-		builder.setContentIntent(pi).setContentTitle("N-of-1 Trials").setContentText("Your trial is due to start today").setAutoCancel(true);
+		builder.setContentIntent(pi).setContentTitle("N-of-1 Trials").setContentText("Your trial is due to start today").setAutoCancel(true)
+				.setSmallIcon(R.drawable.ic_noti);
 
 		if (sp.getBoolean(Keys.DEFAULT_LOUD, false)) {
 			// Notification makes noise
 			builder.setDefaults(Notification.DEFAULT_SOUND);
+			if (DEBUG) Log.d(TAG, "Loud Notification");
 		}
 
 		if (sp.getBoolean(Keys.DEFAULT_FLASH, false)) {
 			// Notification to flash
 			builder.setDefaults(Notification.DEFAULT_LIGHTS);
+			if (DEBUG) Log.d(TAG, "Flashy Notification");
 		}
 
 		if (sp.getBoolean(Keys.DEFAULT_VIBE, false)) {
 			// Notification to vibrate
 			builder.setDefaults(Notification.DEFAULT_VIBRATE);
+			if (DEBUG) Log.d(TAG, "Vibrating Notification");
 		}
 
 		Notification noti = builder.getNotification();
