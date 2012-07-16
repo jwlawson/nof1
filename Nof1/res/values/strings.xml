@@ -111,5 +111,7 @@
     <string name="config_timescale_check_prefix">Day </string>
     <string name="invalid_period_input">Invalid input type for number of treatment periods</string>
     <string name="invalid_length_input">Invalid input type for length of treatment periods</string>
+    <string name="start_today">Start the trial today?</string>
+    <string name="choose_date">Choose the start date…</string>
 
 </resources>
