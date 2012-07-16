@@ -26,9 +26,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.Scheduler;
 import uk.co.jwlawson.nof1.fragments.CheckArray;
 import uk.co.jwlawson.nof1.fragments.StartDate;
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -112,7 +112,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	public DoctorConfig() {
 	}
 
-	@SuppressLint("NewApi")
+	@TargetApi(8)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -216,6 +216,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 				save();
 				makeTreatmentPlan();
 				email();
+				runScheduler();
 				setResult(RESULT_OK);
 				finish();
 			} else {
@@ -256,6 +257,13 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	public void onBackPressed() {
 		super.onBackPressed();
 		// If config not finished, don't want to allow user to go back
+	}
+
+	/** Run the scheduler for the first time */
+	private void runScheduler() {
+		Intent intent = new Intent(this, Scheduler.class);
+		intent.putExtra(Keys.INTENT_FIRST, true);
+		startService(intent);
 	}
 
 	/** Create a random treatment plan, which must stay hidden but sent to the pharmacist. */

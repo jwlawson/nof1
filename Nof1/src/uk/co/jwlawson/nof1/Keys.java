@@ -43,6 +43,15 @@ public class Keys {
 	/** Shared preference key for back up bool */
 	public static final String DEFAULT_BACKUP = "prefs_backup";
 
+	/** Shared preference key for whether to vibrate on notification */
+	public static final String DEFAULT_VIBE = "prefs_vibrate";
+
+	/** Shared preference key for whether to make noise on notification */
+	public static final String DEFAULT_LOUD = "prefs_loud";
+
+	/** Shared preference key for whether to flash lights on notification */
+	public static final String DEFAULT_FLASH = "prefs_flash";
+
 	/** Name of shared preferences holding the questions */
 	public static final String QUES_NAME = "questions";
 
@@ -62,13 +71,19 @@ public class Keys {
 	public static final String COMMENT = "comment";
 
 	/** Intent key for preview mode */
-	public static final String INTENT_PREVIEW = "preview";
+	public static final String INTENT_PREVIEW = "uk.co.jwlawson.nof1.preview";
 
 	/** Intent key for email string */
-	public static final String INTENT_EMAIL = "email";
+	public static final String INTENT_EMAIL = "uk.co.jwlawson.nof1.email";
 
 	/** Intent key for started on boot */
-	public static final String INTENT_BOOT = "boot";
+	public static final String INTENT_BOOT = "uk.co.jwlawson.nof1.boot";
+
+	/** Intent key for alarm bool */
+	public static final String INTENT_ALRAM = "uk.co.jwlawson.nof1.alarm";
+
+	/** Intent key for first run */
+	public static final String INTENT_FIRST = "uk.co.jwlawson.nof1.first";
 
 	/** SharedPrefernces holding config data */
 	public static final String CONFIG_NAME = "config";
@@ -99,5 +114,17 @@ public class Keys {
 
 	/** Shared preference key for start date */
 	public static final String CONFIG_START = "start";
+
+	/** Shared preferences name for scheduler preferences */
+	public static final String SCHED_NAME = "config";
+
+	/** Shared preferences key for next date to set notification */
+	public static final String SCHED_NEXT_DATE = "next_date";
+
+	/** Shared preference key for the number of days into treatment period the next notification is */
+	public static final String SCHED_NEXT_DAY = "next_day";
+
+	/** Shared preference key for the current treatment period in, starts at 1 */
+	public static final String SCHED_CUR_PERIOD = "cur_period";
 
 }
