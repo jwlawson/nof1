@@ -23,6 +23,7 @@ package uk.co.jwlawson.nof1.activities;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import android.annotation.TargetApi;
@@ -35,6 +36,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,6 +53,9 @@ import com.actionbarsherlock.app.SherlockActivity;
  * 
  */
 public class DoctorLogin extends SherlockActivity implements DialogInterface.OnCancelListener {
+
+	private static final String TAG = "DoctorLogin";
+	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 
 	private static final int THEME = R.style.dialog_theme;
 
@@ -109,6 +114,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 				String passStr = pass.getText().toString();
 				String pass2Str = pass2.getText().toString();
 				String emailStr1 = email.getText().toString();
+				if (DEBUG) Log.d(TAG, "Email entered: " + emailStr1);
 
 				// Check fields aren't empty
 				if (passStr != "" && emailStr1 != "") {
@@ -116,7 +122,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 					if (passStr.equals(pass2Str)) {
 
 						// Hash the email and password, then add to
-						// sharedpreferences.
+						// shared preferences.
 						// This will be what we check against at further
 						// logins.
 						SharedPreferences.Editor editor = sharedPrefs.edit();
