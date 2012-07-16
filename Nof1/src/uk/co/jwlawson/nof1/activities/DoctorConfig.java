@@ -436,6 +436,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			if (item.equalsIgnoreCase("other")) {
 				mPeriodLength.setVisibility(View.VISIBLE);
 				mIntPeriodLength = -1;
+				mArray.setNumber(Integer.parseInt(mPeriodLength.getText().toString()));
 			} else {
 				mPeriodLength.setVisibility(View.GONE);
 				mIntPeriodLength = Integer.parseInt(item);
