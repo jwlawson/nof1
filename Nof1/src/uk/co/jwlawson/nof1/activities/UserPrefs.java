@@ -23,10 +23,13 @@ package uk.co.jwlawson.nof1.activities;
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import android.annotation.TargetApi;
 import android.app.backup.BackupManager;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.util.Log;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
@@ -54,9 +57,17 @@ public class UserPrefs extends SherlockPreferenceActivity {
 		// Load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.user_preferences);
 
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+			if (DEBUG) Log.d(TAG, "Pre-Froyo phone, removing backup option");
+			Preference backup = findPreference(Keys.DEFAULT_BACKUP);
+
+			((PreferenceCategory) findPreference("category_general")).removePreference(backup);
+		}
+
 		if (DEBUG) Log.d(TAG, "Preferences loaded");
 	}
 
+	@TargetApi(8)
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();

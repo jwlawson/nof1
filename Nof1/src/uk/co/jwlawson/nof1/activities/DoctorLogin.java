@@ -25,6 +25,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.backup.BackupManager;
@@ -62,6 +63,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 	public DoctorLogin() {
 	}
 
+	@TargetApi(8)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -123,9 +125,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 						editor.putBoolean(Keys.CONFIG_FIRST, false);
 						editor.commit();
 
-						if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-							mBackupManager.dataChanged();
-						}
+						backup();
 
 						launch(emailStr1);
 					} else {
@@ -186,6 +186,13 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 		i.putExtra(Keys.INTENT_EMAIL, emailStr);
 		startActivity(i);
 		finish();
+	}
+
+	@TargetApi(8)
+	private void backup() {
+		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mBackupManager.dataChanged();
+		}
 	}
 
 	/** Nasty hack to ensure text in alertdialog is readable */
