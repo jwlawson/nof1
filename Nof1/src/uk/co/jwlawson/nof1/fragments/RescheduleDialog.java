@@ -24,15 +24,14 @@ import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.Scheduler;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Spinner;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
@@ -50,7 +49,14 @@ public class RescheduleDialog extends SherlockDialogFragment {
 
 	private Spinner mSpinner;
 
+	private OnRescheduleListener mListener;
+
 	public RescheduleDialog() {
+	}
+
+	public interface OnRescheduleListener {
+
+		public void onReschedule(boolean rescheduled);
 	}
 
 	public static RescheduleDialog newInstance() {
@@ -60,13 +66,13 @@ public class RescheduleDialog extends SherlockDialogFragment {
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return super.onCreateView(inflater, container, savedInstanceState);
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			mListener = (OnRescheduleListener) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.getClass().getName() + " must implement OnRescheduleListener");
+		}
 	}
 
 	@Override
@@ -108,11 +114,14 @@ public class RescheduleDialog extends SherlockDialogFragment {
 				Intent intent = new Intent(getActivity(), Scheduler.class);
 				intent.putExtra(Keys.INTENT_RESCHEDULE, mins);
 				getActivity().startService(intent);
+
+				mListener.onReschedule(true);
 			}
 		});
 		builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				mListener.onReschedule(false);
 				dialog.dismiss();
 			}
 		});

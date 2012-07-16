@@ -52,7 +52,7 @@ import com.actionbarsherlock.view.Window;
  * @author John Lawson
  * 
  */
-public class Questionnaire extends SherlockFragmentActivity {
+public class Questionnaire extends SherlockFragmentActivity implements RescheduleDialog.OnRescheduleListener {
 
 	private static final String TAG = "Questionnaire";
 	private static final boolean DEBUG = true;
@@ -132,8 +132,6 @@ public class Questionnaire extends SherlockFragmentActivity {
 			RescheduleDialog dialog = RescheduleDialog.newInstance();
 			dialog.show(getSupportFragmentManager(), "dialog");
 
-			setResult(RESULT_CANCELED);
-			finish();
 		}
 	}
 
@@ -213,5 +211,13 @@ public class Questionnaire extends SherlockFragmentActivity {
 			setSupportProgressBarIndeterminateVisibility(false);
 		}
 
+	}
+
+	@Override
+	public void onReschedule(boolean rescheduled) {
+		if (rescheduled) {
+			setResult(RESULT_CANCELED);
+			finish();
+		}
 	}
 }
