@@ -120,5 +120,9 @@
     <string name="vibrate_off">Notifications will not cause your phone to vibrate</string>
     <string name="flash_notifications">Flash notification</string>
     <string name="loud_notification">Play sound on notification</string>
+    <string name="flash_on">Lights will flash on notification</string>
+    <string name="flash_off">Lights will not flash on notification</string>
+    <string name="loud_on">Notification will play sound</string>
+    <string name="loud_off">Notification will not play sound</string>
 
 </resources>

@@ -42,17 +42,23 @@
             android:title="Backup data" />
     </PreferenceCategory>
     <PreferenceCategory>
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="prefs_vibrate"
             android:summaryOff="@string/vibrate_off"
             android:summaryOn="@string/vibrate_on"
+            android:switchTextOff="@string/off"
+            android:switchTextOn="@string/on"
             android:title="@string/vibrate_notifications" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:key="prefs_flash"
-            android:title="@string/flash_notifications" android:summaryOn="@string/flash_on" android:summaryOff="@string/flash_off"/>
-            <CheckBoxPreference
+            android:switchTextOff="@string/off"
+            android:switchTextOn="@string/on"
+            android:title="@string/flash_notifications" />
+            <SwitchPreference
             android:key="prefs_loud"
-            android:title="@string/loud_notification" android:summaryOn="@string/loud_on" android:summaryOff="@string/loud_off"/>
+            android:switchTextOff="@string/off"
+            android:switchTextOn="@string/on"
+            android:title="@string/loud_notification" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/doctor_preferences" >
         <PreferenceScreen
