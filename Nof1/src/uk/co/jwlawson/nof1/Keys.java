@@ -67,6 +67,9 @@ public class Keys {
 	/** Intent key for email string */
 	public static final String INTENT_EMAIL = "email";
 
+	/** Intent key for started on boot */
+	public static final String INTENT_BOOT = "boot";
+
 	/** SharedPrefernces holding config data */
 	public static final String CONFIG_NAME = "config";
 

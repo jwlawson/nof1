@@ -26,6 +26,7 @@
     <uses-sdk
         android:minSdkVersion="7"
         android:targetSdkVersion="16" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -127,6 +128,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
         </activity>
+        <receiver android:name=".Receiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+        <service android:name=".Scheduler">
+            <intent-filter></intent-filter>
+        </service>
     </application>
 
 </manifest>
