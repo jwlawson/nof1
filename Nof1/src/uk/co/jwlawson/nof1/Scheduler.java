@@ -59,6 +59,17 @@ public class Scheduler extends Service {
 
 		if (intent.getBooleanExtra(Keys.INTENT_BOOT, false)) {
 			if (DEBUG) Log.d(TAG, "Scheduler started after boot");
+
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					// Do some stuff
+
+					// Close service once done
+					Scheduler.this.stopSelf();
+				}
+			});
+			thread.start();
 		}
 		return super.onStartCommand(intent, flags, startId);
 	}
