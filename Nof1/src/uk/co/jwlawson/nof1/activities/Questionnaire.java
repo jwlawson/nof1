@@ -30,6 +30,7 @@ import uk.co.jwlawson.nof1.fragments.CommentFragment;
 import uk.co.jwlawson.nof1.fragments.NumberFragment;
 import uk.co.jwlawson.nof1.fragments.QuestionFragment;
 import uk.co.jwlawson.nof1.fragments.RadioFragment;
+import uk.co.jwlawson.nof1.fragments.RescheduleDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -127,7 +128,9 @@ public class Questionnaire extends SherlockFragmentActivity {
 			setResult(RESULT_BACK);
 			finish();
 		} else {
-			// TODO reschedule
+			// Show reschedule dialog
+			RescheduleDialog dialog = RescheduleDialog.newInstance();
+			dialog.show(getSupportFragmentManager(), "dialog");
 		}
 	}
 
