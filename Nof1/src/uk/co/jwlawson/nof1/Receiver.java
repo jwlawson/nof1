@@ -96,7 +96,8 @@ public class Receiver extends BroadcastReceiver {
 		PendingIntent pi = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-		builder.setContentIntent(pi).setContentTitle("N-of-1 Trials").setContentText("Please fill in the questionnnaire").setAutoCancel(true);
+		builder.setContentIntent(pi).setContentTitle("N-of-1 Trials").setContentText("Please fill in the questionnnaire").setAutoCancel(true)
+				.setSmallIcon(R.drawable.ic_noti);
 
 		if (sp.getBoolean(Keys.DEFAULT_LOUD, false)) {
 			// Notification makes noise
@@ -116,6 +117,8 @@ public class Receiver extends BroadcastReceiver {
 		Notification noti = builder.getNotification();
 
 		((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(0x100, noti);
+
+		if (DEBUG) Log.d(TAG, "Notification posted");
 
 	}
 
@@ -151,6 +154,8 @@ public class Receiver extends BroadcastReceiver {
 		Notification noti = builder.getNotification();
 
 		((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(0x100, noti);
+
+		if (DEBUG) Log.d(TAG, "Notification posted");
 
 	}
 
