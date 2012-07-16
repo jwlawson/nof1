@@ -134,7 +134,6 @@
             </intent-filter>
         </receiver>
         <service android:name=".Scheduler">
-            <intent-filter></intent-filter>
         </service>
     </application>
 
