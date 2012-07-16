@@ -41,7 +41,7 @@
             android:summaryOn="Data will be backed up"
             android:title="Backup data" />
     </PreferenceCategory>
-    <PreferenceCategory>
+    <PreferenceCategory android:title="@string/notifications">
         <SwitchPreference
             android:key="prefs_vibrate"
             android:summaryOff="@string/vibrate_off"
@@ -53,12 +53,12 @@
             android:key="prefs_flash"
             android:switchTextOff="@string/off"
             android:switchTextOn="@string/on"
-            android:title="@string/flash_notifications" />
+            android:title="@string/flash_notifications" android:summaryOn="@string/flash_on" android:summaryOff="@string/flash_off"/>
             <SwitchPreference
             android:key="prefs_loud"
             android:switchTextOff="@string/off"
             android:switchTextOn="@string/on"
-            android:title="@string/loud_notification" />
+            android:title="@string/loud_notification" android:summaryOn="@string/loud_on" android:summaryOff="@string/loud_off"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/doctor_preferences" >
         <PreferenceScreen

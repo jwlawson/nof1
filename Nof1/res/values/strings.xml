@@ -115,14 +115,15 @@
     <string name="choose_date">Choose the start date…</string>
     <string name="on">On</string>
     <string name="off">Off</string>
-    <string name="vibrate_notifications">Vibrate on notification</string>
+    <string name="vibrate_notifications">Vibrate</string>
     <string name="vibrate_on">Notifications will cause your phone to vibrate</string>
     <string name="vibrate_off">Notifications will not cause your phone to vibrate</string>
-    <string name="flash_notifications">Flash notification</string>
-    <string name="loud_notification">Play sound on notification</string>
-    <string name="flash_on">Lights will flash on notification</string>
-    <string name="flash_off">Lights will not flash on notification</string>
+    <string name="flash_notifications">Flash</string>
+    <string name="loud_notification">Play sound</string>
+    <string name="flash_on">Notifications will flash lights</string>
+    <string name="flash_off">Notifications will not flash lights</string>
     <string name="loud_on">Notification will play sound</string>
     <string name="loud_off">Notification will not play sound</string>
+    <string name="notifications">Notifications</string>
 
 </resources>

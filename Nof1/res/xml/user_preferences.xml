@@ -41,7 +41,7 @@
             android:summaryOn="Data will be backed up"
             android:title="Backup data" />
     </PreferenceCategory>
-    <PreferenceCategory>
+    <PreferenceCategory android:title="@string/notifications">
         <CheckBoxPreference
             android:key="prefs_vibrate"
             android:summaryOff="@string/vibrate_off"
