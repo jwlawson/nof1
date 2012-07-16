@@ -131,6 +131,9 @@ public class Questionnaire extends SherlockFragmentActivity {
 			// Show reschedule dialog
 			RescheduleDialog dialog = RescheduleDialog.newInstance();
 			dialog.show(getSupportFragmentManager(), "dialog");
+
+			setResult(RESULT_CANCELED);
+			finish();
 		}
 	}
 
