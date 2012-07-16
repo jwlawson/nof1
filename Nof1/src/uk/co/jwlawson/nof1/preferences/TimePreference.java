@@ -59,8 +59,15 @@ public class TimePreference extends DialogPreference {
 		this(ctxt, null, 0);
 	}
 
+	// This is what gets called by XML inflation, defStyle is not 0
+	// So don't call the 3 param constructor - doesn't work
 	public TimePreference(Context ctxt, AttributeSet attrs) {
-		this(ctxt, attrs, 0);
+		super(ctxt, attrs);
+
+		setPositiveButtonText("Set");
+		setNegativeButtonText("Cancel");
+
+		if (DEBUG) Log.d(TAG, "TimePref created");
 	}
 
 	public TimePreference(Context ctxt, AttributeSet attrs, int defStyle) {
