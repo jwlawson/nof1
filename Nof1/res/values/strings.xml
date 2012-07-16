@@ -113,5 +113,12 @@
     <string name="invalid_length_input">Invalid input type for length of treatment periods</string>
     <string name="start_today">Start the trial today?</string>
     <string name="choose_date">Choose the start date…</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="vibrate_notifications">Vibrate on notification</string>
+    <string name="vibrate_on">Notifications will cause your phone to vibrate</string>
+    <string name="vibrate_off">Notifications will not cause your phone to vibrate</string>
+    <string name="flash_notifications">Flash notification</string>
+    <string name="loud_notification">Play sound on notification</string>
 
 </resources>
