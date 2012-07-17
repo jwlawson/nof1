@@ -43,7 +43,7 @@ public class MainActivity extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		populateDatabase();
+		// populateDatabase();
 
 		Button btnNotification = (Button) findViewById(R.id.main_btn_noti);
 		btnNotification.setOnClickListener(new OnClickListener() {
@@ -127,6 +127,10 @@ public class MainActivity extends SherlockActivity {
 
 	private void populateDatabase() {
 		SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+
+		if (!sp.contains(Keys.QUES_NUMBER_QUESTIONS)) {
+			sp.edit().putInt(Keys.QUES_NUMBER_QUESTIONS, 10).commit();
+		}
 
 		Random rand = new Random();
 		DataSource source = new DataSource(this);

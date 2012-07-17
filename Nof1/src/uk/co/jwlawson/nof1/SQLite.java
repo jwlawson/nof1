@@ -50,7 +50,7 @@ public class SQLite extends SQLiteOpenHelper {
 	private int mNumQuestion;
 
 	private static final String DATABASE_NAME = "info.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	/** Construct database with custom name and version number */
 	public SQLite(Context context) {
