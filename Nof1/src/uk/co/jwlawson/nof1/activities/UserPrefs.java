@@ -20,8 +20,17 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import uk.co.jwlawson.nof1.BuildConfig;
+import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import android.annotation.TargetApi;
+import android.app.backup.BackupManager;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.PreferenceCategory;
+import android.util.Log;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
 
@@ -34,6 +43,9 @@ import com.actionbarsherlock.app.SherlockPreferenceActivity;
  */
 public class UserPrefs extends SherlockPreferenceActivity {
 
+	private static final String TAG = "User Prefs";
+	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+
 	public UserPrefs() {
 	}
 
@@ -44,6 +56,34 @@ public class UserPrefs extends SherlockPreferenceActivity {
 
 		// Load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.user_preferences);
+
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+			if (DEBUG) Log.d(TAG, "Pre-Froyo phone, removing backup option");
+			Preference backup = findPreference(Keys.DEFAULT_BACKUP);
+
+			((PreferenceCategory) findPreference("category_general")).removePreference(backup);
+		}
+
+		if (DEBUG) Log.d(TAG, "Preferences loaded");
 	}
 
+	@TargetApi(8)
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+		if (!sp.contains(Keys.DEFAULT_FIRST)) {
+			// TODO First time run - schedule first notification
+
+			// Add key, to prevent this running again
+			sp.edit().putBoolean(Keys.DEFAULT_FIRST, true).commit();
+		}
+
+		if (sp.getBoolean(Keys.DEFAULT_BACKUP, false) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			BackupManager bm = new BackupManager(this);
+			bm.dataChanged();
+			if (DEBUG) Log.d(TAG, "Requesting backup");
+		}
+	}
 }

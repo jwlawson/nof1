@@ -35,6 +35,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/config_doctor_details" />
+
+        <fragment
+            android:id="@+id/config_doctor_date_frag"
+            android:name="uk.co.jwlawson.nof1.fragments.StartDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/start_date" />
 
         <include
             android:layout_width="match_parent"

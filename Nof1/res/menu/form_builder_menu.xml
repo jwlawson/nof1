@@ -17,16 +17,22 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <item
+    <item android:id="@+id/menu_form_builder_done" android:icon="@drawable/ic_action_done" android:showAsAction="always|withText" android:title="Done"></item><item
         android:id="@+id/menu_form_builder_add"
         android:icon="@drawable/ic_action_add"
         android:showAsAction="always|withText"
         android:title="Add">
     </item>
-    <item android:id="@+id/menu_form_builder_preview" android:title="@string/preview" android:icon="@drawable/ic_action_preview" android:showAsAction="ifRoom|withText"></item>
+    <item
+        android:id="@+id/menu_form_builder_preview"
+        android:icon="@drawable/ic_action_preview"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/preview">
+    </item>
+    
 
 </menu>

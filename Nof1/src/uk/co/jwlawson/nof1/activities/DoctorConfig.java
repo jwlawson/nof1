@@ -26,7 +26,13 @@ import org.apache.commons.codec.digest.DigestUtils;
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.Scheduler;
+import uk.co.jwlawson.nof1.fragments.CheckArray;
+import uk.co.jwlawson.nof1.fragments.StartDate;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -89,9 +95,24 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	/** Layout containing timescale config info */
 	private RelativeLayout mTimescaleLayout;
 
+	/** Most recently shown dialog. Kept so it can be closed if activity detroyed */
+	private Dialog mDialog;
+
+	private CheckArray mArray;
+
+	/** Backup manager instance */
+	private BackupManager mBackupManager;
+
+	/** True if want backup */
+	private boolean mBackup;
+
+	/** StartDate fragment instance */
+	private StartDate mDate;
+
 	public DoctorConfig() {
 	}
 
+	@TargetApi(8)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -101,8 +122,13 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 		mFormBuilt = sp.getBoolean(Keys.CONFIG_BUILT, false);
 
-		Intent i = getIntent();
-		String email = i.getStringExtra(Keys.INTENT_EMAIL);
+		if (mFormBuilt) {
+			// If config is already filled in, allow user to go back
+			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		}
+
+		Intent intent = getIntent();
+		String email = intent.getStringExtra(Keys.INTENT_EMAIL);
 
 		mDocEmail = (EditText) findViewById(R.id.config_doctor_details_edit_doc_email);
 		mDocEmail.setText(email);
@@ -128,7 +154,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		// Otherwise if the value is valid, set spinner to "other" and use edittext
 		if (saved >= 0 && flag) {
 			spinLength.setSelection(spinLength.getCount() - 1);
-			mPeriodLength.setText("" + saved);
+			mPeriodLength.setText("" + saved); // string cat needed, otherwise android thinks its an R.id.*
 		}
 
 		mPeriodNumber = (EditText) findViewById(R.id.config_timescale_edit_number_periods);
@@ -161,6 +187,16 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			}
 		});
 
+		mArray = (CheckArray) getSupportFragmentManager().findFragmentById(R.id.config_timescale_check_array);
+
+		mDate = (StartDate) getSupportFragmentManager().findFragmentById(R.id.config_doctor_date_frag);
+
+		SharedPreferences userPrefs = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+		mBackup = userPrefs.getBoolean(Keys.DEFAULT_BACKUP, false);
+
+		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mBackupManager = new BackupManager(this);
+		}
 	}
 
 	@Override
@@ -180,6 +216,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 				save();
 				makeTreatmentPlan();
 				email();
+				runScheduler();
 				setResult(RESULT_OK);
 				finish();
 			} else {
@@ -193,6 +230,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			changeLogin();
 			return true;
 
+			// TODO handle "up" on older versions of android
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -215,6 +253,19 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	}
 
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		// If config not finished, don't want to allow user to go back
+	}
+
+	/** Run the scheduler for the first time */
+	private void runScheduler() {
+		Intent intent = new Intent(this, Scheduler.class);
+		intent.putExtra(Keys.INTENT_FIRST, true);
+		startService(intent);
+	}
+
 	/** Create a random treatment plan, which must stay hidden but sent to the pharmacist. */
 	private void makeTreatmentPlan() {
 		// TODO
@@ -224,13 +275,14 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	private void save() {
 		// Put config data into shared preferences editor
 		SharedPreferences.Editor editor = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE).edit();
+		editor.clear();
 
 		editor.putString(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
 		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
 			try {
 				editor.putInt(Keys.CONFIG_NUMBER_PERIODS, Integer.parseInt(mPeriodNumber.getText().toString()));
 			} catch (NumberFormatException e) {
-				Toast.makeText(this, "Invalid input type for number of treatment periods", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, R.string.invalid_period_input, Toast.LENGTH_LONG).show();
 			}
 		} else {
 			editor.putInt(Keys.CONFIG_NUMBER_PERIODS, mIntPeriodNumber);
@@ -239,15 +291,34 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			try {
 				editor.putInt(Keys.CONFIG_PERIOD_LENGTH, Integer.parseInt(mPeriodLength.getText().toString()));
 			} catch (NumberFormatException e) {
-				Toast.makeText(this, "Invalid input type for length of treatment periods", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, R.string.invalid_length_input, Toast.LENGTH_LONG).show();
 			}
 		} else {
 			editor.putInt(Keys.CONFIG_PERIOD_LENGTH, mIntPeriodLength);
 		}
 		editor.putBoolean(Keys.CONFIG_BUILT, mFormBuilt);
 
+		editor.putString(Keys.CONFIG_START, mDate.getDate());
+
+		// save checked boxes
+		int[] arr = mArray.getSelected();
+		for (int i : arr) {
+			editor.putBoolean(Keys.CONFIG_DAY + i, true);
+		}
+
 		// Save changes
 		editor.commit();
+		// Ask for backup
+		backup();
+	}
+
+	/** Helper to ask for backup, if supported */
+	@TargetApi(8)
+	private void backup() {
+		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			if (DEBUG) Log.d(TAG, "Requesting backup");
+			mBackupManager.dataChanged();
+		}
 	}
 
 	/** email the information to the doctor and pharmacist */
@@ -305,6 +376,8 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 					}
 					// Save changes
 					editor.commit();
+					// Request backup
+					backup();
 				} else {
 					// Incorrect login
 					Toast.makeText(getApplicationContext(), "Incorrect login details", Toast.LENGTH_SHORT).show();
@@ -319,7 +392,17 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 				dialog.cancel();
 			}
 		});
-		builder.create().show();
+		mDialog = builder.create();
+		mDialog.show();
+	}
+
+	@Override
+	protected void onDestroy() {
+		// Close dialog if open to prevent leak
+		if (mDialog != null) {
+			mDialog.dismiss();
+		}
+		super.onDestroy();
 	}
 
 	/** Used to set the email field in EditText from an onClick call */
@@ -353,11 +436,14 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			if (item.equalsIgnoreCase("other")) {
 				mPeriodLength.setVisibility(View.VISIBLE);
 				mIntPeriodLength = -1;
+				mArray.setNumber(Integer.parseInt(mPeriodLength.getText().toString()));
 			} else {
 				mPeriodLength.setVisibility(View.GONE);
 				mIntPeriodLength = Integer.parseInt(item);
+				mArray.setNumber(mIntPeriodLength);
 			}
 			mTimescaleLayout.requestLayout();
+
 			break;
 
 		case R.id.config_timescale_spinner_periods:

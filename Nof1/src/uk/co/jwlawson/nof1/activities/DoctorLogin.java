@@ -23,15 +23,20 @@ package uk.co.jwlawson.nof1.activities;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.backup.BackupManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,15 +54,32 @@ import com.actionbarsherlock.app.SherlockActivity;
  */
 public class DoctorLogin extends SherlockActivity implements DialogInterface.OnCancelListener {
 
+	private static final String TAG = "DoctorLogin";
+	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+
 	private static final int THEME = R.style.dialog_theme;
+
+	private Dialog mDialog;
+
+	private BackupManager mBackupManager;
+
+	private boolean mBackup;
 
 	public DoctorLogin() {
 	}
 
+	@TargetApi(8)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		SharedPreferences sharedPrefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+		SharedPreferences userPrefs = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+		mBackup = userPrefs.getBoolean(Keys.DEFAULT_BACKUP, false);
+
+		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mBackupManager = new BackupManager(this);
+		}
 
 		if (sharedPrefs.getBoolean(Keys.CONFIG_FIRST, true)) {
 
@@ -92,29 +114,41 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 				String passStr = pass.getText().toString();
 				String pass2Str = pass2.getText().toString();
 				String emailStr1 = email.getText().toString();
+				if (DEBUG) Log.d(TAG, "Email entered: " + emailStr1);
 
-				if (passStr.equals(pass2Str)) {
+				// Check fields aren't empty
+				if (passStr != "" && emailStr1 != "") {
 
-					// Hash the email and password, then add to
-					// sharedpreferences.
-					// This will be what we check against at further
-					// logins.
-					SharedPreferences.Editor editor = sharedPrefs.edit();
-					editor.putString(Keys.CONFIG_EMAIL, new String(Hex.encodeHex(DigestUtils.sha512(emailStr1))));
-					editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
-					editor.putBoolean(Keys.CONFIG_FIRST, false);
-					editor.commit();
+					if (passStr.equals(pass2Str)) {
 
-					launch(emailStr1);
+						// Hash the email and password, then add to
+						// shared preferences.
+						// This will be what we check against at further
+						// logins.
+						SharedPreferences.Editor editor = sharedPrefs.edit();
+						editor.putString(Keys.CONFIG_EMAIL, new String(Hex.encodeHex(DigestUtils.sha512(emailStr1))));
+						editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
+						editor.putBoolean(Keys.CONFIG_FIRST, false);
+						editor.commit();
+
+						backup();
+
+						launch(emailStr1);
+					} else {
+						// Password fields don't match.
+						Toast.makeText(getBaseContext(), R.string.passwords_not_equal, Toast.LENGTH_SHORT).show();
+						firstLogin(sharedPrefs, emailStr1);
+					}
 				} else {
-					// Password fields don't match.
-					Toast.makeText(getBaseContext(), R.string.passwords_not_equal, Toast.LENGTH_SHORT).show();
+					// Empty email and password
+					Toast.makeText(getApplicationContext(), R.string.enter_login_details, Toast.LENGTH_SHORT).show();
 					firstLogin(sharedPrefs, emailStr1);
 				}
 			}
 		});
 		builder.setOnCancelListener(this);
-		builder.create().show();
+		mDialog = builder.create();
+		mDialog.show();
 	}
 
 	private void login(final SharedPreferences sharedPrefs, String emailStr) {
@@ -148,7 +182,8 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 			}
 		});
 		builder.setOnCancelListener(this);
-		builder.create().show();
+		mDialog = builder.create();
+		mDialog.show();
 	}
 
 	private void launch(String emailStr) {
@@ -157,6 +192,13 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 		i.putExtra(Keys.INTENT_EMAIL, emailStr);
 		startActivity(i);
 		finish();
+	}
+
+	@TargetApi(8)
+	private void backup() {
+		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mBackupManager.dataChanged();
+		}
 	}
 
 	/** Nasty hack to ensure text in alertdialog is readable */
@@ -171,6 +213,15 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 			inflater = this.getLayoutInflater();
 		}
 		return inflater;
+	}
+
+	@Override
+	protected void onDestroy() {
+		// Close dialog if open to prevent leak
+		if (mDialog != null) {
+			mDialog.dismiss();
+		}
+		super.onDestroy();
 	}
 
 	@Override

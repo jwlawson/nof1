@@ -29,8 +29,11 @@ import uk.co.jwlawson.nof1.containers.Question;
 import uk.co.jwlawson.nof1.fragments.CheckFragment;
 import uk.co.jwlawson.nof1.fragments.FormBuilderList;
 import uk.co.jwlawson.nof1.fragments.QuestionBuilderDialog;
+import android.annotation.TargetApi;
+import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -77,6 +80,12 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	/** CheckFragment asking whether to show a comment box */
 	private CheckFragment mCommentFrag;
 
+	/** Instance of backup manager */
+	private BackupManager mBackupManager;
+
+	/** True if want backup */
+	private boolean mBackup;
+
 	public FormBuilder() {
 		mQuestionList = new ArrayList<Question>();
 	}
@@ -90,6 +99,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 
 	}
 
+	@TargetApi(8)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -134,6 +144,13 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		}
 
 		mCommentFrag = (CheckFragment) getSupportFragmentManager().findFragmentById(R.id.form_builder_check_fragment);
+
+		SharedPreferences userPrefs = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+		mBackup = userPrefs.getBoolean(Keys.DEFAULT_BACKUP, false);
+
+		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mBackupManager = new BackupManager(this);
+		}
 	}
 
 	@Override
@@ -146,6 +163,11 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.menu_form_builder_done:
+			// User happy with questionnaire
+			setResult(RESULT_OK);
+			finish();
+			return true;
 		case R.id.menu_form_builder_add:
 			// Add new question to bottom of the list and load new QuestionBuilder
 			Question q = new Question(Question.SCALE, "");
@@ -224,6 +246,15 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		}
 		// Save changes
 		editor.commit();
+
+		backup();
+	}
+
+	@TargetApi(8)
+	private void backup() {
+		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mBackupManager.dataChanged();
+		}
 	}
 
 	@Override

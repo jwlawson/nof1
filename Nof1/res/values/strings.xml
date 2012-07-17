@@ -16,12 +16,11 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <resources>
 
     <string name="app_name">Nof1 Trial Helper</string>
-    <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">Data Input</string>
     <string name="ok">OK</string>
@@ -46,7 +45,6 @@
     <string name="doctor_preferences">Doctor preferences</string>
     <string name="patient_name">Patient name</string>
     <string name="patien_name_summary">What would you like to be known as?</string>
-    <string name="prefs_patient_name"></string>
     <string name="doctor_config">Doctor config</string>
     <string name="doctor_config_summary">Load the doctor\'s configuration utility.</string>
     <string name="settings">Settings</string>
@@ -78,8 +76,6 @@
 
     <string name="done">Done</string>
     <string name="login_details">Login details</string>
-    <string name="title_question_detail">Question Detail</string>
-    <string name="title_question_list">Questions</string>
     <string name="preview">Preview</string>
     <string name="questionnaire_preview_explain">This is a preview of the questionnaire the patient will have to fill in. Please check any details, spelling etc and if you are happy press Save, otherwise Cancel will take you back to the previous screen.</string>
     <string name="save">Save</string>
@@ -94,19 +90,40 @@
     <string name="login">Login</string>
     <string name="login_failed">Login failed</string>
     <string name="create_questionnaire">Create questionnaire</string>
+
     <string-array name="treatment_period">
-        <item >5</item>
-        <item >6</item>
-        <item >7</item>
-        <item >8</item>
-        <item >9</item>
-        <item >10</item>
-        <item >11</item>
-        <item >12</item>
-        <item >13</item>
-        <item >14</item>
-        <item >15</item>
-        <item >Other</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>Other</item>
     </string-array>
+
+    <string name="include_comment">Include a comment box at the end of the questionnaire?</string>
+    <string name="enter_login_details">Please enter login details</string>
+    <string name="config_timescale_check_prefix">Day </string>
+    <string name="invalid_period_input">Invalid input type for number of treatment periods</string>
+    <string name="invalid_length_input">Invalid input type for length of treatment periods</string>
+    <string name="start_today">Start the trial today?</string>
+    <string name="choose_date">Choose the start date…</string>
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="vibrate_notifications">Vibrate</string>
+    <string name="vibrate_on">Notifications will cause your phone to vibrate</string>
+    <string name="vibrate_off">Notifications will not cause your phone to vibrate</string>
+    <string name="flash_notifications">Flash</string>
+    <string name="loud_notification">Play sound</string>
+    <string name="flash_on">Notifications will flash lights</string>
+    <string name="flash_off">Notifications will not flash lights</string>
+    <string name="loud_on">Notification will play sound</string>
+    <string name="loud_off">Notification will not play sound</string>
+    <string name="notifications">Notifications</string>
 
 </resources>

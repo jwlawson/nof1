@@ -20,15 +20,11 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
+import uk.co.jwlawson.nof1.Scheduler;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -49,16 +45,9 @@ public class MainActivity extends SherlockActivity {
 			@Override
 			public void onClick(View v) {
 
-				Intent i = new Intent(getBaseContext(), FragActivity.class);
-				PendingIntent pi = PendingIntent.getActivity(getBaseContext(), 0, i, PendingIntent.FLAG_CANCEL_CURRENT);
-
-				Notification noti = new NotificationCompat.Builder(getBaseContext()).setContentTitle("Please fill in a form")
-						.setContentText("Nof1 Trials").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pi)
-						.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher)).getNotification();
-
-				noti.flags |= Notification.FLAG_AUTO_CANCEL;
-
-				((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1, noti);
+				Intent intent = new Intent(MainActivity.this, Scheduler.class);
+				intent.putExtra(Keys.INTENT_FIRST, true);
+				startService(intent);
 			}
 		});
 
