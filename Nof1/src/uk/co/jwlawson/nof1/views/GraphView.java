@@ -22,6 +22,7 @@ package uk.co.jwlawson.nof1.views;
 
 import java.util.ArrayList;
 
+import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.containers.Label;
 import uk.co.jwlawson.nof1.containers.Line;
 import uk.co.jwlawson.nof1.containers.Vec2;
@@ -46,7 +47,7 @@ import android.view.View;
 public class GraphView extends View {
 
 	private static final String TAG = "GraphView";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 
 	private static final int TICK_SIZE = 5;
 	private static final int TEXT_SIZE = 12;
@@ -143,6 +144,8 @@ public class GraphView extends View {
 			floatarr[i++] = vec.getX() * mScaleX;
 			floatarr[i++] = mHeight - (vec.getY() * (mHeight - BOTTOM_PAD - TOP_PAD) / mMaxY);
 		}
+
+		invalidate();
 	}
 
 	/**
@@ -164,6 +167,8 @@ public class GraphView extends View {
 			floatarr[i++] = mHeight - ((float) cursor.getInt(1) * (mHeight - BOTTOM_PAD - TOP_PAD) / mMaxY);
 			cursor.moveToNext();
 		}
+
+		invalidate();
 	}
 
 	/** Set largest value on x-axis. Must be initialised before view is drawn */
@@ -286,7 +291,7 @@ public class GraphView extends View {
 			result = specSize;
 		} else {
 			// Want width as wide as we can
-			result = 2000;
+			result = 20000;
 			if (specMode == MeasureSpec.AT_MOST) {
 				// Respect AT_MOST value if that was what is called for by
 				// measureSpec
@@ -340,8 +345,8 @@ public class GraphView extends View {
 		mScaleX = (float) mWidth / mMaxX;
 		mScaleY = (float) h / mMaxY;
 
-		if (mVecList != null) setVecList(mVecList);
-		else if (mCursor != null) setCursor(mCursor);
+		if (mCursor != null) setCursor(mCursor);
+		else if (mVecList.isEmpty()) setVecList(mVecList);
 
 		setMaxX(mMaxX);
 		setMaxY(mMaxY);
