@@ -47,51 +47,52 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 
 /**
- * Activity to load and show the questionnaire presented to the patient. Can be run in preview mode, so the doctor can see what the questionnaire will look like
+ * Activity to load and show the questionnaire presented to the patient. Can be run in preview mode, so the doctor can
+ * see what the questionnaire will look like
  * without risking saving any data.
  * 
  * @author John Lawson
  * 
  */
 public class Questionnaire extends SherlockFragmentActivity implements RescheduleDialog.OnRescheduleListener {
-	
+
 	private static final String TAG = "Questionnaire";
 	private static final boolean DEBUG = true;
-	
+
 	public static final int RESULT_DONE = 10;
 	public static final int RESULT_BACK = 11;
-	
+
 	/** List of all questions included in questionnaire */
 	private ArrayList<QuestionFragment> mQuestionList;
-	
+
 	private CommentFragment mComment;
-	
+
 	/** True if in preview mode: no details saved */
 	private boolean mPreview;
-	
+
 	private DataSource mData;
-	
+
 	public Questionnaire() {
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.mock_layout_data_input);
-		
+
 		setSupportProgressBarIndeterminateVisibility(false);
-		
+
 		mQuestionList = new ArrayList<QuestionFragment>();
-		
+
 		if (savedInstanceState == null) {
 			// Need to load fragments
 			new QuestionLoader().execute();
 		}
-		
+
 		Intent i = getIntent();
 		mPreview = i.getBooleanExtra(Keys.INTENT_PREVIEW, false);
-		
+
 		Button btnOk = (Button) findViewById(R.id.data_input_button_ok);
 		btnOk.setOnClickListener(new OnClickListener() {
 			@Override
@@ -99,7 +100,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 				save();
 			}
 		});
-		
+
 		Button btnCan = (Button) findViewById(R.id.data_input_button_cancel);
 		btnCan.setOnClickListener(new OnClickListener() {
 			@Override
@@ -107,7 +108,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 				cancel();
 			}
 		});
-		
+
 		if (mPreview) {
 			Log.d(TAG, "Building questionnaire in preview mode");
 			btnOk.setText(R.string.save);
@@ -119,7 +120,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			new DataBaseLoader().execute();
 		}
 	}
-	
+
 	private void save() {
 		if (mPreview) {
 			// Save the questionnaire and return to DoctorConfig
@@ -128,10 +129,10 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			finish();
 		} else {
 			// Save data to database
-			
+
 			// Get day of trial we are in
 			int day = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE).getInt(Keys.SCHED_CUMULATIVE_DAY, 0);
-			
+
 			// Get question responses
 			int[] data = new int[mQuestionList.size()];
 			for (int i = 0; i < mQuestionList.size(); i++) {
@@ -148,7 +149,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			// TODO handle ad hoc data entry
 		}
 	}
-	
+
 	private void cancel() {
 		if (mPreview) {
 			// Return to FormBuilder
@@ -158,33 +159,33 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			// Show reschedule dialog
 			RescheduleDialog dialog = RescheduleDialog.newInstance();
 			dialog.show(getSupportFragmentManager(), "dialog");
-			
+
 		}
 	}
-	
+
 	private class QuestionLoader extends AsyncTask<Void, Void, Void> {
-		
+
 		@Override
 		protected Void doInBackground(Void... params) {
 			if (DEBUG) Log.d(TAG, "AsyncTask QuestionLoader started");
 			setSupportProgressBarIndeterminateVisibility(true);
-			
+
 			SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
-			
+
 			// Check whether the device is large enough for 2 columns
 			boolean dualCol = (findViewById(R.id.data_input_fragment_layout2) != null);
 			if (dualCol) Log.d(TAG, "Dual columns found");
 			int column = 0;
-			
+
 			// Go through question shared preference and extract each question
 			for (int i = 0; sp.contains(Keys.QUES_TEXT + i); i++) {
-				
+
 				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-				
+
 				QuestionFragment q;
-				
+
 				int inputType = sp.getInt(Keys.QUES_TYPE + i, Question.SCALE);
-				
+
 				// Make QuestionFragment
 				switch (inputType) {
 				case Question.SCALE:
@@ -203,7 +204,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 					Log.e(TAG, "Something horrid has happened: Unknown question type");
 				}
 				mQuestionList.add(q);
-				
+
 				// Add the questionFragment to the layout.
 				switch (column) {
 				case 0:
@@ -217,9 +218,9 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 					column++;
 					column %= 2;
 				}
-				
+
 				ft.commit();
-				
+
 			}
 			// If should show comment fragment, add to layout
 			if (sp.getBoolean(Keys.COMMENT, false)) {
@@ -227,29 +228,29 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 				mComment = CommentFragment.newInstance();
 				getSupportFragmentManager().beginTransaction().add(R.id.data_input_comment_frame, mComment, "com").commit();
 			}
-			
+
 			return null;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			if (DEBUG) Log.d(TAG, "AsyncTask QuestionLoader finished");
 			setSupportProgressBarIndeterminateVisibility(false);
 		}
-		
+
 	}
-	
+
 	private class DataBaseLoader extends AsyncTask<Void, Void, Void> {
-		
+
 		@Override
 		protected Void doInBackground(Void... params) {
 			mData.open();
 			return null;
 		}
-		
+
 	}
-	
+
 	@Override
 	public void onReschedule(boolean rescheduled) {
 		if (rescheduled) {
@@ -257,15 +258,15 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			finish();
 		}
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		// Dismiss any open dialogs to prevent leaks
 		RescheduleDialog dialog = (RescheduleDialog) getSupportFragmentManager().findFragmentByTag("dialog");
 		if (dialog != null) dialog.dismiss();
-		
+
 		// Close database connection
-		mData.close();
+		if (mData != null) mData.close();
 	}
 }
