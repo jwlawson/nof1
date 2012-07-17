@@ -64,7 +64,7 @@ public class DataSource {
 			mColumns[i + 3] = SQLite.COLUMN_QUESTION + i;
 		}
 
-		if (DEBUG) Log.d(TAG, "Database loaded");
+		if (DEBUG) Log.d(TAG, "Database loaded: " + num);
 	}
 
 	/** Close database */
@@ -86,7 +86,7 @@ public class DataSource {
 		ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_DAY, day);
 		for (int i = 0; i < data.length; i++) {
-			values.put(SQLite.COLUMN_QUESTION, data[i]);
+			values.put(SQLite.COLUMN_QUESTION + i, data[i]);
 		}
 
 		long insertId = mDatabase.insert(SQLite.TABLE_INFO, null, values);
