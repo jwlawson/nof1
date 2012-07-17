@@ -43,9 +43,11 @@ public class SQLite extends SQLiteOpenHelper {
 	public static final String COLUMN_DAY = "day";
 	/** Comments column */
 	public static final String COLUMN_COMMENT = "comment";
+	/** Question column prefix */
+	public static final String COLUMN_QUESTION = "question";
 	
 	/** The number of questions, hence the number of columns called {@code question<i>} */
-	public static int NUM_QUESTIONS;
+	private int mNumQuestion;
 	
 	private static final String DATABASE_NAME = "info.db";
 	private static final int DATABASE_VERSION = 1;
@@ -61,7 +63,11 @@ public class SQLite extends SQLiteOpenHelper {
 	 * @param num The number of questions asked.
 	 */
 	public void setQuestionNumber(int num) {
-		NUM_QUESTIONS = num;
+		mNumQuestion = num;
+	}
+	
+	public int getNumberQuestions() {
+		return mNumQuestion;
 	}
 	
 	@Override
@@ -80,7 +86,7 @@ public class SQLite extends SQLiteOpenHelper {
 	private String makeCreate() {
 		StringBuilder sb = new StringBuilder("create table ");
 		sb.append(TABLE_INFO).append("(").append(COLUMN_ID).append(" integer primary key autoincrement, ").append(COLUMN_DAY).append(" integer");
-		for (int i = 0; i < NUM_QUESTIONS; i++) {
+		for (int i = 0; i < mNumQuestion; i++) {
 			sb.append(", ").append("question").append(i).append(" integer");
 		}
 		sb.append(", ").append(COLUMN_COMMENT).append(" text");

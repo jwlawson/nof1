@@ -20,7 +20,7 @@
 -->
 <resources>
 
-    <string name="app_name">Nof1 Trial Helper</string>
+    <string name="app_name">Nof1 Trials</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">Data Input</string>
     <string name="ok">OK</string>
@@ -125,5 +125,9 @@
     <string name="loud_on">Notification will play sound</string>
     <string name="loud_off">Notification will not play sound</string>
     <string name="notifications">Notifications</string>
+    <string name="noti_first_title">N-of-1 Trials</string>
+    <string name="noti_first_text">Your trial is due to start today</string>
+    <string name="noti_repeat_title">N-of-1 Trials</string>
+    <string name="noti_repeat_text">Please fill in this questionnaire</string>
 
 </resources>
