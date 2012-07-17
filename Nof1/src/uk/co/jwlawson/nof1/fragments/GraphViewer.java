@@ -33,6 +33,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.FrameLayout;
 
 import com.actionbarsherlock.app.SherlockFragment;
 
@@ -53,8 +55,9 @@ public class GraphViewer extends SherlockFragment {
 
 	private DataSource mData;
 
-	public GraphViewer() {
+	private FrameLayout mFrame;
 
+	public GraphViewer() {
 	}
 
 	public int getQuestionId() {
@@ -78,27 +81,26 @@ public class GraphViewer extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// Initialise data source
+		new DataLoader().execute();
+
 		if (DEBUG) Log.d(TAG, "Fragment created");
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-		// Load graph View
-		mGraph = new GraphView(getActivity());
-
 		if (getArguments() == null) {
 			Log.w(TAG, "GraphView created with null arguments");
 
 		} else {
 
-			// Initialise data source
-			new DataLoader().execute();
+			mFrame = new FrameLayout(getActivity());
 
 		}
 
 		if (DEBUG) Log.d(TAG, "View created");
-		return mGraph;
+		return mFrame;
 	}
 
 	@Override
@@ -116,19 +118,31 @@ public class GraphViewer extends SherlockFragment {
 
 		@Override
 		protected Void doInBackground(Void... params) {
+			if (DEBUG) Log.d(TAG, "Data source loading");
 			mData = new DataSource(getActivity());
 			mData.open();
 
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			if (DEBUG) Log.d(TAG, "Data source loaded");
+			getSherlockActivity().setProgressBarIndeterminateVisibility(false);
+
+			// Load graph View
+			mGraph = new GraphView(getActivity());
+
 			// Load data from database and pass to GraphView
 			int id = getArguments().getInt(ARGS_ID);
-			if (mData == null) {
-				// Datasource still loading
-			}
 			Cursor cursor = mData.getQuestion(id);
 
 			// Set max x
 			SharedPreferences sp = getActivity().getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
-			mGraph.setMaxX(sp.getInt(Keys.CONFIG_NUMBER_PERIODS, 5) * sp.getInt(Keys.CONFIG_PERIOD_LENGTH, 5));
+			int maxx = sp.getInt(Keys.CONFIG_NUMBER_PERIODS, 5) * sp.getInt(Keys.CONFIG_PERIOD_LENGTH, 5);
+			mGraph.setMaxX(maxx);
+			if (DEBUG) Log.d(TAG, "Setting max X: " + maxx);
 
 			// Set max y
 			int max = 0;
@@ -139,17 +153,14 @@ public class GraphViewer extends SherlockFragment {
 				cursor.moveToNext();
 			}
 			mGraph.setMaxY(max);
+			if (DEBUG) Log.d(TAG, "Setting max y: " + max);
 
 			// Set cursor
 			mGraph.setCursor(cursor);
 
-			return null;
-		}
+			LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
-		@Override
-		protected void onPostExecute(Void result) {
-			super.onPostExecute(result);
-			getSherlockActivity().setProgressBarIndeterminateVisibility(false);
+			mFrame.addView(mGraph, params);
 		}
 
 	}
