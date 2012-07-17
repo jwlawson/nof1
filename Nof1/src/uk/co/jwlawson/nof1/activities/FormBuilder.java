@@ -241,6 +241,8 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			if (DEBUG) Log.d(TAG, q.getQuestionStr() + ": " + q.getInputType());
 		}
 
+		editor.putInt(Keys.QUES_NUMBER_QUESTIONS, mQuestionList.size());
+
 		if (mCommentFrag.getResult() == 1) {
 			editor.putBoolean(Keys.COMMENT, true);
 		}
