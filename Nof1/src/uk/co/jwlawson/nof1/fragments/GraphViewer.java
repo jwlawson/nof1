@@ -22,7 +22,10 @@ package uk.co.jwlawson.nof1.fragments;
 
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.DataSource;
+import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.views.GraphView;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -66,6 +69,8 @@ public class GraphViewer extends SherlockFragment {
 
 		frag.setArguments(args);
 
+		if (DEBUG) Log.d(TAG, "New graphview instanced: " + questionId);
+
 		return frag;
 	}
 
@@ -73,9 +78,7 @@ public class GraphViewer extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// Initialise data source
-		new DataLoader().execute();
-
+		if (DEBUG) Log.d(TAG, "Fragment created");
 	}
 
 	@Override
@@ -84,17 +87,17 @@ public class GraphViewer extends SherlockFragment {
 		// Load graph View
 		mGraph = new GraphView(getActivity());
 
-		Bundle args = getArguments();
-
-		if (args == null) {
+		if (getArguments() == null) {
 			Log.w(TAG, "GraphView created with null arguments");
 
 		} else {
-			// Load data from database and pass to GraphView
-			int id = args.getInt(ARGS_ID);
-			Cursor cursor = mData.getQuestion(id);
-			mGraph.setCursor(cursor);
+
+			// Initialise data source
+			new DataLoader().execute();
+
 		}
+
+		if (DEBUG) Log.d(TAG, "View created");
 		return mGraph;
 	}
 
@@ -106,10 +109,47 @@ public class GraphViewer extends SherlockFragment {
 	private class DataLoader extends AsyncTask<Void, Void, Void> {
 
 		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
+		}
+
+		@Override
 		protected Void doInBackground(Void... params) {
 			mData = new DataSource(getActivity());
 			mData.open();
+
+			// Load data from database and pass to GraphView
+			int id = getArguments().getInt(ARGS_ID);
+			if (mData == null) {
+				// Datasource still loading
+			}
+			Cursor cursor = mData.getQuestion(id);
+
+			// Set max x
+			SharedPreferences sp = getActivity().getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
+			mGraph.setMaxX(sp.getInt(Keys.CONFIG_NUMBER_PERIODS, 5) * sp.getInt(Keys.CONFIG_PERIOD_LENGTH, 5));
+
+			// Set max y
+			int max = 0;
+			while (!cursor.isAfterLast()) {
+				if (cursor.getInt(1) > max) {
+					max = cursor.getInt(1);
+				}
+				cursor.moveToNext();
+			}
+			mGraph.setMaxY(max);
+
+			// Set cursor
+			mGraph.setCursor(cursor);
+
 			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			getSherlockActivity().setProgressBarIndeterminateVisibility(false);
 		}
 
 	}

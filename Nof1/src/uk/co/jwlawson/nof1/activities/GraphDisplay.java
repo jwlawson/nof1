@@ -18,41 +18,40 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package uk.co.jwlawson.nof1.fragments;
+package uk.co.jwlawson.nof1.activities;
 
-import java.util.ArrayList;
-
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
-import android.content.Context;
-import android.content.SharedPreferences;
+import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.fragments.GraphViewer;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.FrameLayout;
+
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Window;
 
 /**
- * List of all questions
- * 
  * @author John Lawson
  * 
  */
-public class GraphList extends FragList {
-	private static final String TAG = "GraphList";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+public class GraphDisplay extends SherlockFragmentActivity {
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
-		SharedPreferences sp = getActivity().getSharedPreferences(Keys.QUES_NAME, Context.MODE_PRIVATE);
+		FrameLayout frame = new FrameLayout(this);
+		frame.setId(R.id.graph_chooser_view);
+		setContentView(frame);
 
-		ArrayList<String> list = new ArrayList<String>();
-		for (int i = 0; sp.contains(Keys.QUES_TEXT + i); i++) {
-			list.add(sp.getString(Keys.QUES_TEXT + i, "No question found!"));
+		Intent intent = getIntent();
+		int questionId = intent.getIntExtra(Keys.INTENT_ID, 0);
+
+		if (savedInstanceState == null) {
+
+			GraphViewer viewer = GraphViewer.newInstance(questionId);
+			getSupportFragmentManager().beginTransaction().add(R.id.graph_chooser_view, viewer, "viewer").commit();
 		}
-
-		setArrayList(list);
-
-		if (DEBUG) Log.d(TAG, "List created");
 	}
-
 }
