@@ -32,9 +32,9 @@ import android.util.Log;
  * 
  */
 public class SQLite extends SQLiteOpenHelper {
-	
+
 	private static final String TAG = "SQLiteHelper";
-	
+
 	/** Table name */
 	public static final String TABLE_INFO = "info";
 	/** Auto-incrementing ID column */
@@ -45,18 +45,18 @@ public class SQLite extends SQLiteOpenHelper {
 	public static final String COLUMN_COMMENT = "comment";
 	/** Question column prefix */
 	public static final String COLUMN_QUESTION = "question";
-	
+
 	/** The number of questions, hence the number of columns called {@code question<i>} */
 	private int mNumQuestion;
-	
+
 	private static final String DATABASE_NAME = "info.db";
 	private static final int DATABASE_VERSION = 1;
-	
+
 	/** Construct database with custom name and version number */
 	public SQLite(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
-	
+
 	/**
 	 * Set the number of questions asked in data input. Must be called before the database is first created.
 	 * 
@@ -65,30 +65,33 @@ public class SQLite extends SQLiteOpenHelper {
 	public void setQuestionNumber(int num) {
 		mNumQuestion = num;
 	}
-	
+
 	public int getNumberQuestions() {
 		return mNumQuestion;
 	}
-	
+
 	@Override
 	public void onCreate(SQLiteDatabase database) {
 		database.execSQL(makeCreate());
 	}
-	
+
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_INFO);
 		onCreate(db);
 	}
-	
+
 	/** Create the database creation SQL command */
 	private String makeCreate() {
 		StringBuilder sb = new StringBuilder("create table ");
 		sb.append(TABLE_INFO).append("(").append(COLUMN_ID).append(" integer primary key autoincrement, ").append(COLUMN_DAY).append(" integer");
+
+		if (mNumQuestion == 0) Log.e(TAG, "No question number set");
 		for (int i = 0; i < mNumQuestion; i++) {
 			sb.append(", ").append("question").append(i).append(" integer");
 		}
+
 		sb.append(", ").append(COLUMN_COMMENT).append(" text");
 		sb.append(");");
 		return sb.toString();
