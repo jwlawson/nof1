@@ -56,7 +56,7 @@ public class MainActivity extends SherlockActivity {
 
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent(getBaseContext(), FragActivity.class);
+				Intent i = new Intent(getBaseContext(), Questionnaire.class);
 				startActivity(i);
 			}
 		});
