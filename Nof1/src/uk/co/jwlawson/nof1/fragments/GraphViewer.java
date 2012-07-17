@@ -54,6 +54,10 @@ public class GraphViewer extends SherlockFragment {
 
 	}
 
+	public int getQuestionId() {
+		return getArguments().getInt(ARGS_ID);
+	}
+
 	public static GraphViewer newInstance(int questionId) {
 		GraphViewer frag = new GraphViewer();
 
@@ -86,7 +90,7 @@ public class GraphViewer extends SherlockFragment {
 			Log.w(TAG, "GraphView created with null arguments");
 
 		} else {
-
+			// Load data from database and pass to GraphView
 			int id = args.getInt(ARGS_ID);
 			Cursor cursor = mData.getQuestion(id);
 			mGraph.setCursor(cursor);

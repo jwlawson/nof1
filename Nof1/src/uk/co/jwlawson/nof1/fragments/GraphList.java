@@ -20,14 +20,13 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
+import java.util.ArrayList;
 
-import com.actionbarsherlock.app.SherlockListFragment;
+import uk.co.jwlawson.nof1.BuildConfig;
+import uk.co.jwlawson.nof1.Keys;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 
 /**
  * List of all questions
@@ -35,34 +34,22 @@ import com.actionbarsherlock.app.SherlockListFragment;
  * @author John Lawson
  * 
  */
-public class GraphList extends SherlockListFragment {
-
-	public GraphList() {
-	}
+public class GraphList extends FragList {
+	private static final String TAG = "GraphList";
+	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	}
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return super.onCreateView(inflater, container, savedInstanceState);
-	}
+		SharedPreferences sp = getActivity().getSharedPreferences(Keys.QUES_NAME, Context.MODE_PRIVATE);
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-	}
+		ArrayList<String> list = new ArrayList<String>();
+		for (int i = 0; sp.contains(Keys.QUES_TEXT + i); i++) {
+			list.add(sp.getString(Keys.QUES_TEXT + i, "No question found!"));
+		}
 
-	@Override
-	public void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-	}
-
-	@Override
-	public void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
+		setArrayList(list);
 	}
 
 }
