@@ -86,7 +86,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 		
 		if (savedInstanceState == null) {
 			// Need to load fragments
-			new Loader().execute();
+			new QuestionLoader().execute();
 		}
 		
 		Intent i = getIntent();
@@ -162,11 +162,11 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 		}
 	}
 	
-	private class Loader extends AsyncTask<Void, Void, Void> {
+	private class QuestionLoader extends AsyncTask<Void, Void, Void> {
 		
 		@Override
 		protected Void doInBackground(Void... params) {
-			if (DEBUG) Log.d(TAG, "AsyncTask Loader started");
+			if (DEBUG) Log.d(TAG, "AsyncTask QuestionLoader started");
 			setSupportProgressBarIndeterminateVisibility(true);
 			
 			SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
@@ -234,7 +234,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			if (DEBUG) Log.d(TAG, "AsyncTask Loader finished");
+			if (DEBUG) Log.d(TAG, "AsyncTask QuestionLoader finished");
 			setSupportProgressBarIndeterminateVisibility(false);
 		}
 		
