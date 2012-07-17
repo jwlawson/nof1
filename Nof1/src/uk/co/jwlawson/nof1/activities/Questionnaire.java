@@ -264,5 +264,8 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 		// Dismiss any open dialogs to prevent leaks
 		RescheduleDialog dialog = (RescheduleDialog) getSupportFragmentManager().findFragmentByTag("dialog");
 		if (dialog != null) dialog.dismiss();
+		
+		// Close database connection
+		mData.close();
 	}
 }
