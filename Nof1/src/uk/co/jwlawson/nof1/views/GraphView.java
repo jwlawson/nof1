@@ -156,6 +156,8 @@ public class GraphView extends View {
 
 		cursor.moveToFirst();
 
+		floatarr = new float[cursor.getCount() * 2];
+
 		int i = 0;
 		while (!cursor.isAfterLast()) {
 			floatarr[i++] = (float) cursor.getInt(0) * mScaleX;
@@ -244,10 +246,11 @@ public class GraphView extends View {
 
 		if (DEBUG) Log.d(TAG, "Drawing data");
 		canvas.drawLines(floatarr, mVecPaint);
-		canvas.drawLines(floatarr, 2, floatarr.length - 2, mVecPaint);
+		if (floatarr.length > 2) {
+			canvas.drawLines(floatarr, 2, floatarr.length - 2, mVecPaint);
+		}
 
 		if (DEBUG) Log.d(TAG, "Drawing labels");
-
 		for (Label lab : mXLabelList) {
 			lab.draw(canvas, mAxesPaint);
 		}
