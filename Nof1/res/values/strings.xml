@@ -129,5 +129,6 @@
     <string name="noti_first_text">Your trial is due to start today</string>
     <string name="noti_repeat_title">N-of-1 Trials</string>
     <string name="noti_repeat_text">Please fill in this questionnaire</string>
+    <string name="config_not_run">Start date has not been set up. Please run the config tool.</string>
 
 </resources>

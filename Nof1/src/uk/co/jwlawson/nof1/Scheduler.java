@@ -32,6 +32,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Handles scheduling next notification.
@@ -40,55 +41,55 @@ import android.util.Log;
  * 
  */
 public class Scheduler extends Service {
-	
+
 	private static final String TAG = "Scheduler";
 	private static final boolean DEBUG = true && BuildConfig.DEBUG;
-	
+
 	private AlarmManager mAlarmManager;
-	
+
 	private BackupManager mBackupManager;
-	
+
 	@TargetApi(8)
 	public Scheduler() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mBackupManager = new BackupManager(this);
 		}
 	}
-	
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
+
 		mAlarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-		
+
 		if (DEBUG) Log.d(TAG, "Service created");
 	}
-	
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		
+
 		if (intent.getBooleanExtra(Keys.INTENT_BOOT, false)) {
 			if (DEBUG) Log.d(TAG, "Scheduler started after boot");
-			
+
 			Thread thread = new Thread(mBootSchedule);
 			thread.start();
-			
+
 		} else if (intent.getBooleanExtra(Keys.INTENT_ALARM, false)) {
 			if (DEBUG) Log.d(TAG, "Scheduler started to schedule new alarm");
-			
+
 			Thread thread = new Thread(mNotiSchedule);
 			thread.start();
-			
+
 		} else if (intent.getBooleanExtra(Keys.INTENT_FIRST, false)) {
 			if (DEBUG) Log.d(TAG, "Scheduler run for the first time");
-			
+
 			Thread thread = new Thread(mFirstRun);
 			thread.start();
-			
+
 		} else if (intent.hasExtra(Keys.INTENT_RESCHEDULE)) {
 			if (DEBUG) Log.d(TAG, "Rescheduling alarm");
 			final int mins = intent.getIntExtra(Keys.INTENT_RESCHEDULE, 0);
-			
+
 			Thread thread = new Thread(new Runnable() {
 				@Override
 				public void run() {
@@ -96,32 +97,32 @@ public class Scheduler extends Service {
 				}
 			});
 			thread.start();
-			
+
 		}
 		return super.onStartCommand(intent, flags, startId);
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		if (DEBUG) Log.d(TAG, "Service destroyed");
 	}
-	
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-	
+
 	public void reschedule(int mins) {
 		// Work out when next to set the alarm, set it and save in preferences
 		SharedPreferences schedPrefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 		SharedPreferences.Editor schedEdit = schedPrefs.edit();
-		
+
 		// Roll back settings in preferences
 		schedEdit.putInt(Keys.SCHED_NEXT_DAY, schedPrefs.getInt(Keys.SCHED_LAST_DAY, 0));
 		schedEdit.putInt(Keys.SCHED_CUR_PERIOD, schedPrefs.getInt(Keys.SCHED_LAST_PERIOD, 0));
 		schedEdit.putString(Keys.SCHED_NEXT_DATE, schedPrefs.getString(Keys.SCHED_LAST_DATE, null));
-		
+
 		// Get the new date to set the alarm on
 		String lastDate = schedPrefs.getString(Keys.SCHED_NEXT_DATE, null);
 		String[] lastArr = lastDate.split(":");
@@ -129,85 +130,85 @@ public class Scheduler extends Service {
 		Calendar cal = Calendar.getInstance();
 		cal.set(lastInt[2], lastInt[1], lastInt[0]);
 		cal.add(Calendar.MINUTE, mins);
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append(cal.get(Calendar.DAY_OF_MONTH)).append(":");
 		sb.append(cal.get(Calendar.MONTH)).append(":");
 		sb.append(cal.get(Calendar.YEAR));
-		
+
 		schedEdit.putString(Keys.SCHED_NEXT_DATE, sb.toString());
-		
+
 		schedEdit.commit();
 		backup();
-		
+
 		// Finally, use the new values to set an alarm
 		setRepeatAlarm();
-		
+
 		// Close service once done
 		Scheduler.this.stopSelf();
 	}
-	
+
 	/** Load next date to set alarm from preferences and set alarm for then */
 	private void setRepeatAlarm() {
 		Intent intent = new Intent(Scheduler.this, Receiver.class);
 		intent.putExtra(Keys.INTENT_ALARM, true);
-		
+
 		setAlarmFromPrefs(intent);
 	}
-	
+
 	/** Load first date to set alarm from preferences and set alarm for then */
 	private void setFirstAlarm() {
 		Intent intent = new Intent(Scheduler.this, Receiver.class);
 		intent.putExtra(Keys.INTENT_FIRST, true);
-		
+
 		setAlarmFromPrefs(intent);
 	}
-	
+
 	/** Sets an alarm for time saved in prefs which fires off the supplied intent */
 	private void setAlarmFromPrefs(Intent intent) {
 		SharedPreferences sp = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
-		
+
 		SharedPreferences userPrefs = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
-		
+
 		String dateStr = sp.getString(Keys.SCHED_NEXT_DATE, null);
 		String timeStr = userPrefs.getString(Keys.DEFAULT_TIME, "12:00");
 		if (dateStr == null) {
 			Log.d(TAG, "Config not yet run");
 			return;
 		}
-		
+
 		String[] dateArr = dateStr.split(":");
 		String[] timeArr = timeStr.split(":");
-		
+
 		int[] dateInt = new int[] { Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]), Integer.parseInt(dateArr[2]) };
 		int[] timeInt = new int[] { Integer.parseInt(timeArr[0]), Integer.parseInt(timeArr[1]) };
-		
+
 		Calendar cal = Calendar.getInstance();
 		cal.set(dateInt[2], dateInt[1], dateInt[0], timeInt[0], timeInt[1]);
-		
+
 		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-		
+
 		mAlarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
 		if (DEBUG) Log.d(TAG, "Scheduled alarm for: " + dateInt[2] + " " + dateInt[1] + " " + dateInt[0] + " " + timeInt[0] + " " + timeInt[1]);
 	}
-	
+
 	private Runnable mNotiSchedule = new Runnable() {
 		@Override
 		public void run() {
 			// Work out when next to set the alarm, set it and save in preferences
 			SharedPreferences schedPrefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 			SharedPreferences.Editor schedEdit = schedPrefs.edit();
-			
+
 			SharedPreferences configPrefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-			
+
 			int lastDay = schedPrefs.getInt(Keys.SCHED_NEXT_DAY, 0);
 			int periodLength = configPrefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
 			int nextDay = -1;
 			int add;
-			
+
 			for (add = 1; add < periodLength + 1; add++) {
 				nextDay = (lastDay + add) % (periodLength + 1);
-				
+
 				if (configPrefs.contains(Keys.CONFIG_DAY + nextDay)) {
 					if (DEBUG) Log.d(TAG, "Found the next day to send notification: " + nextDay);
 					break;
@@ -226,11 +227,11 @@ public class Scheduler extends Service {
 				schedEdit.putInt(Keys.SCHED_CUR_PERIOD, period + 1);
 			}
 			schedEdit.putInt(Keys.SCHED_LAST_PERIOD, period);
-			
+
 			// Save next day to set alarm
 			schedEdit.putInt(Keys.SCHED_NEXT_DAY, nextDay);
 			schedEdit.putInt(Keys.SCHED_LAST_DAY, lastDay);
-			
+
 			// Get the new date to set the alarm on
 			String lastDate = schedPrefs.getString(Keys.SCHED_NEXT_DATE, null);
 			String[] lastArr = lastDate.split(":");
@@ -238,80 +239,82 @@ public class Scheduler extends Service {
 			Calendar cal = Calendar.getInstance();
 			cal.set(lastInt[2], lastInt[1], lastInt[0]);
 			cal.add(Calendar.DAY_OF_MONTH, add);
-			
+
 			StringBuilder sb = new StringBuilder();
 			sb.append(cal.get(Calendar.DAY_OF_MONTH)).append(":");
 			sb.append(cal.get(Calendar.MONTH)).append(":");
 			sb.append(cal.get(Calendar.YEAR));
-			
+
 			schedEdit.putString(Keys.SCHED_NEXT_DATE, sb.toString());
 			schedEdit.putString(Keys.SCHED_LAST_DATE, lastDate);
-			
+
 			// Increment cumulative day counter
 			int cumDay = schedPrefs.getInt(Keys.SCHED_NEXT_CUMULATIVE_DAY, 0);
 			schedEdit.putInt(Keys.SCHED_NEXT_CUMULATIVE_DAY, cumDay + add);
 			schedEdit.putInt(Keys.SCHED_CUMULATIVE_DAY, cumDay);
-			
+
 			schedEdit.commit();
 			backup();
-			
+
 			// Finally, use the new values to set an alarm
 			setRepeatAlarm();
-			
+
 			// Close service once done
 			Scheduler.this.stopSelf();
 		}
 	};
-	
+
 	private Runnable mFirstRun = new Runnable() {
 		@Override
 		public void run() {
 			// Load preferences to hold information.
 			// Set alarm for start date of trial
-			
+
 			SharedPreferences configPrefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-			
+
 			SharedPreferences schedPrefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 			SharedPreferences.Editor schedEdit = schedPrefs.edit();
-			
+
 			// Load start date as next time for notification
 			String start = configPrefs.getString(Keys.CONFIG_START, null);
 			if (start == null) {
-				throw new RuntimeException("Start date is null, config not run yet?");
+				Log.e(TAG, "Start date not initialised, config needs to be run");
+				Toast.makeText(Scheduler.this, R.string.config_not_run, Toast.LENGTH_SHORT).show();
+
+			} else {
+				schedEdit.putString(Keys.SCHED_NEXT_DATE, start);
+				schedEdit.putInt(Keys.SCHED_NEXT_DAY, 0);
+				schedEdit.putInt(Keys.SCHED_CUR_PERIOD, 1);
+
+				schedEdit.commit();
+
+				backup();
+
+				// Set up first time run notification
+				setFirstAlarm();
 			}
-			schedEdit.putString(Keys.SCHED_NEXT_DATE, start);
-			schedEdit.putInt(Keys.SCHED_NEXT_DAY, 0);
-			schedEdit.putInt(Keys.SCHED_CUR_PERIOD, 1);
-			
-			schedEdit.commit();
-			
-			backup();
-			
-			// Set up first time run notification
-			setFirstAlarm();
-			
 			// Close service once done
 			Scheduler.this.stopSelf();
 		}
 	};
-	
+
 	private Runnable mBootSchedule = new Runnable() {
 		@Override
 		public void run() {
 			// Get the next alarm time from preferences and set it
 			setRepeatAlarm();
-			
+
 			// Close service once done
 			Scheduler.this.stopSelf();
 		}
-		
+
 	};
-	
+
 	@TargetApi(8)
 	private void backup() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mBackupManager.dataChanged();
 		}
 	}
-	
+
 }
