@@ -24,12 +24,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 /**
+ * Data handling class which makes it easy to get and save data to database.
+ * 
  * @author John Lawson
  * 
  */
 public class DataSource {
+	
+	private static final String TAG = "DataSource";
+	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 	
 	private SQLite mHelper;
 	
@@ -53,11 +59,15 @@ public class DataSource {
 		for (int i = 0; i < num; i++) {
 			mColumns[i + 3] = SQLite.COLUMN_QUESTION + i;
 		}
+		
+		if (DEBUG) Log.d(TAG, "Database loaded");
 	}
 	
 	/** Close database */
 	public void close() {
 		mHelper.close();
+		
+		if (DEBUG) Log.d(TAG, "Database closed");
 	}
 	
 	/**
@@ -76,6 +86,8 @@ public class DataSource {
 		}
 		
 		long insertId = mDatabase.insert(SQLite.TABLE_INFO, null, values);
+		
+		if (DEBUG) Log.d(TAG, "Saving data to database. ID: " + insertId);
 		
 		return insertId;
 	}
@@ -117,10 +129,22 @@ public class DataSource {
 	 * @return A cursor containing the requested columns
 	 */
 	public Cursor getColumns(String[] columns) {
+		if (DEBUG) Log.d(TAG, "Getting data: " + columns[0]);
+		
 		Cursor cursor = mDatabase.query(SQLite.TABLE_INFO, columns, null, null, null, null, null);
 		
 		cursor.moveToFirst();
 		
 		return cursor;
+	}
+	
+	/**
+	 * Get the data stored about a question
+	 * 
+	 * @param questionId Number of question to return data for
+	 * @return Cursor with columns for day and requested question data
+	 */
+	public Cursor getQuestion(int questionId) {
+		return getColumn(SQLite.COLUMN_QUESTION + questionId);
 	}
 }
