@@ -20,6 +20,8 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import java.util.ArrayList;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -29,6 +31,7 @@ import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.Scheduler;
 import uk.co.jwlawson.nof1.fragments.CheckArray;
 import uk.co.jwlawson.nof1.fragments.StartDate;
+import uk.co.jwlawson.nof1.fragments.TimeSetter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -37,6 +40,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -109,8 +113,13 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	/** StartDate fragment instance */
 	private StartDate mDate;
 
-	public DoctorConfig() {
-	}
+	private EditText mTreatmentA;
+
+	private EditText mTreatmentB;
+
+	private EditText mAnyNotes;
+
+	private TimeSetter mTimeSetter;
 
 	@TargetApi(8)
 	@Override
@@ -197,6 +206,27 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mBackupManager = new BackupManager(this);
 		}
+
+		mTreatmentA = (EditText) findViewById(R.id.config_doctor_medicine_edit_treatmenta);
+		mTreatmentA.setText(sp.getString(Keys.CONFIG_TREATMENT_A, ""));
+
+		mTreatmentB = (EditText) findViewById(R.id.config_doctor_medicine_edit_treatmentb);
+		mTreatmentB.setText(sp.getString(Keys.CONFIG_TREATMENT_B, ""));
+
+		mAnyNotes = (EditText) findViewById(R.id.config_doctor_medicine_edit_notes);
+		mAnyNotes.setText(sp.getString(Keys.CONFIG_TREATMENT_NOTES, ""));
+
+		mTimeSetter = (TimeSetter) getSupportFragmentManager().findFragmentById(R.id.config_doctor_time_frag);
+		int num = 0;
+		while (sp.contains(Keys.CONFIG_TIME + num)) {
+			num++;
+		}
+		String[] times = new String[num];
+		for (int i = 0; i < num; i++) {
+			times[i] = sp.getString(Keys.CONFIG_TIME + i, "12:00");
+		}
+		mTimeSetter.setTimes(times);
+
 	}
 
 	@Override
@@ -211,17 +241,30 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		switch (item.getItemId()) {
 		case R.id.menu_doctor_config_done:
 			// Config done. Save data and email stuff away.
-			// TODO Check that all config is actually done
-			if (mFormBuilt) {
-				save();
-				makeTreatmentPlan();
-				email();
-				runScheduler();
-				setResult(RESULT_OK);
-				finish();
+
+			// Check that all config is actually done
+			String[] errors = checkFilledIn();
+			if (errors.length == 0) {
+				if (mFormBuilt) {
+					save();
+					makeTreatmentPlan();
+					email();
+					runScheduler();
+					setResult(RESULT_OK);
+					finish();
+				} else {
+					// Questionnaire not built yet
+					Toast.makeText(this, R.string.questionnaire_not_made, Toast.LENGTH_LONG).show();
+				}
 			} else {
-				// Questionnaire not built yet
-				Toast.makeText(this, "You must create the questionnaire first", Toast.LENGTH_LONG).show();
+				// Not all fields filled in
+				Resources res = getResources();
+				StringBuilder sb = new StringBuilder(res.getString(R.string.fill_in_prompt));
+				sb.append(" ").append(errors[0]);
+				for (int i = 1; i < errors.length; i++) {
+					sb.append(", ").append(errors[i]);
+				}
+				Toast.makeText(this, sb.toString(), Toast.LENGTH_LONG).show();
 			}
 
 			return true;
@@ -299,6 +342,12 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		editor.putBoolean(Keys.CONFIG_BUILT, mFormBuilt);
 
 		editor.putString(Keys.CONFIG_START, mDate.getDate());
+
+		// Save times to remind to take medicine
+		String[] times = mTimeSetter.getTimes();
+		for (int i = 0; i < times.length; i++) {
+			editor.putString(Keys.CONFIG_TIME + i, times[i]);
+		}
 
 		// save checked boxes
 		int[] arr = mArray.getSelected();
@@ -422,6 +471,50 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			inflater = this.getLayoutInflater();
 		}
 		return inflater;
+	}
+
+	/**
+	 * Go through form and check everything has been filled in and completed. If not, add name to returned array and
+	 * highlight view
+	 */
+	private String[] checkFilledIn() {
+		ArrayList<String> list = new ArrayList<String>();
+		Resources res = getResources();
+
+		if (mDocEmail.getText().length() == 0) {
+			list.add(res.getString(R.string.doctor_email));
+			mDocEmail.setBackgroundColor(0x20FF0000);
+		}
+		if (mPharmEmail.getText().length() == 0) {
+			list.add(res.getString(R.string.pharmacist_email));
+			mPharmEmail.setBackgroundColor(0x20FF0000);
+		}
+		if (mPatientName.getText().length() == 0) {
+			list.add(res.getString(R.string.patient_name));
+			mPatientName.setBackgroundColor(0x20FF0000);
+		}
+		if (mIntPeriodLength < 0 && mPeriodLength.getText().length() == 0) {
+			list.add(res.getString(R.string.treatment_period));
+			mPeriodLength.setBackgroundColor(0x20FF0000);
+		}
+		if (mIntPeriodNumber < 0 && mPeriodNumber.getText().length() == 0) {
+			list.add(res.getString(R.string.config_no_treatment_periods));
+			mPeriodNumber.setBackgroundColor(0x20FF0000);
+		}
+		if (mArray.getSelected().length == 0) {
+			list.add(res.getString(R.string.config_days_record));
+			mArray.getView().setBackgroundColor(0x20FF0000);
+		}
+		if (mTreatmentA.getText().length() == 0) {
+			list.add(res.getString(R.string.treatment_a));
+			mTreatmentA.setBackgroundColor(0x20FF0000);
+		}
+		if (mTreatmentB.getText().length() == 0) {
+			list.add(res.getString(R.string.treatment_b));
+			mTreatmentB.setBackgroundColor(0x20FF0000);
+		}
+		String[] result = new String[list.size()];
+		return list.toArray(result);
 	}
 
 	@Override
