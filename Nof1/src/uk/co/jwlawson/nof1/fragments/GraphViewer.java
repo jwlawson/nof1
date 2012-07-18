@@ -129,7 +129,7 @@ public class GraphViewer extends SherlockFragment {
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			if (DEBUG) Log.d(TAG, "Data source loaded");
-			getSherlockActivity().setProgressBarIndeterminateVisibility(false);
+			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(false);
 
 			// Load graph View
 			mGraph = new GraphView(getActivity());
