@@ -164,4 +164,10 @@ public class GraphViewer extends SherlockFragment {
 		}
 
 	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		mData.close();
+	}
 }
