@@ -124,11 +124,14 @@ public class Scheduler extends Service {
 		schedEdit.putString(Keys.SCHED_NEXT_DATE, schedPrefs.getString(Keys.SCHED_LAST_DATE, null));
 
 		// Get the new date to set the alarm on
-		String lastDate = schedPrefs.getString(Keys.SCHED_NEXT_DATE, null);
-		String[] lastArr = lastDate.split(":");
-		int[] lastInt = new int[] { Integer.parseInt(lastArr[0]), Integer.parseInt(lastArr[1]), Integer.parseInt(lastArr[2]) };
+		// String lastDate = schedPrefs.getString(Keys.SCHED_NEXT_DATE, null);
+		// String[] lastArr = lastDate.split(":");
+		// int[] lastInt = new int[] { Integer.parseInt(lastArr[0]), Integer.parseInt(lastArr[1]),
+		// Integer.parseInt(lastArr[2]) };
+
+		// Get calendar for this time + mins
 		Calendar cal = Calendar.getInstance();
-		cal.set(lastInt[2], lastInt[1], lastInt[0]);
+		// cal.set(lastInt[2], lastInt[1], lastInt[0]);
 		cal.add(Calendar.MINUTE, mins);
 
 		StringBuilder sb = new StringBuilder();
