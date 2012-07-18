@@ -106,7 +106,7 @@ public class TimeHolder extends SherlockFragment {
 				int hour = picker.getCurrentHour();
 				int min = picker.getCurrentMinute();
 
-				mTime = hour + ":" + min;
+				mTime = hour + ":" + (min < 10 ? "0" + min : min);
 				mTextView.setText(mTime);
 
 				dialog.dismiss();
