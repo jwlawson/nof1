@@ -110,7 +110,7 @@ public class Receiver extends BroadcastReceiver {
 
 	private void setMedicineNotification(Context context) {
 
-		setNotification(context, null, R.string.noti_medicine_title, R.string.noti_medicine_text);
+		setNotification(context, new Intent(), R.string.noti_medicine_title, R.string.noti_medicine_text);
 	}
 
 	/**
