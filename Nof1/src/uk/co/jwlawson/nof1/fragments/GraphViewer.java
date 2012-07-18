@@ -57,6 +57,8 @@ public class GraphViewer extends SherlockFragment {
 
 	private FrameLayout mFrame;
 
+	private Cursor mCursor;
+
 	public GraphViewer() {
 	}
 
@@ -136,7 +138,7 @@ public class GraphViewer extends SherlockFragment {
 
 			// Load data from database and pass to GraphView
 			int id = getArguments().getInt(ARGS_ID);
-			Cursor cursor = mData.getQuestion(id);
+			mCursor = mData.getQuestion(id);
 
 			// Set max x
 			SharedPreferences sp = getActivity().getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
@@ -146,17 +148,17 @@ public class GraphViewer extends SherlockFragment {
 
 			// Set max y
 			int max = 0;
-			while (!cursor.isAfterLast()) {
-				if (cursor.getInt(1) > max) {
-					max = cursor.getInt(1);
+			while (!mCursor.isAfterLast()) {
+				if (mCursor.getInt(1) > max) {
+					max = mCursor.getInt(1);
 				}
-				cursor.moveToNext();
+				mCursor.moveToNext();
 			}
 			mGraph.setMaxY(max);
 			if (DEBUG) Log.d(TAG, "Setting max y: " + max);
 
 			// Set cursor
-			mGraph.setCursor(cursor);
+			mGraph.setCursor(mCursor);
 
 			LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
@@ -169,5 +171,6 @@ public class GraphViewer extends SherlockFragment {
 	public void onDestroy() {
 		super.onDestroy();
 		mData.close();
+		mCursor.close();
 	}
 }
