@@ -139,5 +139,7 @@
     <string name="edit">Edit…</string>
     <string name="time">Time</string>
     <string name="remove_last">Remove last</string>
+    <string name="questionnaire_not_made">You must create the questionnaire first</string>
+    <string name="fill_in_prompt">Ensure you have filled in: </string>
 
 </resources>
