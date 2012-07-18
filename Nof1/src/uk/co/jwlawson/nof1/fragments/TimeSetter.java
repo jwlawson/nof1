@@ -92,4 +92,19 @@ public class TimeSetter extends SherlockFragment {
 
 		return result;
 	}
+
+	public void setTimes(String[] times) {
+		// Make fragments for each time set
+
+		FragmentTransaction ft = getSherlockActivity().getSupportFragmentManager().beginTransaction();
+
+		for (int i = 0; i < times.length; i++) {
+			TimeHolder frag = TimeHolder.newInstance(times[i]);
+
+			ft.add(R.id.config_doctor_medicine_timing_layout, frag, "time" + mNumber);
+			mNumber++;
+		}
+
+		ft.commit();
+	}
 }
