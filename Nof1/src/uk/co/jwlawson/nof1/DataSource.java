@@ -37,11 +37,16 @@ public class DataSource {
 	private static final String TAG = "DataSource";
 	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 
+	/** SQLite helper class */
 	private SQLite mHelper;
 
+	/** SQLite database */
 	private SQLiteDatabase mDatabase;
 
+	/** Array of all columns */
 	private String[] mColumns;
+
+	static final int[] sDataLock = new int[0];
 
 	public DataSource(Context context) {
 		mHelper = new SQLite(context);
@@ -110,8 +115,9 @@ public class DataSource {
 		ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_COMMENT, comment);
 
-		mDatabase.update(SQLite.TABLE_INFO, values, SQLite.COLUMN_ID + "=" + insertId, null);
-
+		synchronized (sDataLock) {
+			mDatabase.update(SQLite.TABLE_INFO, values, SQLite.COLUMN_ID + "=" + insertId, null);
+		}
 		return insertId;
 	}
 
@@ -135,8 +141,11 @@ public class DataSource {
 	public Cursor getColumns(String[] columns) {
 		if (DEBUG) Log.d(TAG, "Getting data: " + columns[0]);
 
-		Cursor cursor = mDatabase.query(SQLite.TABLE_INFO, columns, null, null, null, null, null);
+		Cursor cursor;
 
+		synchronized (sDataLock) {
+			cursor = mDatabase.query(SQLite.TABLE_INFO, columns, null, null, null, null, null);
+		}
 		cursor.moveToFirst();
 
 		return cursor;
