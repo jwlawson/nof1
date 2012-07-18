@@ -113,12 +113,16 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	/** StartDate fragment instance */
 	private StartDate mDate;
 
+	/** EditText for TreatmentA entry */
 	private EditText mTreatmentA;
 
+	/** EditText for TreatmentB entry */
 	private EditText mTreatmentB;
 
+	/** EditText for any treatment notes */
 	private EditText mAnyNotes;
 
+	/** TimeSetter fragment */
 	private TimeSetter mTimeSetter;
 
 	@TargetApi(8)
@@ -140,12 +144,14 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		String email = intent.getStringExtra(Keys.INTENT_EMAIL);
 
 		mDocEmail = (EditText) findViewById(R.id.config_doctor_details_edit_doc_email);
-		mDocEmail.setText(email);
+		if (email != null && email.length() != 0) mDocEmail.setText(email);
 
 		mPharmEmail = (EditText) findViewById(R.id.config_doctor_details_edit_pharm_email);
 
-		mPatientName = (EditText) findViewById(R.id.config_doctor_details_edit_pharm_email);
-		mPatientName.setText(sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+		mPatientName = (EditText) findViewById(R.id.config_doctor_details_edit_name);
+		if (sp.contains(Keys.CONFIG_PATIENT_NAME)) {
+			mPatientName.setText(sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+		}
 
 		mPeriodLength = (EditText) findViewById(R.id.config_timescale_edit_period);
 		Spinner spinLength = (Spinner) findViewById(R.id.config_timescale_spinner_length);
@@ -298,8 +304,10 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
 		// If config not finished, don't want to allow user to go back
+		if (mFormBuilt && checkFilledIn().length == 0) {
+			super.onBackPressed();
+		}
 	}
 
 	/** Run the scheduler for the first time */
@@ -348,6 +356,9 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		for (int i = 0; i < times.length; i++) {
 			editor.putString(Keys.CONFIG_TIME + i, times[i]);
 		}
+
+		editor.putString(Keys.CONFIG_TREATMENT_A, mTreatmentA.getText().toString());
+		editor.putString(Keys.CONFIG_TREATMENT_B, mTreatmentB.getText().toString());
 
 		// save checked boxes
 		int[] arr = mArray.getSelected();
@@ -484,34 +495,50 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		if (mDocEmail.getText().length() == 0) {
 			list.add(res.getString(R.string.doctor_email));
 			mDocEmail.setBackgroundColor(0x20FF0000);
+		} else {
+			mDocEmail.setBackgroundColor(0x00000000);
 		}
 		if (mPharmEmail.getText().length() == 0) {
 			list.add(res.getString(R.string.pharmacist_email));
 			mPharmEmail.setBackgroundColor(0x20FF0000);
+		} else {
+			mPharmEmail.setBackgroundColor(0x00000000);
 		}
 		if (mPatientName.getText().length() == 0) {
 			list.add(res.getString(R.string.patient_name));
 			mPatientName.setBackgroundColor(0x20FF0000);
+		} else {
+			mPatientName.setBackgroundColor(0x00000000);
 		}
 		if (mIntPeriodLength < 0 && mPeriodLength.getText().length() == 0) {
 			list.add(res.getString(R.string.treatment_period));
 			mPeriodLength.setBackgroundColor(0x20FF0000);
+		} else {
+			mPeriodLength.setBackgroundColor(0x00000000);
 		}
 		if (mIntPeriodNumber < 0 && mPeriodNumber.getText().length() == 0) {
 			list.add(res.getString(R.string.config_no_treatment_periods));
 			mPeriodNumber.setBackgroundColor(0x20FF0000);
+		} else {
+			mPeriodNumber.setBackgroundColor(0x00000000);
 		}
 		if (mArray.getSelected().length == 0) {
 			list.add(res.getString(R.string.config_days_record));
 			mArray.getView().setBackgroundColor(0x20FF0000);
+		} else {
+			mArray.getView().setBackgroundColor(0x00000000);
 		}
 		if (mTreatmentA.getText().length() == 0) {
 			list.add(res.getString(R.string.treatment_a));
 			mTreatmentA.setBackgroundColor(0x20FF0000);
+		} else {
+			mTreatmentA.setBackgroundColor(0x00000000);
 		}
 		if (mTreatmentB.getText().length() == 0) {
 			list.add(res.getString(R.string.treatment_b));
 			mTreatmentB.setBackgroundColor(0x20FF0000);
+		} else {
+			mTreatmentB.setBackgroundColor(0x00000000);
 		}
 		String[] result = new String[list.size()];
 		return list.toArray(result);
@@ -539,11 +566,12 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 				mArray.setNumber(mIntPeriodLength);
 				num = mIntPeriodLength;
 			}
+			// Set which boxes in check array are selected
 			SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
 			boolean[] selected = new boolean[num];
 			for (int i = 0; i < num; i++) {
-				selected[i] = sp.getBoolean(Keys.CONFIG_DAY + i, false);
+				selected[i] = sp.getBoolean(Keys.CONFIG_DAY + (i + 1), false);
 			}
 			mArray.setSelected(selected);
 			mTimescaleLayout.requestLayout();
