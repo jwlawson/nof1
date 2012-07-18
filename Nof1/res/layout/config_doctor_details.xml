@@ -40,9 +40,7 @@
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/patient_name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
-
-
+
     <EditText
         android:id="@+id/config_doctor_details_edit_name"
         android:layout_width="wrap_content"
@@ -51,8 +49,7 @@
         android:layout_alignRight="@+id/config_doctor_details_text_name"
         android:layout_below="@+id/config_doctor_details_text_name"
         android:ems="10"
-        android:inputType="textPersonName" >
-
+        android:inputType="textCapWords|textPersonName" >
         
     </EditText>
 
