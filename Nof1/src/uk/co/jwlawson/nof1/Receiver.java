@@ -77,7 +77,14 @@ public class Receiver extends BroadcastReceiver {
 			Intent i = new Intent(context, Scheduler.class);
 			i.putExtra(Keys.INTENT_BOOT, false);
 			i.putExtra(Keys.INTENT_ALARM, true); // Really do want to use INTENT_ALARM, not INTENT_FIRST
+			i.putExtra(Keys.INTENT_FIRST, true); // Both tells scheduler to set up medicine alarms
 			context.startService(i);
+
+		} else if (intent.getBooleanExtra(Keys.INTENT_MEDICINE, false)) {
+			if (DEBUG) Log.d(TAG, "Medicine alarm caught");
+
+			// Show medicine reminder notification
+			setMedicineNotification(context);
 		}
 	}
 
@@ -99,6 +106,11 @@ public class Receiver extends BroadcastReceiver {
 
 		setNotification(context, intent, R.string.noti_first_title, R.string.noti_first_text);
 
+	}
+
+	private void setMedicineNotification(Context context) {
+
+		setNotification(context, null, R.string.noti_medicine_title, R.string.noti_medicine_text);
 	}
 
 	/**
