@@ -130,5 +130,14 @@
     <string name="noti_repeat_title">N-of-1 Trials</string>
     <string name="noti_repeat_text">Please fill in this questionnaire</string>
     <string name="config_not_run">Start date has not been set up. Please run the config tool.</string>
+    <string name="medicine_explain">Please enter details about the treatments used in the trial. Include any information the pharmacist may need to make the prescription.</string>
+    <string name="treatment_a">Treatment A</string>
+    <string name="treatment_b">Treatment B</string>
+    <string name="any_notes">Any Notes</string>
+    <string name="medicine_timing">Times to take medicine</string>
+    <string name="add">Add…</string>
+    <string name="edit">Edit…</string>
+    <string name="time">Time</string>
+    <string name="remove_last">Remove last</string>
 
 </resources>
