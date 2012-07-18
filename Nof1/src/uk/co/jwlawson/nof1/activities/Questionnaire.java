@@ -131,20 +131,57 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			// Save data to database
 
 			// Get day of trial we are in
-			int day = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE).getInt(Keys.SCHED_CUMULATIVE_DAY, 0);
+			final int day = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE).getInt(Keys.SCHED_CUMULATIVE_DAY, 0);
 
 			// Get question responses
-			int[] data = new int[mQuestionList.size()];
+			final int[] data = new int[mQuestionList.size()];
 			for (int i = 0; i < mQuestionList.size(); i++) {
 				data[i] = mQuestionList.get(i).getResult();
 			}
 			if (mComment != null) {
 				// Save with comment
-				String comment = mComment.getComment();
-				mData.saveData(day, data, comment);
+				final String comment = mComment.getComment();
+				new AsyncTask<Void, Void, Void>() {
+					@Override
+					protected void onPreExecute() {
+						setSupportProgressBarIndeterminateVisibility(true);
+					};
+
+					@Override
+					protected Void doInBackground(Void... params) {
+						mData.saveData(day, data, comment);
+						return null;
+					}
+
+					@Override
+					protected void onPostExecute(Void result) {
+						setSupportProgressBarIndeterminateVisibility(false);
+						setResult(RESULT_OK);
+						finish();
+					};
+				}.execute();
+
 			} else {
 				// Save without comment
-				mData.saveData(day, data);
+				new AsyncTask<Void, Void, Void>() {
+					@Override
+					protected void onPreExecute() {
+						setSupportProgressBarIndeterminateVisibility(true);
+					};
+
+					@Override
+					protected Void doInBackground(Void... params) {
+						mData.saveData(day, data);
+						return null;
+					}
+
+					@Override
+					protected void onPostExecute(Void result) {
+						setSupportProgressBarIndeterminateVisibility(false);
+						setResult(RESULT_OK);
+						finish();
+					};
+				}.execute();
 			}
 			// TODO handle ad hoc data entry
 		}
