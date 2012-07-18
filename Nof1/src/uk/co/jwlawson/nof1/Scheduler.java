@@ -22,6 +22,7 @@ package uk.co.jwlawson.nof1;
 
 import java.util.Calendar;
 
+import uk.co.jwlawson.nof1.preferences.TimePreference;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -44,6 +45,9 @@ public class Scheduler extends Service {
 
 	private static final String TAG = "Scheduler";
 	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+
+	private static final int REQUEST_QUES = 0;
+	private static final int REQUEST_MED = 1;
 
 	private AlarmManager mAlarmManager;
 
@@ -80,6 +84,17 @@ public class Scheduler extends Service {
 			Thread thread = new Thread(mNotiSchedule);
 			thread.start();
 
+			if (intent.getBooleanExtra(Keys.INTENT_FIRST, false)) {
+				// If first is sent as well, then need to set up medicine reminders
+				Thread t = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						setMedicineAlarm();
+					}
+				});
+				t.start();
+			}
+
 		} else if (intent.getBooleanExtra(Keys.INTENT_FIRST, false)) {
 			if (DEBUG) Log.d(TAG, "Scheduler run for the first time");
 
@@ -113,7 +128,7 @@ public class Scheduler extends Service {
 		return null;
 	}
 
-	public void reschedule(int mins) {
+	private void reschedule(int mins) {
 		// Work out when next to set the alarm, set it and save in preferences
 		SharedPreferences schedPrefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 		SharedPreferences.Editor schedEdit = schedPrefs.edit();
@@ -123,29 +138,17 @@ public class Scheduler extends Service {
 		schedEdit.putInt(Keys.SCHED_CUR_PERIOD, schedPrefs.getInt(Keys.SCHED_LAST_PERIOD, 1));
 		schedEdit.putString(Keys.SCHED_NEXT_DATE, schedPrefs.getString(Keys.SCHED_LAST_DATE, null));
 
-		// Get the new date to set the alarm on
-		// String lastDate = schedPrefs.getString(Keys.SCHED_NEXT_DATE, null);
-		// String[] lastArr = lastDate.split(":");
-		// int[] lastInt = new int[] { Integer.parseInt(lastArr[0]), Integer.parseInt(lastArr[1]),
-		// Integer.parseInt(lastArr[2]) };
-
 		// Get calendar for this time + mins
 		Calendar cal = Calendar.getInstance();
-		// cal.set(lastInt[2], lastInt[1], lastInt[0]);
 		cal.add(Calendar.MINUTE, mins);
-
-		StringBuilder sb = new StringBuilder();
-		sb.append(cal.get(Calendar.DAY_OF_MONTH)).append(":");
-		sb.append(cal.get(Calendar.MONTH)).append(":");
-		sb.append(cal.get(Calendar.YEAR));
-
-		schedEdit.putString(Keys.SCHED_NEXT_DATE, sb.toString());
 
 		schedEdit.commit();
 		backup();
 
 		// Finally, use the new values to set an alarm
-		setRepeatAlarm();
+		Intent intent = new Intent(Scheduler.this, Receiver.class);
+		intent.putExtra(Keys.INTENT_ALARM, true);
+		setAlarm(intent, cal);
 
 		// Close service once done
 		Scheduler.this.stopSelf();
@@ -180,6 +183,25 @@ public class Scheduler extends Service {
 			return;
 		}
 
+		setAlarm(intent, dateStr, timeStr);
+	}
+
+	/** Set an alarm to fire off specified intent at time stored in calendar */
+	private void setAlarm(Intent intent, Calendar cal) {
+		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+		mAlarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
+	}
+
+	/**
+	 * Set an alarm at specified date and time.
+	 * 
+	 * @param intent
+	 * @param dateStr DD:MM:YYYY
+	 * @param timeStr HH:MM
+	 */
+	private void setAlarm(Intent intent, String dateStr, String timeStr) {
+
 		String[] dateArr = dateStr.split(":");
 		String[] timeArr = timeStr.split(":");
 
@@ -189,10 +211,35 @@ public class Scheduler extends Service {
 		Calendar cal = Calendar.getInstance();
 		cal.set(dateInt[2], dateInt[1], dateInt[0], timeInt[0], timeInt[1]);
 
-		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		mAlarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
 		if (DEBUG) Log.d(TAG, "Scheduled alarm for: " + dateInt[2] + " " + dateInt[1] + " " + dateInt[0] + " " + timeInt[0] + " " + timeInt[1]);
+	}
+
+	private void setMedicineAlarm() {
+		SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+		int dayInMillis = 24 * 60 * 60 * 1000;
+
+		Calendar cal = Calendar.getInstance();
+
+		for (int i = 0; sp.contains(Keys.CONFIG_TIME + i); i++) {
+			String time = sp.getString(Keys.CONFIG_TIME + i, "12:00");
+			int hour = TimePreference.getHour(time);
+			int min = TimePreference.getMinute(time);
+
+			cal.set(Calendar.HOUR_OF_DAY, hour);
+			cal.set(Calendar.MINUTE, min);
+
+			Intent intent = new Intent(this, Receiver.class);
+			intent.putExtra(Keys.INTENT_MEDICINE, true);
+
+			PendingIntent pi = PendingIntent.getBroadcast(this, REQUEST_MED, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), dayInMillis, pi);
+			if (DEBUG) Log.d(TAG, "Scheduling a repeating medicine alarm at " + time);
+		}
 	}
 
 	private Runnable mNotiSchedule = new Runnable() {
@@ -306,6 +353,7 @@ public class Scheduler extends Service {
 		public void run() {
 			// Get the next alarm time from preferences and set it
 			setRepeatAlarm();
+			setMedicineAlarm();
 
 			// Close service once done
 			Scheduler.this.stopSelf();

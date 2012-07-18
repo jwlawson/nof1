@@ -91,6 +91,9 @@ public class Keys {
 	/** Intent key for question id */
 	public static final String INTENT_ID = "uk.co.jwlawson.nof1.id";
 
+	/** Intent key for medicine notification bool */
+	public static final String INTENT_MEDICINE = "uk.co.jwlawson.nof1.medicine";
+
 	/** Intent key for mins to reschedule */
 	public static final String INTENT_RESCHEDULE = "uk.co.jwlawson.nof1.reschedule";
 
