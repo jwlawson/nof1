@@ -211,6 +211,16 @@ public class CheckArray extends SherlockFragment {
 		return result;
 	}
 
+	/** Set the states of all checkboxes in array */
+	public void setSelected(boolean[] selected) {
+
+		int min = selected.length < mBoxList.size() ? selected.length : mBoxList.size();
+
+		for (int i = 0; i < min; i++) {
+			mBoxList.get(i).setChecked(selected[i]);
+		}
+	}
+
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
