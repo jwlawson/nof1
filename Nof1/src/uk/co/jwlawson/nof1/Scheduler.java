@@ -220,8 +220,6 @@ public class Scheduler extends Service {
 	private void setMedicineAlarm() {
 		SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
-		int dayInMillis = 24 * 60 * 60 * 1000;
-
 		Calendar cal = Calendar.getInstance();
 
 		for (int i = 0; sp.contains(Keys.CONFIG_TIME + i); i++) {
@@ -237,7 +235,7 @@ public class Scheduler extends Service {
 
 			PendingIntent pi = PendingIntent.getBroadcast(this, REQUEST_MED, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), dayInMillis, pi);
+			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
 			if (DEBUG) Log.d(TAG, "Scheduling a repeating medicine alarm at " + time);
 		}
 	}
