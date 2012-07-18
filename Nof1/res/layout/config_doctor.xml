@@ -52,8 +52,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             layout="@layout/config_doctor_medicine" />
-
+
         <fragment
+            android:id="@+id/config_doctor_time_frag"
             android:name="uk.co.jwlawson.nof1.fragments.TimeSetter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
