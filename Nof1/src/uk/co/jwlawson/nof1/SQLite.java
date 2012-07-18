@@ -49,7 +49,8 @@ public class SQLite extends SQLiteOpenHelper {
 	/** The number of questions, hence the number of columns called {@code question<i>} */
 	private int mNumQuestion;
 
-	private static final String DATABASE_NAME = "info.db";
+	/** Database file name */
+	public static final String DATABASE_NAME = "info.db";
 	private static final int DATABASE_VERSION = 2;
 
 	/** Construct database with custom name and version number */
