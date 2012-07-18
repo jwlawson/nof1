@@ -23,8 +23,10 @@ package uk.co.jwlawson.nof1.activities;
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.Scheduler;
 import android.annotation.TargetApi;
 import android.app.backup.BackupManager;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -74,7 +76,7 @@ public class UserPrefs extends SherlockPreferenceActivity {
 
 		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
 		if (!sp.contains(Keys.DEFAULT_FIRST)) {
-			// TODO First time run - schedule first notification
+			// TODO First time run - schedule first notification - Done in DoctorConfig?
 
 			// Add key, to prevent this running again
 			sp.edit().putBoolean(Keys.DEFAULT_FIRST, true).commit();
@@ -85,5 +87,10 @@ public class UserPrefs extends SherlockPreferenceActivity {
 			bm.dataChanged();
 			if (DEBUG) Log.d(TAG, "Requesting backup");
 		}
+
+		// Tell Scheduler to redo alarms, as time could have changed
+		Intent intent = new Intent(this, Scheduler.class);
+		intent.putExtra(Keys.INTENT_BOOT, true);
+		startService(intent);
 	}
 }
