@@ -21,6 +21,7 @@
 package uk.co.jwlawson.nof1.activities;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 
 import uk.co.jwlawson.nof1.DataSource;
 import uk.co.jwlawson.nof1.Keys;
@@ -131,12 +132,24 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			// Save data to database
 
 			// Get day of trial we are in
-			final int day = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE).getInt(Keys.SCHED_CUMULATIVE_DAY, 0);
+			final int day = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE).getInt(Keys.SCHED_CUMULATIVE_DAY, 1);
 
 			// Get question responses
+			boolean problem = false;
 			final int[] data = new int[mQuestionList.size()];
 			for (int i = 0; i < mQuestionList.size(); i++) {
-				data[i] = mQuestionList.get(i).getResult();
+				// Basic input check
+				try {
+					data[i] = mQuestionList.get(i).getResult();
+					mQuestionList.get(i).getView().setBackgroundColor(0x00000000);
+				} catch (InputMismatchException e) {
+					problem = true;
+					mQuestionList.get(i).getView().setBackgroundColor(0x20FF0000);
+				}
+			}
+			if (problem) {
+				Toast.makeText(this, "Please answer all the questions", Toast.LENGTH_SHORT).show();
+				return;
 			}
 			if (mComment != null) {
 				// Save with comment
@@ -155,6 +168,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 
 					@Override
 					protected void onPostExecute(Void result) {
+						if (DEBUG) Log.d(TAG, "Data saved");
 						setSupportProgressBarIndeterminateVisibility(false);
 						setResult(RESULT_OK);
 						finish();
@@ -177,6 +191,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 
 					@Override
 					protected void onPostExecute(Void result) {
+						if (DEBUG) Log.d(TAG, "Data saved");
 						setSupportProgressBarIndeterminateVisibility(false);
 						setResult(RESULT_OK);
 						finish();
