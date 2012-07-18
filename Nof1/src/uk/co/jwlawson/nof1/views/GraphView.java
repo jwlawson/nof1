@@ -22,7 +22,6 @@ package uk.co.jwlawson.nof1.views;
 
 import java.util.ArrayList;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.containers.Label;
 import uk.co.jwlawson.nof1.containers.Line;
 import uk.co.jwlawson.nof1.containers.Vec2;
@@ -47,7 +46,7 @@ import android.view.View;
 public class GraphView extends View {
 
 	private static final String TAG = "GraphView";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private static final int TICK_SIZE = 5;
 	private static final int TEXT_SIZE = 12;
