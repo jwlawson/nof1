@@ -526,15 +526,26 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		case R.id.config_timescale_spinner_length:
 			// Length spinner
 			item = (String) parent.getItemAtPosition(position);
+			int num;
 			if (item.equalsIgnoreCase("other")) {
 				mPeriodLength.setVisibility(View.VISIBLE);
 				mIntPeriodLength = -1;
-				mArray.setNumber(Integer.parseInt(mPeriodLength.getText().toString()));
+				num = Integer.parseInt(mPeriodLength.getText().toString());
+				mArray.setNumber(num);
+
 			} else {
 				mPeriodLength.setVisibility(View.GONE);
 				mIntPeriodLength = Integer.parseInt(item);
 				mArray.setNumber(mIntPeriodLength);
+				num = mIntPeriodLength;
 			}
+			SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+			boolean[] selected = new boolean[num];
+			for (int i = 0; i < num; i++) {
+				selected[i] = sp.getBoolean(Keys.CONFIG_DAY + i, false);
+			}
+			mArray.setSelected(selected);
 			mTimescaleLayout.requestLayout();
 
 			break;

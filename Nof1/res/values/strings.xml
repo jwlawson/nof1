@@ -141,5 +141,7 @@
     <string name="remove_last">Remove last</string>
     <string name="questionnaire_not_made">You must create the questionnaire first</string>
     <string name="fill_in_prompt">Ensure you have filled in: </string>
+    <string name="noti_medicine_title">N-of-1 Trails</string>
+    <string name="noti_medicine_text">It is time to take your medicine</string>
 
 </resources>
