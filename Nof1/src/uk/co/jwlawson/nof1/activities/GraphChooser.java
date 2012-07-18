@@ -53,6 +53,8 @@ public class GraphChooser extends SherlockFragmentActivity implements GraphList.
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.graph_chooser);
 
+		setSupportProgressBarIndeterminateVisibility(false);
+
 		FrameLayout frame = (FrameLayout) findViewById(R.id.graph_chooser_view);
 
 		if (frame != null) {
