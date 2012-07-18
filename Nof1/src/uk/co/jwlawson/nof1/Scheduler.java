@@ -119,8 +119,8 @@ public class Scheduler extends Service {
 		SharedPreferences.Editor schedEdit = schedPrefs.edit();
 
 		// Roll back settings in preferences
-		schedEdit.putInt(Keys.SCHED_NEXT_DAY, schedPrefs.getInt(Keys.SCHED_LAST_DAY, 0));
-		schedEdit.putInt(Keys.SCHED_CUR_PERIOD, schedPrefs.getInt(Keys.SCHED_LAST_PERIOD, 0));
+		schedEdit.putInt(Keys.SCHED_NEXT_DAY, schedPrefs.getInt(Keys.SCHED_LAST_DAY, 1));
+		schedEdit.putInt(Keys.SCHED_CUR_PERIOD, schedPrefs.getInt(Keys.SCHED_LAST_PERIOD, 1));
 		schedEdit.putString(Keys.SCHED_NEXT_DATE, schedPrefs.getString(Keys.SCHED_LAST_DATE, null));
 
 		// Get the new date to set the alarm on
@@ -201,8 +201,8 @@ public class Scheduler extends Service {
 
 			SharedPreferences configPrefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
-			int lastDay = schedPrefs.getInt(Keys.SCHED_NEXT_DAY, 0);
-			int periodLength = configPrefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
+			int lastDay = schedPrefs.getInt(Keys.SCHED_NEXT_DAY, 1);
+			int periodLength = configPrefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 1);
 			int nextDay = -1;
 			int add;
 
@@ -249,7 +249,7 @@ public class Scheduler extends Service {
 			schedEdit.putString(Keys.SCHED_LAST_DATE, lastDate);
 
 			// Increment cumulative day counter
-			int cumDay = schedPrefs.getInt(Keys.SCHED_NEXT_CUMULATIVE_DAY, 0);
+			int cumDay = schedPrefs.getInt(Keys.SCHED_NEXT_CUMULATIVE_DAY, 1);
 			schedEdit.putInt(Keys.SCHED_NEXT_CUMULATIVE_DAY, cumDay + add);
 			schedEdit.putInt(Keys.SCHED_CUMULATIVE_DAY, cumDay);
 
@@ -283,7 +283,7 @@ public class Scheduler extends Service {
 
 			} else {
 				schedEdit.putString(Keys.SCHED_NEXT_DATE, start);
-				schedEdit.putInt(Keys.SCHED_NEXT_DAY, 0);
+				schedEdit.putInt(Keys.SCHED_NEXT_DAY, 1);
 				schedEdit.putInt(Keys.SCHED_CUR_PERIOD, 1);
 
 				schedEdit.commit();
