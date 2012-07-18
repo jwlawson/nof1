@@ -124,6 +124,18 @@ public class Keys {
 	/** Shared preference key for start date */
 	public static final String CONFIG_START = "start";
 
+	/** Shared preference key prefix for time to take medicine */
+	public static final String CONFIG_TIME = "time";
+
+	/** Shared preference key for the treatment A */
+	public static final String CONFIG_TREATMENT_A = "treatment_a";
+
+	/** Shared preference key for the treatment B */
+	public static final String CONFIG_TREATMENT_B = "treatment_b";
+
+	/** Shared preference key for any treatment notes */
+	public static final String CONFIG_TREATMENT_NOTES = "treatment_notes";
+
 	/** Shared preferences name for scheduler preferences */
 	public static final String SCHED_NAME = "config";
 
