@@ -268,7 +268,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	/** Create a random treatment plan, which must stay hidden but sent to the pharmacist. */
 	private void makeTreatmentPlan() {
-		// TODO
+		// TODO Make treatment plan
 	}
 
 	/** Save the data to file. */
@@ -323,7 +323,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	/** email the information to the doctor and pharmacist */
 	private void email() {
-		// TODO
+		// TODO Send email
 		String pharmEmail = mPharmEmail.getText().toString();
 		String docEmail = mDocEmail.getText().toString();
 	}
