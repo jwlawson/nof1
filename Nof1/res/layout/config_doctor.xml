@@ -47,6 +47,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/config_timescale" />
+
+        <include
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/config_doctor_medicine" />
+
+        <fragment
+            android:name="uk.co.jwlawson.nof1.fragments.TimeSetter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout="@layout/config_doctor_medicine_timing" />
 
         <Button
             android:id="@+id/config_doctor_btn_create"

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent" xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <TextView
+        android:id="@+id/config_doctor_medicine_text_explain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/padding_large"
+        android:layout_marginRight="@dimen/padding_large"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/medicine_explain"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/config_doctor_medicine_text_treatmenta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_doctor_medicine_text_explain"
+        android:layout_below="@+id/config_doctor_medicine_text_explain"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/treatment_a"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/config_doctor_medicine_edit_treatmenta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_doctor_medicine_text_treatmenta"
+        android:layout_alignRight="@+id/config_doctor_medicine_text_explain"
+        android:layout_below="@+id/config_doctor_medicine_text_treatmenta"
+        android:ems="10"
+        android:inputType="textCapSentences" >
+
+    </EditText>
+
+    <TextView
+        android:id="@+id/config_doctor_medicine_text_treatmentb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_doctor_medicine_edit_treatmenta"
+        android:layout_below="@+id/config_doctor_medicine_edit_treatmenta"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/treatment_b"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/config_doctor_medicine_edit_treatmentb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_doctor_medicine_text_treatmentb"
+        android:layout_alignRight="@+id/config_doctor_medicine_edit_treatmenta"
+        android:layout_below="@+id/config_doctor_medicine_text_treatmentb"
+        android:ems="10"
+        android:inputType="textCapSentences" />
+
+    <TextView
+        android:id="@+id/config_doctor_medicine_text_notes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_doctor_medicine_edit_treatmentb"
+        android:layout_below="@+id/config_doctor_medicine_edit_treatmentb"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/any_notes"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/config_doctor_medicine_edit_notes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_doctor_medicine_text_notes"
+        android:layout_alignRight="@+id/config_doctor_medicine_edit_treatmentb"
+        android:layout_below="@+id/config_doctor_medicine_text_notes"
+        android:ems="10"
+        android:inputType="textCapSentences|textMultiLine" >
+
+        <requestFocus />
+    </EditText>
+
+</RelativeLayout>
