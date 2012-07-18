@@ -70,6 +70,7 @@ public class TimeSetter extends SherlockFragment {
 		remove.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				if (mNumber < 1) return;
 				FragmentManager fm = getSherlockActivity().getSupportFragmentManager();
 				FragmentTransaction ft = fm.beginTransaction();
 				ft.remove(fm.findFragmentByTag("time" + (mNumber - 1)));
