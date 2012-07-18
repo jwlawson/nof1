@@ -20,6 +20,8 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
+import java.util.InputMismatchException;
+
 import uk.co.jwlawson.nof1.R;
 import android.os.Bundle;
 import android.util.Log;
@@ -82,8 +84,7 @@ public class NumberFragment extends QuestionFragment {
 		try {
 			result = Integer.parseInt(mText.getText().toString());
 		} catch (NumberFormatException e) {
-			// TODO something to handle error
-			Log.e(TAG, "Incorrect number entry");
+			throw new InputMismatchException("Incorrect number entry");
 		}
 		return result;
 	}

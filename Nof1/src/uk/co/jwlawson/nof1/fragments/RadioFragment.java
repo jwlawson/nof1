@@ -20,6 +20,8 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
+import java.util.InputMismatchException;
+
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
 import android.os.Bundle;
@@ -39,7 +41,7 @@ public class RadioFragment extends QuestionFragment implements RadioGroup.OnChec
 	private static final String ARGS_MIN = "argsMin";
 	private static final String ARGS_MAX = "argsMax";
 
-	private int mSelected;
+	private int mSelected = -1;
 
 	public RadioFragment() {
 	}
@@ -127,6 +129,10 @@ public class RadioFragment extends QuestionFragment implements RadioGroup.OnChec
 
 	@Override
 	public int getResult() {
+		if (mSelected < 0) {
+			// No radio selected
+			throw new InputMismatchException("No radio selected");
+		}
 		return mSelected;
 	}
 
