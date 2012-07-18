@@ -26,8 +26,10 @@ import android.annotation.TargetApi;
 import android.app.backup.BackupAgentHelper;
 import android.app.backup.BackupDataInput;
 import android.app.backup.BackupDataOutput;
+import android.app.backup.FileBackupHelper;
 import android.app.backup.SharedPreferencesBackupHelper;
 import android.os.ParcelFileDescriptor;
+import android.util.Log;
 
 /**
  * @author John Lawson
@@ -37,6 +39,7 @@ import android.os.ParcelFileDescriptor;
 public class Backup extends BackupAgentHelper {
 
 	private static final String BACKUP = "prefs";
+	private static final String DATABASE = "database";
 
 	public Backup() {
 	}
@@ -47,20 +50,24 @@ public class Backup extends BackupAgentHelper {
 		SharedPreferencesBackupHelper helper = new SharedPreferencesBackupHelper(this, Keys.CONFIG_NAME, Keys.QUES_NAME, Keys.DEFAULT_PREFS);
 		addHelper(BACKUP, helper);
 
+		Log.d("BackupManager", getFilesDir().toString());
+
+		FileBackupHelper file = new FileBackupHelper(this, "../databases/" + SQLite.DATABASE_NAME);
+		addHelper(DATABASE, file);
 	}
 
 	@Override
 	public void onBackup(ParcelFileDescriptor oldState, BackupDataOutput data, ParcelFileDescriptor newState) throws IOException {
-		super.onBackup(oldState, data, newState);
-
-		// TODO backup database
+		synchronized (DataSource.sDataLock) {
+			super.onBackup(oldState, data, newState);
+		}
 	}
 
 	@Override
 	public void onRestore(BackupDataInput data, int appVersionCode, ParcelFileDescriptor newState) throws IOException {
-		super.onRestore(data, appVersionCode, newState);
-
-		// TODO rebuild database
+		synchronized (DataSource.sDataLock) {
+			super.onRestore(data, appVersionCode, newState);
+		}
 	}
 
 }
