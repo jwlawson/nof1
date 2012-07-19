@@ -16,7 +16,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uk.co.jwlawson.nof1"
@@ -28,7 +28,7 @@
         android:targetSdkVersion="16" />
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:backupAgent="Backup"
@@ -51,51 +51,36 @@
         </activity>
         <activity
             android:name=".activities.UserPrefs"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/settings" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activities.DoctorLogin"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/configuration" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.UserPrefs" />
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activities.DoctorConfig"
-            android:exported="true"
+            android:exported="false"
             android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.UserPrefs" />
-
-            <intent-filter>
-            </intent-filter>
         </activity>
         <activity
             android:name=".activities.FormBuilder"
-            android:exported="true"
+            android:exported="false"
             android:uiOptions="splitActionBarWhenNarrow"
             android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.DoctorConfig" />
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".activities.Questionnaire"
@@ -124,6 +109,11 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.GraphChooser" />
+        </activity>
+        <activity android:name=".activities.About" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
         </activity>
     </application>
 

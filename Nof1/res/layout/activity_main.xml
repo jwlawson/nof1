@@ -23,7 +23,7 @@
     android:id="@+id/main_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -88,6 +88,17 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/main_btn_config"
             android:text="Form builder" />
+
+        <Button
+            android:id="@+id/main_btn_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/main_btn_builder"
+            android:text="About" />
+
     </RelativeLayout>
 
 </ScrollView>

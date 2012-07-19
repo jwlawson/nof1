@@ -117,6 +117,16 @@ public class MainActivity extends SherlockActivity {
 			}
 		});
 
+		Button btnAbout = (Button) findViewById(R.id.main_btn_about);
+		btnAbout.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getBaseContext(), About.class);
+				startActivity(i);
+			}
+		});
+
 	}
 
 	@Override
