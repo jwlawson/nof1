@@ -129,6 +129,16 @@ public class MainActivity extends SherlockActivity {
 			}
 		});
 
+		Button btnHome = (Button) findViewById(R.id.main_btn_home);
+		btnHome.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getBaseContext(), HomeScreen.class);
+				startActivity(i);
+			}
+		});
+
 	}
 
 	@Override
