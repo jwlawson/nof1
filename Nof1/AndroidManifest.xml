@@ -67,7 +67,7 @@
             android:label="@string/configuration" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
+                android:value="uk.co.jwlawson.nof1.activities.UserPrefs" />
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -79,7 +79,7 @@
             android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
+                android:value="uk.co.jwlawson.nof1.activities.UserPrefs" />
 
             <intent-filter>
             </intent-filter>
