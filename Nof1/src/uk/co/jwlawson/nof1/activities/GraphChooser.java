@@ -28,6 +28,8 @@ import uk.co.jwlawson.nof1.fragments.GraphViewer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -109,8 +111,17 @@ public class GraphChooser extends SherlockFragmentActivity implements GraphList.
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			if (DEBUG) Log.d(TAG, "Home button selected");
-			setResult(RESULT_CANCELED);
-			finish();
+			Intent upIntent = new Intent(this, MainActivity.class);
+			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+				// This activity is not part of the application's task, so create a new task
+				// with a synthesized back stack.
+				TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
+				finish();
+			} else {
+				// This activity is part of the application's task, so simply
+				// navigate up to the hierarchical parent activity.
+				NavUtils.navigateUpTo(this, upIntent);
+			}
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

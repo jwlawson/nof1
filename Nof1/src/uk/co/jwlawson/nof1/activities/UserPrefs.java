@@ -32,6 +32,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
@@ -78,8 +80,17 @@ public class UserPrefs extends SherlockPreferenceActivity {
 
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			setResult(RESULT_CANCELED);
-			finish();
+			Intent upIntent = new Intent(this, MainActivity.class);
+			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+				// This activity is not part of the application's task, so create a new task
+				// with a synthesized back stack.
+				TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
+				finish();
+			} else {
+				// This activity is part of the application's task, so simply
+				// navigate up to the hierarchical parent activity.
+				NavUtils.navigateUpTo(this, upIntent);
+			}
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

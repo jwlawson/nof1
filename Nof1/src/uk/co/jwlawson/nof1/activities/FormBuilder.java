@@ -36,6 +36,8 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -187,6 +189,18 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			return true;
 		case android.R.id.home:
 			if (DEBUG) Log.d(TAG, "Home button pressed");
+			Intent upIntent = new Intent(this, DoctorConfig.class);
+			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+				// This activity is not part of the application's task, so create a new task
+				// with a synthesized back stack.
+				TaskStackBuilder.create(this).addNextIntent(new Intent(this, MainActivity.class)).addNextIntent(new Intent(this, UserPrefs.class))
+						.addNextIntent(upIntent).startActivities();
+				finish();
+			} else {
+				// This activity is part of the application's task, so simply
+				// navigate up to the hierarchical parent activity.
+				NavUtils.navigateUpTo(this, upIntent);
+			}
 		default:
 			return super.onMenuItemSelected(featureId, item);
 		}

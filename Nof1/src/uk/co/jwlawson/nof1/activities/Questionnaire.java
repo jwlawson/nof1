@@ -247,6 +247,12 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			setResult(RESULT_CANCELED);
+			finish();
+			return true;
+		}
 		return super.onOptionsItemSelected(item);
 	}
 

@@ -45,6 +45,8 @@ public class MainActivity extends SherlockActivity {
 
 		// populateDatabase();
 
+		getSupportActionBar().setHomeButtonEnabled(false);
+
 		Button btnNotification = (Button) findViewById(R.id.main_btn_noti);
 		btnNotification.setOnClickListener(new OnClickListener() {
 
