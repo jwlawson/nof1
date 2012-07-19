@@ -52,6 +52,8 @@ public class HomeScreen extends SherlockActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		getSupportActionBar().setHomeButtonEnabled(false);
+
 		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
 
 		if (!sp.contains(Keys.DEFAULT_FIRST)) {
