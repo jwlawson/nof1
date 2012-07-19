@@ -22,6 +22,7 @@ package uk.co.jwlawson.nof1;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -51,7 +52,13 @@ public class DataSource {
 	public DataSource(Context context) {
 		mHelper = new SQLite(context);
 
-		int num = context.getSharedPreferences(Keys.QUES_NAME, Context.MODE_PRIVATE).getInt(Keys.QUES_NUMBER_QUESTIONS, 0);
+		SharedPreferences sp = context.getSharedPreferences(Keys.QUES_NAME, Context.MODE_PRIVATE);
+
+		if (!sp.contains(Keys.QUES_NUMBER_QUESTIONS)) {
+			throw new RuntimeException("Datasource run with no questionnaire");
+		}
+
+		int num = sp.getInt(Keys.QUES_NUMBER_QUESTIONS, 0);
 
 		mHelper.setQuestionNumber(num);
 	}
