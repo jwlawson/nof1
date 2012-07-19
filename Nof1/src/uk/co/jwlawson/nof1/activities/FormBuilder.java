@@ -106,6 +106,8 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 
 		SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 		// Load layout. This will change depending on the screen size
 		setContentView(R.layout.form_builder_list);
 
@@ -183,6 +185,8 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			i.putExtra(Keys.INTENT_PREVIEW, true);
 			startActivityForResult(i, REQUEST_PREVIEW);
 			return true;
+		case android.R.id.home:
+			if (DEBUG) Log.d(TAG, "Home button pressed");
 		default:
 			return super.onMenuItemSelected(featureId, item);
 		}

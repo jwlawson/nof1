@@ -28,6 +28,7 @@ import android.os.Bundle;
 import android.widget.FrameLayout;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
 /**
@@ -41,6 +42,8 @@ public class GraphDisplay extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 		FrameLayout frame = new FrameLayout(this);
 		frame.setId(R.id.graph_chooser_view);
 		setContentView(frame);
@@ -53,5 +56,16 @@ public class GraphDisplay extends SherlockFragmentActivity {
 			GraphViewer viewer = GraphViewer.newInstance(questionId);
 			getSupportFragmentManager().beginTransaction().add(R.id.graph_chooser_view, viewer, "viewer").commit();
 		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			setResult(RESULT_CANCELED);
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }

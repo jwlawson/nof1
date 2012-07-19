@@ -34,6 +34,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
 /**
@@ -54,6 +55,8 @@ public class GraphChooser extends SherlockFragmentActivity implements GraphList.
 		setContentView(R.layout.graph_chooser);
 
 		setSupportProgressBarIndeterminateVisibility(false);
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		FrameLayout frame = (FrameLayout) findViewById(R.id.graph_chooser_view);
 
@@ -101,4 +104,15 @@ public class GraphChooser extends SherlockFragmentActivity implements GraphList.
 		}
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			if (DEBUG) Log.d(TAG, "Home button selected");
+			setResult(RESULT_CANCELED);
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 }

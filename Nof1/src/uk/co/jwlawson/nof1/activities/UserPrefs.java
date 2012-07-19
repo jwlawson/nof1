@@ -35,6 +35,7 @@ import android.preference.PreferenceCategory;
 import android.util.Log;
 
 import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.view.MenuItem;
 
 /**
  * Shows the user preferences, which are accessible with getDefaultPreferences(Context)
@@ -56,6 +57,8 @@ public class UserPrefs extends SherlockPreferenceActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 		// Load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.user_preferences);
 
@@ -69,18 +72,25 @@ public class UserPrefs extends SherlockPreferenceActivity {
 		if (DEBUG) Log.d(TAG, "Preferences loaded");
 	}
 
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (DEBUG) Log.d(TAG, "Menu item selected: " + item.getTitle());
+
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			setResult(RESULT_CANCELED);
+			finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
 	@TargetApi(8)
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 
 		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
-		if (!sp.contains(Keys.DEFAULT_FIRST)) {
-			// TODO First time run - schedule first notification - Done in DoctorConfig?
-
-			// Add key, to prevent this running again
-			sp.edit().putBoolean(Keys.DEFAULT_FIRST, true).commit();
-		}
 
 		if (sp.getBoolean(Keys.DEFAULT_BACKUP, false) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			BackupManager bm = new BackupManager(this);
