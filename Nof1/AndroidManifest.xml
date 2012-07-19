@@ -28,6 +28,8 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <permission android:protectionLevel="signature" android:description="@string/receiver_permission" android:name="uk.co.jwlawson.nof1.permission.RECEIVER" android:label="Nof1 Receiver permission"></permission>
+    <uses-permission android:name="uk.co.jwlawson.nof1.permission.RECEIVER"/>
 
     <application
         android:backupAgent="Backup"
@@ -90,7 +92,7 @@
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
         </activity>
 
-        <receiver android:name=".Receiver" >
+        <receiver android:name=".Receiver" android:permission="uk.co.jwlawson.nof1.permission.RECEIVER">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

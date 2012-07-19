@@ -153,5 +153,6 @@
     <string name="doctor_login">Doctor Login</string>
     <string name="form_builder">Form builder</string>
     <string name="home">Home</string>
+    <string name="receiver_permission">Used to ensure that only the N-of-1 app can access this receiver</string>
 
 </resources>
