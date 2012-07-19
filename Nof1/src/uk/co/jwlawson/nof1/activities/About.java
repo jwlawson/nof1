@@ -55,7 +55,14 @@ public class About extends SherlockActivity {
 		Linkify.TransformFilter emptyFilter = new Linkify.TransformFilter() {
 			@Override
 			public String transformUrl(Matcher match, String url) {
-				return null;
+				return "";
+			}
+		};
+
+		Linkify.MatchFilter emptyMatch = new Linkify.MatchFilter() {
+			@Override
+			public boolean acceptMatch(CharSequence s, int start, int end) {
+				return true;
 			}
 		};
 
@@ -65,7 +72,7 @@ public class About extends SherlockActivity {
 
 		Pattern apacheMatcher = Pattern.compile("Apache Commons Codec");
 		String urlApache = "http://commons.apache.org/codec/index.html";
-		Linkify.addLinks(details, apacheMatcher, urlApache, null, emptyFilter);
+		Linkify.addLinks(details, apacheMatcher, urlApache, emptyMatch, emptyFilter);
 	}
 
 	@Override
