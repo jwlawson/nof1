@@ -18,10 +18,9 @@
   Contributors:
       John Lawson - initial API and implementation
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="uk.co.jwlawson.nof1"
+<manifest package="uk.co.jwlawson.nof1"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.0" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -115,6 +114,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
         </activity>
+        <activity android:name=".activities.HomeScreen"></activity>
     </application>
 
 </manifest>
