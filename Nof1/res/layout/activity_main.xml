@@ -16,14 +16,14 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_scroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:text="Post notification" />
+            android:text="@string/post_notification" />
 
         <Button
             android:id="@+id/main_btn_data"
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/main_btn_noti"
-            android:text="Data input" />
+            android:text="@string/data_input" />
 
         <Button
             android:id="@+id/main_btn_graphs"
@@ -51,7 +51,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/main_btn_data"
-            android:text="View graphs" />
+            android:text="@string/view_graphs" />
 
         <Button
             android:id="@+id/main_btn_settings"
@@ -60,7 +60,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/main_btn_graphs"
-            android:text="Settings" />
+            android:text="@string/settings" />
 
         <Button
             android:id="@+id/main_btn_login"
@@ -69,7 +69,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/main_btn_settings"
-            android:text="Doctor Login" />
+            android:text="@string/doctor_login" />
 
         <Button
             android:id="@+id/main_btn_config"
@@ -78,7 +78,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/main_btn_login"
-            android:text="Doctor Config" />
+            android:text="@string/doctor_config" />
 
         <Button
             android:id="@+id/main_btn_builder"
@@ -87,8 +87,8 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/main_btn_config"
-            android:text="Form builder" />
-
+            android:text="@string/form_builder" />
+
         <Button
             android:id="@+id/main_btn_about"
             android:layout_width="wrap_content"
@@ -97,8 +97,8 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@id/main_btn_builder"
-            android:text="About" />
-
+            android:text="@string/about" />
+
         <Button
             android:id="@+id/main_btn_home"
             android:layout_width="wrap_content"
@@ -107,8 +107,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@id/main_btn_about"
-            android:text="Home" />
-
+            android:text="@string/home" />
     </RelativeLayout>
 
 </ScrollView>

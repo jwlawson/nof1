@@ -148,5 +148,10 @@
     <string name="enter_data">Enter data</string>
     <string name="view_graphs">View graphs</string>
     <string name="about">About</string>
+    <string name="post_notification">Post notification</string>
+    <string name="data_input">Data input</string>
+    <string name="doctor_login">Doctor Login</string>
+    <string name="form_builder">Form builder</string>
+    <string name="home">Home</string>
 
 </resources>
