@@ -20,6 +20,7 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import uk.co.jwlawson.nof1.R;
@@ -51,13 +52,20 @@ public class About extends SherlockActivity {
 		TextView details = (TextView) findViewById(R.id.about_details);
 		Linkify.addLinks(details, Linkify.ALL);
 
+		Linkify.TransformFilter emptyFilter = new Linkify.TransformFilter() {
+			@Override
+			public String transformUrl(Matcher match, String url) {
+				return null;
+			}
+		};
+
 		Pattern ABSMatcher = Pattern.compile("ActionBarSherlock");
 		String urlABS = "http://actionbarsherlock.com/";
-		Linkify.addLinks(details, ABSMatcher, urlABS);
+		Linkify.addLinks(details, ABSMatcher, urlABS, null, emptyFilter);
 
 		Pattern apacheMatcher = Pattern.compile("Apache Commons Codec");
 		String urlApache = "http://commons.apache.org/codec/index.html";
-		Linkify.addLinks(details, apacheMatcher, urlApache);
+		Linkify.addLinks(details, apacheMatcher, urlApache, null, emptyFilter);
 	}
 
 	@Override
