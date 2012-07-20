@@ -175,6 +175,8 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		}
 
 		mPeriodLength = (EditText) findViewById(R.id.config_timescale_edit_period);
+		mPeriodLength.setOnEditorActionListener(this);
+
 		Spinner spinLength = (Spinner) findViewById(R.id.config_timescale_spinner_length);
 		spinLength.setOnItemSelectedListener(this);
 
@@ -816,6 +818,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	@Override
 	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		if (DEBUG) Log.d(TAG, "Editor action caught");
 		if (v.getId() == mPeriodLength.getId()) {
 			// Period length edittext action
 			if (event != null) {
