@@ -83,7 +83,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	private static final int REQUEST_FORM = 12;
 
-	private static final String SCHEDULE_FILE = "schedule.txt";
+	private static final String SCHEDULE_FILE = "schedule";
 
 	/** EditText with doctor's email */
 	private EditText mDocEmail;
@@ -161,8 +161,10 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 		mDocEmail = (EditText) findViewById(R.id.config_doctor_details_edit_doc_email);
 		if (email != null && email.length() != 0) mDocEmail.setText(email);
+		if (DEBUG) mDocEmail.setText("doc@jwlawson.co.uk");
 
 		mPharmEmail = (EditText) findViewById(R.id.config_doctor_details_edit_pharm_email);
+		if (DEBUG) mPharmEmail.setText("test@jwlawson.co.uk");
 
 		mPatientName = (EditText) findViewById(R.id.config_doctor_details_edit_name);
 		if (sp.contains(Keys.CONFIG_PATIENT_NAME)) {
@@ -389,7 +391,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
 						.append(cal.get(Calendar.YEAR)).append(" - ");
 				// Get end date
-				cal.add(Calendar.DAY_OF_MONTH, length);
+				cal.add(Calendar.DAY_OF_MONTH, length - 1);
 				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
 						.append(cal.get(Calendar.YEAR)).append(": ");
 				dates.append(mTreatmentA.getText().toString()).append("\n");
@@ -398,7 +400,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
 						.append(cal.get(Calendar.YEAR)).append(" - ");
-				cal.add(Calendar.DAY_OF_MONTH, length);
+				cal.add(Calendar.DAY_OF_MONTH, length - 1);
 				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
 						.append(cal.get(Calendar.YEAR)).append(": ");
 				dates.append(mTreatmentB.getText().toString()).append("\n");
@@ -407,7 +409,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 				sb.append("BA");
 				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
 						.append(cal.get(Calendar.YEAR)).append(" - ");
-				cal.add(Calendar.DAY_OF_MONTH, length);
+				cal.add(Calendar.DAY_OF_MONTH, length - 1);
 				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
 						.append(cal.get(Calendar.YEAR)).append(": ");
 				dates.append(mTreatmentB.getText().toString()).append("\n");
@@ -415,7 +417,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
 						.append(cal.get(Calendar.YEAR)).append(" - ");
-				cal.add(Calendar.DAY_OF_MONTH, length);
+				cal.add(Calendar.DAY_OF_MONTH, length - 1);
 				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
 						.append(cal.get(Calendar.YEAR)).append(": ");
 				dates.append(mTreatmentA.getText().toString()).append("\n");
@@ -575,6 +577,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 		// Make pharmacist email text
 		StringBuilder sb1 = new StringBuilder("Please find attached a treatment schedule for an N-of-1 trial.");
+		sb1.append("\nAppend \".rtf\" without quotes to the end of the file name and open in your favourite word processor.");
 		sb1.append("\n").append("Doctors name: ").append(mDocName.getText().toString());
 		sb1.append("\n").append("Patient name: ").append(mPatientName.getText().toString());
 		sb1.append("\n\n").append("Treatment A: ").append(mTreatmentA.getText().toString());
@@ -582,7 +585,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		sb1.append("\n\n").append("Treatment notes: ").append(mAnyNotes.getText().toString());
 
 		// Set up pharmacist email
-		Intent intent2 = new Intent(Intent.ACTION_SEND);
+		Intent intent2 = new Intent(Intent.ACTION_SEND_MULTIPLE);
 		intent2.setType(HTTP.PLAIN_TEXT_TYPE);
 		intent2.putExtra(Intent.EXTRA_EMAIL, new String[] { pharmEmail });
 		intent2.putExtra(Intent.EXTRA_SUBJECT, "N-of-1 Trials treatment schedule");
@@ -590,8 +593,24 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		// Add schedule attachment
 
 		File file = new File(getFilesDir(), SCHEDULE_FILE);
-		if (DEBUG) Log.d(TAG, file.getAbsolutePath());
-		intent2.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+		Uri uri2 = Uri.fromFile(file);
+		if (DEBUG) Log.d(TAG, "uri2 " + uri2.toString());
+
+		Uri uri = Uri.parse("file://" + file.getAbsolutePath());
+		Log.d(TAG, "URI " + uri.toString());
+
+		Uri uri3 = Uri.parse("file:/" + file.getAbsolutePath());
+		Log.d(TAG, "uri3 " + uri3.toString());
+
+		Uri uri4 = Uri.parse("file:" + file.getAbsolutePath());
+		Log.d(TAG, "uri4 " + uri4.toString());
+
+		ArrayList<Uri> list = new ArrayList<Uri>();
+		list.add(uri);
+		list.add(uri2);
+		list.add(uri3);
+		list.add(uri4);
+		intent2.putParcelableArrayListExtra(Intent.EXTRA_STREAM, list);
 
 		startActivities(new Intent[] { intent1, intent2 });
 
