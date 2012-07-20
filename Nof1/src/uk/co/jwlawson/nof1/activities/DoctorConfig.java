@@ -357,8 +357,9 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	private void makeTreatmentPlan() {
 		// Make treatment plan
 
-		// Get basic infomation
-		SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+		// Get basic information
+		// File should be world readable so that GMail (or whatever the user uses) can read it
+		SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_WORLD_READABLE);
 		int number = sp.getInt(Keys.CONFIG_NUMBER_PERIODS, 0);
 		int length = sp.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
 		int perDay = mTimeSetter.getTimes().length;
