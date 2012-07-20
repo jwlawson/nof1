@@ -61,9 +61,9 @@ public class HomeScreen extends SherlockActivity {
 
 			TaskStackBuilder builder = TaskStackBuilder.create(this);
 
-			builder.addNextIntent(new Intent(this, MainActivity.class));
+			builder.addNextIntent(new Intent(this, HomeScreen.class));
 			builder.addNextIntent(new Intent(this, UserPrefs.class));
-			builder.addNextIntent(new Intent(this, DoctorConfig.class));
+			builder.addNextIntent(new Intent(this, DoctorLogin.class));
 
 			builder.startActivities();
 
