@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ListView;
 
 /**
  * List of all questions
@@ -55,4 +56,9 @@ public class GraphList extends FragList {
 		if (DEBUG) Log.d(TAG, "List created");
 	}
 
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+	}
 }
