@@ -154,5 +154,6 @@
     <string name="form_builder">Form builder</string>
     <string name="home">Home</string>
     <string name="receiver_permission">Used to ensure that only the N-of-1 app can access this receiver</string>
+    <string name="doctors_name">Doctor\'s name</string>
 
 </resources>
