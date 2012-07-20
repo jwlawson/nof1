@@ -80,7 +80,7 @@ public class UserPrefs extends SherlockPreferenceActivity {
 
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			Intent upIntent = new Intent(this, MainActivity.class);
+			Intent upIntent = new Intent(this, HomeScreen.class);
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
 				// This activity is not part of the application's task, so create a new task
 				// with a synthesized back stack.

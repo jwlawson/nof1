@@ -193,7 +193,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
 				// This activity is not part of the application's task, so create a new task
 				// with a synthesized back stack.
-				TaskStackBuilder.create(this).addNextIntent(new Intent(this, MainActivity.class)).addNextIntent(new Intent(this, UserPrefs.class))
+				TaskStackBuilder.create(this).addNextIntent(new Intent(this, HomeScreen.class)).addNextIntent(new Intent(this, UserPrefs.class))
 						.addNextIntent(upIntent).startActivities();
 				finish();
 			} else {

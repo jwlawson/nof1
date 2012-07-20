@@ -68,7 +68,7 @@ public class GraphDisplay extends SherlockFragmentActivity {
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
 				// This activity is not part of the application's task, so create a new task
 				// with a synthesized back stack.
-				TaskStackBuilder.create(this).addNextIntent(new Intent(this, MainActivity.class)).addNextIntent(upIntent).startActivities();
+				TaskStackBuilder.create(this).addNextIntent(new Intent(this, HomeScreen.class)).addNextIntent(upIntent).startActivities();
 				finish();
 			} else {
 				// This activity is part of the application's task, so simply

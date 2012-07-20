@@ -79,7 +79,7 @@ public class About extends SherlockActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			Intent upIntent = new Intent(this, MainActivity.class);
+			Intent upIntent = new Intent(this, HomeScreen.class);
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
 				// This activity is not part of the application's task, so create a new task
 				// with a synthesised back stack.
