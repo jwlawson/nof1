@@ -20,10 +20,16 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Random;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.http.protocol.HTTP;
 
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
@@ -41,12 +47,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -54,6 +62,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -67,12 +76,14 @@ import com.actionbarsherlock.view.MenuItem;
  * @author John Lawson
  * 
  */
-public class DoctorConfig extends SherlockFragmentActivity implements AdapterView.OnItemSelectedListener {
+public class DoctorConfig extends SherlockFragmentActivity implements AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener {
 
 	private static final String TAG = "DoctorConfig";
 	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 
 	private static final int REQUEST_FORM = 12;
+
+	private static final String SCHEDULE_FILE = "schedule.txt";
 
 	/** EditText with doctor's email */
 	private EditText mDocEmail;
@@ -127,6 +138,9 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	/** TimeSetter fragment */
 	private TimeSetter mTimeSetter;
 
+	/** EditText containing doctors name */
+	private EditText mDocName;
+
 	@TargetApi(8)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +167,11 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		mPatientName = (EditText) findViewById(R.id.config_doctor_details_edit_name);
 		if (sp.contains(Keys.CONFIG_PATIENT_NAME)) {
 			mPatientName.setText(sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+		}
+
+		mDocName = (EditText) findViewById(R.id.config_doctor_details_edit_doc_name);
+		if (sp.contains(Keys.CONFIG_DOCTOR_NAME)) {
+			mDocName.setText(sp.getString(Keys.CONFIG_DOCTOR_NAME, ""));
 		}
 
 		mPeriodLength = (EditText) findViewById(R.id.config_timescale_edit_period);
@@ -334,34 +353,128 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	/** Create a random treatment plan, which must stay hidden but sent to the pharmacist. */
 	private void makeTreatmentPlan() {
-		// TODO Make treatment plan
+		// Make treatment plan
+
+		// Get basic infomation
+		SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+		int number = sp.getInt(Keys.CONFIG_NUMBER_PERIODS, 0);
+		int length = sp.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
+		int perDay = mTimeSetter.getTimes().length;
+		String start = mDate.getDate();
+
+		// Set up fields
+		Random rand = new Random();
+		StringBuilder sb = new StringBuilder();
+		StringBuilder dates = new StringBuilder();
+
+		// Set calendar instance to start date
+		Calendar cal = Calendar.getInstance();
+		String[] startArr = start.split(":");
+		int[] startInt = new int[] { Integer.parseInt(startArr[0]), Integer.parseInt(startArr[1]), Integer.parseInt(startArr[2]) };
+		cal.set(startInt[2], startInt[1], startInt[0]);
+
+		/*
+		 * For each pair of treatment periods, randomly assign A or B first
+		 * Record data in the string builders.
+		 * SB contains a short version either AB or BA
+		 * dates contains a list of which dates go with which medicine
+		 */
+		for (int i = 0; i < number; i++) {
+			if (rand.nextBoolean()) {
+				sb.append("AB");
+				// Get start date
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(" - ");
+				// Get end date
+				cal.add(Calendar.DAY_OF_MONTH, length);
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(": ");
+				dates.append(mTreatmentA.getText().toString()).append("\n");
+				// add a day for next start date
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(" - ");
+				cal.add(Calendar.DAY_OF_MONTH, length);
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(": ");
+				dates.append(mTreatmentB.getText().toString()).append("\n");
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+			} else {
+				sb.append("BA");
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(" - ");
+				cal.add(Calendar.DAY_OF_MONTH, length);
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(": ");
+				dates.append(mTreatmentB.getText().toString()).append("\n");
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(" - ");
+				cal.add(Calendar.DAY_OF_MONTH, length);
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(": ");
+				dates.append(mTreatmentA.getText().toString()).append("\n");
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			sb.append("|");
+		}
+
+		sb.append("\n\n");
+		sb.append("\n").append("Doctors name: ").append(mDocName.getText().toString());
+		sb.append("\n").append("Patient name: ").append(mPatientName.getText().toString());
+		sb.append("\n\n").append("Treatment A: ").append(mTreatmentA.getText().toString());
+		sb.append("\n").append("Treatment B: ").append(mTreatmentB.getText().toString());
+		sb.append("\n\n").append("Treatment notes: ").append(mAnyNotes.getText().toString());
+		sb.append("\n\n").append("Medicine taken ").append(perDay).append(" times a day.").append("\n\n");
+		sb.append(dates);
+
+		try {
+			FileOutputStream fos = openFileOutput(SCHEDULE_FILE, MODE_PRIVATE);
+			fos.write(sb.toString().getBytes());
+			fos.close();
+		} catch (IOException e) {
+			Toast.makeText(this, "Problem saving file", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	/** Save the data to file. */
-	private void save() {
+	private boolean save() {
+		boolean result = true;
 		// Put config data into shared preferences editor
 		SharedPreferences.Editor editor = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE).edit();
-		editor.clear();
+
+		int number = 0;
+		int length = 0;
 
 		editor.putString(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
+		editor.putString(Keys.CONFIG_DOCTOR_NAME, mDocName.getText().toString());
+
 		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
 			try {
-				editor.putInt(Keys.CONFIG_NUMBER_PERIODS, Integer.parseInt(mPeriodNumber.getText().toString()));
+				number = Integer.parseInt(mPeriodNumber.getText().toString());
 			} catch (NumberFormatException e) {
 				Toast.makeText(this, R.string.invalid_period_input, Toast.LENGTH_LONG).show();
+				result = false;
 			}
 		} else {
-			editor.putInt(Keys.CONFIG_NUMBER_PERIODS, mIntPeriodNumber);
+			number = mIntPeriodNumber;
 		}
-		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
+		editor.putInt(Keys.CONFIG_NUMBER_PERIODS, number);
+
+		if (mPeriodLength.getVisibility() == View.VISIBLE) {
 			try {
-				editor.putInt(Keys.CONFIG_PERIOD_LENGTH, Integer.parseInt(mPeriodLength.getText().toString()));
+				length = Integer.parseInt(mPeriodLength.getText().toString());
 			} catch (NumberFormatException e) {
 				Toast.makeText(this, R.string.invalid_length_input, Toast.LENGTH_LONG).show();
+				result = false;
 			}
 		} else {
-			editor.putInt(Keys.CONFIG_PERIOD_LENGTH, mIntPeriodLength);
+			length = mIntPeriodLength;
 		}
+		editor.putInt(Keys.CONFIG_PERIOD_LENGTH, length);
+
 		editor.putBoolean(Keys.CONFIG_BUILT, mFormBuilt);
 
 		editor.putString(Keys.CONFIG_START, mDate.getDate());
@@ -374,17 +487,24 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 		editor.putString(Keys.CONFIG_TREATMENT_A, mTreatmentA.getText().toString());
 		editor.putString(Keys.CONFIG_TREATMENT_B, mTreatmentB.getText().toString());
+		editor.putString(Keys.CONFIG_TREATMENT_NOTES, mAnyNotes.getText().toString());
 
 		// save checked boxes
 		int[] arr = mArray.getSelected();
-		for (int i : arr) {
-			editor.putBoolean(Keys.CONFIG_DAY + i, true);
+		for (int j = 1; j < length + 1; j++) {
+			boolean contains = false;
+			for (int k = 0; k < arr.length; k++) {
+				if (j == arr[k]) contains = true;
+			}
+			editor.putBoolean(Keys.CONFIG_DAY + j, contains);
 		}
 
 		// Save changes
-		editor.commit();
+		result &= editor.commit();
 		// Ask for backup
 		backup();
+
+		return result;
 	}
 
 	/** Helper to ask for backup, if supported */
@@ -398,9 +518,80 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	/** email the information to the doctor and pharmacist */
 	private void email() {
-		// TODO Send email
+		Toast.makeText(this, "About to send emails containing config info", Toast.LENGTH_SHORT).show();
+		// Make and Send email
 		String pharmEmail = mPharmEmail.getText().toString();
 		String docEmail = mDocEmail.getText().toString();
+
+		SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+		// Make email text
+		StringBuilder sb = new StringBuilder("Thanks for using the N-of-1 app");
+		sb.append("\n").append("Patient name: ").append(mPatientName.getText().toString());
+		sb.append("\n").append("Treatment A: ").append(mTreatmentA.getText().toString());
+		sb.append("\n").append("Treatment B: ").append(mTreatmentB.getText().toString());
+		sb.append("\n").append("Treatment notes: ").append(mAnyNotes.getText().toString());
+
+		// Medicine schedule
+		sb.append("\n\n").append("Daily medicine schedule: ");
+		String[] times = mTimeSetter.getTimes();
+		for (int i = 0; i < times.length; i++) {
+			sb.append(times[i]).append(" ");
+		}
+		// Start date
+		String start = mDate.getDate();
+		String[] startArr = start.split(":");
+		sb.append("\n\n").append("Trial start date: ").append(startArr[0]).append("/").append(Integer.parseInt(startArr[1]) + 1).append("/")
+				.append(startArr[2]);
+
+		// Treatment length
+		sb.append("\n").append("Number of pairs of treatment periods: ").append(prefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0));
+		sb.append("\n").append("Length of treatment periods: ").append(prefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0));
+
+		// Recording days
+		sb.append("\n").append("Days in period to record data: ");
+		int[] days = mArray.getSelected();
+		for (int i = 0; i < days.length; i++) {
+			sb.append(days[i]).append(" ");
+		}
+
+		// Questions
+		sb.append("\n\n").append("Questions:").append("\n");
+
+		SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+		for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
+			sb.append(ques.getString(Keys.QUES_TEXT + i, "")).append("\n");
+		}
+
+		// Set up doctor email
+		Intent intent1 = new Intent(Intent.ACTION_SEND);
+		intent1.setType(HTTP.PLAIN_TEXT_TYPE);
+		intent1.putExtra(Intent.EXTRA_EMAIL, new String[] { docEmail });
+		intent1.putExtra(Intent.EXTRA_SUBJECT, "N-of-1 Trials patient configuration");
+		intent1.putExtra(Intent.EXTRA_TEXT, sb.toString());
+
+		// Make pharmacist email text
+		StringBuilder sb1 = new StringBuilder("Please find attached a treatment schedule for an N-of-1 trial.");
+		sb1.append("\n").append("Doctors name: ").append(mDocName.getText().toString());
+		sb1.append("\n").append("Patient name: ").append(mPatientName.getText().toString());
+		sb1.append("\n\n").append("Treatment A: ").append(mTreatmentA.getText().toString());
+		sb1.append("\n").append("Treatment B: ").append(mTreatmentB.getText().toString());
+		sb1.append("\n\n").append("Treatment notes: ").append(mAnyNotes.getText().toString());
+
+		// Set up pharmacist email
+		Intent intent2 = new Intent(Intent.ACTION_SEND);
+		intent2.setType(HTTP.PLAIN_TEXT_TYPE);
+		intent2.putExtra(Intent.EXTRA_EMAIL, new String[] { pharmEmail });
+		intent2.putExtra(Intent.EXTRA_SUBJECT, "N-of-1 Trials treatment schedule");
+		intent2.putExtra(Intent.EXTRA_TEXT, sb1.toString());
+		// Add schedule attachment
+
+		File file = new File(getFilesDir(), SCHEDULE_FILE);
+		if (DEBUG) Log.d(TAG, file.getAbsolutePath());
+		intent2.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
+
+		startActivities(new Intent[] { intent1, intent2 });
+
 	}
 
 	/** Loads AlertDialog to change the login details of doctor */
@@ -476,6 +667,13 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		// Close dialog if open to prevent leak
 		if (mDialog != null) {
 			mDialog.dismiss();
+		}
+		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+		if (!sp.contains(Keys.DEFAULT_FIRST)) {
+			SharedPreferences.Editor edit = sp.edit();
+			edit.putBoolean(Keys.DEFAULT_FIRST, true);
+			edit.commit();
+			backup();
 		}
 		super.onDestroy();
 	}
@@ -568,12 +766,15 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		case R.id.config_timescale_spinner_length:
 			// Length spinner
 			item = (String) parent.getItemAtPosition(position);
-			int num;
+			int num = 0;
 			if (item.equalsIgnoreCase("other")) {
 				mPeriodLength.setVisibility(View.VISIBLE);
 				mIntPeriodLength = -1;
-				num = Integer.parseInt(mPeriodLength.getText().toString());
-				mArray.setNumber(num);
+				String text = mPeriodLength.getText().toString();
+				if (text.length() != 0) {
+					num = Integer.parseInt(text);
+					mArray.setNumber(num);
+				}
 
 			} else {
 				mPeriodLength.setVisibility(View.GONE);
@@ -611,5 +812,31 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	@Override
 	public void onNothingSelected(AdapterView<?> arg0) {
 		// Don't care
+	}
+
+	@Override
+	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		if (v.getId() == mPeriodLength.getId()) {
+			// Period length edittext action
+			if (event != null) {
+				// Get the number entered and set the check array
+				String text = mPeriodLength.getText().toString();
+				if (text.length() != 0) {
+
+					int num = Integer.parseInt(text);
+					mArray.setNumber(num);
+
+					// Set which boxes in check array are selected
+					SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+					boolean[] selected = new boolean[num];
+					for (int i = 0; i < num; i++) {
+						selected[i] = sp.getBoolean(Keys.CONFIG_DAY + (i + 1), false);
+					}
+					mArray.setSelected(selected);
+				}
+			}
+		}
+		return false;
 	}
 }
