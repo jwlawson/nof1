@@ -139,6 +139,15 @@ public class MainActivity extends SherlockActivity {
 			}
 		});
 
+		Button btnPop = (Button) findViewById(R.id.main_btn_pop);
+		btnPop.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				populateDatabase();
+			}
+		});
+
 	}
 
 	@Override
