@@ -24,6 +24,7 @@ import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.fragments.GraphViewer;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
@@ -52,6 +53,9 @@ public class GraphDisplay extends SherlockFragmentActivity {
 
 		Intent intent = getIntent();
 		int questionId = intent.getIntExtra(Keys.INTENT_ID, 0);
+
+		SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+		setTitle(sp.getString(Keys.QUES_TEXT + questionId, ""));
 
 		if (savedInstanceState == null) {
 
