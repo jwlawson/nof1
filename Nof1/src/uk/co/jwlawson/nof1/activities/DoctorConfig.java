@@ -818,27 +818,22 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	@Override
 	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-		if (DEBUG) Log.d(TAG, "Editor action caught");
-		if (v.getId() == mPeriodLength.getId()) {
-			// Period length edittext action
-			if (event != null) {
-				// Get the number entered and set the check array
-				String text = mPeriodLength.getText().toString();
-				if (text.length() != 0) {
+		if (DEBUG) Log.d(TAG, "Editor action caught " + v.getId() + ":" + mPeriodLength.getId());
+		// Get the number entered and set the check array
+		String text = mPeriodLength.getText().toString();
+		if (text.length() != 0) {
 
-					int num = Integer.parseInt(text);
-					mArray.setNumber(num);
+			int num = Integer.parseInt(text);
+			mArray.setNumber(num);
 
-					// Set which boxes in check array are selected
-					SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+			// Set which boxes in check array are selected
+			SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
-					boolean[] selected = new boolean[num];
-					for (int i = 0; i < num; i++) {
-						selected[i] = sp.getBoolean(Keys.CONFIG_DAY + (i + 1), false);
-					}
-					mArray.setSelected(selected);
-				}
+			boolean[] selected = new boolean[num];
+			for (int i = 0; i < num; i++) {
+				selected[i] = sp.getBoolean(Keys.CONFIG_DAY + (i + 1), false);
 			}
+			mArray.setSelected(selected);
 		}
 		return false;
 	}
