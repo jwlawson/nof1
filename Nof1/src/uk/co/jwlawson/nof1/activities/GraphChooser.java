@@ -23,6 +23,7 @@ package uk.co.jwlawson.nof1.activities;
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.fragments.FragList;
 import uk.co.jwlawson.nof1.fragments.GraphList;
 import uk.co.jwlawson.nof1.fragments.GraphViewer;
 import android.content.Intent;
@@ -99,6 +100,8 @@ public class GraphChooser extends SherlockFragmentActivity implements GraphList.
 				ft.commit();
 			}
 		} else {
+			// Clear list selection
+			((FragList) getSupportFragmentManager().findFragmentById(R.id.graph_chooser_list)).clearSelected();
 			// Launch new activity
 			Intent intent = new Intent(this, GraphDisplay.class);
 			intent.putExtra(Keys.INTENT_ID, position);
