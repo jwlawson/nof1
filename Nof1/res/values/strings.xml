@@ -156,7 +156,7 @@
     <string name="doctors_name">Doctor\'s name</string>
     <string name="populate_database">Populate database</string>
     <string name="thanks">Thanks</string>
-    <string name="you_are_now">"You are now "</string>
+    <string name="you_are_now">&quot;You have now completed day &quot;</string>
     <string name="out_of">" out of "</string>
     <string name="what_now">What would you like to do now?</string>
     <string name="go_home">Go to main screen</string>
