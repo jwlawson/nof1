@@ -111,7 +111,7 @@
         android:layout_below="@+id/config_timescale_text_days_record"
         android:text="@string/config_days_record_explain"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
     <Spinner
         android:id="@+id/config_timescale_spinner_periods"
         android:layout_width="wrap_content"
@@ -119,8 +119,8 @@
         android:layout_alignLeft="@+id/config_timescale_text_number_periods_explain"
         android:layout_alignRight="@+id/config_timescale_edit_number_periods"
         android:layout_below="@+id/config_timescale_text_number_periods_explain"
-        android:entries="@array/treatment_period" />
-
+        android:entries="@array/treatment_period_arr" />
+
     <Spinner
         android:id="@+id/config_timescale_spinner_length"
         android:layout_width="wrap_content"
@@ -128,7 +128,7 @@
         android:layout_alignLeft="@+id/config_timescale_text_period_explain"
         android:layout_alignRight="@+id/config_timescale_text_period"
         android:layout_below="@+id/config_timescale_text_period_explain"
-        android:entries="@array/treatment_period" />
+        android:entries="@array/treatment_period_arr" />
 
     <fragment
         android:name="uk.co.jwlawson.nof1.fragments.CheckArray"

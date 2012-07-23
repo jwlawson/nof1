@@ -869,7 +869,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		case R.id.config_timescale_spinner_periods:
 			// Number spinner
 			item = (String) parent.getItemAtPosition(position);
-			String[] arr1 = getResources().getStringArray(R.string.treatment_period);
+			String[] arr1 = getResources().getStringArray(R.array.treatment_period_arr);
 			// arr[length - 1] is "other"
 			if (item.equalsIgnoreCase(arr1[arr1.length - 1])) {
 				mPeriodNumber.setVisibility(View.VISIBLE);

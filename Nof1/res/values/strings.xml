@@ -90,7 +90,7 @@
     <string name="login_failed">Login failed</string>
     <string name="create_questionnaire">Create questionnaire</string>
 
-    <string-array name="treatment_period">
+    <string-array name="treatment_period_arr">
         <item>5</item>
         <item>6</item>
         <item>7</item>
