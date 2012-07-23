@@ -836,7 +836,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		case R.id.config_timescale_spinner_length:
 			// Length spinner
 			item = (String) parent.getItemAtPosition(position);
-			String[] arr = getResources().getStringArray(R.string.treatment_period);
+			String[] arr = getResources().getStringArray(R.array.treatment_period_arr);
 			int num = 0;
 			// arr[length-1] is "other" ie no number selected
 			if (item.equalsIgnoreCase(arr[arr.length - 1])) {
