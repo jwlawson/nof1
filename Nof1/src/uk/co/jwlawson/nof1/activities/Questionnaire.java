@@ -193,6 +193,8 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			calStart.set(startInt[2], startInt[1], startInt[0]);
 
 			Calendar calNow = Calendar.getInstance();
+			// Add an hour to ensure that calStart is before calNow when they have the same date
+			calNow.add(Calendar.HOUR, 1);
 			int day1 = 0;
 			while (calStart.before(calNow)) {
 				calStart.add(Calendar.DAY_OF_MONTH, 1);
