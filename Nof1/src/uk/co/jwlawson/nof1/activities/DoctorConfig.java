@@ -639,6 +639,8 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		intent1.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.doc_email_subject));
 		intent1.putExtra(Intent.EXTRA_TEXT, sb.toString());
 
+		startActivity(intent1);
+
 		// Make pharmacist email text
 		StringBuilder sb1 = new StringBuilder(res.getText(R.string.find_attached));
 		sb1.append("\n").append(res.getText(R.string.doctors_name)).append(": ").append(mDocName.getText().toString());
@@ -660,7 +662,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 		intent2.putExtra(Intent.EXTRA_STREAM, uri2);
 
-		startActivities(new Intent[] { intent1, intent2 });
+		startActivity(intent2);
 
 	}
 
