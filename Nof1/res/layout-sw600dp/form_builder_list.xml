@@ -31,6 +31,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:checked="false"
+        android:label="@string/include_comment"
         android:layout_alignRight="@+id/form_builder_list_fragment" />
 
 </RelativeLayout>

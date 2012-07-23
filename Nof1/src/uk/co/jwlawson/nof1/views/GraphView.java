@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import uk.co.jwlawson.nof1.containers.Label;
 import uk.co.jwlawson.nof1.containers.Line;
 import uk.co.jwlawson.nof1.containers.Vec2;
-
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -97,6 +97,9 @@ public class GraphView extends View {
 	/** Width of view */
 	private int mWidth;
 
+	/** Cursor holding data */
+	private Cursor mCursor;
+
 	private float[] floatarr;
 
 	public GraphView(Context context) {
@@ -128,19 +131,43 @@ public class GraphView extends View {
 		mAxesPaint.setTextSize(TEXT_SIZE);
 	}
 
-	/** Set the list of points to be drawn */
+	/** Set the list of points to be drawn. Use either this or setCursor to supply points to graph */
 	public void setVecList(ArrayList<Vec2> vecList) {
-		mVecList = vecList;
-		floatarr = new float[mVecList.size() * 2];
-		fillFloatArr();
-	}
 
-	private void fillFloatArr() {
+		mVecList = vecList;
+
+		floatarr = new float[vecList.size() * 2];
+
 		int i = 0;
-		for (Vec2 vec : mVecList) {
+		for (Vec2 vec : vecList) {
 			floatarr[i++] = vec.getX() * mScaleX;
 			floatarr[i++] = mHeight - (vec.getY() * (mHeight - BOTTOM_PAD - TOP_PAD) / mMaxY);
 		}
+
+		invalidate();
+	}
+
+	/**
+	 * Set a cursor to read data from. Use either this or setVecList to supply points to the graph
+	 * 
+	 * @param cursor Cursor with x in first column, y in second column
+	 */
+	public void setCursor(Cursor cursor) {
+
+		mCursor = cursor;
+
+		cursor.moveToFirst();
+
+		floatarr = new float[cursor.getCount() * 2];
+
+		int i = 0;
+		while (!cursor.isAfterLast()) {
+			floatarr[i++] = (float) cursor.getInt(0) * mScaleX;
+			floatarr[i++] = mHeight - ((float) cursor.getInt(1) * (mHeight - BOTTOM_PAD - TOP_PAD) / mMaxY);
+			cursor.moveToNext();
+		}
+
+		invalidate();
 	}
 
 	/** Set largest value on x-axis. Must be initialised before view is drawn */
@@ -156,23 +183,19 @@ public class GraphView extends View {
 		// Add ticks to axis
 		float xtick = (float) mWidth / maxX;
 		for (int i = 1; i <= maxX; i++) {
-			mXAxisList.add(new Line(new Vec2((int) (i * xtick), mHeight), new Vec2(
-					(int) (i * xtick), mHeight + TICK_SIZE)));
+			mXAxisList.add(new Line(new Vec2((int) (i * xtick), mHeight), new Vec2((int) (i * xtick), mHeight + TICK_SIZE)));
 		}
 		// Add labels to x-axis
 		if (maxX < 10) {
 			for (int i = 1; i <= maxX; i++) {
-				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE
-						+ TEXT_SIZE)));
+				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE + TEXT_SIZE)));
 			}
 		} else {
 			for (int i = 5; i <= maxX; i = i + 5) {
-				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE
-						+ TEXT_SIZE)));
+				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE + TEXT_SIZE)));
 			}
 		}
-		mXLabelList
-				.add(new Label("Days", new Vec2(mWidth / 2, mHeight + TICK_SIZE + 2 * TEXT_SIZE)));
+		mXLabelList.add(new Label("Days", new Vec2(mWidth / 2, mHeight + TICK_SIZE + 2 * TEXT_SIZE)));
 
 		invalidate();
 	}
@@ -190,20 +213,17 @@ public class GraphView extends View {
 		// Add ticks to axis
 		float ytick = (float) (mHeight - TOP_PAD - BOTTOM_PAD) / maxY;
 		for (int i = 1; i <= maxY; i++) {
-			mYAxisList.add(new Line(new Vec2(0, (int) (mHeight - (i * ytick))), new Vec2(
-					-TICK_SIZE, (int) (mHeight - (i * ytick)))));
+			mYAxisList.add(new Line(new Vec2(0, (int) (mHeight - (i * ytick))), new Vec2(-TICK_SIZE, (int) (mHeight - (i * ytick)))));
 		}
 
 		// Add labels to y-axis
 		if (maxY < 10) {
 			for (int i = 1; i <= maxY; i++) {
-				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight
-						- (i * ytick) + TEXT_SIZE / 2))));
+				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight - (i * ytick) + TEXT_SIZE / 2))));
 			}
 		} else {
 			for (int i = 5; i <= maxY; i = i + 5) {
-				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight
-						- (i * ytick) + TEXT_SIZE / 2))));
+				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight - (i * ytick) + TEXT_SIZE / 2))));
 			}
 		}
 		invalidate();
@@ -230,10 +250,11 @@ public class GraphView extends View {
 
 		if (DEBUG) Log.d(TAG, "Drawing data");
 		canvas.drawLines(floatarr, mVecPaint);
-		canvas.drawLines(floatarr, 2, floatarr.length - 2, mVecPaint);
+		if (floatarr.length > 2) {
+			canvas.drawLines(floatarr, 2, floatarr.length - 2, mVecPaint);
+		}
 
 		if (DEBUG) Log.d(TAG, "Drawing labels");
-
 		for (Label lab : mXLabelList) {
 			lab.draw(canvas, mAxesPaint);
 		}
@@ -269,7 +290,7 @@ public class GraphView extends View {
 			result = specSize;
 		} else {
 			// Want width as wide as we can
-			result = 2000;
+			result = 20000;
 			if (specMode == MeasureSpec.AT_MOST) {
 				// Respect AT_MOST value if that was what is called for by
 				// measureSpec
@@ -323,7 +344,8 @@ public class GraphView extends View {
 		mScaleX = (float) mWidth / mMaxX;
 		mScaleY = (float) h / mMaxY;
 
-		fillFloatArr();
+		if (mCursor != null) setCursor(mCursor);
+		else if (mVecList.isEmpty()) setVecList(mVecList);
 
 		setMaxX(mMaxX);
 		setMaxY(mMaxY);

@@ -36,6 +36,8 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -105,6 +107,8 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		super.onCreate(savedInstanceState);
 
 		SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// Load layout. This will change depending on the screen size
 		setContentView(R.layout.form_builder_list);
@@ -183,6 +187,20 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			i.putExtra(Keys.INTENT_PREVIEW, true);
 			startActivityForResult(i, REQUEST_PREVIEW);
 			return true;
+		case android.R.id.home:
+			if (DEBUG) Log.d(TAG, "Home button pressed");
+			Intent upIntent = new Intent(this, DoctorConfig.class);
+			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+				// This activity is not part of the application's task, so create a new task
+				// with a synthesized back stack.
+				TaskStackBuilder.create(this).addNextIntent(new Intent(this, HomeScreen.class)).addNextIntent(new Intent(this, UserPrefs.class))
+						.addNextIntent(upIntent).startActivities();
+				finish();
+			} else {
+				// This activity is part of the application's task, so simply
+				// navigate up to the hierarchical parent activity.
+				NavUtils.navigateUpTo(this, upIntent);
+			}
 		default:
 			return super.onMenuItemSelected(featureId, item);
 		}
@@ -240,6 +258,8 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			}
 			if (DEBUG) Log.d(TAG, q.getQuestionStr() + ": " + q.getInputType());
 		}
+
+		editor.putInt(Keys.QUES_NUMBER_QUESTIONS, mQuestionList.size());
 
 		if (mCommentFrag.getResult() == 1) {
 			editor.putBoolean(Keys.COMMENT, true);

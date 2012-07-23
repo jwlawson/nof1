@@ -44,12 +44,6 @@ public class Receiver extends BroadcastReceiver {
 	private static final String TAG = "Receiver";
 	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 	
-	/**
-	 * 
-	 */
-	public Receiver() {
-	}
-	
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		
@@ -83,7 +77,14 @@ public class Receiver extends BroadcastReceiver {
 			Intent i = new Intent(context, Scheduler.class);
 			i.putExtra(Keys.INTENT_BOOT, false);
 			i.putExtra(Keys.INTENT_ALARM, true); // Really do want to use INTENT_ALARM, not INTENT_FIRST
+			i.putExtra(Keys.INTENT_FIRST, true); // Both tells scheduler to set up medicine alarms
 			context.startService(i);
+			
+		} else if (intent.getBooleanExtra(Keys.INTENT_MEDICINE, false)) {
+			if (DEBUG) Log.d(TAG, "Medicine alarm caught");
+			
+			// Show medicine reminder notification
+			setMedicineNotification(context);
 		}
 	}
 	
@@ -91,6 +92,7 @@ public class Receiver extends BroadcastReceiver {
 	private void setRepeatNotification(Context context) {
 		Intent intent = new Intent(context, Questionnaire.class);
 		intent.putExtra(Keys.INTENT_PREVIEW, false);
+		intent.putExtra(Keys.INTENT_SCHEDULED, true);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		
 		setNotification(context, intent, R.string.noti_repeat_title, R.string.noti_repeat_text);
@@ -98,13 +100,15 @@ public class Receiver extends BroadcastReceiver {
 	
 	/** Set the first notification at start of trial */
 	private void setFirstNotification(Context context) {
+		// TODO What should first notification do?
 		
-		Intent intent = new Intent(context, Questionnaire.class);
-		intent.putExtra(Keys.INTENT_PREVIEW, false);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		setNotification(context, new Intent(), R.string.noti_first_title, R.string.noti_first_text);
 		
-		setNotification(context, intent, R.string.noti_first_title, R.string.noti_repeat_text);
+	}
+	
+	private void setMedicineNotification(Context context) {
 		
+		setNotification(context, new Intent(), R.string.noti_medicine_title, R.string.noti_medicine_text);
 	}
 	
 	/**

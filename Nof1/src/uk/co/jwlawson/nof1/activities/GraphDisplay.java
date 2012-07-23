@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
- * You may obtain a copy of the GNU General Public License at  
+ * You may obtain a copy of the GNU General Public License at 
  * <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
@@ -20,71 +20,59 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
-import uk.co.jwlawson.nof1.Scheduler;
-import android.annotation.TargetApi;
-import android.app.backup.BackupManager;
+import uk.co.jwlawson.nof1.fragments.GraphViewer;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceCategory;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
+import android.widget.FrameLayout;
 
-import com.actionbarsherlock.app.SherlockPreferenceActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 
 /**
- * Shows the user preferences, which are accessible with getDefaultPreferences(Context)
- * Also provides access to doctor config.
- * 
  * @author John Lawson
  * 
  */
-public class UserPrefs extends SherlockPreferenceActivity {
+public class GraphDisplay extends SherlockFragmentActivity {
 
-	private static final String TAG = "User Prefs";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
-
-	public UserPrefs() {
-	}
-
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-		// Load the preferences from an XML resource
-		addPreferencesFromResource(R.xml.user_preferences);
+		FrameLayout frame = new FrameLayout(this);
+		frame.setId(R.id.graph_chooser_view);
+		setContentView(frame);
 
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
-			if (DEBUG) Log.d(TAG, "Pre-Froyo phone, removing backup option");
-			Preference backup = findPreference(Keys.DEFAULT_BACKUP);
+		Intent intent = getIntent();
+		int questionId = intent.getIntExtra(Keys.INTENT_ID, 0);
 
-			((PreferenceCategory) findPreference("category_general")).removePreference(backup);
+		SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+		setTitle(sp.getString(Keys.QUES_TEXT + questionId, ""));
+
+		if (savedInstanceState == null) {
+
+			GraphViewer viewer = GraphViewer.newInstance(questionId);
+			getSupportFragmentManager().beginTransaction().add(R.id.graph_chooser_view, viewer, "viewer").commit();
 		}
-
-		if (DEBUG) Log.d(TAG, "Preferences loaded");
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (DEBUG) Log.d(TAG, "Menu item selected: " + item.getTitle());
-
 		switch (item.getItemId()) {
 		case android.R.id.home:
-			Intent upIntent = new Intent(this, HomeScreen.class);
+			Intent upIntent = new Intent(this, GraphChooser.class);
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
 				// This activity is not part of the application's task, so create a new task
 				// with a synthesized back stack.
-				TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
+				TaskStackBuilder.create(this).addNextIntent(new Intent(this, HomeScreen.class)).addNextIntent(upIntent).startActivities();
 				finish();
 			} else {
 				// This activity is part of the application's task, so simply
@@ -94,24 +82,5 @@ public class UserPrefs extends SherlockPreferenceActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
-
-	@TargetApi(8)
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-
-		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
-
-		if (sp.getBoolean(Keys.DEFAULT_BACKUP, false) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			BackupManager bm = new BackupManager(this);
-			bm.dataChanged();
-			if (DEBUG) Log.d(TAG, "Requesting backup");
-		}
-
-		// Tell Scheduler to redo alarms, as time could have changed
-		Intent intent = new Intent(this, Scheduler.class);
-		intent.putExtra(Keys.INTENT_BOOT, true);
-		startService(intent);
 	}
 }

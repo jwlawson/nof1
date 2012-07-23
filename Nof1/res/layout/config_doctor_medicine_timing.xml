@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <TextView
+        android:id="@+id/config_doctor_medicine_timing_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/padding_large"
+        android:layout_marginRight="@dimen/padding_large"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/medicine_timing"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <LinearLayout
+        android:id="@+id/config_doctor_medicine_timing_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/config_doctor_medicine_timing_text"
+        android:layout_alignRight="@+id/config_doctor_medicine_timing_text"
+        android:layout_below="@id/config_doctor_medicine_timing_text"
+        android:orientation="vertical" >
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/config_doctor_medicine_timing_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/config_doctor_medicine_timing_layout"
+        android:layout_below="@+id/config_doctor_medicine_timing_layout"
+        android:text="@string/add" />
+
+    <Button
+        android:id="@+id/config_doctor_medicine_timing_remove"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/config_doctor_medicine_timing_layout"
+        android:layout_toRightOf="@+id/config_doctor_medicine_timing_add"
+        android:text="@string/remove_last" />
+
+</RelativeLayout>

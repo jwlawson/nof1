@@ -22,6 +22,7 @@ package uk.co.jwlawson.nof1;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -33,24 +34,39 @@ import android.util.Log;
  * 
  */
 public class DataSource {
-	
+
 	private static final String TAG = "DataSource";
 	private static final boolean DEBUG = true && BuildConfig.DEBUG;
-	
+
+	/** SQLite helper class */
 	private SQLite mHelper;
-	
+
+	/** SQLite database */
 	private SQLiteDatabase mDatabase;
-	
+
+	/** Array of all columns */
 	private String[] mColumns;
-	
+
+	static final int[] sDataLock = new int[0];
+
 	public DataSource(Context context) {
 		mHelper = new SQLite(context);
+
+		SharedPreferences sp = context.getSharedPreferences(Keys.QUES_NAME, Context.MODE_PRIVATE);
+
+		if (!sp.contains(Keys.QUES_NUMBER_QUESTIONS)) {
+			throw new RuntimeException("Datasource run with no questionnaire");
+		}
+
+		int num = sp.getInt(Keys.QUES_NUMBER_QUESTIONS, 0);
+
+		mHelper.setQuestionNumber(num);
 	}
-	
+
 	/** Opens the database. Should not be called in a main thread */
 	public void open() {
 		mDatabase = mHelper.getWritableDatabase();
-		
+
 		int num = mHelper.getNumberQuestions();
 		mColumns = new String[num + 3];
 		mColumns[0] = SQLite.COLUMN_ID;
@@ -59,17 +75,17 @@ public class DataSource {
 		for (int i = 0; i < num; i++) {
 			mColumns[i + 3] = SQLite.COLUMN_QUESTION + i;
 		}
-		
-		if (DEBUG) Log.d(TAG, "Database loaded");
+
+		if (DEBUG) Log.d(TAG, "Database loaded: " + num);
 	}
-	
+
 	/** Close database */
 	public void close() {
 		mHelper.close();
-		
+
 		if (DEBUG) Log.d(TAG, "Database closed");
 	}
-	
+
 	/**
 	 * Save data to the database. Open must have been called before this.
 	 * 
@@ -78,20 +94,20 @@ public class DataSource {
 	 * @return The column id saved
 	 */
 	public long saveData(int day, int[] data) {
-		
+
 		ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_DAY, day);
 		for (int i = 0; i < data.length; i++) {
-			values.put(SQLite.COLUMN_QUESTION, data[i]);
+			values.put(SQLite.COLUMN_QUESTION + i, data[i]);
 		}
-		
+
 		long insertId = mDatabase.insert(SQLite.TABLE_INFO, null, values);
-		
+
 		if (DEBUG) Log.d(TAG, "Saving data to database. ID: " + insertId);
-		
+
 		return insertId;
 	}
-	
+
 	/**
 	 * Save data to the database. Open must have been called before this.
 	 * 
@@ -102,15 +118,16 @@ public class DataSource {
 	 */
 	public long saveData(int day, int[] data, String comment) {
 		long insertId = saveData(day, data);
-		
+
 		ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_COMMENT, comment);
-		
-		mDatabase.update(SQLite.TABLE_INFO, values, SQLite.COLUMN_ID + "=" + insertId, null);
-		
+
+		synchronized (sDataLock) {
+			mDatabase.update(SQLite.TABLE_INFO, values, SQLite.COLUMN_ID + "=" + insertId, null);
+		}
 		return insertId;
 	}
-	
+
 	/**
 	 * Get a column from the database
 	 * 
@@ -118,10 +135,10 @@ public class DataSource {
 	 * @return A cursor containing the day data was recorded and the requested column
 	 */
 	public Cursor getColumn(String column) {
-		
+
 		return getColumns(new String[] { SQLite.COLUMN_DAY, column });
 	}
-	
+
 	/**
 	 * Get columns from the database
 	 * 
@@ -130,14 +147,17 @@ public class DataSource {
 	 */
 	public Cursor getColumns(String[] columns) {
 		if (DEBUG) Log.d(TAG, "Getting data: " + columns[0]);
-		
-		Cursor cursor = mDatabase.query(SQLite.TABLE_INFO, columns, null, null, null, null, null);
-		
+
+		Cursor cursor;
+
+		synchronized (sDataLock) {
+			cursor = mDatabase.query(SQLite.TABLE_INFO, columns, null, null, null, null, null);
+		}
 		cursor.moveToFirst();
-		
+
 		return cursor;
 	}
-	
+
 	/**
 	 * Get the data stored about a question
 	 * 

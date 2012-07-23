@@ -27,122 +27,149 @@ package uk.co.jwlawson.nof1;
  * 
  */
 public class Keys {
-	
+
 	/** Name of default shared preferences */
 	public static final String DEFAULT_PREFS = "uk.co.jwlawson.nof1_preferences";
-	
+
 	/** Shared preference key for Patient name */
 	public static final String DEFAULT_PATIENT_NAME = "prefs_patient_name";
-	
+
 	/** Shared preference key for reminder time */
 	public static final String DEFAULT_TIME = "prefs_reminder_time";
-	
+
 	/** Shared preference key for first time bool */
 	public static final String DEFAULT_FIRST = "prefs_first";
-	
+
 	/** Shared preference key for back up bool */
 	public static final String DEFAULT_BACKUP = "prefs_backup";
-	
+
 	/** Shared preference key for whether to vibrate on notification */
 	public static final String DEFAULT_VIBE = "prefs_vibrate";
-	
+
 	/** Shared preference key for whether to make noise on notification */
 	public static final String DEFAULT_LOUD = "prefs_loud";
-	
+
 	/** Shared preference key for whether to flash lights on notification */
 	public static final String DEFAULT_FLASH = "prefs_flash";
-	
+
 	/** Name of shared preferences holding the questions */
 	public static final String QUES_NAME = "questions";
-	
+
 	/** Shared preference key with question text. Append with required question number. */
 	public static final String QUES_TEXT = "questionText";
-	
+
 	/** Shared preference key with question type. Append with required question number. */
 	public static final String QUES_TYPE = "inputType";
-	
+
 	/** Shared preference key with minimum hint. Append with required question number. */
 	public static final String QUES_MIN = "questionMin";
-	
+
 	/** Shared preference key with maximum hint. Append with required question number. */
 	public static final String QUES_MAX = "questionMax";
-	
+
+	/** Shared preferences key for the number of questions in questionnaire */
+	public static final String QUES_NUMBER_QUESTIONS = "number_questions";
+
 	/** Shared preference key for comment bool. True = show comment */
 	public static final String COMMENT = "comment";
-	
+
 	/** Intent key for preview mode */
 	public static final String INTENT_PREVIEW = "uk.co.jwlawson.nof1.preview";
-	
+
 	/** Intent key for email string */
 	public static final String INTENT_EMAIL = "uk.co.jwlawson.nof1.email";
-	
+
 	/** Intent key for started on boot */
 	public static final String INTENT_BOOT = "uk.co.jwlawson.nof1.boot";
-	
+
 	/** Intent key for alarm bool */
 	public static final String INTENT_ALARM = "uk.co.jwlawson.nof1.alarm";
-	
+
 	/** Intent key for first run */
 	public static final String INTENT_FIRST = "uk.co.jwlawson.nof1.first";
-	
+
+	/** Intent key for question id */
+	public static final String INTENT_ID = "uk.co.jwlawson.nof1.id";
+
+	/** Intent key for medicine notification bool */
+	public static final String INTENT_MEDICINE = "uk.co.jwlawson.nof1.medicine";
+
 	/** Intent key for mins to reschedule */
 	public static final String INTENT_RESCHEDULE = "uk.co.jwlawson.nof1.reschedule";
-	
+
+	/** Intent key for whether the questionnaire is loaded from scheduled alert */
+	public static final String INTENT_SCHEDULED = "uk.co.jwlawson.nof1.scheduled";
+
 	/** SharedPrefernces holding config data */
 	public static final String CONFIG_NAME = "config";
-	
+
 	/** Shared preference key for whether the questionnaire is built */
 	public static final String CONFIG_BUILT = "config_built";
-	
+
 	/** Shared preferences key for hashed email */
 	public static final String CONFIG_EMAIL = "email_hash";
-	
+
 	/** Shared preference key for whether this is the first time doctor has logged in */
 	public static final String CONFIG_FIRST = "first_run";
-	
+
 	/** Shared preferences key for hashed password */
 	public static final String CONFIG_PASS = "pass_hash";
-	
+
 	/** Shared preferences key for doctor inputed patient name */
 	public static final String CONFIG_PATIENT_NAME = "patient_name";
-	
+
+	/** Shared preference key for doctor name */
+	public static final String CONFIG_DOCTOR_NAME = "doctor_name";
+
 	/** Shared preferences key for number of days per treatment period */
 	public static final String CONFIG_PERIOD_LENGTH = "period_length";
-	
-	/** Shared preferences key for number of treatment periods in trial */
+
+	/** Shared preferences key for number of *pairs of* treatment periods in trial */
 	public static final String CONFIG_NUMBER_PERIODS = "number_periods";
-	
+
 	/** Shared preferences key prefix for whether to fill in questionnaire on this day */
 	public static final String CONFIG_DAY = "day";
-	
+
 	/** Shared preference key for start date */
 	public static final String CONFIG_START = "start";
-	
+
+	/** Shared preference key prefix for time to take medicine */
+	public static final String CONFIG_TIME = "time";
+
+	/** Shared preference key for the treatment A */
+	public static final String CONFIG_TREATMENT_A = "treatment_a";
+
+	/** Shared preference key for the treatment B */
+	public static final String CONFIG_TREATMENT_B = "treatment_b";
+
+	/** Shared preference key for any treatment notes */
+	public static final String CONFIG_TREATMENT_NOTES = "treatment_notes";
+
 	/** Shared preferences name for scheduler preferences */
 	public static final String SCHED_NAME = "config";
-	
+
 	/** Shared preferences key for next date to set notification */
 	public static final String SCHED_NEXT_DATE = "next_date";
-	
+
 	/** Shared preference key for the number of days into treatment period the next notification is */
 	public static final String SCHED_NEXT_DAY = "next_day";
-	
+
 	/** Shared preference key for the current treatment period in, starts at 1 */
 	public static final String SCHED_CUR_PERIOD = "cur_period";
-	
+
 	/** Shared preference key for the last day notification was set */
 	public static final String SCHED_LAST_DAY = "last_day";
-	
+
 	/** Shared preference key for the last date notification was set */
 	public static final String SCHED_LAST_DATE = "last_date";
-	
+
 	/** Shared preference key for the period in when last notification was set */
 	public static final String SCHED_LAST_PERIOD = "last_period";
-	
+
 	/** Shared preference key for the cumulative number of days into the trial */
 	public static final String SCHED_CUMULATIVE_DAY = "cum_day";
-	
+
 	/** Shared preference key for the next cumulative number of days into the trial */
 	public static final String SCHED_NEXT_CUMULATIVE_DAY = "next_cum_day";
-	
+
 }
