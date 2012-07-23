@@ -28,7 +28,7 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <permission android:protectionLevel="signature" android:description="@string/receiver_permission" android:name="uk.co.jwlawson.nof1.permission.RECEIVER" android:label="Nof1 Receiver permission"></permission>
+    <permission android:protectionLevel="signatureOrSystem" android:description="@string/receiver_permission" android:name="uk.co.jwlawson.nof1.permission.RECEIVER" android:label="Nof1 Receiver permission"></permission>
     <uses-permission android:name="uk.co.jwlawson.nof1.permission.RECEIVER"/>
 
     <application
