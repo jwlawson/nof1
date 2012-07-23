@@ -16,20 +16,28 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
-<manifest package="uk.co.jwlawson.nof1"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="uk.co.jwlawson.nof1"
     android:versionCode="1"
-    android:versionName="1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="7"
+        android:minSdkVersion="11"
         android:targetSdkVersion="16" />
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <permission android:protectionLevel="signatureOrSystem" android:description="@string/receiver_permission" android:name="uk.co.jwlawson.nof1.permission.RECEIVER" android:label="Nof1 Receiver permission"></permission>
-    <uses-permission android:name="uk.co.jwlawson.nof1.permission.RECEIVER"/>
+
+    <permission
+        android:name="uk.co.jwlawson.nof1.permission.RECEIVER"
+        android:description="@string/receiver_permission"
+        android:label="Nof1 Receiver permission"
+        android:protectionLevel="signatureOrSystem" >
+    </permission>
+
+    <uses-permission android:name="uk.co.jwlawson.nof1.permission.RECEIVER" />
 
     <application
         android:backupAgent="Backup"
@@ -67,8 +75,8 @@
         </activity>
         <activity
             android:name=".activities.DoctorConfig"
-            android:label="@string/configuration"
             android:exported="false"
+            android:label="@string/configuration"
             android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -92,7 +100,9 @@
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
         </activity>
 
-        <receiver android:name=".Receiver" android:permission="uk.co.jwlawson.nof1.permission.RECEIVER">
+        <receiver
+            android:name=".Receiver"
+            android:permission="uk.co.jwlawson.nof1.permission.RECEIVER" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -116,7 +126,22 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.HomeScreen"></activity>
+        <activity android:name=".activities.HomeScreen" >
+        </activity>
+        <activity
+            android:name=".activities.CommentList"
+            android:label="@string/title_comment_list" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
+        </activity>
+        <activity
+            android:name=".activities.CommentDetail"
+            android:label="@string/title_comment_detail" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CommentListActivity" />
+        </activity>
     </application>
 
 </manifest>

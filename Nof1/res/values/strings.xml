@@ -16,7 +16,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <resources>
 
@@ -179,5 +179,7 @@
     <string name="questions">&quot;Questions: &quot;</string>
     <string name="incorrect_login">&quot;Incorrect login details&quot;</string>
     <string name="answer_all">&quot;Please answer all the questions&quot;</string>
+    <string name="title_comment_detail">Comment Detail</string>
+    <string name="title_comment_list">Comments</string>
 
 </resources>
