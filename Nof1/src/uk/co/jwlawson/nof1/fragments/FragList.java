@@ -61,8 +61,7 @@ public abstract class FragList extends SherlockListFragment {
 
 	/** Creates the arrayAdapter for the list and sets the arraylist */
 	public <T extends Object> void setArrayList(ArrayList<T> list) {
-		HighlightArrayAdapter<T> adapter = new HighlightArrayAdapter<T>(getActivity(), android.R.layout.simple_expandable_list_item_1,
-				android.R.id.text1, list);
+		HighlightArrayAdapter<T> adapter = new HighlightArrayAdapter<T>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, list);
 		setListAdapter(adapter);
 	}
 
