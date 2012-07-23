@@ -161,5 +161,23 @@
     <string name="what_now">What would you like to do now?</string>
     <string name="go_home">Go to main screen</string>
     <string name="exit">Exit</string>
+    <string name="find_attached">Please find attached a treatment schedule for an N-of-1 trial.</string>
+    <string name="doc_name">&quot;Doctors name: &quot;</string>
+    <string name="treatment_notes">&quot;Treatment notes: &quot;</string>
+    <string name="pharm_email_subject">&quot;N-of-1 Trials treatment schedule&quot;</string>
+    <string name="doc_email_subject">&quot;N-of-1 Trials patient configuration&quot;</string>
+    <string name="days_to_record">&quot;Days in period to record data: &quot;</string>
+    <string name="length_periods">&quot;Length of treatment periods: &quot;</string>
+    <string name="number_periods">&quot;Number of pairs of treatment periods: &quot;</string>
+    <string name="trials_start">&quot;Trial start date: &quot;</string>
+    <string name="medicine_schedule">&quot;Daily medicine schedule: &quot;</string>
+    <string name="thanks_for_using">&quot;Thanks for using the N-of-1 app&quot;</string>
+    <string name="about_to_send_emails">&quot;About to send emails containing config info&quot;</string>
+    <string name="problem_saving_file">&quot;Problem saving file&quot;</string>
+    <string name="medicine_taken">&quot;Medicine taken &quot;</string>
+    <string name="times_a_day">&quot; times a day.&quot;</string>
+    <string name="questions">&quot;Questions: &quot;</string>
+    <string name="incorrect_login">&quot;Incorrect login details&quot;</string>
+    <string name="answer_all">&quot;Please answer all the questions&quot;</string>
 
 </resources>
