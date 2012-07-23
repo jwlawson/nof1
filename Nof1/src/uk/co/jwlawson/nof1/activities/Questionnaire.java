@@ -168,6 +168,8 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			}
 			if (problem) {
 				Toast.makeText(this, R.string.answer_all, Toast.LENGTH_SHORT).show();
+				((Button) findViewById(R.id.data_input_button_ok)).setEnabled(true);
+				((Button) findViewById(R.id.data_input_button_cancel)).setEnabled(true);
 				return;
 			}
 			if (mComment != null) {
