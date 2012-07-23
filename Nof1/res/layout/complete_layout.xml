@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/complete_text_thanks"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/padding_large"
+        android:layout_marginRight="@dimen/padding_large"
+        android:layout_marginTop="@dimen/padding_large"
+        android:text="@string/thanks"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/complete_text_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/complete_text_thanks"
+        android:layout_alignRight="@+id/complete_text_thanks"
+        android:layout_below="@+id/complete_text_thanks"
+        android:layout_marginTop="@dimen/padding_medium"
+        android:minLines="1"
+        android:text="@string/you_are_now"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/complete_text_what_next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/complete_text_progress"
+        android:layout_alignRight="@+id/complete_text_progress"
+        android:layout_below="@+id/complete_text_progress"
+        android:layout_marginTop="@dimen/padding_medium"
+        android:text="@string/what_now"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/complete_btn_graphs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/complete_text_what_next"
+        android:layout_alignRight="@+id/complete_text_what_next"
+        android:layout_below="@+id/complete_text_what_next"
+        android:text="@string/view_graphs" />
+
+    <Button
+        android:id="@+id/complete_btn_home"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/complete_btn_graphs"
+        android:layout_alignRight="@+id/complete_btn_graphs"
+        android:layout_below="@+id/complete_btn_graphs"
+        android:text="@string/go_home" />
+
+    <Button
+        android:id="@+id/complete_btn_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/complete_btn_home"
+        android:layout_alignRight="@+id/complete_btn_home"
+        android:layout_below="@+id/complete_btn_home"
+        android:text="@string/exit" />
+
+</RelativeLayout>

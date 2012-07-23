@@ -155,5 +155,12 @@
     <string name="receiver_permission">Used to ensure that only the N-of-1 app can access this receiver</string>
     <string name="doctors_name">Doctor\'s name</string>
     <string name="populate_database">Populate database</string>
+    <string name="thanks">Thanks</string>
+    <string name="name">Name</string>
+    <string name="you_are_now">"You are now "</string>
+    <string name="out_of">" out of "</string>
+    <string name="what_now">What would you like to do now?</string>
+    <string name="go_home">Go to main screen</string>
+    <string name="exit">Exit</string>
 
 </resources>
