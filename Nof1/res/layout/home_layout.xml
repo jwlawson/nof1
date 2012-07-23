@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="@dimen/padding_medium" >
+    android:padding="@dimen/padding_medium" >
 
     <Button
         android:id="@+id/home_btn_data"
