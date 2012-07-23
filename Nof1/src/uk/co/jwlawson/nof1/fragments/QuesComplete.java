@@ -59,9 +59,13 @@ public class QuesComplete extends SherlockDialogFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		setStyle(STYLE_NO_TITLE, 0);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View view = inflater.inflate(R.layout.complete_layout, container, false);
 
@@ -84,6 +88,7 @@ public class QuesComplete extends SherlockDialogFragment {
 				TaskStackBuilder builder = TaskStackBuilder.create(getActivity());
 				builder.addNextIntent(new Intent(getActivity(), HomeScreen.class)).addNextIntent(new Intent(getActivity(), GraphChooser.class));
 				builder.startActivities();
+				getActivity().finish();
 			}
 		});
 
@@ -94,6 +99,7 @@ public class QuesComplete extends SherlockDialogFragment {
 				TaskStackBuilder builder = TaskStackBuilder.create(getActivity());
 				builder.addNextIntent(new Intent(getActivity(), HomeScreen.class));
 				builder.startActivities();
+				getActivity().finish();
 			}
 		});
 
@@ -108,6 +114,7 @@ public class QuesComplete extends SherlockDialogFragment {
 				getActivity().finish();
 			}
 		});
+
 		return view;
 	}
 
