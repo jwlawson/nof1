@@ -22,7 +22,6 @@
 
     <string name="app_name">Nof1 Trials</string>
     <string name="menu_settings">Settings</string>
-    <string name="title_activity_main">Data Input</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="question">Question</string>
