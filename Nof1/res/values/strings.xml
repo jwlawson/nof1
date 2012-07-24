@@ -185,5 +185,6 @@
     <string name="add_new_note">Add a new note:</string>
     <string name="add_note">Add new note</string>
     <string name="crash_toast_text">"Oops, something seems to be wrong. Please send a crash report so this bug can be squashed."</string>
+    <string name="crash">Crash!</string>
 
 </resources>

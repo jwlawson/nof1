@@ -117,6 +117,24 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/main_btn_home"
             android:text="@string/populate_database" />
+
+        <Button
+            android:id="@+id/main_btn_comments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/main_btn_pop"
+            android:text="@string/view_comments" />
+
+        <Button
+            android:id="@+id/main_btn_crash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/main_btn_comments"
+            android:text="@string/crash" />
 
     </RelativeLayout>
 

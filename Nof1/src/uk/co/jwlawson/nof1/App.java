@@ -32,14 +32,13 @@ import android.app.Application;
 		mailTo = "nof1@jwlawson.co.uk", 
 		mode = ReportingInteractionMode.TOAST, 
 		resToastText = R.string.crash_toast_text, 
-		customReportContent = {	ReportField.USER_COMMENT ,
-								ReportField.APP_VERSION_NAME, 
+		customReportContent = {	ReportField.APP_VERSION_NAME, 
 								ReportField.ANDROID_VERSION,
 								ReportField.BRAND,
 								ReportField.PHONE_MODEL, 
+								ReportField.CRASH_CONFIGURATION,
 								ReportField.CUSTOM_DATA, 
-								ReportField.STACK_TRACE,
-								ReportField.LOGCAT })
+								ReportField.STACK_TRACE})
 /**
  * Appplication. Required to set up ACRA.
  * @author John Lawson
