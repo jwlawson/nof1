@@ -27,6 +27,12 @@ import org.acra.annotation.ReportsCrashes;
 
 import android.app.Application;
 
+/**
+ * Application. Required to set up ACRA.
+ * 
+ * @author John Lawson
+ * 
+ */
 // @formatter:off
 @ReportsCrashes(formKey = "", // will not be used
 		mailTo = "nof1@jwlawson.co.uk", 
@@ -40,18 +46,13 @@ import android.app.Application;
 								ReportField.CUSTOM_DATA, 
 								ReportField.STACK_TRACE})
 // @formatter:on
-/**
- * Appplication. Required to set up ACRA.
- * @author John Lawson
- * 
- */
 public class App extends Application {
-
+	
 	@Override
 	public void onCreate() {
 		// The following line triggers the initialization of ACRA
 		ACRA.init(this);
 		super.onCreate();
 	}
-
+	
 }
