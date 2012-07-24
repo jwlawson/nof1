@@ -148,6 +148,9 @@ public class Keys {
 	/** Shared preference key for any treatment notes */
 	public static final String CONFIG_TREATMENT_NOTES = "treatment_notes";
 	
+	/** Shared preference key for database version */
+	public static final String CONFIG_DB_VERSION = "db_version";
+	
 	/** Shared preferences name for scheduler preferences */
 	public static final String SCHED_NAME = "config";
 	
