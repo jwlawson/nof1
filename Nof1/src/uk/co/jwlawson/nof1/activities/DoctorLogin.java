@@ -20,6 +20,8 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import java.util.UUID;
+
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
@@ -125,13 +127,16 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 					
 					if (passStr.equals(pass2Str)) {
 						
-						// Hash the email and password, then add to
-						// shared preferences.
-						// This will be what we check against at further
-						// logins.
+						// generate unique ID
+						UUID uniqueId = UUID.randomUUID();
+						String uuidStr = uniqueId.toString();
+						
+						// Hash and salt the email and password, then add to shared preferences.
+						// This will be what we check against at further logins.
 						SharedPreferences.Editor editor = sharedPrefs.edit();
-						editor.putString(Keys.CONFIG_EMAIL, new String(Hex.encodeHex(DigestUtils.sha512(emailStr1))));
-						editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
+						editor.putString(Keys.CONFIG_UUID, uuidStr);
+						editor.putString(Keys.CONFIG_EMAIL, new String(Hex.encodeHex(DigestUtils.sha512(emailStr1 + uuidStr))));
+						editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr + uuidStr))));
 						editor.putBoolean(Keys.CONFIG_FIRST, false);
 						editor.commit();
 						
@@ -170,10 +175,14 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				String emailStr = email.getText().toString();
-				String emailHash = new String(Hex.encodeHex(DigestUtils.sha512(emailStr)));
-				String passHash = new String(Hex.encodeHex(DigestUtils.sha512(pass.getText().toString())));
+				String uuidStr = sharedPrefs.getString(Keys.CONFIG_UUID, "");
 				
+				String emailStr = email.getText().toString();
+				// Hash email and password
+				String emailHash = new String(Hex.encodeHex(DigestUtils.sha512(emailStr + uuidStr)));
+				String passHash = new String(Hex.encodeHex(DigestUtils.sha512(pass.getText().toString() + uuidStr)));
+				
+				// Compare hashes
 				if (emailHash.equals(sharedPrefs.getString(Keys.CONFIG_EMAIL, null)) && passHash.equals(sharedPrefs.getString(Keys.CONFIG_PASS, null))) {
 					// Login correct
 					launch(emailStr);
