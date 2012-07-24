@@ -1,0 +1,3 @@
+<resources>
+    <item type="layout" name="activity_comment_list">@layout/activity_comment_twopane</item>
+</resources>
