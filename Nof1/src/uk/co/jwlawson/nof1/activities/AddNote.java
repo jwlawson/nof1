@@ -74,6 +74,7 @@ public class AddNote extends SherlockActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.menu_add_note, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 
