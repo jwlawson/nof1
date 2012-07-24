@@ -73,6 +73,10 @@ public class About extends SherlockActivity {
 		Pattern apacheMatcher = Pattern.compile("Apache Commons Codec");
 		String urlApache = "http://commons.apache.org/codec/index.html";
 		Linkify.addLinks(details, apacheMatcher, urlApache, emptyMatch, emptyFilter);
+
+		Pattern acraMatcher = Pattern.compile("ACRA crash reporting");
+		String urlAcra = "http://code.google.com/p/acra";
+		Linkify.addLinks(details, acraMatcher, urlAcra, emptyMatch, emptyFilter);
 	}
 
 	@Override

@@ -55,8 +55,8 @@ public class TimePreference extends DialogPreference {
 		return (Integer.parseInt(pieces[1]));
 	}
 
-	public TimePreference(Context ctxt) {
-		this(ctxt, null, 0);
+	public TimePreference(Context context) {
+		this(context, null, 0);
 	}
 
 	// This is what gets called by XML inflation, defStyle is not 0

@@ -102,6 +102,26 @@ public class HomeScreen extends SherlockActivity {
 				btnGraphs.setEnabled(false);
 			}
 
+			Button btnComment = (Button) findViewById(R.id.home_btn_comment);
+
+			btnComment.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(HomeScreen.this, CommentList.class);
+					startActivity(intent);
+				}
+			});
+
+			Button btnNewNote = (Button) findViewById(R.id.home_btn_add_note);
+
+			btnNewNote.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(HomeScreen.this, AddNote.class);
+					startActivity(intent);
+				}
+			});
+
 		}
 
 	}
