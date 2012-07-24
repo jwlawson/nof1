@@ -138,6 +138,7 @@ public class DataSource {
 	 */
 	public long saveComment(int day, String comment) {
 		ContentValues values = new ContentValues();
+		values.put(SQLite.COLUMN_DAY, day);
 		values.put(SQLite.COLUMN_COMMENT, comment);
 
 		long insertId = -1;
