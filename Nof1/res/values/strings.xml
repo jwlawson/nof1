@@ -181,5 +181,7 @@
     <string name="answer_all">&quot;Please answer all the questions&quot;</string>
     <string name="title_comment_detail">Comment Detail</string>
     <string name="title_comment_list">Comments</string>
+    <string name="view_comments">View comments</string>
+    <string name="add_new_note">Add a new note:</string>
 
 </resources>
