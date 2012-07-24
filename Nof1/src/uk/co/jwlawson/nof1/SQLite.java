@@ -20,7 +20,9 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -79,8 +81,64 @@ public class SQLite extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_INFO);
+
+		// Make array of all column headers
+		int num = getNumberQuestions();
+		String[] columns = new String[num + 3];
+		columns[0] = SQLite.COLUMN_ID;
+		columns[1] = SQLite.COLUMN_DAY;
+		columns[2] = SQLite.COLUMN_QUESTION;
+		for (int i = 0; i < num; i++) {
+			columns[i + 3] = SQLite.COLUMN_QUESTION + i;
+		}
+
+		// Get all data from database
+		Cursor cursor;
+		synchronized (DataSource.sDataLock) {
+			cursor = db.query(TABLE_INFO, columns, null, null, null, null, null);
+		}
+
+		// Store all data in arrays. Could be lots of data
+		int size = cursor.getCount();
+		int[] ids = new int[size];
+		int[] days = new int[size];
+		int[][] questions = new int[size][num];
+		String[] comments = new String[size];
+
+		cursor.moveToFirst();
+
+		for (int i = 0; i < size; i++) {
+			ids[i] = cursor.getInt(0);
+			days[i] = cursor.getInt(1);
+			for (int j = 0; j < num; j++) {
+				questions[i][j] = cursor.getInt(j + 2);
+			}
+			comments[i] = cursor.getString(num + 2);
+		}
+		cursor.close();
+
+		// Delete current table
+		synchronized (DataSource.sDataLock) {
+			db.execSQL("DROP TABLE IF EXISTS " + TABLE_INFO);
+		}
+
+		// Make new table
 		onCreate(db);
+
+		// Fill new table with old data
+		for (int i = 0; i < size; i++) {
+			ContentValues values = new ContentValues();
+			values.put(COLUMN_ID, ids[i]);
+			values.put(COLUMN_DAY, days[i]);
+			for (int j = 0; j < questions[i].length; j++) {
+				values.put(SQLite.COLUMN_QUESTION + j, questions[i][j]);
+			}
+			values.put(COLUMN_COMMENT, comments[i]);
+
+			synchronized (DataSource.sDataLock) {
+				db.insert(SQLite.TABLE_INFO, null, values);
+			}
+		}
 	}
 
 	/** Create the database creation SQL command */
