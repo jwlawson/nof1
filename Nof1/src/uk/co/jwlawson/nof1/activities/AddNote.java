@@ -108,6 +108,13 @@ public class AddNote extends SherlockActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		// Close database
+		if (mData != null) mData.close();
+	}
+
 	private class DataLoader extends AsyncTask<Void, Void, Void> {
 
 		@Override
@@ -161,10 +168,8 @@ public class AddNote extends SherlockActivity {
 			}
 			if (DEBUG) Log.d(TAG, "Data input for day number " + day1);
 
-			final int day = day1;
-
 			for (int i = 0; i < values.length; i++) {
-				mData.saveComment(day, values[i]);
+				mData.saveComment(day1, values[i]);
 			}
 			return null;
 		}
