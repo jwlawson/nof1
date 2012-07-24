@@ -39,6 +39,7 @@ import android.app.Application;
 								ReportField.CRASH_CONFIGURATION,
 								ReportField.CUSTOM_DATA, 
 								ReportField.STACK_TRACE})
+// @formatter:on
 /**
  * Appplication. Required to set up ACRA.
  * @author John Lawson
