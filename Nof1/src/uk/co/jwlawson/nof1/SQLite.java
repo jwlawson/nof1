@@ -36,6 +36,7 @@ import android.util.Log;
 public class SQLite extends SQLiteOpenHelper {
 
 	private static final String TAG = "SQLiteHelper";
+	private static final boolean DEBUG = false;
 
 	/** Table name */
 	public static final String TABLE_INFO = "info";
@@ -53,7 +54,7 @@ public class SQLite extends SQLiteOpenHelper {
 
 	/** Database file name */
 	public static final String DATABASE_NAME = "info.db";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 1;
 
 	/** Construct database with custom name and version number */
 	public SQLite(Context context) {
@@ -80,17 +81,18 @@ public class SQLite extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
+		if (DEBUG) Log.d(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
 
 		// Make array of all column headers
 		int num = getNumberQuestions();
 		String[] columns = new String[num + 3];
 		columns[0] = SQLite.COLUMN_ID;
 		columns[1] = SQLite.COLUMN_DAY;
-		columns[2] = SQLite.COLUMN_QUESTION;
+
 		for (int i = 0; i < num; i++) {
-			columns[i + 3] = SQLite.COLUMN_QUESTION + i;
+			columns[i + 2] = SQLite.COLUMN_QUESTION + i;
 		}
+		columns[num + 2] = SQLite.COLUMN_COMMENT;
 
 		// Get all data from database
 		Cursor cursor;
@@ -100,7 +102,6 @@ public class SQLite extends SQLiteOpenHelper {
 
 		// Store all data in arrays. Could be lots of data
 		int size = cursor.getCount();
-		int[] ids = new int[size];
 		int[] days = new int[size];
 		int[][] questions = new int[size][num];
 		String[] comments = new String[size];
@@ -108,12 +109,13 @@ public class SQLite extends SQLiteOpenHelper {
 		cursor.moveToFirst();
 
 		for (int i = 0; i < size; i++) {
-			ids[i] = cursor.getInt(0);
 			days[i] = cursor.getInt(1);
 			for (int j = 0; j < num; j++) {
 				questions[i][j] = cursor.getInt(j + 2);
 			}
 			comments[i] = cursor.getString(num + 2);
+
+			cursor.moveToNext();
 		}
 		cursor.close();
 
@@ -128,7 +130,6 @@ public class SQLite extends SQLiteOpenHelper {
 		// Fill new table with old data
 		for (int i = 0; i < size; i++) {
 			ContentValues values = new ContentValues();
-			values.put(COLUMN_ID, ids[i]);
 			values.put(COLUMN_DAY, days[i]);
 			for (int j = 0; j < questions[i].length; j++) {
 				values.put(SQLite.COLUMN_QUESTION + j, questions[i][j]);
