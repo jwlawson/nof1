@@ -16,7 +16,8 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation-->
+      John Lawson - initial API and implementation
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uk.co.jwlawson.nof1"
     android:versionCode="1"
@@ -39,6 +40,7 @@
     <uses-permission android:name="uk.co.jwlawson.nof1.permission.RECEIVER" />
 
     <application
+        android:name="App"
         android:backupAgent="Backup"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
