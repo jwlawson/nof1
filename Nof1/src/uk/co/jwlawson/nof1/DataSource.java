@@ -91,7 +91,7 @@ public class DataSource {
 	 * 
 	 * @param day Day data is saved
 	 * @param data Data to save
-	 * @return The column id saved
+	 * @return The row id saved
 	 */
 	public long saveData(int day, int[] data) {
 
@@ -100,9 +100,10 @@ public class DataSource {
 		for (int i = 0; i < data.length; i++) {
 			values.put(SQLite.COLUMN_QUESTION + i, data[i]);
 		}
-
-		long insertId = mDatabase.insert(SQLite.TABLE_INFO, null, values);
-
+		long insertId = -1;
+		synchronized (sDataLock) {
+			insertId = mDatabase.insert(SQLite.TABLE_INFO, null, values);
+		}
 		if (DEBUG) Log.d(TAG, "Saving data to database. ID: " + insertId);
 
 		return insertId;
@@ -114,7 +115,7 @@ public class DataSource {
 	 * @param day
 	 * @param data
 	 * @param comment
-	 * @return The column id saved
+	 * @return The row id saved
 	 */
 	public long saveData(int day, int[] data, String comment) {
 		long insertId = saveData(day, data);
@@ -125,6 +126,26 @@ public class DataSource {
 		synchronized (sDataLock) {
 			mDatabase.update(SQLite.TABLE_INFO, values, SQLite.COLUMN_ID + "=" + insertId, null);
 		}
+		return insertId;
+	}
+
+	/**
+	 * Save a single comment with no data
+	 * 
+	 * @param day
+	 * @param comment
+	 * @return The row id saved
+	 */
+	public long saveComment(int day, String comment) {
+		ContentValues values = new ContentValues();
+		values.put(SQLite.COLUMN_COMMENT, comment);
+
+		long insertId = -1;
+		synchronized (sDataLock) {
+			insertId = mDatabase.insert(SQLite.TABLE_INFO, null, values);
+		}
+		if (DEBUG) Log.d(TAG, "Saving data to database. ID: " + insertId);
+
 		return insertId;
 	}
 
