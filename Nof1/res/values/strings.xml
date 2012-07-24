@@ -183,5 +183,6 @@
     <string name="title_comment_list">Comments</string>
     <string name="view_comments">View comments</string>
     <string name="add_new_note">Add a new note:</string>
+    <string name="add_note">Add new note</string>
 
 </resources>

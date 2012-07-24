@@ -112,6 +112,16 @@ public class HomeScreen extends SherlockActivity {
 				}
 			});
 
+			Button btnNewNote = (Button) findViewById(R.id.home_btn_add_note);
+
+			btnNewNote.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(HomeScreen.this, AddNote.class);
+					startActivity(intent);
+				}
+			});
+
 		}
 
 	}
