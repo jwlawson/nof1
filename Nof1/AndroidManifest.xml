@@ -16,7 +16,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uk.co.jwlawson.nof1"
@@ -51,7 +51,7 @@
 
         <activity
             android:name=".activities.MainActivity"
-            android:label="@string/app_name" >
+            android:label="N-of-1 Debug" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -127,6 +127,11 @@
                 android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
         </activity>
         <activity android:name=".activities.HomeScreen" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activities.CommentList"
@@ -141,6 +146,11 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CommentListActivity" />
+        </activity>
+        <activity android:name=".activities.AddNote" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
         </activity>
     </application>
 
