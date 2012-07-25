@@ -151,6 +151,16 @@ public class AddNote extends SherlockActivity {
 		@Override
 		protected Void doInBackground(String... values) {
 
+			boolean empty = true;
+			for (int i = 0; i < values.length; i++) {
+				empty = empty && values[i].length() == 0;
+			}
+			// Don't save blank note
+			if (empty) {
+				if (DEBUG) Log.d(TAG, "Not saving empty note");
+				return null;
+			}
+
 			// Find the cumulative day for saving data
 			SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 			String[] start = sp.getString(Keys.CONFIG_START, "").split(":");
