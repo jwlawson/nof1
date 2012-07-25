@@ -20,6 +20,7 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
+import uk.co.jwlawson.nof1.FinishedService;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.activities.GraphChooser;
@@ -87,6 +88,10 @@ public class QuesComplete extends SherlockDialogFragment {
 			TextView finished = (TextView) view.findViewById(R.id.complete_text_finished);
 			finished.setVisibility(View.VISIBLE);
 			((RelativeLayout) finished.getParent()).requestLayout();
+
+			// Start the service to create CSV file
+			Intent intent = new Intent(getActivity(), FinishedService.class);
+			getActivity().startService(intent);
 		}
 
 		Button btnGraph = (Button) view.findViewById(R.id.complete_btn_graphs);
