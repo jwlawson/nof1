@@ -32,6 +32,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -73,11 +74,17 @@ public class GraphView extends View {
 	/** List of y-axis labels */
 	private ArrayList<Label> mYLabelList;
 
+	/** List of re3ctangles used to shade vertical regions */
+	private ArrayList<Rect> mVertShadingList;
+
 	/** Paint to draw the points */
 	private Paint mVecPaint;
 
 	/** Paint to draw axes */
 	private Paint mAxesPaint;
+
+	/** Paint to draw the shading */
+	private Paint mShadingPaint;
 
 	/** Scale in x direction */
 	private float mScaleX;
@@ -100,6 +107,9 @@ public class GraphView extends View {
 	/** Cursor holding data */
 	private Cursor mCursor;
 
+	/** Separation width of the vertical lines, if any is specified */
+	private int mVertLineWidth;
+
 	private float[] floatarr;
 
 	public GraphView(Context context) {
@@ -118,6 +128,7 @@ public class GraphView extends View {
 		mXLabelList = new ArrayList<Label>();
 		mYAxisList = new ArrayList<Line>();
 		mYLabelList = new ArrayList<Label>();
+		mVertShadingList = new ArrayList<Rect>(0);
 
 		mVecPaint = new Paint();
 		mVecPaint.setColor(0xFF33B5E5);
@@ -129,6 +140,11 @@ public class GraphView extends View {
 		mAxesPaint.setColor(Color.BLACK);
 		mAxesPaint.setTextAlign(Align.CENTER);
 		mAxesPaint.setTextSize(TEXT_SIZE);
+
+		mShadingPaint = new Paint();
+		mShadingPaint.setColor(Color.LTGRAY);
+		mShadingPaint.setStyle(Style.FILL);
+
 	}
 
 	/** Set the list of points to be drawn. Use either this or setCursor to supply points to graph */
@@ -226,7 +242,62 @@ public class GraphView extends View {
 				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight - (i * ytick) + TEXT_SIZE / 2))));
 			}
 		}
+
+		// If vertical lines needed, add them
+		if (mVertLineWidth != 0) {
+			setVerticalLines(mVertLineWidth);
+		}
 		invalidate();
+	}
+
+	/**
+	 * Set the graph to draw vertical lines on the graph from the x-axis to the top of the graph. Each line will be
+	 * equally spaced <i>width</i> away from the previous
+	 */
+	public void setVerticalLines(int width) {
+
+		if (width <= 0) {
+			throw new IllegalArgumentException("Vertical lines must have a positive separation");
+		}
+
+		mVertLineWidth = width;
+
+		// Find the number of lines to draw
+		int num = (int) ((float) mMaxX / width);
+		float xtick = (float) mWidth / mMaxX;
+
+		// Add lines to the list
+		for (int i = 1; i <= num; i++) {
+			mXAxisList.add(new Line(new Vec2((int) (i * xtick * width), mHeight), new Vec2((int) (i * xtick * width), TOP_PAD + BOTTOM_PAD)));
+		}
+	}
+
+	/**
+	 * Set the graph to shade the regions between vertical lines. The passed array indicated whether a region should be
+	 * shaded or not. Null can be passed, this causes every other region to be shaded.
+	 */
+	public void setVerticalShading(boolean[] shaded) {
+
+		int num = (int) ((float) mMaxX / mVertLineWidth);
+		if (shaded == null) {
+			boolean[] newShaded = new boolean[num];
+			boolean flag = false;
+			for (int i = 0; i < num; i++) {
+				newShaded[i] = flag;
+				flag = !flag;
+			}
+			setVerticalShading(newShaded);
+			return;
+		}
+
+		int max = num < shaded.length ? num : shaded.length;
+		for (int i = 0; i < max; i++) {
+			if (shaded[i]) {
+				Rect rect = new Rect(i * mVertLineWidth, TOP_PAD + BOTTOM_PAD, (i + 1) * mVertLineWidth, mHeight);
+				mVertShadingList.add(rect);
+			}
+		}
+
 	}
 
 	@Override
@@ -239,13 +310,18 @@ public class GraphView extends View {
 		canvas.translate(LEFT_PAD, -BOTTOM_PAD);
 
 		if (DEBUG) Log.d(TAG, "Drawing x-axis");
-		for (Line line : mXAxisList) {
-			line.draw(canvas, mAxesPaint);
+		for (int i = 0; i < mXAxisList.size(); i++) {
+			mXAxisList.get(i).draw(canvas, mAxesPaint);
 		}
 
 		if (DEBUG) Log.d(TAG, "Drawing y-axis");
-		for (Line line : mYAxisList) {
-			line.draw(canvas, mAxesPaint);
+		for (int i = 0; i < mYAxisList.size(); i++) {
+			mYAxisList.get(i).draw(canvas, mAxesPaint);
+		}
+
+		if (DEBUG) Log.d(TAG, "Drawing shading");
+		for (int i = 0; i < mVertShadingList.size(); i++) {
+			canvas.drawRect(mVertShadingList.get(i), mShadingPaint);
 		}
 
 		if (DEBUG) Log.d(TAG, "Drawing data");
@@ -255,12 +331,12 @@ public class GraphView extends View {
 		}
 
 		if (DEBUG) Log.d(TAG, "Drawing labels");
-		for (Label lab : mXLabelList) {
-			lab.draw(canvas, mAxesPaint);
+		for (int i = 0; i < mXLabelList.size(); i++) {
+			mXLabelList.get(i).draw(canvas, mAxesPaint);
 		}
 
-		for (Label lab : mYLabelList) {
-			lab.draw(canvas, mAxesPaint);
+		for (int i = 0; i < mYLabelList.size(); i++) {
+			mYLabelList.get(i).draw(canvas, mAxesPaint);
 		}
 
 		canvas.restore();
