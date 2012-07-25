@@ -35,6 +35,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
@@ -81,6 +82,13 @@ public class QuesComplete extends SherlockDialogFragment {
 		progress.setText("" + res.getText(R.string.you_are_now) + schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 0) + res.getText(R.string.out_of)
 				+ (configPrefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0) * configPrefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0) * 2));
 
+		// If the trial is finished, show some text saying this
+		if (schedPrefs.getBoolean(Keys.SCHED_FINISHED, false)) {
+			TextView finished = (TextView) view.findViewById(R.id.complete_text_finished);
+			finished.setVisibility(View.VISIBLE);
+			((RelativeLayout) finished.getParent()).requestLayout();
+		}
+
 		Button btnGraph = (Button) view.findViewById(R.id.complete_btn_graphs);
 		btnGraph.setOnClickListener(new OnClickListener() {
 			@Override
@@ -117,5 +125,4 @@ public class QuesComplete extends SherlockDialogFragment {
 
 		return view;
 	}
-
 }
