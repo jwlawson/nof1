@@ -187,5 +187,6 @@
     <string name="crash_toast_text">"Oops, something seems to be wrong. Please send a crash report so this bug can be squashed.\n\nInclude information about what you were doing and which screen you were on."</string>
     <string name="crash">Crash!</string>
     <string name="last_questionnaire">This was the last questionnaire you have to complete.</string>
+    <string name="create_csv">Create .csv</string>
 
 </resources>

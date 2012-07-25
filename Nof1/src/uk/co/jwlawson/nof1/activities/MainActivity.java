@@ -23,6 +23,7 @@ package uk.co.jwlawson.nof1.activities;
 import java.util.Random;
 
 import uk.co.jwlawson.nof1.DataSource;
+import uk.co.jwlawson.nof1.FinishedService;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.Scheduler;
@@ -42,8 +43,6 @@ public class MainActivity extends SherlockActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		// populateDatabase();
 
 		getSupportActionBar().setHomeButtonEnabled(false);
 
@@ -164,6 +163,16 @@ public class MainActivity extends SherlockActivity {
 			@Override
 			public void onClick(View v) {
 				throw new RuntimeException();
+			}
+		});
+
+		Button btnCreateCSV = (Button) findViewById(R.id.main_btn_createcsv);
+		btnCreateCSV.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent i = new Intent(getBaseContext(), FinishedService.class);
+				startService(i);
 			}
 		});
 
