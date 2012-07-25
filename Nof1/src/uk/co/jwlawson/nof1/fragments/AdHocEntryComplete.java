@@ -112,7 +112,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 			layout.requestLayout();
 		}
 
-		Button btnGraph = (Button) view.findViewById(R.id.complete_btn_graphs);
+		Button btnGraph = (Button) view.findViewById(R.id.ad_hoc_btn_graphs);
 		btnGraph.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -123,7 +123,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 			}
 		});
 
-		Button btnHome = (Button) view.findViewById(R.id.complete_btn_home);
+		Button btnHome = (Button) view.findViewById(R.id.ad_hoc_btn_home);
 		btnHome.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -134,7 +134,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 			}
 		});
 
-		Button btnExit = (Button) view.findViewById(R.id.complete_btn_exit);
+		Button btnExit = (Button) view.findViewById(R.id.ad_hoc_btn_exit);
 		btnExit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
