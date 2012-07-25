@@ -109,7 +109,7 @@ public class CommentListFragment extends FragList {
 			while (!mCursor.isAfterLast()) {
 				int day = mCursor.getInt(dayCol);
 				String comment = mCursor.getString(comCol);
-				if (comment.length() != 0) {
+				if (comment != null && comment.length() != 0) {
 					cal.add(Calendar.DAY_OF_MONTH, day - calDay);
 
 					String date = cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.YEAR);
