@@ -22,7 +22,6 @@ package uk.co.jwlawson.nof1.fragments;
 
 import java.util.ArrayList;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
 import android.app.Activity;
 import android.content.res.TypedArray;
@@ -47,7 +46,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 public class CheckArray extends SherlockFragment {
 
 	private static final String TAG = "CheckArray Fragment";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private static final String ARGS_NUMBER = "number";
 	private static final String ARGS_PREFIX = "prefix";

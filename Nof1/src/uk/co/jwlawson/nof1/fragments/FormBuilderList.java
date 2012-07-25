@@ -33,7 +33,7 @@ import android.widget.ListView;
 public class FormBuilderList extends FragList {
 
 	private static final String TAG = "FormBuilderList";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	public FormBuilderList() {
 		if (DEBUG) Log.d(TAG, "New FormBuilderList created");

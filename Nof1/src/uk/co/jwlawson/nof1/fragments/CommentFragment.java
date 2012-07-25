@@ -33,7 +33,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 public class CommentFragment extends SherlockFragment {
 
 	private static final String TAG = "CommentFragment";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private EditText mText;
 
 	public CommentFragment() {

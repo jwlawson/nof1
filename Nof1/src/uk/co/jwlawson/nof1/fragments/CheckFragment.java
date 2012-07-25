@@ -35,7 +35,7 @@ import android.widget.TextView;
 public class CheckFragment extends QuestionFragment {
 
 	private static final String TAG = "CheckFragment";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	public static final String ARGS_TEXT = "argsText";
 	public static final String ARGS_DEFAULT = "argsDefault";

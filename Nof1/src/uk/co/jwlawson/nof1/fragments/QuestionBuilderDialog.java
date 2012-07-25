@@ -51,7 +51,7 @@ import com.actionbarsherlock.view.MenuItem;
 public class QuestionBuilderDialog extends SherlockDialogFragment implements AdapterView.OnItemSelectedListener {
 
 	private static final String TAG = "QuestionBuilderDialog";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	/** View type. Show fragment as a dialog */
 	public static final int DIALOG = 0;

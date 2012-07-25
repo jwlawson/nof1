@@ -47,7 +47,7 @@ import android.view.View;
 public class GraphView extends View {
 
 	private static final String TAG = "GraphView";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	private static final int TICK_SIZE = 5;
 	private static final int TEXT_SIZE = 12;

@@ -33,7 +33,6 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.protocol.HTTP;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.Scheduler;
@@ -83,7 +82,7 @@ import com.actionbarsherlock.view.MenuItem;
 public class DoctorConfig extends SherlockFragmentActivity implements AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener {
 
 	private static final String TAG = "DoctorConfig";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private static final int REQUEST_FORM = 12;
 

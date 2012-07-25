@@ -20,7 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import android.content.Intent;
@@ -46,7 +45,7 @@ import com.actionbarsherlock.view.MenuItem;
 public class HomeScreen extends SherlockActivity {
 
 	private static final String TAG = "HomeScreen";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

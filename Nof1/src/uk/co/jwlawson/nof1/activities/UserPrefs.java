@@ -20,7 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.Scheduler;
@@ -49,7 +48,7 @@ import com.actionbarsherlock.view.MenuItem;
 public class UserPrefs extends SherlockPreferenceActivity {
 
 	private static final String TAG = "User Prefs";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	public UserPrefs() {
 	}

@@ -62,7 +62,7 @@ import com.actionbarsherlock.view.Window;
 public class Questionnaire extends SherlockFragmentActivity implements RescheduleDialog.OnRescheduleListener {
 
 	private static final String TAG = "Questionnaire";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	public static final int RESULT_DONE = 10;
 	public static final int RESULT_BACK = 11;
