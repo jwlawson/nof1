@@ -153,6 +153,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
         </activity>
+        <service android:name="FinishedService" android:exported="false"></service>
     </application>
 
 </manifest>
