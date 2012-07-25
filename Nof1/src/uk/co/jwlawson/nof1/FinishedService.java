@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
@@ -62,6 +63,7 @@ public class FinishedService extends Service {
 		return super.onStartCommand(intent, flags, startId);
 	}
 
+	@SuppressLint("WorldReadableFiles")
 	@TargetApi(8)
 	private boolean createCVS(Cursor cursor) {
 		/*
