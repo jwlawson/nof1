@@ -22,7 +22,6 @@ package uk.co.jwlawson.nof1.activities;
 
 import java.util.Calendar;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.DataSource;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
@@ -49,7 +48,7 @@ import com.actionbarsherlock.view.Window;
 public class AddNote extends SherlockActivity {
 
 	private static final String TAG = "AddNote";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private DataSource mData;
 

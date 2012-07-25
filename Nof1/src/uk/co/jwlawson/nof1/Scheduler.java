@@ -44,7 +44,7 @@ import android.widget.Toast;
 public class Scheduler extends Service {
 
 	private static final String TAG = "Scheduler";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private static final int REQUEST_QUES = 0;
 	private static final int REQUEST_MED = 1;

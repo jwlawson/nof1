@@ -20,7 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.Scheduler;
@@ -43,7 +42,7 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 public class RescheduleDialog extends SherlockDialogFragment {
 
 	private static final String TAG = "RescheduleDialog";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private static final String ARGS_SPINNER = TAG + "Spinner";
 

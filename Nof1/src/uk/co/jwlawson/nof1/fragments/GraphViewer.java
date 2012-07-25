@@ -20,7 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.fragments;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.DataSource;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.views.GraphView;
@@ -47,7 +46,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 public class GraphViewer extends SherlockFragment {
 
 	private static final String TAG = "GraphViewer fragment";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private static final String ARGS_ID = "id";
 

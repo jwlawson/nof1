@@ -20,7 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.preferences;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
@@ -36,7 +35,7 @@ import android.widget.TimePicker;
 public class TimePreference extends DialogPreference {
 
 	private static final String TAG = "Time Preference";
-	private static final boolean DEBUG = false && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private int mLastHour = 0;
 	private int mLastMinute = 0;

@@ -42,7 +42,7 @@ import com.actionbarsherlock.app.SherlockListFragment;
 public abstract class FragList extends SherlockListFragment {
 
 	private static final String TAG = "FragList";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	private OnListItemSelectedListener mListener;
 	private int mSelectedPosition = -1;

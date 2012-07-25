@@ -25,7 +25,6 @@ import java.util.UUID;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import android.annotation.TargetApi;
@@ -54,66 +53,66 @@ import com.actionbarsherlock.app.SherlockActivity;
  * 
  */
 public class DoctorLogin extends SherlockActivity implements DialogInterface.OnCancelListener {
-	
+
 	private static final String TAG = "DoctorLogin";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
-	
+	private static final boolean DEBUG = false;
+
 	private static final int THEME = R.style.dialog_theme;
-	
+
 	private static final int REQUEST_CONFIG = 13;
-	
+
 	/** Dialog shown for login details */
 	private Dialog mDialog;
-	
+
 	/** Manager that handles backing up data */
 	private BackupManager mBackupManager;
-	
+
 	/** True if user wants to backup data */
 	private boolean mBackup;
-	
+
 	public DoctorLogin() {
 	}
-	
+
 	@TargetApi(8)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		SharedPreferences sharedPrefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-		
+
 		SharedPreferences userPrefs = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
 		mBackup = userPrefs.getBoolean(Keys.DEFAULT_BACKUP, false);
-		
+
 		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mBackupManager = new BackupManager(this);
 		}
-		
+
 		if (sharedPrefs.getBoolean(Keys.CONFIG_FIRST, true)) {
-			
+
 			// First time the app has been run.
 			firstLogin(sharedPrefs, null);
-			
+
 		} else {
-			
+
 			// Not the first time, so login already made
 			login(sharedPrefs, null);
-			
+
 		}
-		
+
 	}
-	
+
 	private void firstLogin(final SharedPreferences sharedPrefs, String emailStr) {
-		
+
 		// First time the app has been run. Set up doctor login.
 		AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, THEME));
 		View view = getInflater().inflate(R.layout.config_doctor_first_login, null, false);
-		
+
 		final EditText email = (EditText) view.findViewById(R.id.config_doctor_first_edit_email);
 		email.setText(emailStr);
-		
+
 		final EditText pass = (EditText) view.findViewById(R.id.config_doctor_first_edit_pass);
-		
+
 		final EditText pass2 = (EditText) view.findViewById(R.id.config_doctor_first_edit_pass2);
-		
+
 		builder.setTitle(R.string.new_login_details).setView(view).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -121,16 +120,16 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 				String pass2Str = pass2.getText().toString();
 				String emailStr1 = email.getText().toString();
 				if (DEBUG) Log.d(TAG, "Email entered: " + emailStr1);
-				
+
 				// Check fields aren't empty
 				if (passStr != "" && emailStr1 != "") {
-					
+
 					if (passStr.equals(pass2Str)) {
-						
+
 						// generate unique ID
 						UUID uniqueId = UUID.randomUUID();
 						String uuidStr = uniqueId.toString();
-						
+
 						// Hash and salt the email and password, then add to shared preferences.
 						// This will be what we check against at further logins.
 						SharedPreferences.Editor editor = sharedPrefs.edit();
@@ -139,9 +138,9 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 						editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr + uuidStr))));
 						editor.putBoolean(Keys.CONFIG_FIRST, false);
 						editor.commit();
-						
+
 						backup();
-						
+
 						launch(emailStr1);
 					} else {
 						// Password fields don't match.
@@ -159,31 +158,32 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 		mDialog = builder.create();
 		mDialog.show();
 	}
-	
+
 	private void login(final SharedPreferences sharedPrefs, String emailStr) {
 		// Not the first time run, check login against sharedprefs.
 		AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, THEME));
-		
+
 		View view = getInflater().inflate(R.layout.config_doctor_login, null, false);
-		
+
 		final EditText email = (EditText) view.findViewById(R.id.config_doctor_login_edit_email);
 		email.setText(emailStr);
-		
+
 		final EditText pass = (EditText) view.findViewById(R.id.config_doctor_login_edit_pass);
-		
+
 		builder.setView(view).setTitle(R.string.login).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-			
+
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				String uuidStr = sharedPrefs.getString(Keys.CONFIG_UUID, "");
-				
+
 				String emailStr = email.getText().toString();
 				// Hash email and password
 				String emailHash = new String(Hex.encodeHex(DigestUtils.sha512(emailStr + uuidStr)));
 				String passHash = new String(Hex.encodeHex(DigestUtils.sha512(pass.getText().toString() + uuidStr)));
-				
+
 				// Compare hashes
-				if (emailHash.equals(sharedPrefs.getString(Keys.CONFIG_EMAIL, null)) && passHash.equals(sharedPrefs.getString(Keys.CONFIG_PASS, null))) {
+				if (emailHash.equals(sharedPrefs.getString(Keys.CONFIG_EMAIL, null))
+						&& passHash.equals(sharedPrefs.getString(Keys.CONFIG_PASS, null))) {
 					// Login correct
 					launch(emailStr);
 				} else {
@@ -197,7 +197,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 		mDialog = builder.create();
 		mDialog.show();
 	}
-	
+
 	private void launch(String emailStr) {
 		// Launch DoctorConfig activity
 		Intent i = new Intent(this, DoctorConfig.class);
@@ -205,14 +205,14 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 		startActivityForResult(i, REQUEST_CONFIG);
 		finish();
 	}
-	
+
 	@TargetApi(8)
 	private void backup() {
 		if (mBackup && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mBackupManager.dataChanged();
 		}
 	}
-	
+
 	/** Nasty hack to ensure text in alertdialog is readable */
 	private LayoutInflater getInflater() {
 		LayoutInflater inflater;
@@ -226,7 +226,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 		}
 		return inflater;
 	}
-	
+
 	@Override
 	protected void onDestroy() {
 		// Close dialog if open to prevent leak
@@ -236,7 +236,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 		if (DEBUG) Log.d(TAG, "Activity destroyed");
 		super.onDestroy();
 	}
-	
+
 	@Override
 	public void onCancel(DialogInterface dialog) {
 		// When a dialog is closed, finish the activity.

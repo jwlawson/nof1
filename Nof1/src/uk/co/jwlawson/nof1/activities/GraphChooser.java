@@ -20,7 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.fragments.FragList;
@@ -47,7 +46,7 @@ import com.actionbarsherlock.view.Window;
 public class GraphChooser extends SherlockFragmentActivity implements GraphList.OnListItemSelectedListener {
 
 	private static final String TAG = "Graph Chooser";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private boolean mDual;
 

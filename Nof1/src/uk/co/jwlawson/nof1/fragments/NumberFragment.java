@@ -33,7 +33,7 @@ import android.widget.TextView;
 
 public class NumberFragment extends QuestionFragment {
 	private static final String TAG = "NumberFragment";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	private static final String ARGS_TEXT = "argsText";
 

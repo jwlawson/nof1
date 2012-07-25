@@ -3,7 +3,6 @@ package uk.co.jwlawson.nof1.fragments;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.SQLite;
 import android.app.Activity;
@@ -19,7 +18,7 @@ import android.widget.ListView;
 public class CommentListFragment extends FragList {
 
 	private static final String TAG = "CommentListFragment";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private Cursor mCursor;
 

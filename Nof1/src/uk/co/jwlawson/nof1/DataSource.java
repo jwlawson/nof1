@@ -36,7 +36,7 @@ import android.util.Log;
 public class DataSource {
 
 	private static final String TAG = "DataSource";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	/** SQLite helper class */
 	private SQLite mHelper;

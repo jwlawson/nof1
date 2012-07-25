@@ -22,7 +22,6 @@ package uk.co.jwlawson.nof1.fragments;
 
 import java.util.ArrayList;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.Keys;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -38,7 +37,7 @@ import android.widget.ListView;
  */
 public class GraphList extends FragList {
 	private static final String TAG = "GraphList";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

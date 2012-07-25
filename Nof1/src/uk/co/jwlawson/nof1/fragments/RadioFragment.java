@@ -22,7 +22,6 @@ package uk.co.jwlawson.nof1.fragments;
 
 import java.util.InputMismatchException;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,7 +34,7 @@ import android.widget.TextView;
 public class RadioFragment extends QuestionFragment implements RadioGroup.OnCheckedChangeListener {
 
 	private static final String TAG = "RadioFragment";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private static final String ARGS_TEXT = "argsText";
 	private static final String ARGS_MIN = "argsMin";

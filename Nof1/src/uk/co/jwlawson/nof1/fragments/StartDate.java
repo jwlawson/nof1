@@ -22,7 +22,6 @@ package uk.co.jwlawson.nof1.fragments;
 
 import java.util.Calendar;
 
-import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.R;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
@@ -46,7 +45,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 public class StartDate extends SherlockFragment implements OnCheckedChangeListener, OnDateSetListener {
 
 	private static final String TAG = "StartDate";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private static final String ARGS_DATE = "date";
 
