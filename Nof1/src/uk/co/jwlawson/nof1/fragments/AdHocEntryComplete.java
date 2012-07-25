@@ -70,8 +70,10 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 
 		TextView thanks = (TextView) view.findViewById(R.id.ad_hoc_text_thanks);
 
+		// Get layout, as we might need to refresh later
 		RelativeLayout layout = (RelativeLayout) thanks.getParent();
 
+		// Load preferences
 		SharedPreferences userPrefs = getActivity().getSharedPreferences(Keys.DEFAULT_PREFS, Context.MODE_PRIVATE);
 		SharedPreferences configPrefs = getActivity().getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
 		SharedPreferences schedPrefs = getActivity().getSharedPreferences(Keys.SCHED_NAME, Context.MODE_PRIVATE);
@@ -88,7 +90,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 
 		// Get next date for scheduler to run
 		SharedPreferences sp = getActivity().getSharedPreferences(Keys.SCHED_NAME, Context.MODE_PRIVATE);
-		String alarm = sp.getString(Keys.SCHED_LAST_DATE, "");
+		String alarm = sp.getString(Keys.SCHED_NEXT_DATE, "");
 		Calendar cal = Calendar.getInstance();
 
 		String now = cal.get(Calendar.DAY_OF_MONTH) + ":" + cal.get(Calendar.MONTH) + ":" + cal.get(Calendar.YEAR);
@@ -109,6 +111,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 			// Was not scheduled to enter data today, hide buttons
 			cancelText.setVisibility(View.GONE);
 			btnCancel.setVisibility(View.GONE);
+			// refresh layout
 			layout.requestLayout();
 		}
 
@@ -116,6 +119,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 		btnGraph.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				// Show graphs
 				TaskStackBuilder builder = TaskStackBuilder.create(getActivity());
 				builder.addNextIntent(new Intent(getActivity(), HomeScreen.class)).addNextIntent(new Intent(getActivity(), GraphChooser.class));
 				builder.startActivities();
@@ -127,6 +131,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 		btnHome.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				// Go to home screen
 				TaskStackBuilder builder = TaskStackBuilder.create(getActivity());
 				builder.addNextIntent(new Intent(getActivity(), HomeScreen.class));
 				builder.startActivities();
@@ -138,6 +143,8 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 		btnExit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				// Go to android home screen
+				// TODO possibly finish with result to tell home screen to finish
 				Intent i = new Intent();
 				i.setAction(Intent.ACTION_MAIN);
 				i.addCategory(Intent.CATEGORY_HOME);
