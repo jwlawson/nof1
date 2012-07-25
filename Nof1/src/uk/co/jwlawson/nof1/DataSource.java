@@ -71,10 +71,10 @@ public class DataSource {
 		mColumns = new String[num + 3];
 		mColumns[0] = SQLite.COLUMN_ID;
 		mColumns[1] = SQLite.COLUMN_DAY;
-		mColumns[2] = SQLite.COLUMN_QUESTION;
 		for (int i = 0; i < num; i++) {
-			mColumns[i + 3] = SQLite.COLUMN_QUESTION + i;
+			mColumns[i + 2] = SQLite.COLUMN_QUESTION + i;
 		}
+		mColumns[num + 2] = SQLite.COLUMN_COMMENT;
 
 		if (DEBUG) Log.d(TAG, "Database loaded: " + num);
 	}
@@ -178,6 +178,15 @@ public class DataSource {
 		cursor.moveToFirst();
 
 		return cursor;
+	}
+
+	/**
+	 * Get all columns from the database
+	 * 
+	 * @return A cursor containing all columns
+	 */
+	public Cursor getAllColumns() {
+		return getColumns(mColumns);
 	}
 
 	/**
