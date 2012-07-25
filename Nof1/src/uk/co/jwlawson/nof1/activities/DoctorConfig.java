@@ -517,6 +517,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 		editor.putString(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
 		editor.putString(Keys.CONFIG_DOCTOR_NAME, mDocName.getText().toString());
+		editor.putString(Keys.CONFIG_DOC, mDocEmail.getText().toString());
 
 		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
 			try {

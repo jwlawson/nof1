@@ -112,6 +112,9 @@ public class Keys {
 	/** Shared preferences key for hashed email */
 	public static final String CONFIG_EMAIL = "email_hash";
 
+	/** Shared preference key for doctor's email */
+	public static final String CONFIG_DOC = "doc";
+
 	/** Shared preference key for whether this is the first time doctor has logged in */
 	public static final String CONFIG_FIRST = "first_run";
 
