@@ -65,7 +65,7 @@
             android:label="@string/settings" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
+                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
         </activity>
         <activity
             android:name=".activities.DoctorLogin"
@@ -98,7 +98,7 @@
             android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
+                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
         </activity>
 
         <receiver
@@ -115,7 +115,7 @@
         <activity android:name=".activities.GraphChooser" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
+                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
         </activity>
         <activity android:name=".activities.GraphDisplay" >
             <meta-data
@@ -125,7 +125,7 @@
         <activity android:name=".activities.About" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.MainActivity" />
+                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
         </activity>
         <activity android:name=".activities.HomeScreen" >
             <intent-filter>
@@ -146,7 +146,7 @@
             android:label="@string/title_comment_detail" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CommentListActivity" />
+                android:value="uk.co.jwlawson.nof1.activities.CommentList" />
         </activity>
         <activity android:name=".activities.AddNote" >
             <meta-data
