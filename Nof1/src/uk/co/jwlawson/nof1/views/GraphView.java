@@ -32,7 +32,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
-import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -47,7 +47,7 @@ import android.view.View;
 public class GraphView extends View {
 
 	private static final String TAG = "GraphView";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 
 	private static final int TICK_SIZE = 5;
 	private static final int TEXT_SIZE = 12;
@@ -75,7 +75,7 @@ public class GraphView extends View {
 	private ArrayList<Label> mYLabelList;
 
 	/** List of re3ctangles used to shade vertical regions */
-	private ArrayList<Rect> mVertShadingList;
+	private ArrayList<RectF> mVertShadingList;
 
 	/** Paint to draw the points */
 	private Paint mVecPaint;
@@ -110,6 +110,9 @@ public class GraphView extends View {
 	/** Separation width of the vertical lines, if any is specified */
 	private int mVertLineWidth;
 
+	/** Array of which vertical regions should be shaded */
+	private boolean[] mShaded;
+
 	private float[] floatarr;
 
 	public GraphView(Context context) {
@@ -128,7 +131,7 @@ public class GraphView extends View {
 		mXLabelList = new ArrayList<Label>();
 		mYAxisList = new ArrayList<Line>();
 		mYLabelList = new ArrayList<Label>();
-		mVertShadingList = new ArrayList<Rect>(0);
+		mVertShadingList = new ArrayList<RectF>(0);
 
 		mVecPaint = new Paint();
 		mVecPaint.setColor(0xFF33B5E5);
@@ -142,7 +145,8 @@ public class GraphView extends View {
 		mAxesPaint.setTextSize(TEXT_SIZE);
 
 		mShadingPaint = new Paint();
-		mShadingPaint.setColor(Color.LTGRAY);
+		mShadingPaint.setColor(0x30000000);
+		mShadingPaint.setAntiAlias(true);
 		mShadingPaint.setStyle(Style.FILL);
 
 	}
@@ -213,6 +217,15 @@ public class GraphView extends View {
 		}
 		mXLabelList.add(new Label("Days", new Vec2(mWidth / 2, mHeight + TICK_SIZE + 2 * TEXT_SIZE)));
 
+		// If vertical lines needed, add them
+		if (mVertLineWidth != 0) {
+			setVerticalLines(mVertLineWidth);
+		}
+		// If vertical shaded needed, add this
+		if (mShaded != null) {
+			setVerticalShading(mShaded);
+		}
+
 		invalidate();
 	}
 
@@ -225,6 +238,7 @@ public class GraphView extends View {
 
 		// Add axis
 		mYAxisList.add(new Line(new Vec2(0, mHeight), new Vec2(0, TOP_PAD + BOTTOM_PAD)));
+		if (DEBUG) Log.d(TAG, "Y-axis: ( 0 , " + mHeight + " ), ( 0 , " + (TOP_PAD + BOTTOM_PAD) + ")");
 
 		// Add ticks to axis
 		float ytick = (float) (mHeight - TOP_PAD - BOTTOM_PAD) / maxY;
@@ -243,10 +257,6 @@ public class GraphView extends View {
 			}
 		}
 
-		// If vertical lines needed, add them
-		if (mVertLineWidth != 0) {
-			setVerticalLines(mVertLineWidth);
-		}
 		invalidate();
 	}
 
@@ -266,9 +276,11 @@ public class GraphView extends View {
 		int num = (int) ((float) mMaxX / width);
 		float xtick = (float) mWidth / mMaxX;
 
-		// Add lines to the list
-		for (int i = 1; i <= num; i++) {
-			mXAxisList.add(new Line(new Vec2((int) (i * xtick * width), mHeight), new Vec2((int) (i * xtick * width), TOP_PAD + BOTTOM_PAD)));
+		if (mShaded == null) {
+			// Add lines to the list
+			for (int i = 1; i <= num; i++) {
+				mXAxisList.add(new Line(new Vec2((int) (i * xtick * width), mHeight), new Vec2((int) (i * xtick * width), TOP_PAD + BOTTOM_PAD)));
+			}
 		}
 	}
 
@@ -278,22 +290,29 @@ public class GraphView extends View {
 	 */
 	public void setVerticalShading(boolean[] shaded) {
 
+		mShaded = shaded;
+
 		int num = (int) ((float) mMaxX / mVertLineWidth);
+
+		// If shaded is null create a new boolean array with alternating values and re-run
 		if (shaded == null) {
 			boolean[] newShaded = new boolean[num];
-			boolean flag = false;
-			for (int i = 0; i < num; i++) {
-				newShaded[i] = flag;
-				flag = !flag;
+			newShaded[0] = false;
+			for (int i = 1; i < num; i++) {
+				newShaded[i] = !newShaded[i - 1];
 			}
 			setVerticalShading(newShaded);
 			return;
 		}
 
+		mVertShadingList.clear();
+
 		int max = num < shaded.length ? num : shaded.length;
+		float xtick = (float) mWidth / mMaxX;
+
 		for (int i = 0; i < max; i++) {
 			if (shaded[i]) {
-				Rect rect = new Rect(i * mVertLineWidth, TOP_PAD + BOTTOM_PAD, (i + 1) * mVertLineWidth, mHeight);
+				RectF rect = new RectF(i * xtick * mVertLineWidth, mHeight, (i + 1) * xtick * mVertLineWidth, TOP_PAD + BOTTOM_PAD);
 				mVertShadingList.add(rect);
 			}
 		}
