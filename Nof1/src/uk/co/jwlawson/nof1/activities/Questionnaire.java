@@ -28,6 +28,7 @@ import uk.co.jwlawson.nof1.DataSource;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import uk.co.jwlawson.nof1.containers.Question;
+import uk.co.jwlawson.nof1.fragments.AdHocEntryComplete;
 import uk.co.jwlawson.nof1.fragments.CheckFragment;
 import uk.co.jwlawson.nof1.fragments.CommentFragment;
 import uk.co.jwlawson.nof1.fragments.NumberFragment;
@@ -243,9 +244,16 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 	}
 
 	private void dataSaved() {
-		QuesComplete frag = QuesComplete.newInstance();
+		if (mScheduled) {
 
-		frag.show(getSupportFragmentManager(), "complete");
+			QuesComplete frag = QuesComplete.newInstance();
+			frag.show(getSupportFragmentManager(), "complete");
+
+		} else {
+
+			AdHocEntryComplete frag = AdHocEntryComplete.newInstance();
+			frag.show(getSupportFragmentManager(), "complete");
+		}
 	}
 
 	private void cancel() {

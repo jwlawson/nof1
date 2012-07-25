@@ -188,5 +188,6 @@
     <string name="crash">Crash!</string>
     <string name="last_questionnaire">This was the last questionnaire you have to complete.</string>
     <string name="create_csv">Create .csv</string>
+    <string name="cancel_todays_alarm">You are scheduled to fill in this questionnaire later today. Would you like to cancel today\'s alarm?</string>
 
 </resources>
