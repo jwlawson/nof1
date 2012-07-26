@@ -24,7 +24,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
     <TextView
         android:id="@+id/data_input_radio_text_question"
         android:layout_width="wrap_content"
@@ -33,15 +33,17 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="@dimen/padding_large"
+        android:layout_marginRight="@dimen/padding_large"
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/question"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <RadioGroup
         android:id="@+id/data_input_radio_radiogroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignLeft="@+id/data_input_radio_text_question"
+        android:layout_alignRight="@+id/data_input_radio_text_question"
         android:layout_below="@id/data_input_radio_text_question"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/padding_small"
@@ -82,12 +84,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
-
+
         <RadioButton
             android:id="@+id/radio6"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_height="wrap_content" />
+
     </RadioGroup>
 
     <TextView
