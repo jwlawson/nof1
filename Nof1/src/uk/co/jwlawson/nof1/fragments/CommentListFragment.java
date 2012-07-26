@@ -1,10 +1,5 @@
 package uk.co.jwlawson.nof1.fragments;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-
-import uk.co.jwlawson.nof1.Keys;
-import uk.co.jwlawson.nof1.SQLite;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,6 +9,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import uk.co.jwlawson.nof1.Keys;
+import uk.co.jwlawson.nof1.SQLite;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 
 public class CommentListFragment extends FragList {
 
@@ -29,8 +30,10 @@ public class CommentListFragment extends FragList {
 		/**
 		 * Called when a list item is added to the adapter
 		 * 
-		 * @param comment The comment added
-		 * @param date The date when the comment was submitted
+		 * @param comment
+		 *            The comment added
+		 * @param date
+		 *            The date when the comment was submitted
 		 */
 		public void onListItemAdded(String comment, String date);
 	}
@@ -54,7 +57,8 @@ public class CommentListFragment extends FragList {
 		try {
 			mListener = (OnListItemAddedListener) activity;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.getClass().getName() + " must implement OnListItemAddedListener");
+			throw new ClassCastException(activity.getClass().getName()
+					+ " must implement OnListItemAddedListener");
 		}
 	}
 
@@ -88,11 +92,13 @@ public class CommentListFragment extends FragList {
 
 			mCursor.moveToFirst();
 
-			SharedPreferences sp = getActivity().getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
+			SharedPreferences sp = getActivity().getSharedPreferences(Keys.CONFIG_NAME,
+					Context.MODE_PRIVATE);
 
 			// Get start date
 			String[] start = sp.getString(Keys.CONFIG_START, "").split(":");
-			int[] startArr = new int[] { Integer.parseInt(start[0]), Integer.parseInt(start[1]), Integer.parseInt(start[2]) };
+			int[] startArr = new int[] { Integer.parseInt(start[0]), Integer.parseInt(start[1]),
+					Integer.parseInt(start[2]) };
 
 			// Get start date calendar
 			Calendar cal = Calendar.getInstance();
@@ -101,6 +107,7 @@ public class CommentListFragment extends FragList {
 			// get column ids
 			int dayCol = mCursor.getColumnIndexOrThrow(SQLite.COLUMN_DAY);
 			int comCol = mCursor.getColumnIndexOrThrow(SQLite.COLUMN_COMMENT);
+			int timeCol = mCursor.getColumnIndex(SQLite.COLUMN_TIME);
 
 			int calDay = 0;
 
@@ -111,7 +118,9 @@ public class CommentListFragment extends FragList {
 				if (comment != null && comment.length() != 0) {
 					cal.add(Calendar.DAY_OF_MONTH, day - calDay);
 
-					String date = cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.YEAR);
+					String date = cal.get(Calendar.DAY_OF_MONTH) + "/"
+							+ (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.YEAR) + " "
+							+ mCursor.getString(timeCol);
 					mListener.onListItemAdded(comment, date);
 					publishProgress(date);
 

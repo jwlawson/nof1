@@ -20,13 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
-import java.util.ArrayList;
-
-import uk.co.jwlawson.nof1.DataSource;
-import uk.co.jwlawson.nof1.R;
-import uk.co.jwlawson.nof1.SQLite;
-import uk.co.jwlawson.nof1.fragments.CommentDetailFragment;
-import uk.co.jwlawson.nof1.fragments.CommentListFragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -40,8 +33,16 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
-public class CommentList extends SherlockFragmentActivity implements CommentListFragment.OnListItemSelectedListener,
-		CommentListFragment.OnListItemAddedListener {
+import uk.co.jwlawson.nof1.DataSource;
+import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.SQLite;
+import uk.co.jwlawson.nof1.fragments.CommentDetailFragment;
+import uk.co.jwlawson.nof1.fragments.CommentListFragment;
+
+import java.util.ArrayList;
+
+public class CommentList extends SherlockFragmentActivity implements
+		CommentListFragment.OnListItemSelectedListener, CommentListFragment.OnListItemAddedListener {
 
 	private static final String TAG = "CommentList";
 	private static final boolean DEBUG = false;
@@ -90,11 +91,13 @@ public class CommentList extends SherlockFragmentActivity implements CommentList
 			// Replace comment details fragment with new one
 			// TODO Check whether we need to replace it
 			CommentDetailFragment frag = CommentDetailFragment.newInstance(mList.get(position));
-			getSupportFragmentManager().beginTransaction().replace(R.id.comment_detail_container, frag).commit();
+			getSupportFragmentManager().beginTransaction()
+					.replace(R.id.comment_detail_container, frag).commit();
 
 		} else {
 			// Clear selection from carrying on when return from new actiity
-			((CommentListFragment) getSupportFragmentManager().findFragmentById(R.id.comment_list)).clearSelected();
+			((CommentListFragment) getSupportFragmentManager().findFragmentById(R.id.comment_list))
+					.clearSelected();
 
 			// Load new activity
 			Intent detailIntent = new Intent(this, CommentDetail.class);
@@ -132,7 +135,8 @@ public class CommentList extends SherlockFragmentActivity implements CommentList
 			mData.open();
 
 			// Quesry database
-			Cursor cursor = mData.getColumn(SQLite.COLUMN_COMMENT);
+			Cursor cursor = mData.getColumns(new String[] { SQLite.COLUMN_DAY, SQLite.COLUMN_TIME,
+					SQLite.COLUMN_COMMENT });
 
 			return cursor;
 		}
@@ -140,7 +144,8 @@ public class CommentList extends SherlockFragmentActivity implements CommentList
 		@Override
 		protected void onPostExecute(Cursor result) {
 			// Set list cursor
-			((CommentListFragment) getSupportFragmentManager().findFragmentById(R.id.comment_list)).setCursor(result);
+			((CommentListFragment) getSupportFragmentManager().findFragmentById(R.id.comment_list))
+					.setCursor(result);
 
 			super.onPostExecute(result);
 		}

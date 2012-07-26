@@ -137,6 +137,7 @@ public class Scheduler extends Service {
 		schedEdit.putInt(Keys.SCHED_NEXT_DAY, schedPrefs.getInt(Keys.SCHED_LAST_DAY, 1));
 		schedEdit.putInt(Keys.SCHED_CUR_PERIOD, schedPrefs.getInt(Keys.SCHED_LAST_PERIOD, 1));
 		schedEdit.putString(Keys.SCHED_NEXT_DATE, schedPrefs.getString(Keys.SCHED_LAST_DATE, null));
+		schedEdit.putInt(Keys.SCHED_NEXT_CUMULATIVE_DAY, schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 1));
 
 		// Get calendar for this time + mins
 		Calendar cal = Calendar.getInstance();
