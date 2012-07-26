@@ -68,7 +68,7 @@ public class DataSource {
 		mDatabase = mHelper.getWritableDatabase();
 
 		int num = mHelper.getNumberQuestions();
-		mColumns = new String[num + 3];
+		mColumns = new String[num + 4];
 		mColumns[0] = SQLite.COLUMN_ID;
 		mColumns[1] = SQLite.COLUMN_DAY;
 		mColumns[2] = SQLite.COLUMN_TIME;

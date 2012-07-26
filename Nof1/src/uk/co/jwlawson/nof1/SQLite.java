@@ -93,7 +93,7 @@ public class SQLite extends SQLiteOpenHelper {
 
 		// Make array of all column headers
 		int num = getNumberQuestions();
-		String[] columns = new String[num + 3];
+		String[] columns = new String[num + 4];
 		columns[0] = SQLite.COLUMN_ID;
 		columns[1] = SQLite.COLUMN_DAY;
 		columns[2] = SQLite.COLUMN_TIME;
