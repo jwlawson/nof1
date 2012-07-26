@@ -24,25 +24,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
     <TextView
         android:id="@+id/data_input_radio_text_question"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:paddingLeft="@dimen/padding_large"
-        android:paddingRight="@dimen/padding_large"
-        android:paddingTop="@dimen/padding_large_minus_vsmall"
+        android:layout_marginLeft="@dimen/padding_large"
+        android:layout_marginTop="@dimen/padding_large"
         android:text="@string/question"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <RadioGroup
         android:id="@+id/data_input_radio_radiogroup"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_below="@id/data_input_radio_text_question"
-        android:layout_centerHorizontal="true"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/padding_small"
         android:paddingRight="@dimen/padding_small" >
@@ -50,56 +50,66 @@
         <RadioButton
             android:id="@+id/radio0"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <RadioButton
             android:id="@+id/radio1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <RadioButton
             android:id="@+id/radio2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <RadioButton
             android:id="@+id/radio3"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <RadioButton
             android:id="@+id/radio4"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <RadioButton
             android:id="@+id/radio5"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
 
         <RadioButton
             android:id="@+id/radio6"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
     </RadioGroup>
-
+
     <TextView
         android:id="@+id/data_input_radio_text_min"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/data_input_radio_radiogroup"
+        android:layout_alignParentLeft="true"
         android:layout_below="@+id/data_input_radio_radiogroup"
+        android:layout_marginLeft="@dimen/padding_large"
+        android:maxWidth="@dimen/text_width"
         android:paddingBottom="@dimen/padding_vsmall"
         android:text="@string/min"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
     <TextView
         android:id="@+id/data_input_radio_text_max"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/data_input_radio_text_min"
-        android:layout_alignBottom="@+id/data_input_radio_text_min"
-        android:layout_alignRight="@+id/data_input_radio_radiogroup"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/data_input_radio_radiogroup"
+        android:layout_marginRight="@dimen/padding_large"
+        android:maxWidth="@dimen/text_width"
         android:paddingBottom="@dimen/padding_vsmall"
         android:text="@string/max"
         android:textAppearance="?android:attr/textAppearanceSmall" />
