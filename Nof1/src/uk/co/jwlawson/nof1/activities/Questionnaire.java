@@ -20,22 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.InputMismatchException;
-
-import uk.co.jwlawson.nof1.DataSource;
-import uk.co.jwlawson.nof1.Keys;
-import uk.co.jwlawson.nof1.R;
-import uk.co.jwlawson.nof1.containers.Question;
-import uk.co.jwlawson.nof1.fragments.AdHocEntryComplete;
-import uk.co.jwlawson.nof1.fragments.CheckFragment;
-import uk.co.jwlawson.nof1.fragments.CommentFragment;
-import uk.co.jwlawson.nof1.fragments.NumberFragment;
-import uk.co.jwlawson.nof1.fragments.QuesComplete;
-import uk.co.jwlawson.nof1.fragments.QuestionFragment;
-import uk.co.jwlawson.nof1.fragments.RadioFragment;
-import uk.co.jwlawson.nof1.fragments.RescheduleDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -51,15 +35,34 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
+import uk.co.jwlawson.nof1.DataSource;
+import uk.co.jwlawson.nof1.Keys;
+import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.containers.Question;
+import uk.co.jwlawson.nof1.fragments.AdHocEntryComplete;
+import uk.co.jwlawson.nof1.fragments.CheckFragment;
+import uk.co.jwlawson.nof1.fragments.CommentFragment;
+import uk.co.jwlawson.nof1.fragments.NumberFragment;
+import uk.co.jwlawson.nof1.fragments.QuesComplete;
+import uk.co.jwlawson.nof1.fragments.QuestionFragment;
+import uk.co.jwlawson.nof1.fragments.RadioFragment;
+import uk.co.jwlawson.nof1.fragments.RescheduleDialog;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.InputMismatchException;
+
 /**
- * Activity to load and show the questionnaire presented to the patient. Can be run in preview mode, so the doctor can
+ * Activity to load and show the questionnaire presented to the patient. Can be
+ * run in preview mode, so the doctor can
  * see what the questionnaire will look like
  * without risking saving any data.
  * 
  * @author John Lawson
  * 
  */
-public class Questionnaire extends SherlockFragmentActivity implements RescheduleDialog.OnRescheduleListener {
+public class Questionnaire extends SherlockFragmentActivity implements
+		RescheduleDialog.OnRescheduleListener {
 
 	private static final String TAG = "Questionnaire";
 	private static final boolean DEBUG = false;
@@ -126,7 +129,8 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 		});
 
 		if (!mPreview && !mScheduled) {
-			// Not preview or scheduled, so makes no sense to have reschedule button
+			// Not preview or scheduled, so makes no sense to have reschedule
+			// button
 			btnCan.setEnabled(false);
 		}
 
@@ -145,19 +149,24 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 	private void save() {
 		if (mPreview) {
 			// Save the questionnaire and return to DoctorConfig
-			// Well, questions are already saved to SharedPreferenced, so just return
+			// Well, questions are already saved to SharedPreferenced, so just
+			// return
 			setResult(RESULT_DONE);
 			finish();
 		} else if (mScheduled) {
 			// Scheduled data input
 			// Save data to database
 
+			Calendar calNow = Calendar.getInstance();
+			String time = calNow.get(Calendar.HOUR_OF_DAY) + ":" + calNow.get(Calendar.MINUTE);
+
 			// Disable buttons to show we are doing something
 			((Button) findViewById(R.id.data_input_button_ok)).setEnabled(false);
 			((Button) findViewById(R.id.data_input_button_cancel)).setEnabled(false);
 
 			// Get day of trial we are in
-			final int day = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE).getInt(Keys.SCHED_CUMULATIVE_DAY, 1);
+			final int day = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE).getInt(
+					Keys.SCHED_CUMULATIVE_DAY, 1);
 
 			// Get question responses
 			boolean problem = false;
@@ -181,11 +190,11 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			if (mComment != null) {
 				// Save with comment
 				final String comment = mComment.getComment();
-				saveData(day, data, comment);
+				saveData(day, time, data, comment);
 
 			} else {
 				// Save without comment
-				saveData(day, data, null);
+				saveData(day, time, data, null);
 			}
 
 		} else {
@@ -194,12 +203,16 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			// Find the cumulative day for saving data
 			SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 			String[] start = sp.getString(Keys.CONFIG_START, "").split(":");
-			int[] startInt = new int[] { Integer.parseInt(start[0]), Integer.parseInt(start[1]), Integer.parseInt(start[2]) };
+			int[] startInt = new int[] { Integer.parseInt(start[0]), Integer.parseInt(start[1]),
+					Integer.parseInt(start[2]) };
 			Calendar calStart = Calendar.getInstance();
 			calStart.set(startInt[2], startInt[1], startInt[0]);
 
 			Calendar calNow = Calendar.getInstance();
-			// Add an hour to ensure that calStart is before calNow when they have the same date
+
+			String time = calNow.get(Calendar.HOUR_OF_DAY) + ":" + calNow.get(Calendar.MINUTE);
+			// Add an hour to ensure that calStart is before calNow when they
+			// have the same date
 			calNow.add(Calendar.HOUR, 1);
 			int day1 = 0;
 			while (calStart.before(calNow)) {
@@ -234,11 +247,11 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			if (mComment != null) {
 				// Save with comment
 				final String comment = mComment.getComment();
-				saveData(day, data, comment);
+				saveData(day, time, data, comment);
 
 			} else {
 				// Save without comment
-				saveData(day, data, null);
+				saveData(day, time, data, null);
 			}
 		}
 	}
@@ -273,7 +286,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 		}
 	}
 
-	private void saveData(final int day, final int[] data, final String comment) {
+	private void saveData(final int day, final String time, final int[] data, final String comment) {
 		// Save with comment
 		new AsyncTask<Void, Void, Void>() {
 			@Override
@@ -283,7 +296,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 
 			@Override
 			protected Void doInBackground(Void... params) {
-				mData.saveData(day, data, comment);
+				mData.saveData(day, time, data, comment);
 				return null;
 			}
 
@@ -345,7 +358,8 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 				// Make QuestionFragment
 				switch (inputType) {
 				case Question.SCALE:
-					q = RadioFragment.newInstance(sp.getString(Keys.QUES_TEXT + i, null), sp.getString(Keys.QUES_MIN + i, null),
+					q = RadioFragment.newInstance(sp.getString(Keys.QUES_TEXT + i, null),
+							sp.getString(Keys.QUES_MIN + i, null),
 							sp.getString(Keys.QUES_MAX + i, null));
 					break;
 				case Question.NUMBER:
@@ -382,7 +396,8 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			if (sp.getBoolean(Keys.COMMENT, false)) {
 				if (DEBUG) Log.d(TAG, "Adding comment fragment");
 				mComment = CommentFragment.newInstance();
-				getSupportFragmentManager().beginTransaction().add(R.id.data_input_comment_frame, mComment, "com").commit();
+				getSupportFragmentManager().beginTransaction()
+						.add(R.id.data_input_comment_frame, mComment, "com").commit();
 			}
 
 			return null;
@@ -419,7 +434,8 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 	protected void onDestroy() {
 		super.onDestroy();
 		// Dismiss any open dialogs to prevent leaks
-		RescheduleDialog dialog = (RescheduleDialog) getSupportFragmentManager().findFragmentByTag("dialog");
+		RescheduleDialog dialog = (RescheduleDialog) getSupportFragmentManager().findFragmentByTag(
+				"dialog");
 		if (dialog != null) dialog.dismiss();
 
 		// Close database connection

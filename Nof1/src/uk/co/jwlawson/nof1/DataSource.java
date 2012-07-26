@@ -39,7 +39,7 @@ public class DataSource {
 	private static final boolean DEBUG = false;
 
 	/** SQLite helper class */
-	private SQLite mHelper;
+	private final SQLite mHelper;
 
 	/** SQLite database */
 	private SQLiteDatabase mDatabase;
@@ -71,10 +71,11 @@ public class DataSource {
 		mColumns = new String[num + 3];
 		mColumns[0] = SQLite.COLUMN_ID;
 		mColumns[1] = SQLite.COLUMN_DAY;
+		mColumns[2] = SQLite.COLUMN_TIME;
 		for (int i = 0; i < num; i++) {
-			mColumns[i + 2] = SQLite.COLUMN_QUESTION + i;
+			mColumns[i + 3] = SQLite.COLUMN_QUESTION + i;
 		}
-		mColumns[num + 2] = SQLite.COLUMN_COMMENT;
+		mColumns[num + 3] = SQLite.COLUMN_COMMENT;
 
 		if (DEBUG) Log.d(TAG, "Database loaded: " + num);
 	}
@@ -89,14 +90,17 @@ public class DataSource {
 	/**
 	 * Save data to the database. Open must have been called before this.
 	 * 
-	 * @param day Day data is saved
-	 * @param data Data to save
+	 * @param day
+	 *            Day data is saved
+	 * @param data
+	 *            Data to save
 	 * @return The row id saved
 	 */
-	public long saveData(int day, int[] data) {
+	public long saveData(int day, String time, int[] data) {
 
 		ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_DAY, day);
+		values.put(SQLite.COLUMN_TIME, time);
 		for (int i = 0; i < data.length; i++) {
 			values.put(SQLite.COLUMN_QUESTION + i, data[i]);
 		}
@@ -117,8 +121,8 @@ public class DataSource {
 	 * @param comment
 	 * @return The row id saved
 	 */
-	public long saveData(int day, int[] data, String comment) {
-		long insertId = saveData(day, data);
+	public long saveData(int day, String time, int[] data, String comment) {
+		long insertId = saveData(day, time, data);
 
 		ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_COMMENT, comment);
@@ -136,9 +140,10 @@ public class DataSource {
 	 * @param comment
 	 * @return The row id saved
 	 */
-	public long saveComment(int day, String comment) {
+	public long saveComment(int day, String time, String comment) {
 		ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_DAY, day);
+		values.put(SQLite.COLUMN_TIME, time);
 		values.put(SQLite.COLUMN_COMMENT, comment);
 
 		long insertId = -1;
@@ -153,8 +158,10 @@ public class DataSource {
 	/**
 	 * Get a column from the database
 	 * 
-	 * @param column Column name to return
-	 * @return A cursor containing the day data was recorded and the requested column
+	 * @param column
+	 *            Column name to return
+	 * @return A cursor containing the day data was recorded and the requested
+	 *         column
 	 */
 	public Cursor getColumn(String column) {
 
@@ -164,7 +171,8 @@ public class DataSource {
 	/**
 	 * Get columns from the database
 	 * 
-	 * @param columns Column names to return
+	 * @param columns
+	 *            Column names to return
 	 * @return A cursor containing the requested columns
 	 */
 	public Cursor getColumns(String[] columns) {
@@ -192,7 +200,8 @@ public class DataSource {
 	/**
 	 * Get the data stored about a question
 	 * 
-	 * @param questionId Number of question to return data for
+	 * @param questionId
+	 *            Number of question to return data for
 	 * @return Cursor with columns for day and requested question data
 	 */
 	public Cursor getQuestion(int questionId) {
