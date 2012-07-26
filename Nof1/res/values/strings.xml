@@ -27,7 +27,7 @@
     <string name="min">Min</string>
     <string name="max">Max</string>
     <string name="yes">Yes</string>
-    <string name="comment">Comment</string>
+    <string name="comment">Note</string>
     <string name="schedule_reminder">"Remind me again in "</string>
 
     <string-array name="reminder_spinner_options">
@@ -104,7 +104,7 @@
         <item>Other</item>
     </string-array>
 
-    <string name="include_comment">Include a comment box at the end of the questionnaire?</string>
+    <string name="include_comment">Include a note box at the end of the questionnaire?</string>
     <string name="enter_login_details">Please enter login details</string>
     <string name="config_timescale_check_prefix">Day </string>
     <string name="invalid_period_input">Invalid input type for number of treatment periods</string>
@@ -174,9 +174,9 @@
     <string name="questions">"Questions: "</string>
     <string name="incorrect_login">"Incorrect login details"</string>
     <string name="answer_all">"Please answer all the questions"</string>
-    <string name="title_comment_detail">Comment Detail</string>
-    <string name="title_comment_list">Comments</string>
-    <string name="view_comments">View comments</string>
+    <string name="title_comment_detail">Note Detail</string>
+    <string name="title_comment_list">Notes</string>
+    <string name="view_comments">View notes</string>
     <string name="add_new_note">Add a new note:</string>
     <string name="add_note">Add new note</string>
     <string name="crash_toast_text">"Oops, something seems to be wrong. Please send a crash report so this bug can be squashed.\n\nInclude information about what you were doing and which screen you were on."</string>
