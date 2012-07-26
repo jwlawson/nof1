@@ -254,16 +254,18 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		mAnyNotes.setText(sp.getString(Keys.CONFIG_TREATMENT_NOTES, ""));
 
 		mTimeSetter = (TimeSetter) getSupportFragmentManager().findFragmentById(R.id.config_doctor_time_frag);
-		int num = 0;
-		while (sp.contains(Keys.CONFIG_TIME + num)) {
-			num++;
+		if (savedInstanceState == null) {
+			// Load fragments into timesetter
+			int num = 0;
+			while (sp.contains(Keys.CONFIG_TIME + num)) {
+				num++;
+			}
+			String[] times = new String[num];
+			for (int i = 0; i < num; i++) {
+				times[i] = sp.getString(Keys.CONFIG_TIME + i, "12:00");
+			}
+			mTimeSetter.setTimes(times);
 		}
-		String[] times = new String[num];
-		for (int i = 0; i < num; i++) {
-			times[i] = sp.getString(Keys.CONFIG_TIME + i, "12:00");
-		}
-		mTimeSetter.setTimes(times);
-
 	}
 
 	@Override
