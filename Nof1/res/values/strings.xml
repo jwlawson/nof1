@@ -27,7 +27,7 @@
     <string name="min">Min</string>
     <string name="max">Max</string>
     <string name="yes">Yes</string>
-    <string name="comment">Comment</string>
+    <string name="comment">Note</string>
     <string name="schedule_reminder">"Remind me again in "</string>
 
     <string-array name="reminder_spinner_options">
@@ -104,7 +104,7 @@
         <item>Other</item>
     </string-array>
 
-    <string name="include_comment">Include a comment box at the end of the questionnaire?</string>
+    <string name="include_comment">Include a note box at the end of the questionnaire?</string>
     <string name="enter_login_details">Please enter login details</string>
     <string name="config_timescale_check_prefix">Day </string>
     <string name="invalid_period_input">Invalid input type for number of treatment periods</string>
@@ -142,7 +142,7 @@
     <string name="noti_medicine_title">N-of-1 Trails</string>
     <string name="noti_medicine_text">It is time to take your medicine</string>
     <string name="about_nof1">N-of-1 trials app</string>
-    <string name="about_details">Copyright 2012 WMG, University of Warwick\n\n An application to help those working in the healthcare industry to design and implement N-of-1 trials.\n\n Developed by John Lawson at the Institute of Digital Health, Warwick University.\n\n The app is licensed under the GNU GPLv3, a copy of which is available at http://www.gnu.org/licenses/gpl.html. \n \n Source code for the app is available at https://github.com/jwlawson/nof1.\n\n This app uses ActionBarSherlock, ACRA crash reporting and some functionality from the Apache Commons Codec, available under the Apache v2 license found at http://www.apache.org/licenses/LICENSE-2.0.</string>
+    <string name="about_details">Copyright 2012 John Lawson, WMG, University of Warwick\n\n An application to help those working in the healthcare industry to design and implement N-of-1 trials.\n\n Developed by John Lawson at the Institute of Digital Health, Warwick University.\n\n The app is licensed under the GNU GPLv3, a copy of which is available at http://www.gnu.org/licenses/gpl.html. \n \n Source code for the app is available at https://github.com/jwlawson/nof1.\n\n This app uses ActionBarSherlock, ACRA crash reporting and some functionality from the Apache Commons Codec, available under the Apache v2 license found at http://www.apache.org/licenses/LICENSE-2.0.</string>
     <string name="enter_data">Enter data</string>
     <string name="view_graphs">View graphs</string>
     <string name="about">About</string>
@@ -174,9 +174,9 @@
     <string name="questions">"Questions: "</string>
     <string name="incorrect_login">"Incorrect login details"</string>
     <string name="answer_all">"Please answer all the questions"</string>
-    <string name="title_comment_detail">Comment Detail</string>
-    <string name="title_comment_list">Comments</string>
-    <string name="view_comments">View comments</string>
+    <string name="title_comment_detail">Note Detail</string>
+    <string name="title_comment_list">Notes</string>
+    <string name="view_comments">View notes</string>
     <string name="add_new_note">Add a new note:</string>
     <string name="add_note">Add new note</string>
     <string name="crash_toast_text">"Oops, something seems to be wrong. Please send a crash report so this bug can be squashed.\n\nInclude information about what you were doing and which screen you were on."</string>
