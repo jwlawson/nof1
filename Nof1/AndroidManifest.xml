@@ -16,7 +16,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="uk.co.jwlawson.nof1"
@@ -85,6 +85,7 @@
         <activity
             android:name=".activities.FormBuilder"
             android:exported="false"
+            android:label="@string/form_builder"
             android:uiOptions="splitActionBarWhenNarrow"
             android:windowSoftInputMode="stateHidden" >
             <meta-data
@@ -93,6 +94,7 @@
         </activity>
         <activity
             android:name=".activities.Questionnaire"
+            android:label="@string/data_input"
             android:uiOptions="splitActionBarWhenNarrow"
             android:windowSoftInputMode="stateHidden" >
             <meta-data
@@ -111,7 +113,9 @@
         <service android:name=".Scheduler" >
         </service>
 
-        <activity android:name=".activities.GraphChooser" >
+        <activity
+            android:name=".activities.GraphChooser"
+            android:label="@string/view_graphs" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
@@ -121,7 +125,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.GraphChooser" />
         </activity>
-        <activity android:name=".activities.About" >
+        <activity
+            android:name=".activities.About"
+            android:label="@string/about" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
@@ -147,12 +153,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.CommentList" />
         </activity>
-        <activity android:name=".activities.AddNote" >
+        <activity
+            android:name=".activities.AddNote"
+            android:label="@string/add_note" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
         </activity>
-        <service android:name="FinishedService" android:exported="false"></service>
+
+        <service
+            android:name=".FinishedService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
