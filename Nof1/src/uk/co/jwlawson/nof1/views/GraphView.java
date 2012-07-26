@@ -20,11 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.views;
 
-import java.util.ArrayList;
-
-import uk.co.jwlawson.nof1.containers.Label;
-import uk.co.jwlawson.nof1.containers.Line;
-import uk.co.jwlawson.nof1.containers.Vec2;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Canvas;
@@ -36,6 +31,12 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+
+import uk.co.jwlawson.nof1.containers.Label;
+import uk.co.jwlawson.nof1.containers.Line;
+import uk.co.jwlawson.nof1.containers.Vec2;
+
+import java.util.ArrayList;
 
 /**
  * View to draw and display a graph showing the data over time. x = days, y =
@@ -63,28 +64,28 @@ public class GraphView extends View {
 	private ArrayList<Vec2> mVecList;
 
 	/** List of lines to draw as x-axis */
-	private ArrayList<Line> mXAxisList;
+	private final ArrayList<Line> mXAxisList;
 
 	/** List of x-axis labels */
-	private ArrayList<Label> mXLabelList;
+	private final ArrayList<Label> mXLabelList;
 
 	/** List of lines to draw as y-axis */
-	private ArrayList<Line> mYAxisList;
+	private final ArrayList<Line> mYAxisList;
 
 	/** List of y-axis labels */
-	private ArrayList<Label> mYLabelList;
+	private final ArrayList<Label> mYLabelList;
 
 	/** List of re3ctangles used to shade vertical regions */
-	private ArrayList<RectF> mVertShadingList;
+	private final ArrayList<RectF> mVertShadingList;
 
 	/** Paint to draw the points */
-	private Paint mVecPaint;
+	private final Paint mVecPaint;
 
 	/** Paint to draw axes */
-	private Paint mAxesPaint;
+	private final Paint mAxesPaint;
 
 	/** Paint to draw the shading */
-	private Paint mShadingPaint;
+	private final Paint mShadingPaint;
 
 	/** Scale in x direction */
 	private float mScaleX;
@@ -151,7 +152,10 @@ public class GraphView extends View {
 
 	}
 
-	/** Set the list of points to be drawn. Use either this or setCursor to supply points to graph */
+	/**
+	 * Set the list of points to be drawn. Use either this or setCursor to
+	 * supply points to graph
+	 */
 	public void setVecList(ArrayList<Vec2> vecList) {
 
 		mVecList = vecList;
@@ -168,9 +172,11 @@ public class GraphView extends View {
 	}
 
 	/**
-	 * Set a cursor to read data from. Use either this or setVecList to supply points to the graph
+	 * Set a cursor to read data from. Use either this or setVecList to supply
+	 * points to the graph
 	 * 
-	 * @param cursor Cursor with x in first column, y in second column
+	 * @param cursor
+	 *            Cursor with x in first column, y in second column
 	 */
 	public void setCursor(Cursor cursor) {
 
@@ -178,12 +184,27 @@ public class GraphView extends View {
 
 		cursor.moveToFirst();
 
-		floatarr = new float[cursor.getCount() * 2];
+		int count = 0;
+		while (!cursor.isAfterLast()) {
+			if (!cursor.isNull(1)) {
+				count++;
+			}
+			cursor.moveToNext();
+		}
+
+		cursor.moveToFirst();
+
+		floatarr = new float[count * 2];
 
 		int i = 0;
 		while (!cursor.isAfterLast()) {
-			floatarr[i++] = (float) cursor.getInt(0) * mScaleX;
-			floatarr[i++] = mHeight - ((float) cursor.getInt(1) * (mHeight - BOTTOM_PAD - TOP_PAD) / mMaxY);
+
+			if (!cursor.isNull(1)) {
+
+				floatarr[i++] = cursor.getInt(0) * mScaleX;
+				floatarr[i++] = mHeight
+						- ((float) cursor.getInt(1) * (mHeight - BOTTOM_PAD - TOP_PAD) / mMaxY);
+			}
 			cursor.moveToNext();
 		}
 
@@ -203,19 +224,23 @@ public class GraphView extends View {
 		// Add ticks to axis
 		float xtick = (float) mWidth / maxX;
 		for (int i = 1; i <= maxX; i++) {
-			mXAxisList.add(new Line(new Vec2((int) (i * xtick), mHeight), new Vec2((int) (i * xtick), mHeight + TICK_SIZE)));
+			mXAxisList.add(new Line(new Vec2((int) (i * xtick), mHeight), new Vec2(
+					(int) (i * xtick), mHeight + TICK_SIZE)));
 		}
 		// Add labels to x-axis
 		if (maxX < 10) {
 			for (int i = 1; i <= maxX; i++) {
-				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE + TEXT_SIZE)));
+				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE
+						+ TEXT_SIZE)));
 			}
 		} else {
 			for (int i = 5; i <= maxX; i = i + 5) {
-				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE + TEXT_SIZE)));
+				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE
+						+ TEXT_SIZE)));
 			}
 		}
-		mXLabelList.add(new Label("Days", new Vec2(mWidth / 2, mHeight + TICK_SIZE + 2 * TEXT_SIZE)));
+		mXLabelList
+				.add(new Label("Days", new Vec2(mWidth / 2, mHeight + TICK_SIZE + 2 * TEXT_SIZE)));
 
 		// If vertical lines needed, add them
 		if (mVertLineWidth != 0) {
@@ -238,22 +263,26 @@ public class GraphView extends View {
 
 		// Add axis
 		mYAxisList.add(new Line(new Vec2(0, mHeight), new Vec2(0, TOP_PAD + BOTTOM_PAD)));
-		if (DEBUG) Log.d(TAG, "Y-axis: ( 0 , " + mHeight + " ), ( 0 , " + (TOP_PAD + BOTTOM_PAD) + ")");
+		if (DEBUG)
+			Log.d(TAG, "Y-axis: ( 0 , " + mHeight + " ), ( 0 , " + (TOP_PAD + BOTTOM_PAD) + ")");
 
 		// Add ticks to axis
 		float ytick = (float) (mHeight - TOP_PAD - BOTTOM_PAD) / maxY;
 		for (int i = 1; i <= maxY; i++) {
-			mYAxisList.add(new Line(new Vec2(0, (int) (mHeight - (i * ytick))), new Vec2(-TICK_SIZE, (int) (mHeight - (i * ytick)))));
+			mYAxisList.add(new Line(new Vec2(0, (int) (mHeight - (i * ytick))), new Vec2(
+					-TICK_SIZE, (int) (mHeight - (i * ytick)))));
 		}
 
 		// Add labels to y-axis
 		if (maxY < 10) {
 			for (int i = 1; i <= maxY; i++) {
-				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight - (i * ytick) + TEXT_SIZE / 2))));
+				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight
+						- (i * ytick) + TEXT_SIZE / 2))));
 			}
 		} else {
 			for (int i = 5; i <= maxY; i = i + 5) {
-				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight - (i * ytick) + TEXT_SIZE / 2))));
+				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight
+						- (i * ytick) + TEXT_SIZE / 2))));
 			}
 		}
 
@@ -261,7 +290,8 @@ public class GraphView extends View {
 	}
 
 	/**
-	 * Set the graph to draw vertical lines on the graph from the x-axis to the top of the graph. Each line will be
+	 * Set the graph to draw vertical lines on the graph from the x-axis to the
+	 * top of the graph. Each line will be
 	 * equally spaced <i>width</i> away from the previous
 	 */
 	public void setVerticalLines(int width) {
@@ -279,14 +309,17 @@ public class GraphView extends View {
 		if (mShaded == null) {
 			// Add lines to the list
 			for (int i = 1; i <= num; i++) {
-				mXAxisList.add(new Line(new Vec2((int) (i * xtick * width), mHeight), new Vec2((int) (i * xtick * width), TOP_PAD + BOTTOM_PAD)));
+				mXAxisList.add(new Line(new Vec2((int) (i * xtick * width), mHeight), new Vec2(
+						(int) (i * xtick * width), TOP_PAD + BOTTOM_PAD)));
 			}
 		}
 	}
 
 	/**
-	 * Set the graph to shade the regions between vertical lines. The passed array indicated whether a region should be
-	 * shaded or not. Null can be passed, this causes every other region to be shaded.
+	 * Set the graph to shade the regions between vertical lines. The passed
+	 * array indicated whether a region should be
+	 * shaded or not. Null can be passed, this causes every other region to be
+	 * shaded.
 	 */
 	public void setVerticalShading(boolean[] shaded) {
 
@@ -294,7 +327,8 @@ public class GraphView extends View {
 
 		int num = (int) ((float) mMaxX / mVertLineWidth);
 
-		// If shaded is null create a new boolean array with alternating values and re-run
+		// If shaded is null create a new boolean array with alternating values
+		// and re-run
 		if (shaded == null) {
 			boolean[] newShaded = new boolean[num];
 			newShaded[0] = false;
@@ -312,7 +346,8 @@ public class GraphView extends View {
 
 		for (int i = 0; i < max; i++) {
 			if (shaded[i]) {
-				RectF rect = new RectF(i * xtick * mVertLineWidth, mHeight, (i + 1) * xtick * mVertLineWidth, TOP_PAD + BOTTOM_PAD);
+				RectF rect = new RectF(i * xtick * mVertLineWidth, mHeight, (i + 1) * xtick
+						* mVertLineWidth, TOP_PAD + BOTTOM_PAD);
 				mVertShadingList.add(rect);
 			}
 		}
@@ -413,7 +448,7 @@ public class GraphView extends View {
 			result = specSize;
 		} else {
 			// Want height to match given RATIO
-			result = (int) ((float) width * RATIO);
+			result = (int) (width * RATIO);
 			if (specMode == MeasureSpec.AT_MOST) {
 				// Respect AT_MOST value if that was what is called for by
 				// measureSpec
