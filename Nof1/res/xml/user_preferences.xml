@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
-  Copyright (C) 2012  WMG, University of Warwick
+  Copyright (C) 2012  John Lawson WMG, University of Warwick
   
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -39,20 +39,20 @@
             android:summary="Store a backup of the app data in the cloud?"
             android:summaryOff="Data will not be backed up"
             android:summaryOn="Data will be backed up"
-            android:title="Backup data" />
+            android:title="Backup data" android:defaultValue="true"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/notifications">
         <CheckBoxPreference
             android:key="prefs_vibrate"
             android:summaryOff="@string/vibrate_off"
             android:summaryOn="@string/vibrate_on"
-            android:title="@string/vibrate_notifications" />
+            android:title="@string/vibrate_notifications" android:defaultValue="true"/>
         <CheckBoxPreference
             android:key="prefs_flash"
-            android:title="@string/flash_notifications" android:summaryOn="@string/flash_on" android:summaryOff="@string/flash_off"/>
+            android:title="@string/flash_notifications" android:summaryOn="@string/flash_on" android:summaryOff="@string/flash_off" android:defaultValue="true"/>
             <CheckBoxPreference
             android:key="prefs_loud"
-            android:title="@string/loud_notification" android:summaryOn="@string/loud_on" android:summaryOff="@string/loud_off"/>
+            android:title="@string/loud_notification" android:summaryOn="@string/loud_on" android:summaryOff="@string/loud_off" android:defaultValue="true"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/doctor_preferences" >
         <PreferenceScreen

@@ -1,6 +1,6 @@
 <!--
   Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
-  Copyright (C) 2012  WMG, University of Warwick
+  Copyright (C) 2012 John Lawson WMG, University of Warwick
   
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -146,6 +146,8 @@
     <string name="enter_data">Enter data</string>
     <string name="view_graphs">View graphs</string>
     <string name="about">About</string>
+    <string name="data_input">Data input</string>
+    <string name="form_builder">Form builder</string>
     <string name="receiver_permission">Used to ensure that only the N-of-1 app can access this receiver</string>
     <string name="doctors_name">Doctor\'s name</string>
     <string name="thanks">Thanks</string>
