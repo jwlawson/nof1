@@ -20,13 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
-import java.util.Random;
-
-import uk.co.jwlawson.nof1.DataSource;
-import uk.co.jwlawson.nof1.FinishedService;
-import uk.co.jwlawson.nof1.Keys;
-import uk.co.jwlawson.nof1.R;
-import uk.co.jwlawson.nof1.Scheduler;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -36,6 +29,14 @@ import android.widget.Button;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
+
+import uk.co.jwlawson.nof1.DataSource;
+import uk.co.jwlawson.nof1.FinishedService;
+import uk.co.jwlawson.nof1.Keys;
+import uk.co.jwlawson.nof1.R;
+import uk.co.jwlawson.nof1.Scheduler;
+
+import java.util.Random;
 
 public class MainActivity extends SherlockActivity {
 
@@ -200,7 +201,7 @@ public class MainActivity extends SherlockActivity {
 				data[j] = rand.nextInt(10);
 			}
 
-			source.saveData(i * 5, data);
+			source.saveData(i * 5, "12:00", data);
 		}
 		source.close();
 	}

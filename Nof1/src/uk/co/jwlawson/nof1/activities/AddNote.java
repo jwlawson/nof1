@@ -20,12 +20,6 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
-import java.util.Calendar;
-
-import uk.co.jwlawson.nof1.BuildConfig;
-import uk.co.jwlawson.nof1.DataSource;
-import uk.co.jwlawson.nof1.Keys;
-import uk.co.jwlawson.nof1.R;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -40,6 +34,12 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
+import uk.co.jwlawson.nof1.DataSource;
+import uk.co.jwlawson.nof1.Keys;
+import uk.co.jwlawson.nof1.R;
+
+import java.util.Calendar;
+
 /**
  * Activity to allow patient to add a short note on any day.
  * 
@@ -49,7 +49,7 @@ import com.actionbarsherlock.view.Window;
 public class AddNote extends SherlockActivity {
 
 	private static final String TAG = "AddNote";
-	private static final boolean DEBUG = true && BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private DataSource mData;
 
@@ -87,7 +87,8 @@ public class AddNote extends SherlockActivity {
 			// up / home action bar button pressed
 			Intent upIntent = new Intent(this, HomeScreen.class);
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-				// This activity is not part of the application's task, so create a new task
+				// This activity is not part of the application's task, so
+				// create a new task
 				// with a synthesized back stack.
 				TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
 				finish();
@@ -164,12 +165,15 @@ public class AddNote extends SherlockActivity {
 			// Find the cumulative day for saving data
 			SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 			String[] start = sp.getString(Keys.CONFIG_START, "").split(":");
-			int[] startInt = new int[] { Integer.parseInt(start[0]), Integer.parseInt(start[1]), Integer.parseInt(start[2]) };
+			int[] startInt = new int[] { Integer.parseInt(start[0]), Integer.parseInt(start[1]),
+					Integer.parseInt(start[2]) };
 			Calendar calStart = Calendar.getInstance();
 			calStart.set(startInt[2], startInt[1], startInt[0]);
 
 			Calendar calNow = Calendar.getInstance();
-			// Add an hour to ensure that calStart is before calNow when they have the same date
+			String time = calNow.get(Calendar.HOUR_OF_DAY) + ":" + calNow.get(Calendar.MINUTE);
+			// Add an hour to ensure that calStart is before calNow when they
+			// have the same date
 			calNow.add(Calendar.HOUR, 1);
 			int day1 = 0;
 			while (calStart.before(calNow)) {
@@ -179,7 +183,7 @@ public class AddNote extends SherlockActivity {
 			if (DEBUG) Log.d(TAG, "Data input for day number " + day1);
 
 			for (int i = 0; i < values.length; i++) {
-				mData.saveComment(day1, values[i]);
+				mData.saveComment(day1, time, values[i]);
 			}
 			return null;
 		}
