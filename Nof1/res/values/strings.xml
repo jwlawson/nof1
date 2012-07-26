@@ -56,8 +56,8 @@
     <string name="password">Password</string>
     <string name="repeat_password">Repeat password</string>
     <string name="config_question_type_explain">Scale gives a 7 point scale to choose from. Please ensure that all questions are consistent with either high being good or high being bad. Number allows the patient to enter a discrete value. Checkbox is for a yes or no type question.</string>
-    <string name="config_min_hint">Minimum hint</string>
-    <string name="config_max_hint">Maximum hint</string>
+    <string name="config_min_hint">Minimum label</string>
+    <string name="config_max_hint">Maximum label</string>
     <string name="treatment_period">Treatment period</string>
     <string name="config_treatment_period_explain">The number of days in a block that each treatment is trialed for.</string>
     <string name="config_no_treatment_periods">Number of treatment periods</string>
