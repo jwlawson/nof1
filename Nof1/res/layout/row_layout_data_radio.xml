@@ -17,14 +17,14 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+
     <TextView
         android:id="@+id/data_input_radio_text_question"
         android:layout_width="wrap_content"
@@ -36,7 +36,7 @@
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/question"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <RadioGroup
         android:id="@+id/data_input_radio_radiogroup"
         android:layout_width="match_parent"
@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
     </RadioGroup>
-
+
     <TextView
         android:id="@+id/data_input_radio_text_min"
         android:layout_width="wrap_content"
@@ -101,7 +101,7 @@
         android:paddingBottom="@dimen/padding_vsmall"
         android:text="@string/min"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
     <TextView
         android:id="@+id/data_input_radio_text_max"
         android:layout_width="wrap_content"
@@ -109,6 +109,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/data_input_radio_radiogroup"
         android:layout_marginRight="@dimen/padding_large"
+        android:gravity="right"
         android:maxWidth="@dimen/text_width"
         android:paddingBottom="@dimen/padding_vsmall"
         android:text="@string/max"
