@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
-  Copyright (C) 2012  WMG, University of Warwick
+  Copyright (C) 2012 John Lawson, WMG, University of Warwick
   
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -40,7 +40,8 @@
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/patient_name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
+
     <EditText
         android:id="@+id/config_doctor_details_edit_name"
         android:layout_width="wrap_content"
@@ -52,7 +53,8 @@
         android:inputType="textCapWords|textPersonName" >
         
     </EditText>
-
+
+
     <TextView
         android:id="@+id/config_doctor_details_text_doc_email"
         android:layout_width="wrap_content"
@@ -107,7 +109,10 @@
         android:layout_marginTop="16dp"
         android:text="@string/config_email_use"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
+
+
+
     <TextView
         android:id="@+id/config_doctor_details_text_doc_name"
         android:layout_width="wrap_content"
@@ -117,7 +122,9 @@
         android:layout_marginTop="@dimen/padding_large"
         android:text="@string/doctors_name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
+
+
     <EditText
         android:id="@+id/config_doctor_details_edit_doc_name"
         android:layout_width="wrap_content"

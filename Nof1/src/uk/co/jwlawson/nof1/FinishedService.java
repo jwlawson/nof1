@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
- * Copyright (C) 2012  WMG, University of Warwick
+ * Copyright (C) 2012 John Lawson, WMG, University of Warwick
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
- * You may obtain a copy of the GNU General Public License at 
+ * You may obtain a copy of the GNU General Public License at  
  * <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
@@ -38,7 +38,7 @@ import android.os.IBinder;
 import android.widget.Toast;
 
 /**
- * Service to
+ * Service to save a copy of the results as a .csv file
  * 
  * @author John Lawson
  * 

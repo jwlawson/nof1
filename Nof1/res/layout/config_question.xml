@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
-  Copyright (C) 2012  WMG, University of Warwick
+  Copyright (C) 2012 John Lawson, WMG, University of Warwick
   
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/padding_large" >
-
+
+
     <RelativeLayout
         android:id="@+id/config_question_layout"
         android:layout_width="match_parent"
@@ -80,7 +81,8 @@
             android:layout_marginTop="@dimen/padding_medium"
             android:text="@string/config_question_type_explain"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
+
         <RelativeLayout
             android:id="@+id/config_question_minmax_layout"
             android:layout_width="wrap_content"

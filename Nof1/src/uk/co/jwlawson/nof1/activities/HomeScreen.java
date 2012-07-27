@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
- * Copyright (C) 2012  WMG, University of Warwick
+ * Copyright (C) 2012 John Lawson, WMG, University of Warwick
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
- * You may obtain a copy of the GNU General Public License at 
+ * You may obtain a copy of the GNU General Public License at  
  * <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import org.apache.http.protocol.HTTP;
 
 import uk.co.jwlawson.nof1.BuildConfig;
 import uk.co.jwlawson.nof1.DataSource;
@@ -148,7 +150,7 @@ public class HomeScreen extends SherlockActivity {
 
 			SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 			if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
-				// Trial finished. Show emailcsv button
+				// Trial finished. Show email csv button
 				final Button btnEmail = (Button) findViewById(R.id.home_btn_email);
 				btnEmail.setVisibility(View.VISIBLE);
 
@@ -156,13 +158,13 @@ public class HomeScreen extends SherlockActivity {
 					@Override
 					public void onClick(View v) {
 
-						btnEmail.setEnabled(false);
-
 						File file = findCSV();
 
 						if (file == null) {
 							// File not found
+							btnEmail.setEnabled(false);
 							new Loader().execute();
+
 						} else {
 							Uri uri = Uri.fromFile(file);
 							Resources res = getResources();
@@ -170,6 +172,7 @@ public class HomeScreen extends SherlockActivity {
 
 							try {
 								Intent intent = new Intent(Intent.ACTION_SEND);
+								intent.setType(HTTP.PLAIN_TEXT_TYPE);
 								intent.putExtra(Intent.EXTRA_EMAIL, "");
 								intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
 								intent.putExtra(Intent.EXTRA_TEXT,
@@ -181,7 +184,6 @@ public class HomeScreen extends SherlockActivity {
 								Toast.makeText(HomeScreen.this, R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
 							}
 						}
-						btnEmail.setEnabled(true);
 
 					}
 				});
@@ -393,8 +395,9 @@ public class HomeScreen extends SherlockActivity {
 
 				try {
 					Intent intent = new Intent(Intent.ACTION_SEND);
+					intent.setType(HTTP.PLAIN_TEXT_TYPE);
 					intent.putExtra(Intent.EXTRA_EMAIL, "");
-					intent.putExtra(Intent.EXTRA_TITLE, res.getText(R.string.trial_data));
+					intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
 					intent.putExtra(Intent.EXTRA_TEXT, res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 					intent.putExtra(Intent.EXTRA_STREAM, uri);
 					startActivity(intent);

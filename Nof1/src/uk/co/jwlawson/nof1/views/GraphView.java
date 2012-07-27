@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
- * Copyright (C) 2012  WMG, University of Warwick
+ * Copyright (C) 2012 John Lawson, WMG, University of Warwick
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Align;
 import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -116,6 +117,8 @@ public class GraphView extends View {
 
 	private float[] floatarr;
 
+	private Path mPath;
+
 	public GraphView(Context context) {
 		this(context, null, 0);
 	}
@@ -168,6 +171,8 @@ public class GraphView extends View {
 			floatarr[i++] = mHeight - (vec.getY() * (mHeight - BOTTOM_PAD - TOP_PAD) / mMaxY);
 		}
 
+		mPath = makePath(floatarr);
+
 		invalidate();
 	}
 
@@ -207,6 +212,8 @@ public class GraphView extends View {
 			}
 			cursor.moveToNext();
 		}
+
+		mPath = makePath(floatarr);
 
 		invalidate();
 	}
@@ -354,6 +361,16 @@ public class GraphView extends View {
 
 	}
 
+	private Path makePath(float[] arr) {
+		Path p = new Path();
+		p.moveTo(arr[0], arr[1]);
+		for (int i = 2; i < arr.length; i = i + 2) {
+			p.lineTo(arr[i], arr[i + 1]);
+		}
+
+		return p;
+	}
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
@@ -379,10 +396,7 @@ public class GraphView extends View {
 		}
 
 		if (DEBUG) Log.d(TAG, "Drawing data");
-		canvas.drawLines(floatarr, mVecPaint);
-		if (floatarr.length > 2) {
-			canvas.drawLines(floatarr, 2, floatarr.length - 2, mVecPaint);
-		}
+		canvas.drawPath(mPath, mVecPaint);
 
 		if (DEBUG) Log.d(TAG, "Drawing labels");
 		for (int i = 0; i < mXLabelList.size(); i++) {

@@ -1,6 +1,6 @@
 <!--
   Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
-  Copyright (C) 2012  WMG, University of Warwick
+  Copyright (C) 2012 John Lawson, WMG, University of Warwick
   
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <resources>
 
@@ -28,7 +28,7 @@
     <string name="min">Min</string>
     <string name="max">Max</string>
     <string name="yes">Yes</string>
-    <string name="comment">Comment</string>
+    <string name="comment">Note</string>
     <string name="schedule_reminder">"Remind me again in "</string>
 
     <string-array name="reminder_spinner_options">
@@ -143,7 +143,7 @@
     <string name="noti_medicine_title">N-of-1 Trails</string>
     <string name="noti_medicine_text">It is time to take your medicine</string>
     <string name="about_nof1">N-of-1 trials app</string>
-    <string name="about_details">Copyright 2012 WMG, University of Warwick\n\n An application to help those working in the healthcare industry to design and implement N-of-1 trials.\n\n Developed by John Lawson at the Institute of Digital Health, Warwick University.\n\n The app is licensed under the GNU GPLv3, a copy of which is available at http://www.gnu.org/licenses/gpl.html. \n \n Source code for the app is available at https://github.com/jwlawson/nof1.\n\n This app uses Jake Wharton\'s ActionBarSherlock, ACRA crash reporting and some functionality from the Apache Commons Codec, available under the Apache v2 license found at http://www.apache.org/licenses/LICENSE-2.0.</string>
+    <string name="about_details">Copyright 2012 John Lawson, WMG, University of Warwick\n\n An application to help those working in the healthcare industry to design and implement N-of-1 trials.\n\n Developed by John Lawson at the Institute of Digital Health, Warwick University.\n\n The app is licensed under the GNU GPLv3, a copy of which is available at http://www.gnu.org/licenses/gpl.html. \n \n Source code for the app is available at https://github.com/jwlawson/nof1.\n\n This app uses Jake Wharton\'s ActionBarSherlock, ACRA crash reporting and some functionality from the Apache Commons Codec, available under the Apache v2 license found at http://www.apache.org/licenses/LICENSE-2.0.</string>
     <string name="enter_data">Enter data</string>
     <string name="view_graphs">View graphs</string>
     <string name="about">About</string>
@@ -191,8 +191,8 @@
     <string name="cancel_todays_alarm">You are scheduled to fill in this questionnaire later today. Would you like to cancel today\'s alarm?</string>
     <string name="n_of_1_debug">N-of-1 Debug</string>
     <string name="email_csv">Email data file</string>
-    <string name="no_email_app_found">&quot;No email app found.&quot;</string>
-    <string name="trial_data">&quot;N-of-1 Trial data&quot;</string>
-    <string name="results_attached">&quot;Find attached the data from the N-of-1 trial for &quot;</string>
+    <string name="no_email_app_found">"No email app found."</string>
+    <string name="trial_data">"N-of-1 Trial data"</string>
+    <string name="results_attached">"Find attached the data from the N-of-1 trial for "</string>
 
 </resources>

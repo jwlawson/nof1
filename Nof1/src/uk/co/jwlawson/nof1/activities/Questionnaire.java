@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
- * Copyright (C) 2012  WMG, University of Warwick
+ * Copyright (C) 2012 John Lawson, WMG, University of Warwick
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  * 
- * You may obtain a copy of the GNU General Public License at 
+ * You may obtain a copy of the GNU General Public License at  
  * <http://www.gnu.org/licenses/>.
  * 
  * Contributors:
@@ -133,12 +133,12 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 		}
 
 		if (mPreview) {
-			Log.d(TAG, "Building questionnaire in preview mode");
+			if (DEBUG) Log.d(TAG, "Building questionnaire in preview mode");
 			btnOk.setText(R.string.save);
 			btnCan.setText(R.string.cancel);
 			Toast.makeText(this, R.string.questionnaire_preview_explain, Toast.LENGTH_LONG).show();
 		} else {
-			Log.d(TAG, "Building questionnaire and loading database");
+			if (DEBUG) Log.d(TAG, "Building questionnaire and loading database");
 			mData = new DataSource(this);
 			new DataBaseLoader().execute();
 		}

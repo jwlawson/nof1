@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
- * Copyright (C) 2012  WMG, University of Warwick
+ * Copyright (C) 2012 John Lawson, WMG, University of Warwick
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -517,10 +517,12 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		int number = 0;
 		int length = 0;
 		
+		// Names
 		editor.putString(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
 		editor.putString(Keys.CONFIG_DOCTOR_NAME, mDocName.getText().toString());
 		editor.putString(Keys.CONFIG_DOC, mDocEmail.getText().toString());
 		
+		// Period number
 		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
 			try {
 				number = Integer.parseInt(mPeriodNumber.getText().toString());
@@ -533,6 +535,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		}
 		editor.putInt(Keys.CONFIG_NUMBER_PERIODS, number);
 		
+		// Period length
 		if (mPeriodLength.getVisibility() == View.VISIBLE) {
 			try {
 				length = Integer.parseInt(mPeriodLength.getText().toString());
@@ -547,6 +550,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		
 		editor.putBoolean(Keys.CONFIG_BUILT, mFormBuilt);
 		
+		// Start date
 		editor.putString(Keys.CONFIG_START, mDate.getDate());
 		
 		// Save times to remind to take medicine
