@@ -20,6 +20,11 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.views;
 
+import java.util.ArrayList;
+
+import uk.co.jwlawson.nof1.containers.Label;
+import uk.co.jwlawson.nof1.containers.Line;
+import uk.co.jwlawson.nof1.containers.Vec2;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Canvas;
@@ -32,12 +37,6 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-
-import uk.co.jwlawson.nof1.containers.Label;
-import uk.co.jwlawson.nof1.containers.Line;
-import uk.co.jwlawson.nof1.containers.Vec2;
-
-import java.util.ArrayList;
 
 /**
  * View to draw and display a graph showing the data over time. x = days, y =
@@ -206,8 +205,7 @@ public class GraphView extends View {
 			if (!cursor.isNull(1)) {
 
 				floatarr[i++] = cursor.getInt(0) * mScaleX;
-				floatarr[i++] = mHeight
-						- ((float) cursor.getInt(1) * (mHeight - BOTTOM_PAD - TOP_PAD) / mMaxY);
+				floatarr[i++] = mHeight - ((float) cursor.getInt(1) * (mHeight - BOTTOM_PAD - TOP_PAD) / mMaxY);
 			}
 			cursor.moveToNext();
 		}
@@ -230,23 +228,19 @@ public class GraphView extends View {
 		// Add ticks to axis
 		float xtick = (float) mWidth / maxX;
 		for (int i = 1; i <= maxX; i++) {
-			mXAxisList.add(new Line(new Vec2((int) (i * xtick), mHeight), new Vec2(
-					(int) (i * xtick), mHeight + TICK_SIZE)));
+			mXAxisList.add(new Line(new Vec2((int) (i * xtick), mHeight), new Vec2((int) (i * xtick), mHeight + TICK_SIZE)));
 		}
 		// Add labels to x-axis
 		if (maxX < 10) {
 			for (int i = 1; i <= maxX; i++) {
-				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE
-						+ TEXT_SIZE)));
+				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE + TEXT_SIZE)));
 			}
 		} else {
 			for (int i = 5; i <= maxX; i = i + 5) {
-				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE
-						+ TEXT_SIZE)));
+				mXLabelList.add(new Label("" + i, new Vec2((int) (i * xtick), mHeight + TICK_SIZE + TEXT_SIZE)));
 			}
 		}
-		mXLabelList
-				.add(new Label("Days", new Vec2(mWidth / 2, mHeight + TICK_SIZE + 2 * TEXT_SIZE)));
+		mXLabelList.add(new Label("Days", new Vec2(mWidth / 2, mHeight + TICK_SIZE + 2 * TEXT_SIZE)));
 
 		// If vertical lines needed, add them
 		if (mVertLineWidth != 0) {
@@ -269,26 +263,22 @@ public class GraphView extends View {
 
 		// Add axis
 		mYAxisList.add(new Line(new Vec2(0, mHeight), new Vec2(0, TOP_PAD + BOTTOM_PAD)));
-		if (DEBUG)
-			Log.d(TAG, "Y-axis: ( 0 , " + mHeight + " ), ( 0 , " + (TOP_PAD + BOTTOM_PAD) + ")");
+		if (DEBUG) Log.d(TAG, "Y-axis: ( 0 , " + mHeight + " ), ( 0 , " + (TOP_PAD + BOTTOM_PAD) + ")");
 
 		// Add ticks to axis
 		float ytick = (float) (mHeight - TOP_PAD - BOTTOM_PAD) / maxY;
 		for (int i = 1; i <= maxY; i++) {
-			mYAxisList.add(new Line(new Vec2(0, (int) (mHeight - (i * ytick))), new Vec2(
-					-TICK_SIZE, (int) (mHeight - (i * ytick)))));
+			mYAxisList.add(new Line(new Vec2(0, (int) (mHeight - (i * ytick))), new Vec2(-TICK_SIZE, (int) (mHeight - (i * ytick)))));
 		}
 
 		// Add labels to y-axis
 		if (maxY < 10) {
 			for (int i = 1; i <= maxY; i++) {
-				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight
-						- (i * ytick) + TEXT_SIZE / 2))));
+				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight - (i * ytick) + TEXT_SIZE / 2))));
 			}
 		} else {
 			for (int i = 5; i <= maxY; i = i + 5) {
-				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight
-						- (i * ytick) + TEXT_SIZE / 2))));
+				mYLabelList.add(new Label("" + i, new Vec2(-2 * TICK_SIZE, (int) (mHeight - (i * ytick) + TEXT_SIZE / 2))));
 			}
 		}
 
@@ -315,8 +305,7 @@ public class GraphView extends View {
 		if (mShaded == null) {
 			// Add lines to the list
 			for (int i = 1; i <= num; i++) {
-				mXAxisList.add(new Line(new Vec2((int) (i * xtick * width), mHeight), new Vec2(
-						(int) (i * xtick * width), TOP_PAD + BOTTOM_PAD)));
+				mXAxisList.add(new Line(new Vec2((int) (i * xtick * width), mHeight), new Vec2((int) (i * xtick * width), TOP_PAD + BOTTOM_PAD)));
 			}
 		}
 	}
@@ -352,8 +341,7 @@ public class GraphView extends View {
 
 		for (int i = 0; i < max; i++) {
 			if (shaded[i]) {
-				RectF rect = new RectF(i * xtick * mVertLineWidth, mHeight, (i + 1) * xtick
-						* mVertLineWidth, TOP_PAD + BOTTOM_PAD);
+				RectF rect = new RectF(i * xtick * mVertLineWidth, mHeight, (i + 1) * xtick * mVertLineWidth, TOP_PAD + BOTTOM_PAD);
 				mVertShadingList.add(rect);
 			}
 		}
@@ -362,11 +350,12 @@ public class GraphView extends View {
 
 	private Path makePath(float[] arr) {
 		Path p = new Path();
-		p.moveTo(arr[0], arr[1]);
-		for (int i = 2; i < arr.length; i = i + 2) {
-			p.lineTo(arr[i], arr[i + 1]);
+		if (arr.length > 2) {
+			p.moveTo(arr[0], arr[1]);
+			for (int i = 2; i < arr.length; i = i + 2) {
+				p.lineTo(arr[i], arr[i + 1]);
+			}
 		}
-
 		return p;
 	}
 
@@ -380,30 +369,39 @@ public class GraphView extends View {
 		canvas.translate(LEFT_PAD, -BOTTOM_PAD);
 
 		if (DEBUG) Log.d(TAG, "Drawing x-axis");
-		for (int i = 0; i < mXAxisList.size(); i++) {
-			mXAxisList.get(i).draw(canvas, mAxesPaint);
+		if (!mXAxisList.isEmpty()) {
+			for (int i = 0; i < mXAxisList.size(); i++) {
+				mXAxisList.get(i).draw(canvas, mAxesPaint);
+			}
+		}
+		if (!mYAxisList.isEmpty()) {
+			if (DEBUG) Log.d(TAG, "Drawing y-axis");
+			for (int i = 0; i < mYAxisList.size(); i++) {
+				mYAxisList.get(i).draw(canvas, mAxesPaint);
+			}
 		}
 
-		if (DEBUG) Log.d(TAG, "Drawing y-axis");
-		for (int i = 0; i < mYAxisList.size(); i++) {
-			mYAxisList.get(i).draw(canvas, mAxesPaint);
-		}
-
-		if (DEBUG) Log.d(TAG, "Drawing shading");
-		for (int i = 0; i < mVertShadingList.size(); i++) {
-			canvas.drawRect(mVertShadingList.get(i), mShadingPaint);
+		if (!mVertShadingList.isEmpty()) {
+			if (DEBUG) Log.d(TAG, "Drawing shading");
+			for (int i = 0; i < mVertShadingList.size(); i++) {
+				canvas.drawRect(mVertShadingList.get(i), mShadingPaint);
+			}
 		}
 
 		if (DEBUG) Log.d(TAG, "Drawing data");
-		canvas.drawPath(mPath, mVecPaint);
+		if (mPath != null) canvas.drawPath(mPath, mVecPaint);
 
-		if (DEBUG) Log.d(TAG, "Drawing labels");
-		for (int i = 0; i < mXLabelList.size(); i++) {
-			mXLabelList.get(i).draw(canvas, mAxesPaint);
+		if (!mXLabelList.isEmpty()) {
+			if (DEBUG) Log.d(TAG, "Drawing labels");
+			for (int i = 0; i < mXLabelList.size(); i++) {
+				mXLabelList.get(i).draw(canvas, mAxesPaint);
+			}
 		}
 
-		for (int i = 0; i < mYLabelList.size(); i++) {
-			mYLabelList.get(i).draw(canvas, mAxesPaint);
+		if (!mYLabelList.isEmpty()) {
+			for (int i = 0; i < mYLabelList.size(); i++) {
+				mYLabelList.get(i).draw(canvas, mAxesPaint);
+			}
 		}
 
 		canvas.restore();
