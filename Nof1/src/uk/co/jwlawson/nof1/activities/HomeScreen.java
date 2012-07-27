@@ -171,7 +171,7 @@ public class HomeScreen extends SherlockActivity {
 							try {
 								Intent intent = new Intent(Intent.ACTION_SEND);
 								intent.putExtra(Intent.EXTRA_EMAIL, "");
-								intent.putExtra(Intent.EXTRA_TITLE, res.getText(R.string.trial_data));
+								intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
 								intent.putExtra(Intent.EXTRA_TEXT,
 										res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 								intent.putExtra(Intent.EXTRA_STREAM, uri);
