@@ -19,6 +19,11 @@
 #   public *;
 #}
 ####################################################
+# Nof1
+####################################################
+
+
+####################################################
 # ActionBarSherlock
 ####################################################
 -keep class android.support.v4.app.** { *; }
@@ -48,5 +53,11 @@ public void addCustomData(java.lang.String,java.lang.String);
 -keep public class org.acra.ErrorReporter
 {
 public org.acra.ErrorReporter$ReportsSenderWorker handleSilentException(java.lang.Throwable);
+}
+
+# keep this class so that logging will show 'ACRA' and not a obfuscated name like 'a'.
+# Note: if you are removing log messages elsewhere in this file then this isn't necessary
+-keep class org.acra.ReportField {
+        *;
 }
 

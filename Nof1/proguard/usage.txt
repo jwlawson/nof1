@@ -424,7 +424,6 @@ org.acra.ErrorReporter:
     private static final int MAX_SEND_REPORTS
     static final java.lang.String APPROVED_SUFFIX
     static final java.lang.String EXTRA_REPORT_FILE_NAME
-    266:267:public void addCustomData(java.lang.String,java.lang.String)
     289:289:public java.lang.String putCustomData(java.lang.String,java.lang.String)
     302:302:public java.lang.String removeCustomData(java.lang.String)
     315:315:public java.lang.String getCustomData(java.lang.String)
@@ -760,4 +759,4 @@ uk.co.jwlawson.nof1.views.GraphView:
     private static final int LEFT_PAD
     private static final int RIGHT_PAD
     private static final float RATIO
-    127:128:public GraphView(android.content.Context,android.util.AttributeSet)
+    126:127:public GraphView(android.content.Context,android.util.AttributeSet)
