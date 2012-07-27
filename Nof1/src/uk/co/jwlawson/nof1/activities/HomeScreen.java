@@ -20,21 +20,39 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import uk.co.jwlawson.nof1.BuildConfig;
+import uk.co.jwlawson.nof1.DataSource;
+import uk.co.jwlawson.nof1.FinishedService;
 import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.view.Window;
 
 /**
  * The main home screen that users see when they open the app. On first run will also set up the task stack to allow
@@ -48,11 +66,15 @@ public class HomeScreen extends SherlockActivity {
 	private static final String TAG = "HomeScreen";
 	private static final boolean DEBUG = true && BuildConfig.DEBUG;
 
+	private File mFile;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 
 		getSupportActionBar().setHomeButtonEnabled(false);
+		setSupportProgressBarIndeterminateVisibility(false);
 
 		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
 
@@ -122,6 +144,35 @@ public class HomeScreen extends SherlockActivity {
 				}
 			});
 
+			SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
+			if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
+				// Trial finished. Show emailcsv button
+				Button btnEmail = (Button) findViewById(R.id.home_btn_email);
+				btnEmail.setVisibility(View.VISIBLE);
+
+				btnEmail.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+
+						File file = findCSV();
+
+						if (file == null) {
+							// File not found
+							new Loader().execute();
+						} else {
+							Uri uri = Uri.fromFile(file);
+
+							Intent intent = new Intent(Intent.ACTION_SEND);
+							intent.putExtra(Intent.EXTRA_STREAM, uri);
+							startActivity(intent);
+						}
+
+					}
+				});
+				// Reload relative layout to ensure button is shown
+				((RelativeLayout) btnEmail.getParent()).requestLayout();
+			}
+
 		}
 
 	}
@@ -149,5 +200,183 @@ public class HomeScreen extends SherlockActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private File findCSV() {
+		String state = Environment.getExternalStorageState();
+
+		File dir;
+		File file;
+
+		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) || Environment.MEDIA_MOUNTED.equals(state)) {
+			// External storage readable
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+				// Eclair has no support for getExternalCacheDir()
+				// Look for file in /Android/data/uk.co.jwlawson.nof1/files/
+				File temp = Environment.getExternalStorageDirectory();
+
+				dir = new File(temp.getAbsoluteFile() + "/Android/data/uk.co.jwlawson.nof1/files");
+
+			} else {
+
+				dir = getExternalFilesDir(null);
+			}
+
+			file = new File(dir, FinishedService.CVS_FILE);
+
+			if (file.exists()) {
+				// Found the file
+				return file;
+			}
+		}
+
+		// Search internal storage
+		dir = getFilesDir();
+
+		file = new File(dir, FinishedService.CVS_FILE);
+
+		if (file.exists()) {
+			// Found the file
+			return file;
+		}
+		// File not found :(
+		return null;
+	}
+
+	@SuppressLint("WorldReadableFiles")
+	@TargetApi(8)
+	private boolean createCVS(Cursor cursor) {
+		/*
+		 * We want to write the schedule file to external storage, as that way we know the email app will be able to
+		 * find it.
+		 * However if it cannot, use internal storage and a world readable file. This may or may not work depending on
+		 * the email client used.
+		 */
+		// Check state of external storage
+		boolean storageWriteable = false;
+		boolean storageInternal = false;
+		String state = Environment.getExternalStorageState();
+
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+			// We can read and write the media
+			storageWriteable = true;
+		} else {
+			// Something else is wrong. It may be one of many other states, but all we need
+			// to know is we can neither read nor write
+			storageWriteable = false;
+		}
+		File dir = null;
+
+		if (storageWriteable && Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+			// Eclair has no support for getExternalCacheDir()
+			// Save file to /Android/data/uk.co.jwlawson.nof1/cache/
+			File temp = Environment.getExternalStorageDirectory();
+
+			dir = new File(temp.getAbsoluteFile() + "/Android/data/uk.co.jwlawson.nof1/files");
+
+		} else if (storageWriteable) {
+
+			dir = getExternalFilesDir(null);
+
+		} else {
+			// Toast.makeText(this, "No external storage found. Using internal storage which may not work.",
+			// Toast.LENGTH_LONG).show();
+			storageInternal = true;
+			dir = getFilesDir();
+		}
+		mFile = new File(dir, FinishedService.CVS_FILE);
+
+		if (storageInternal) {
+			try {
+				// File should be world readable so that GMail (or whatever the user uses) can read it
+				FileOutputStream fos = openFileOutput(FinishedService.CVS_FILE, MODE_WORLD_READABLE);
+				fos.write(getCVSString(cursor).getBytes());
+				fos.close();
+
+			} catch (IOException e) {
+				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
+				return false;
+			}
+
+		} else {
+			try {
+				// Write file to external storage
+				BufferedWriter writer = new BufferedWriter(new FileWriter(mFile));
+				writer.write(getCVSString(cursor));
+				writer.close();
+
+			} catch (IOException e) {
+				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
+				return false;
+			}
+		}
+		return true;
+
+	}
+
+	private String getCVSString(Cursor cursor) {
+		StringBuilder sb = new StringBuilder();
+
+		cursor.moveToFirst();
+		String[] headers = cursor.getColumnNames();
+		int size = headers.length;
+
+		// Add column headers
+		for (int i = 0; i < size; i++) {
+			sb.append(headers[i]).append(", ");
+		}
+		sb.append("\n");
+
+		// Add data
+		while (!cursor.isAfterLast()) {
+			for (int i = 0; i < size; i++) {
+				sb.append(cursor.getString(i)).append(", ");
+			}
+			sb.append("\n");
+
+			cursor.moveToNext();
+		}
+
+		return sb.toString();
+
+	}
+
+	private class Loader extends AsyncTask<Void, Void, Void> {
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			setSupportProgressBarIndeterminateVisibility(true);
+		}
+
+		@Override
+		protected Void doInBackground(Void... params) {
+			DataSource data = new DataSource(HomeScreen.this);
+			data.open();
+
+			Cursor cursor = data.getAllColumns();
+
+			createCVS(cursor);
+
+			cursor.close();
+			data.close();
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+			setSupportProgressBarIndeterminateVisibility(false);
+
+			// Send file
+			if (mFile != null) {
+				Uri uri = Uri.fromFile(mFile);
+
+				Intent intent = new Intent(Intent.ACTION_SEND);
+				intent.putExtra(Intent.EXTRA_STREAM, uri);
+				startActivity(intent);
+			}
+		}
 	}
 }

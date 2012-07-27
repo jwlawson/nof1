@@ -190,5 +190,6 @@
     <string name="create_csv">Create .csv</string>
     <string name="cancel_todays_alarm">You are scheduled to fill in this questionnaire later today. Would you like to cancel today\'s alarm?</string>
     <string name="n_of_1_debug">N-of-1 Debug</string>
+    <string name="email_csv">Email data file</string>
 
 </resources>

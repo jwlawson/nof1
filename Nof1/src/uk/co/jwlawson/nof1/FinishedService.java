@@ -45,9 +45,7 @@ import android.widget.Toast;
  */
 public class FinishedService extends Service {
 
-	private static final String CVS_FILE = "results.csv";
-
-	private File mFile;
+	public static final String CVS_FILE = "results.csv";
 
 	public FinishedService() {
 	}
@@ -104,7 +102,7 @@ public class FinishedService extends Service {
 			storageInternal = true;
 			dir = getFilesDir();
 		}
-		mFile = new File(dir, CVS_FILE);
+		File file = new File(dir, CVS_FILE);
 
 		if (storageInternal) {
 			try {
@@ -121,7 +119,7 @@ public class FinishedService extends Service {
 		} else {
 			try {
 				// Write file to external storage
-				BufferedWriter writer = new BufferedWriter(new FileWriter(mFile));
+				BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 				writer.write(getCVSString(cursor));
 				writer.close();
 
@@ -180,7 +178,6 @@ public class FinishedService extends Service {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			// TODO Send CVS
 			super.onPostExecute(result);
 
 			// Stop the service
