@@ -179,9 +179,9 @@
     <string name="questions">"Questions: "</string>
     <string name="incorrect_login">"Incorrect login details"</string>
     <string name="answer_all">"Please answer all the questions"</string>
-    <string name="title_comment_detail">Comment Detail</string>
-    <string name="title_comment_list">Comments</string>
-    <string name="view_comments">View comments</string>
+    <string name="title_comment_detail">Note</string>
+    <string name="title_comment_list">Note list</string>
+    <string name="view_comments">View notes</string>
     <string name="add_new_note">Add a new note:</string>
     <string name="add_note">Add new note</string>
     <string name="crash_toast_text">"Oops, something seems to be wrong. Please send a crash report so this bug can be squashed.\n\nInclude information about what you were doing and which screen you were on."</string>
