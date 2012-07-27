@@ -191,5 +191,8 @@
     <string name="cancel_todays_alarm">You are scheduled to fill in this questionnaire later today. Would you like to cancel today\'s alarm?</string>
     <string name="n_of_1_debug">N-of-1 Debug</string>
     <string name="email_csv">Email data file</string>
+    <string name="no_email_app_found">&quot;No email app found.&quot;</string>
+    <string name="trial_data">&quot;N-of-1 Trial data&quot;</string>
+    <string name="results_attached">&quot;Find attached the data from the N-of-1 trial for &quot;</string>
 
 </resources>

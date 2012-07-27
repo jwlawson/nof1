@@ -33,8 +33,10 @@ import uk.co.jwlawson.nof1.Keys;
 import uk.co.jwlawson.nof1.R;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -147,12 +149,14 @@ public class HomeScreen extends SherlockActivity {
 			SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 			if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
 				// Trial finished. Show emailcsv button
-				Button btnEmail = (Button) findViewById(R.id.home_btn_email);
+				final Button btnEmail = (Button) findViewById(R.id.home_btn_email);
 				btnEmail.setVisibility(View.VISIBLE);
 
 				btnEmail.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
+
+						btnEmail.setEnabled(false);
 
 						File file = findCSV();
 
@@ -161,11 +165,23 @@ public class HomeScreen extends SherlockActivity {
 							new Loader().execute();
 						} else {
 							Uri uri = Uri.fromFile(file);
+							Resources res = getResources();
+							SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
-							Intent intent = new Intent(Intent.ACTION_SEND);
-							intent.putExtra(Intent.EXTRA_STREAM, uri);
-							startActivity(intent);
+							try {
+								Intent intent = new Intent(Intent.ACTION_SEND);
+								intent.putExtra(Intent.EXTRA_EMAIL, "");
+								intent.putExtra(Intent.EXTRA_TITLE, res.getText(R.string.trial_data));
+								intent.putExtra(Intent.EXTRA_TEXT,
+										res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+								intent.putExtra(Intent.EXTRA_STREAM, uri);
+								startActivity(intent);
+							} catch (ActivityNotFoundException e) {
+								// No suitable email activity found
+								Toast.makeText(HomeScreen.this, R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
+							}
 						}
+						btnEmail.setEnabled(true);
 
 					}
 				});
@@ -372,11 +388,22 @@ public class HomeScreen extends SherlockActivity {
 			// Send file
 			if (mFile != null) {
 				Uri uri = Uri.fromFile(mFile);
+				Resources res = getResources();
+				SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
-				Intent intent = new Intent(Intent.ACTION_SEND);
-				intent.putExtra(Intent.EXTRA_STREAM, uri);
-				startActivity(intent);
+				try {
+					Intent intent = new Intent(Intent.ACTION_SEND);
+					intent.putExtra(Intent.EXTRA_EMAIL, "");
+					intent.putExtra(Intent.EXTRA_TITLE, res.getText(R.string.trial_data));
+					intent.putExtra(Intent.EXTRA_TEXT, res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+					intent.putExtra(Intent.EXTRA_STREAM, uri);
+					startActivity(intent);
+				} catch (ActivityNotFoundException e) {
+					// No suitable email activity found
+					Toast.makeText(HomeScreen.this, R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
+				}
 			}
+			((Button) findViewById(R.id.home_btn_email)).setEnabled(true);
 		}
 	}
 }
