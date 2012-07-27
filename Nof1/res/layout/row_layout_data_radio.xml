@@ -91,26 +91,26 @@
             android:layout_height="wrap_content" />
 
     </RadioGroup>
-
+
     <TextView
         android:id="@+id/data_input_radio_text_min"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/data_input_radio_radiogroup"
-        android:layout_marginLeft="@dimen/padding_large"
+        android:layout_marginLeft="@dimen/radio_pad"
         android:maxWidth="@dimen/text_width"
         android:paddingBottom="@dimen/padding_vsmall"
         android:text="@string/min"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
     <TextView
         android:id="@+id/data_input_radio_text_max"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/data_input_radio_radiogroup"
-        android:layout_marginRight="@dimen/padding_large"
+        android:layout_marginRight="@dimen/radio_pad"
         android:gravity="right"
         android:maxWidth="@dimen/text_width"
         android:paddingBottom="@dimen/padding_vsmall"

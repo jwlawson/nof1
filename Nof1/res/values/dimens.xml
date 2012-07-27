@@ -26,5 +26,6 @@
     <dimen name="padding_vsmall">4dp</dimen>
     <dimen name="padding_large_minus_vsmall">12dp</dimen>
     <dimen name="text_width">60dp</dimen>
+    <dimen name="radio_pad">25dp</dimen>
 
 </resources>
