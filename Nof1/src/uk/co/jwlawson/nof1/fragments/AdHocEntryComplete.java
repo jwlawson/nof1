@@ -86,7 +86,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 				+ (configPrefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0) * configPrefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0) * 2));
 
 		TextView cancelText = (TextView) view.findViewById(R.id.ad_hoc_text_cancel_today);
-		Button btnCancel = (Button) view.findViewById(R.id.ad_hoc_btn_cancel_today);
+		final Button btnCancel = (Button) view.findViewById(R.id.ad_hoc_btn_cancel_today);
 
 		// Get next date for scheduler to run
 		SharedPreferences sp = getActivity().getSharedPreferences(Keys.SCHED_NAME, Context.MODE_PRIVATE);
@@ -100,6 +100,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 				@Override
 				public void onClick(View v) {
 					// Run scheduler to cancel todays alarm
+					btnCancel.setEnabled(false);
 					Intent intent = new Intent(getActivity(), Scheduler.class);
 					intent.putExtra(Keys.INTENT_BOOT, false);
 					intent.putExtra(Keys.INTENT_ALARM, true);
