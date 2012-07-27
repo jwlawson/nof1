@@ -43,6 +43,11 @@ public class CommentDetail extends SherlockFragmentActivity {
 			CommentDetailFragment fragment = CommentDetailFragment.newInstance(comment);
 			getSupportFragmentManager().beginTransaction().add(R.id.comment_detail_container, fragment).commit();
 		}
+
+		Intent i = getIntent();
+		if (i.hasExtra("title")) {
+			setTitle(i.getStringExtra("title"));
+		}
 	}
 
 	@Override

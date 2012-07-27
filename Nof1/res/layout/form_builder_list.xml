@@ -13,7 +13,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        class="uk.co.jwlawson.nof1.fragments.FormBuilderList"
+        android:name="uk.co.jwlawson.nof1.fragments.FormBuilderList"
         tools:layout="@layout/simple_expandable_list_item_1" />
 
     <fragment

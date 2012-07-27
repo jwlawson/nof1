@@ -174,13 +174,18 @@
     <string name="questions">"Questions: "</string>
     <string name="incorrect_login">"Incorrect login details"</string>
     <string name="answer_all">"Please answer all the questions"</string>
-    <string name="title_comment_detail">Note Detail</string>
-    <string name="title_comment_list">Notes</string>
+    <string name="title_comment_detail">Note</string>
+    <string name="title_comment_list">Note list</string>
     <string name="view_comments">View notes</string>
     <string name="add_new_note">Add a new note:</string>
     <string name="add_note">Add new note</string>
     <string name="crash_toast_text">"Oops, something seems to be wrong. Please send a crash report so this bug can be squashed.\n\nInclude information about what you were doing and which screen you were on."</string>
     <string name="last_questionnaire">This was the last questionnaire you have to complete.</string>
     <string name="cancel_todays_alarm">You are scheduled to fill in this questionnaire later today. Would you like to cancel today\'s alarm?</string>
+    <string name="email_csv">Email data file</string>
+    <string name="no_email_app_found">"No email app found."</string>
+    <string name="trial_data">"N-of-1 Trial data"</string>
+    <string name="results_attached">"Find attached the data from the N-of-1 trial for "</string>
+
 
 </resources>
