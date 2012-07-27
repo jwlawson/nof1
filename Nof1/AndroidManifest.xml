@@ -38,6 +38,7 @@
     </permission>
 
     <uses-permission android:name="uk.co.jwlawson.nof1.permission.RECEIVER" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:name="App"

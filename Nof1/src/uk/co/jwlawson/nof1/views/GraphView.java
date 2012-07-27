@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
- * Copyright (C) 2012  WMG, University of Warwick
+ * Copyright (C) 2012 John Lawson WMG, University of Warwick
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -362,9 +362,11 @@ public class GraphView extends View {
 
 	private Path makePath(float[] arr) {
 		Path p = new Path();
-		p.moveTo(arr[0], arr[1]);
-		for (int i = 2; i < arr.length; i = i + 2) {
-			p.lineTo(arr[i], arr[i + 1]);
+		if (arr.length > 2) {
+			p.moveTo(arr[0], arr[1]);
+			for (int i = 2; i < arr.length; i = i + 2) {
+				p.lineTo(arr[i], arr[i + 1]);
+			}
 		}
 
 		return p;
@@ -380,30 +382,39 @@ public class GraphView extends View {
 		canvas.translate(LEFT_PAD, -BOTTOM_PAD);
 
 		if (DEBUG) Log.d(TAG, "Drawing x-axis");
-		for (int i = 0; i < mXAxisList.size(); i++) {
-			mXAxisList.get(i).draw(canvas, mAxesPaint);
+		if (!mXAxisList.isEmpty()) {
+			for (int i = 0; i < mXAxisList.size(); i++) {
+				mXAxisList.get(i).draw(canvas, mAxesPaint);
+			}
+		}
+		if (!mYAxisList.isEmpty()) {
+			if (DEBUG) Log.d(TAG, "Drawing y-axis");
+			for (int i = 0; i < mYAxisList.size(); i++) {
+				mYAxisList.get(i).draw(canvas, mAxesPaint);
+			}
 		}
 
-		if (DEBUG) Log.d(TAG, "Drawing y-axis");
-		for (int i = 0; i < mYAxisList.size(); i++) {
-			mYAxisList.get(i).draw(canvas, mAxesPaint);
-		}
-
-		if (DEBUG) Log.d(TAG, "Drawing shading");
-		for (int i = 0; i < mVertShadingList.size(); i++) {
-			canvas.drawRect(mVertShadingList.get(i), mShadingPaint);
+		if (!mVertShadingList.isEmpty()) {
+			if (DEBUG) Log.d(TAG, "Drawing shading");
+			for (int i = 0; i < mVertShadingList.size(); i++) {
+				canvas.drawRect(mVertShadingList.get(i), mShadingPaint);
+			}
 		}
 
 		if (DEBUG) Log.d(TAG, "Drawing data");
-		canvas.drawPath(mPath, mVecPaint);
+		if (mPath != null) canvas.drawPath(mPath, mVecPaint);
 
-		if (DEBUG) Log.d(TAG, "Drawing labels");
-		for (int i = 0; i < mXLabelList.size(); i++) {
-			mXLabelList.get(i).draw(canvas, mAxesPaint);
+		if (!mXLabelList.isEmpty()) {
+			if (DEBUG) Log.d(TAG, "Drawing labels");
+			for (int i = 0; i < mXLabelList.size(); i++) {
+				mXLabelList.get(i).draw(canvas, mAxesPaint);
+			}
 		}
 
-		for (int i = 0; i < mYLabelList.size(); i++) {
-			mYLabelList.get(i).draw(canvas, mAxesPaint);
+		if (!mYLabelList.isEmpty()) {
+			for (int i = 0; i < mYLabelList.size(); i++) {
+				mYLabelList.get(i).draw(canvas, mAxesPaint);
+			}
 		}
 
 		canvas.restore();
