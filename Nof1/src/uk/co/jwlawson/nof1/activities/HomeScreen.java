@@ -26,6 +26,8 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.apache.http.protocol.HTTP;
+
 import uk.co.jwlawson.nof1.DataSource;
 import uk.co.jwlawson.nof1.FinishedService;
 import uk.co.jwlawson.nof1.Keys;
@@ -147,7 +149,7 @@ public class HomeScreen extends SherlockActivity {
 
 			SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 			if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
-				// Trial finished. Show emailcsv button
+				// Trial finished. Show email csv button
 				final Button btnEmail = (Button) findViewById(R.id.home_btn_email);
 				btnEmail.setVisibility(View.VISIBLE);
 
@@ -155,13 +157,13 @@ public class HomeScreen extends SherlockActivity {
 					@Override
 					public void onClick(View v) {
 
-						btnEmail.setEnabled(false);
-
 						File file = findCSV();
 
 						if (file == null) {
 							// File not found
+							btnEmail.setEnabled(false);
 							new Loader().execute();
+
 						} else {
 							Uri uri = Uri.fromFile(file);
 							Resources res = getResources();
@@ -169,8 +171,9 @@ public class HomeScreen extends SherlockActivity {
 
 							try {
 								Intent intent = new Intent(Intent.ACTION_SEND);
+								intent.setType(HTTP.PLAIN_TEXT_TYPE);
 								intent.putExtra(Intent.EXTRA_EMAIL, "");
-								intent.putExtra(Intent.EXTRA_TITLE, res.getText(R.string.trial_data));
+								intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
 								intent.putExtra(Intent.EXTRA_TEXT,
 										res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 								intent.putExtra(Intent.EXTRA_STREAM, uri);
@@ -180,7 +183,6 @@ public class HomeScreen extends SherlockActivity {
 								Toast.makeText(HomeScreen.this, R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
 							}
 						}
-						btnEmail.setEnabled(true);
 
 					}
 				});
@@ -392,8 +394,9 @@ public class HomeScreen extends SherlockActivity {
 
 				try {
 					Intent intent = new Intent(Intent.ACTION_SEND);
+					intent.setType(HTTP.PLAIN_TEXT_TYPE);
 					intent.putExtra(Intent.EXTRA_EMAIL, "");
-					intent.putExtra(Intent.EXTRA_TITLE, res.getText(R.string.trial_data));
+					intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
 					intent.putExtra(Intent.EXTRA_TEXT, res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 					intent.putExtra(Intent.EXTRA_STREAM, uri);
 					startActivity(intent);
