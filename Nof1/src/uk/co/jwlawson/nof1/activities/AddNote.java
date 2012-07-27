@@ -20,6 +20,11 @@
  ******************************************************************************/
 package uk.co.jwlawson.nof1.activities;
 
+import java.util.Calendar;
+
+import uk.co.jwlawson.nof1.DataSource;
+import uk.co.jwlawson.nof1.Keys;
+import uk.co.jwlawson.nof1.R;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -33,12 +38,6 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-
-import uk.co.jwlawson.nof1.DataSource;
-import uk.co.jwlawson.nof1.Keys;
-import uk.co.jwlawson.nof1.R;
-
-import java.util.Calendar;
 
 /**
  * Activity to allow patient to add a short note on any day.
@@ -165,13 +164,13 @@ public class AddNote extends SherlockActivity {
 			// Find the cumulative day for saving data
 			SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 			String[] start = sp.getString(Keys.CONFIG_START, "").split(":");
-			int[] startInt = new int[] { Integer.parseInt(start[0]), Integer.parseInt(start[1]),
-					Integer.parseInt(start[2]) };
+			int[] startInt = new int[] { Integer.parseInt(start[0]), Integer.parseInt(start[1]), Integer.parseInt(start[2]) };
 			Calendar calStart = Calendar.getInstance();
 			calStart.set(startInt[2], startInt[1], startInt[0]);
 
 			Calendar calNow = Calendar.getInstance();
-			String time = calNow.get(Calendar.HOUR_OF_DAY) + ":" + calNow.get(Calendar.MINUTE);
+			String time = calNow.get(Calendar.HOUR_OF_DAY) + ":"
+					+ (calNow.get(Calendar.MINUTE) < 10 ? "0" + calNow.get(Calendar.MINUTE) : calNow.get(Calendar.MINUTE));
 			// Add an hour to ensure that calStart is before calNow when they
 			// have the same date
 			calNow.add(Calendar.HOUR, 1);
