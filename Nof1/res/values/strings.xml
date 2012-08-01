@@ -16,7 +16,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <resources>
 
@@ -186,6 +186,8 @@
     <string name="no_email_app_found">"No email app found."</string>
     <string name="trial_data">"N-of-1 Trial data"</string>
     <string name="results_attached">"Find attached the data from the N-of-1 trial for "</string>
-
+    <string name="include_samples">Include sample questions?</string>
+    <string name="add_sample">Add sample questions</string>
+    <string name="add_sample_brief">Add sample</string>
 
 </resources>

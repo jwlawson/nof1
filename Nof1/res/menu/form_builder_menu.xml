@@ -33,6 +33,7 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/preview">
     </item>
+    <item android:id="@+id/menu_form_builder_samples" android:showAsAction="never|withText" android:titleCondensed="@string/about" android:title="@string/add_sample"></item>
     
 
 </menu>

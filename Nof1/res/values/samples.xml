@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="sample_ques_brief">
+        <item>Episode frequency</item>
+        <item>Episode severity</item>
+        <item>Number of episodes</item>
+        <item>Episode length</item>
+        <item>Ability to exercise</item>
+    </string-array>
+
+    <integer-array name="sample_ques_types">
+        <item>0</item>
+        <item>0</item>
+        <item>1</item>
+        <item>0</item>
+        <item>0</item>
+    </integer-array>
+
+    <string-array name="sample_questions">
+        <item>Compared to your usual state, how frequent have you episodes been?</item>
+        <item>Compared to your usual state, how severe have your episodes been?</item>
+        <item>How many episodes have you had in the past 24 hours?</item>
+        <item>Compared to your usual state, how long have your episodes been?</item>
+        <item>Compared to your usual state, how much have you been able to exercise?</item>
+    </string-array>
+    <string-array name="sample_ques_min">
+        <item>Much more frequent</item>
+        <item>Much more severe</item>
+        <item/>
+        <item>Much longer</item>
+        <item>Much less</item>
+    </string-array>
+    <string-array name="sample_ques_max">
+        <item>Much less frequent</item>
+        <item>Much less severe</item>
+        <item></item>
+        <item>Much shorter</item>
+        <item>Much more</item>
+    </string-array>
+
+</resources>
