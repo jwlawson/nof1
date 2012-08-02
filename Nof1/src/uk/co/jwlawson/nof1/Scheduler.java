@@ -264,8 +264,10 @@ public class Scheduler extends Service {
 			int nextDay = -1;
 			int add;
 			// TODO on the very first day, could have add = 0
-			for (add = 1; add < periodLength + 1; add++) {
-				nextDay = (lastDay + add) % (periodLength + 1);
+			for (add = 1; add <= periodLength; add++) {
+				nextDay = (lastDay + add) % (periodLength);
+				// Because of modulo, when the nextday would be the last in period nextDay is set to zero
+				if (nextDay == 0) nextDay = periodLength;
 				
 				if (configPrefs.getBoolean(Keys.CONFIG_DAY + nextDay, false)) {
 					if (DEBUG) Log.d(TAG, "Found the next day to send notification: " + nextDay);
