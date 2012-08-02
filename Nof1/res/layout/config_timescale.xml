@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
-  Copyright (C) 2012  WMG, University of Warwick
+  Copyright (C) 2012 John Lawson WMG, University of Warwick
   
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -111,7 +111,8 @@
         android:layout_below="@+id/config_timescale_text_days_record"
         android:text="@string/config_days_record_explain"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
+
     <Spinner
         android:id="@+id/config_timescale_spinner_periods"
         android:layout_width="wrap_content"
@@ -120,7 +121,8 @@
         android:layout_alignRight="@+id/config_timescale_edit_number_periods"
         android:layout_below="@+id/config_timescale_text_number_periods_explain"
         android:entries="@array/treatment_period_arr" />
-
+
+
     <Spinner
         android:id="@+id/config_timescale_spinner_length"
         android:layout_width="wrap_content"
@@ -131,7 +133,7 @@
         android:entries="@array/treatment_period_arr" />
 
     <fragment
-        android:name="uk.co.jwlawson.nof1.fragments.CheckArray"
+        android:name="org.nof1trial.nof1.fragments.CheckArray"
         android:id="@+id/config_timescale_check_array"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

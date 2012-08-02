@@ -32,25 +32,25 @@ Contributors:
 	<header contentId="org.eclipse.pde.bundleManifest" excluded="true" />
 	<header contentId="org.eclipse.pde.targetFile" excluded="true" />
 	<header contentId="org.eclipse.ant.core.antBuildFile" excluded="true" />
-	<header contentId="org.eclipse.pde.pluginManifest" excluded="true" />
+	<header contentId="org.eclipse.pde.simpleCheatSheet" excluded="true" />
 	<header contentId="org.eclipse.core.runtime.xml" postBlankLines="0" lineFormat="false" preserveFirstLine="true">
 		<beginLine><![CDATA[<!--]]></beginLine>
 		<linePrefix><![CDATA[  ]]></linePrefix>
 		<endLine><![CDATA[-->]]></endLine>
 		<firstLinePattern><![CDATA[<\?xml version=.*\?>]]></firstLinePattern>
 	</header>
-	<header contentId="org.eclipse.pde.simpleCheatSheet" excluded="true" />
+	<header contentId="org.eclipse.pde.pluginManifest" excluded="true" />
 	<header contentId="org.eclipse.core.runtime.text" postBlankLines="0" lineFormat="true" preserveFirstLine="false">
 		<beginLine><![CDATA[#-------------------------------------------------------------------------------]]></beginLine>
 		<linePrefix><![CDATA[# ]]></linePrefix>
 		<endLine><![CDATA[#-------------------------------------------------------------------------------]]></endLine>
 	</header>
 	<header contentId="org.eclipse.pde.featureManifest" excluded="true" />
+	<header contentId="org.eclipse.pde.compositeCheatSheet" excluded="true" />
 	<header contentId="org.eclipse.jdt.core.javaSource" postBlankLines="0" lineFormat="false" preserveFirstLine="false">
 		<beginLine><![CDATA[/*******************************************************************************]]></beginLine>
 		<linePrefix><![CDATA[ * ]]></linePrefix>
 		<endLine><![CDATA[ ******************************************************************************/]]></endLine>
 	</header>
-	<header contentId="org.eclipse.pde.compositeCheatSheet" excluded="true" />
 	<header contentId="org.eclipse.pde.schema" excluded="true" />
 </project>

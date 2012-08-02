@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
-  Copyright (C) 2012 John Lawson  WMG, University of Warwick
+  Copyright (C) 2012 John Lawson WMG, University of Warwick
   
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
 
@@ -28,7 +28,7 @@
             android:summary="@string/patien_name_summary"
             android:title="@string/patient_name" />
 
-        <uk.co.jwlawson.nof1.preferences.TimePreference
+        <org.nof1trial.nof1.preferences.TimePreference
             android:dialogTitle="Questionnaire time"
             android:key="prefs_reminder_time"
             android:summary="What time would you like to be reminded to fill in a questionnaire?"
@@ -66,8 +66,8 @@
             android:title="@string/doctor_config" >
             <intent
                 android:action="android.intent.action.MAIN"
-                android:targetClass="uk.co.jwlawson.nof1.activities.DoctorLogin"
-                android:targetPackage="uk.co.jwlawson.nof1" />
+                android:targetClass="org.nof1trial.nof1.activities.DoctorLogin"
+                android:targetPackage="org.nof1trial.nof1" />
         </PreferenceScreen>
     </PreferenceCategory>
 

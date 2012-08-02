@@ -1,6 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--
   Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
-  Copyright (C) 2012 John Lawson  WMG, University of Warwick
+  Copyright (C) 2012 John Lawson WMG, University of Warwick
   
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -16,12 +17,12 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="uk.co.jwlawson.nof1"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    package="org.nof1trial.nof1"
+    android:versionCode="2"
+    android:versionName="1.1" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -31,25 +32,25 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <permission
-        android:name="uk.co.jwlawson.nof1.permission.RECEIVER"
+        android:name="org.nof1trial.nof1.permission.RECEIVER"
         android:description="@string/receiver_permission"
         android:label="Nof1 Receiver permission"
         android:protectionLevel="signatureOrSystem" >
     </permission>
 
-    <uses-permission android:name="uk.co.jwlawson.nof1.permission.RECEIVER" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="org.nof1trial.nof1.permission.RECEIVER" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
-        android:name="App"
-        android:backupAgent="Backup"
+        android:name="org.nof1trial.nof1.App"
+        backupAgent="Backup"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:restoreAnyVersion="false"
         android:theme="@style/Theme.Sherlock.Light.ForceOverflow" >
         <meta-data
             android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAILXceBam-jxJYOgMQvg6TFIy7qQj2CNE1Tj_Kmg" />
+            android:value="AEdPqrEAAAAIQGZpGCuTBlnobcx2KKy0LfHc2x5s1d3l8A-h5w" />
 
         <activity
             android:name=".activities.UserPrefs"
@@ -57,14 +58,14 @@
             android:label="@string/settings" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
+                android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
         <activity
             android:name=".activities.DoctorLogin"
             android:exported="false" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.UserPrefs" />
+                android:value="org.nof1trial.nof1.activities.UserPrefs" />
         </activity>
         <activity
             android:name=".activities.DoctorConfig"
@@ -73,7 +74,7 @@
             android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.UserPrefs" />
+                android:value="org.nof1trial.nof1.activities.UserPrefs" />
         </activity>
         <activity
             android:name=".activities.FormBuilder"
@@ -83,7 +84,7 @@
             android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.DoctorConfig" />
+                android:value="org.nof1trial.nof1.activities.DoctorConfig" />
         </activity>
         <activity
             android:name=".activities.Questionnaire"
@@ -92,12 +93,12 @@
             android:windowSoftInputMode="stateHidden" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
+                android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
 
         <receiver
             android:name=".Receiver"
-            android:permission="uk.co.jwlawson.nof1.permission.RECEIVER" >
+            android:permission="org.nof1trial.nof1.permission.RECEIVER" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
@@ -111,19 +112,19 @@
             android:label="@string/view_graphs" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
+                android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
         <activity android:name=".activities.GraphDisplay" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.GraphChooser" />
+                android:value="org.nof1trial.nof1.activities.GraphChooser" />
         </activity>
         <activity
             android:name=".activities.About"
             android:label="@string/about" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
+                android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
         <activity android:name=".activities.HomeScreen" >
             <intent-filter>
@@ -137,21 +138,21 @@
             android:label="@string/title_comment_list" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
+                android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
         <activity
             android:name=".activities.CommentDetail"
             android:label="@string/title_comment_detail" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.CommentList" />
+                android:value="org.nof1trial.nof1.activities.CommentList" />
         </activity>
         <activity
             android:name=".activities.AddNote"
             android:label="@string/add_note" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="uk.co.jwlawson.nof1.activities.HomeScreen" />
+                android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
 
         <service

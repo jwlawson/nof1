@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
-  Copyright (C) 2012  WMG, University of Warwick
+  Copyright (C) 2012 John Lawson WMG, University of Warwick
   
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -35,10 +35,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             layout="@layout/config_doctor_details" />
-
+
+
+
         <fragment
             android:id="@+id/config_doctor_date_frag"
-            android:name="uk.co.jwlawson.nof1.fragments.StartDate"
+            android:name="org.nof1trial.nof1.fragments.StartDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout="@layout/start_date" />
@@ -52,14 +54,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             layout="@layout/config_doctor_medicine" />
-
+
+
+
         <fragment
             android:id="@+id/config_doctor_time_frag"
-            android:name="uk.co.jwlawson.nof1.fragments.TimeSetter"
+            android:name="org.nof1trial.nof1.fragments.TimeSetter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:layout="@layout/config_doctor_medicine_timing" />
-
+
+
+
+
+
         <Button
             android:id="@+id/config_doctor_btn_create"
             android:layout_width="match_parent"
