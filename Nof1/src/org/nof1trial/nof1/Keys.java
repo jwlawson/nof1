@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.nof1trial.nof1;
 
-
 /**
  * Container class holding various keys for loading SharedPreferences or extras from Bundles, Intents etc
  * 
@@ -30,7 +29,7 @@ package org.nof1trial.nof1;
 public class Keys {
 	
 	/** Name of default shared preferences */
-	public static final String DEFAULT_PREFS = "uk.co.jwlawson.nof1_preferences";
+	public static final String DEFAULT_PREFS = "org.nof1trial.nof1_preferences";
 	
 	/** Shared preference key for Patient name */
 	public static final String DEFAULT_PATIENT_NAME = "prefs_patient_name";
