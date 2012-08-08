@@ -17,12 +17,12 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.nof1trial.nof1"
-    android:versionCode="3"
-    android:versionName="1.2" >
+    android:versionCode="4"
+    android:versionName="1.3" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -43,14 +43,14 @@
 
     <application
         android:name="org.nof1trial.nof1.App"
-        backupAgent="Backup"
+        backupAgent=".Backup"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:restoreAnyVersion="false"
+        android:restoreAnyVersion="true"
         android:theme="@style/Theme.Sherlock.Light.ForceOverflow" >
         <meta-data
             android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAIQGZpGCuTBlnobcx2KKy0LfHc2x5s1d3l8A-h5w" />
+            android:value="AEdPqrEAAAAI1FtYRWzPgQfAIPsUOLpPYqusCdbY0cXGbfgIMQ" />
 
         <activity
             android:name=".activities.UserPrefs"
