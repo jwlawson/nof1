@@ -179,7 +179,7 @@ public class QuestionBuilderDialog extends SherlockDialogFragment implements Ada
 		
 		// For some reason findViewById always returns null for the layout, so get it this way...
 		mLayout = (RelativeLayout) mScaleLayout.getParent();
-		Log.d(TAG, "" + mLayout);
+		if (DEBUG) Log.d(TAG, "" + mLayout);
 		
 		// Set initial text in question fields
 		mEditQuestion = (EditText) view.findViewById(R.id.config_question_edit_text);
