@@ -43,7 +43,7 @@
 
     <application
         android:name="org.nof1trial.nof1.App"
-        backupAgent=".Backup"
+        android:backupAgent="org.nof1trial.nof1.Backup"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:restoreAnyVersion="true"
