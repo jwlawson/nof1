@@ -130,23 +130,27 @@ public class Receiver extends BroadcastReceiver {
 		builder.setContentIntent(pi).setContentTitle(title).setContentText(text).setAutoCancel(true).setSmallIcon(R.drawable.ic_noti)
 				.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_noti));
 		
+		int style = 0;
+		
 		if (sp.getBoolean(Keys.DEFAULT_LOUD, false)) {
 			// Notification makes noise
-			builder.setDefaults(Notification.DEFAULT_SOUND);
+			style ^= Notification.DEFAULT_SOUND;
 			if (DEBUG) Log.d(TAG, "Loud Notification");
 		}
 		
 		if (sp.getBoolean(Keys.DEFAULT_FLASH, false)) {
 			// Notification to flash
-			builder.setDefaults(Notification.DEFAULT_LIGHTS);
+			style ^= Notification.DEFAULT_LIGHTS;
 			if (DEBUG) Log.d(TAG, "Flashy Notification");
 		}
 		
 		if (sp.getBoolean(Keys.DEFAULT_VIBE, false)) {
 			// Notification to vibrate
-			builder.setDefaults(Notification.DEFAULT_VIBRATE);
+			style ^= Notification.DEFAULT_VIBRATE;
 			if (DEBUG) Log.d(TAG, "Vibrating Notification");
 		}
+		
+		builder.setDefaults(style);
 		
 		Notification noti = builder.getNotification();
 		
