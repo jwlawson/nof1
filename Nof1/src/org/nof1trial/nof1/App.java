@@ -35,7 +35,7 @@ import android.app.Application;
  */
 // @formatter:off
 @ReportsCrashes(formKey = "", // will not be used
-		mailTo = "nof1@jwlawson.co.uk", 
+		mailTo = "android@nof1trial.org", 
 		mode = ReportingInteractionMode.TOAST, 
 		resToastText = R.string.crash_toast_text, 
 		customReportContent = {	ReportField.APP_VERSION_NAME, 
