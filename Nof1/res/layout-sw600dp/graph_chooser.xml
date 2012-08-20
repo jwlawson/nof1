@@ -17,34 +17,28 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/graph_chooser_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-
-
+    android:layout_height="match_parent"
+    android:divider="?android:attr/dividerHorizontal"
+    android:orientation="horizontal"
+    android:showDividers="middle" >
+
     <fragment
         android:id="@+id/graph_chooser_list"
         android:name="org.nof1trial.nof1.fragments.GraphList"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" />
-
-
-
-
+        android:layout_width="0dp"
+        android:layout_height="fill_parent"
+        android:layout_weight="1" />
 
     <FrameLayout
         android:id="@+id/graph_chooser_view"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/graph_chooser_list" >
-
+        android:layout_weight="3" >
     </FrameLayout>
 
-</RelativeLayout>
+</LinearLayout>

@@ -24,6 +24,7 @@ import org.nof1trial.nof1.DataSource;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.views.GraphView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -47,7 +48,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 public class GraphViewer extends SherlockFragment {
 	
 	private static final String TAG = "GraphViewer fragment";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	
 	private static final String ARGS_ID = "id";
 	
@@ -83,9 +84,6 @@ public class GraphViewer extends SherlockFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// Initialise data source
-		new DataLoader().execute();
-		
 		if (DEBUG) Log.d(TAG, "Fragment created");
 	}
 	
@@ -107,6 +105,16 @@ public class GraphViewer extends SherlockFragment {
 	}
 	
 	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		
+		if (mGraph == null) {
+			// Initialise data source
+			new DataLoader().execute();
+		}
+	}
+	
+	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 	}
@@ -116,6 +124,7 @@ public class GraphViewer extends SherlockFragment {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
+			if (DEBUG) Log.d(TAG, "Data source loader started");
 			getSherlockActivity().setSupportProgressBarIndeterminateVisibility(true);
 		}
 		

@@ -67,13 +67,15 @@ public class GraphChooser extends SherlockFragmentActivity implements GraphList.
 			
 			mDual = true;
 			
-			GraphViewer viewer = GraphViewer.newInstance(0);
-			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-			ft.replace(R.id.graph_chooser_view, viewer, "viewer");
-			ft.commit();
-			
-			GraphList list = (GraphList) getSupportFragmentManager().findFragmentById(R.id.graph_chooser_list);
-			list.setSelection(0);
+			if (savedInstanceState == null) {
+				GraphViewer viewer = GraphViewer.newInstance(0);
+				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+				ft.replace(R.id.graph_chooser_view, viewer, "viewer");
+				ft.commit();
+				
+				GraphList list = (GraphList) getSupportFragmentManager().findFragmentById(R.id.graph_chooser_list);
+				list.setSelection(0);
+			}
 			
 			if (DEBUG) Log.d(TAG, "Created in dual pane mode");
 			

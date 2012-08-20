@@ -25,6 +25,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,15 +41,17 @@ import com.actionbarsherlock.app.SherlockListFragment;
  * 
  */
 public abstract class FragList extends SherlockListFragment {
-
+	
 	private static final String TAG = "FragList";
 	private static final boolean DEBUG = false;
-
+	
+	private static final String SAVED_POS = "Fraglist.pos";
+	
 	private OnListItemSelectedListener mListener;
 	private int mSelectedPosition = -1;
-
+	
 	public interface OnListItemSelectedListener {
-
+		
 		/**
 		 * 
 		 * @param l The ListView where the click happened
@@ -58,36 +61,36 @@ public abstract class FragList extends SherlockListFragment {
 		 */
 		public void onListItemSelected(ListView l, View v, int position, long id);
 	}
-
+	
 	/** Creates the arrayAdapter for the list and sets the arraylist */
 	public <T extends Object> void setArrayList(ArrayList<T> list) {
 		HighlightArrayAdapter<T> adapter = new HighlightArrayAdapter<T>(getActivity(), android.R.layout.simple_list_item_1, android.R.id.text1, list);
 		setListAdapter(adapter);
 	}
-
+	
 	@Override
 	public void setSelection(int position) {
 		super.setSelection(position);
 		mSelectedPosition = position;
 	}
-
+	
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		if (DEBUG) Log.d(TAG, "Item selected " + position);
-
+		
 		// Clear previously clicked view and colour this clicked view
 		clearSelected();
 		mSelectedPosition = position;
 		getListView().setItemChecked(position, true);
-
+		
 		// Pass click on to activity
 		mListener.onListItemSelected(l, v, position, id);
 	}
-
+	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-
+		
 		// Check that the activity implements the interface
 		try {
 			mListener = (OnListItemSelectedListener) activity;
@@ -95,43 +98,57 @@ public abstract class FragList extends SherlockListFragment {
 			throw new ClassCastException(activity.toString() + " must implement OnListItemSelectedListener");
 		}
 	}
-
+	
 	/**
-	 * Function to clear the background colour of the selected view. Use when a
-	 * different view is selected.
+	 * Function to clear the background colour of the selected view. Use when a different view is selected.
 	 */
 	public void clearSelected() {
 		if (DEBUG) Log.d(TAG, "Clearing selection");
-
+		
 		// Clear saved position
 		mSelectedPosition = -1;
-
+		
 		// Clear the background of all views
 		ListView lv = getListView();
 		for (int i = 0; i < lv.getChildCount(); i++) {
 			lv.getChildAt(i).setBackgroundResource(0);
 		}
 	}
-
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(SAVED_POS, mSelectedPosition);
+	}
+	
+	@Override
+	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		
+		if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_POS)) {
+			setSelection(savedInstanceState.getInt(SAVED_POS));
+		}
+	}
+	
 	/** Simple ArrayAdapter wrapper that persistently keeps the last selected view highlighted */
 	class HighlightArrayAdapter<T> extends ArrayAdapter<T> {
-
+		
 		public HighlightArrayAdapter(Context context, int resource, int textViewResourceId, List<T> objects) {
 			super(context, resource, textViewResourceId, objects);
 		}
-
+		
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View view = super.getView(position, convertView, parent);
-
+			
 			if (position == mSelectedPosition) {
 				view.setBackgroundColor(0xFF33B5E5);
 			} else {
 				view.setBackgroundColor(0x00000000);
 			}
-
+			
 			return view;
 		}
 	}
-
+	
 }
