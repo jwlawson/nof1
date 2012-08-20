@@ -48,7 +48,7 @@ import com.actionbarsherlock.app.SherlockFragment;
 public class GraphViewer extends SherlockFragment {
 	
 	private static final String TAG = "GraphViewer fragment";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	
 	private static final String ARGS_ID = "id";
 	
