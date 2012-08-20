@@ -133,8 +133,15 @@ public class CommentListFragment extends FragList {
 				if (comment != null && comment.length() != 0) {
 					cal.add(Calendar.DAY_OF_MONTH, day - calDay);
 					
-					String date = cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.YEAR) + " "
-							+ mCursor.getString(timeCol);
+					// Ensure that for minutes less than 10 they have prefix of 0
+					String[] time = mCursor.getString(timeCol).split(":");
+					int mins = Integer.parseInt(time[1]);
+					if (mins < 10) {
+						time[1] = "0" + mins;
+					}
+					
+					String date = cal.get(Calendar.DAY_OF_MONTH) + "/" + (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.YEAR) + " " + time[0] + ":"
+							+ time[1];
 					mListener.onListItemAdded(comment, date);
 					publishProgress(date);
 					
