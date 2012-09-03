@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8" standalone="no"?><!--
   Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
   Copyright (C) 2012 John Lawson
   
@@ -17,148 +16,96 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
--->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.nof1trial.nof1"
-    android:versionCode="5"
-    android:versionName="1.4" >
+      John Lawson - initial API and implementation
 
-    <uses-sdk
-        android:minSdkVersion="7"
-        android:targetSdkVersion="16" />
+--><manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="5" android:versionName="1.4" package="org.nof1trial.nof1">
 
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="16"/>
 
-    <permission
-        android:name="org.nof1trial.nof1.permission.RECEIVER"
-        android:description="@string/receiver_permission"
-        android:label="Nof1 Receiver permission"
-        android:protectionLevel="signatureOrSystem" >
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <permission android:description="@string/receiver_permission" android:label="Nof1 Receiver permission" android:name="org.nof1trial.nof1.permission.RECEIVER" android:protectionLevel="signatureOrSystem">
     </permission>
 
-    <uses-permission android:name="org.nof1trial.nof1.permission.RECEIVER" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="org.nof1trial.nof1.permission.RECEIVER"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
-    <application
-        android:name="org.nof1trial.nof1.App"
-        android:backupAgent="org.nof1trial.nof1.Backup"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:restoreAnyVersion="true"
-        android:theme="@style/Theme.Sherlock.Light.ForceOverflow" >
-        <meta-data
-            android:name="com.google.android.backup.api_key"
-            android:value="AEdPqrEAAAAI1FtYRWzPgQfAIPsUOLpPYqusCdbY0cXGbfgIMQ" />
+    <permission android:name="org.nof1trial.nof1.permission.C2D_MESSAGE" android:protectionLevel="signature"/>
 
-        <activity
-            android:name=".activities.UserPrefs"
-            android:exported="false"
-            android:label="@string/settings" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.HomeScreen" />
+   <uses-permission android:name="android.permission.INTERNET"/>
+   <uses-permission android:name="org.nof1trial.nof1.permission.C2D_MESSAGE"/>
+   <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+   <uses-permission android:name="android.permission.WAKE_LOCK"/>
+   <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+   <uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+   <application android:backupAgent="org.nof1trial.nof1.Backup" android:icon="@drawable/ic_launcher" android:label="@string/app_name" android:name="org.nof1trial.nof1.App" android:restoreAnyVersion="true" android:theme="@style/Theme.Sherlock.Light.ForceOverflow">
+        <meta-data android:name="com.google.android.backup.api_key" android:value="AEdPqrEAAAAI1FtYRWzPgQfAIPsUOLpPYqusCdbY0cXGbfgIMQ"/>
+
+        <activity android:exported="false" android:label="@string/settings" android:name=".activities.UserPrefs">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.nof1trial.nof1.activities.HomeScreen"/>
         </activity>
-        <activity
-            android:name=".activities.DoctorLogin"
-            android:exported="false" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.UserPrefs" />
+        <activity android:exported="false" android:name=".activities.DoctorLogin">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.nof1trial.nof1.activities.UserPrefs"/>
         </activity>
-        <activity
-            android:name=".activities.DoctorConfig"
-            android:exported="false"
-            android:label="@string/configuration"
-            android:windowSoftInputMode="stateHidden" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.UserPrefs" />
+        <activity android:exported="false" android:label="@string/configuration" android:name=".activities.DoctorConfig" android:windowSoftInputMode="stateHidden">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.nof1trial.nof1.activities.UserPrefs"/>
         </activity>
-        <activity
-            android:name=".activities.FormBuilder"
-            android:exported="false"
-            android:label="@string/form_builder"
-            android:uiOptions="splitActionBarWhenNarrow"
-            android:windowSoftInputMode="stateHidden" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.DoctorConfig" />
+        <activity android:exported="false" android:label="@string/form_builder" android:name=".activities.FormBuilder" android:uiOptions="splitActionBarWhenNarrow" android:windowSoftInputMode="stateHidden">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.nof1trial.nof1.activities.DoctorConfig"/>
         </activity>
-        <activity
-            android:name=".activities.Questionnaire"
-            android:label="@string/data_input"
-            android:uiOptions="splitActionBarWhenNarrow"
-            android:windowSoftInputMode="stateHidden" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.HomeScreen" />
+        <activity android:label="@string/data_input" android:name=".activities.Questionnaire" android:uiOptions="splitActionBarWhenNarrow" android:windowSoftInputMode="stateHidden">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.nof1trial.nof1.activities.HomeScreen"/>
         </activity>
 
-        <receiver
-            android:name=".Receiver"
-            android:permission="org.nof1trial.nof1.permission.RECEIVER" >
+        <receiver android:name=".Receiver" android:permission="org.nof1trial.nof1.permission.RECEIVER">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
-        <service android:name=".Scheduler" >
+        <service android:name=".Scheduler">
         </service>
 
-        <activity
-            android:name=".activities.GraphChooser"
-            android:label="@string/view_graphs" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.HomeScreen" />
+        <activity android:label="@string/view_graphs" android:name=".activities.GraphChooser">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.nof1trial.nof1.activities.HomeScreen"/>
         </activity>
-        <activity android:name=".activities.GraphDisplay" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.GraphChooser" />
+        <activity android:name=".activities.GraphDisplay">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.nof1trial.nof1.activities.GraphChooser"/>
         </activity>
-        <activity
-            android:name=".activities.About"
-            android:label="@string/about" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.HomeScreen" />
+        <activity android:label="@string/about" android:name=".activities.About">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.nof1trial.nof1.activities.HomeScreen"/>
         </activity>
-        <activity android:name=".activities.HomeScreen" >
+        <activity android:name=".activities.HomeScreen">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.CommentList"
-            android:label="@string/title_comment_list" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.HomeScreen" />
+        <activity android:label="@string/title_comment_list" android:name=".activities.CommentList">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.nof1trial.nof1.activities.HomeScreen"/>
         </activity>
-        <activity
-            android:name=".activities.CommentDetail"
-            android:label="@string/title_comment_detail" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.CommentList" />
+        <activity android:label="@string/title_comment_detail" android:name=".activities.CommentDetail">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.nof1trial.nof1.activities.CommentList"/>
         </activity>
-        <activity
-            android:name=".activities.AddNote"
-            android:label="@string/add_note" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.HomeScreen" />
+        <activity android:label="@string/add_note" android:name=".activities.AddNote">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="org.nof1trial.nof1.activities.HomeScreen"/>
         </activity>
 
-        <service
-            android:name=".FinishedService"
-            android:exported="false" >
+        <service android:exported="false" android:name=".FinishedService">
         </service>
+        <service android:name=".GCMIntentService"/>
+        <receiver android:name="com.google.android.gcm.GCMBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
+                <category android:name="org.nof1trial.nof1"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION"/>
+                <category android:name="org.nof1trial.nof1"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
