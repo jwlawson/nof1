@@ -22,8 +22,7 @@ package org.nof1trial.nof1.shared;
 
 import java.util.List;
 
-import org.nof1trial.nof1.server.Config;
-
+import com.google.web.bindery.requestfactory.shared.Request;
 import com.google.web.bindery.requestfactory.shared.RequestContext;
 import com.google.web.bindery.requestfactory.shared.ServiceName;
 
@@ -31,15 +30,17 @@ import com.google.web.bindery.requestfactory.shared.ServiceName;
  * @author John Lawson
  * 
  */
-@ServiceName("org.nof1trial.nof1.server.Config")
+@ServiceName("org.nof1trial.nof1.server.ConfigProxy")
 public interface ConfigRequest extends RequestContext {
 
-	public List<Config> findAllConfigs();
+	public Request<List<ConfigProxy>> findAllConfigs();
 
-	public Config findConfig(Long id);
+	public Request<ConfigProxy> findConfig(Long id);
 
-	public List<Config> findConfigByDoctor(String doctorEmail, int maxResults);
+	public Request<List<ConfigProxy>> findConfigByDoctor(String doctorEmail, int maxResults);
 
-	public List<Config> findConfigByPatient(String patientEmail, int maxResults);
+	public Request<List<ConfigProxy>> findConfigByPatient(String patientEmail, int maxResults);
+
+	public Request<ConfigProxy> update(ConfigProxy config);
 
 }
