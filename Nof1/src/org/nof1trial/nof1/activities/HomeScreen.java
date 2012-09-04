@@ -58,45 +58,46 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
 /**
- * The main home screen that users see when they open the app. On first run will also set up the task stack to allow doctors to input data, then patients
+ * The main home screen that users see when they open the app. On first run will also set up the task stack to allow
+ * doctors to input data, then patients
  * preferences, then back to this screen.
  * 
  * @author John Lawson
  * 
  */
 public class HomeScreen extends SherlockActivity {
-	
+
 	private static final String TAG = "HomeScreen";
 	private static final boolean DEBUG = false;
-	
+
 	private File mFile;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
-		
+
 		getSupportActionBar().setHomeButtonEnabled(false);
 		setSupportProgressBarIndeterminateVisibility(false);
-		
+
 		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
-		
+
 		if (!sp.contains(Keys.DEFAULT_FIRST)) {
 			if (DEBUG) Log.d(TAG, "App launched for the first time");
-			
+
 			TaskStackBuilder builder = TaskStackBuilder.create(this);
-			
+
 			builder.addNextIntent(new Intent(this, HomeScreen.class));
 			builder.addNextIntent(new Intent(this, UserPrefs.class));
 			builder.addNextIntent(new Intent(this, DoctorLogin.class));
-			
+
 			builder.startActivities();
-			
+
 		} else {
 			// Not the first time app is run
-			
+
 			setContentView(R.layout.home_layout);
-			
+
 			Button btnData = (Button) findViewById(R.id.home_btn_data);
 			btnData.setOnClickListener(new OnClickListener() {
 				@Override
@@ -106,14 +107,14 @@ public class HomeScreen extends SherlockActivity {
 					startActivity(intent);
 				}
 			});
-			
+
 			SharedPreferences quesPrefs = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
-			
+
 			Button btnGraphs = (Button) findViewById(R.id.home_btn_graph);
-			
+
 			if (quesPrefs.contains(Keys.QUES_TEXT + 0)) {
 				// Enable viewing graphs, as questionnaire built
-				
+
 				btnGraphs.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -126,9 +127,9 @@ public class HomeScreen extends SherlockActivity {
 				// Questionnaire not made, so don't want to create empty database
 				btnGraphs.setEnabled(false);
 			}
-			
+
 			Button btnComment = (Button) findViewById(R.id.home_btn_comment);
-			
+
 			btnComment.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -136,9 +137,9 @@ public class HomeScreen extends SherlockActivity {
 					startActivity(intent);
 				}
 			});
-			
+
 			Button btnNewNote = (Button) findViewById(R.id.home_btn_add_note);
-			
+
 			btnNewNote.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -146,35 +147,36 @@ public class HomeScreen extends SherlockActivity {
 					startActivity(intent);
 				}
 			});
-			
+
 			SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 			if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
 				// Trial finished. Show email csv button
 				final Button btnEmail = (Button) findViewById(R.id.home_btn_email);
 				btnEmail.setVisibility(View.VISIBLE);
-				
+
 				btnEmail.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						
+
 						File file = findCSV();
-						
+
 						if (file == null) {
 							// File not found
 							btnEmail.setEnabled(false);
 							new Loader().execute();
-							
+
 						} else {
 							Uri uri = Uri.fromFile(file);
 							Resources res = getResources();
 							SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-							
+
 							try {
 								Intent intent = new Intent(Intent.ACTION_SEND);
 								intent.setType(HTTP.PLAIN_TEXT_TYPE);
 								intent.putExtra(Intent.EXTRA_EMAIL, "");
 								intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
-								intent.putExtra(Intent.EXTRA_TEXT, res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+								intent.putExtra(Intent.EXTRA_TEXT,
+										res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 								intent.putExtra(Intent.EXTRA_STREAM, uri);
 								startActivity(intent);
 							} catch (ActivityNotFoundException e) {
@@ -182,75 +184,80 @@ public class HomeScreen extends SherlockActivity {
 								Toast.makeText(HomeScreen.this, R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
 							}
 						}
-						
+
 					}
 				});
 				// Reload relative layout to ensure button is shown
 				((RelativeLayout) btnEmail.getParent()).requestLayout();
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.home_menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (DEBUG) Log.d(TAG, "Menu item selected: " + item.getTitle());
-		
+
 		switch (item.getItemId()) {
-		
+
 		case R.id.menu_home_settings:
 			Intent intent = new Intent(this, UserPrefs.class);
 			startActivity(intent);
 			return true;
-			
+
 		case R.id.menu_home_about:
 			Intent intent1 = new Intent(this, About.class);
 			startActivity(intent1);
 			return true;
+
+		case R.id.menu_home_accounts:
+			Intent intent2 = new Intent(this, AccountsActivity.class);
+			startActivity(intent2);
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	private File findCSV() {
 		String state = Environment.getExternalStorageState();
-		
+
 		File dir;
 		File file;
-		
+
 		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) || Environment.MEDIA_MOUNTED.equals(state)) {
 			// External storage readable
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
 				// Eclair has no support for getExternalCacheDir()
 				// Look for file in /Android/data/org.nof1trial.nof1/files/
 				File temp = Environment.getExternalStorageDirectory();
-				
+
 				dir = new File(temp.getAbsoluteFile() + "/Android/data/org.nof1trial.nof1/files");
-				
+
 			} else {
-				
+
 				dir = getExternalFilesDir(null);
 			}
-			
+
 			file = new File(dir, FinishedService.CVS_FILE);
-			
+
 			if (file.exists()) {
 				// Found the file
 				return file;
 			}
 		}
-		
+
 		// Search internal storage
 		dir = getFilesDir();
-		
+
 		file = new File(dir, FinishedService.CVS_FILE);
-		
+
 		if (file.exists()) {
 			// Found the file
 			return file;
@@ -258,7 +265,7 @@ public class HomeScreen extends SherlockActivity {
 		// File not found :(
 		return null;
 	}
-	
+
 	@SuppressLint("WorldReadableFiles")
 	@TargetApi(8)
 	private boolean createCVS(Cursor cursor) {
@@ -272,7 +279,7 @@ public class HomeScreen extends SherlockActivity {
 		boolean storageWriteable = false;
 		boolean storageInternal = false;
 		String state = Environment.getExternalStorageState();
-		
+
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
 			// We can read and write the media
 			storageWriteable = true;
@@ -282,18 +289,18 @@ public class HomeScreen extends SherlockActivity {
 			storageWriteable = false;
 		}
 		File dir = null;
-		
+
 		if (storageWriteable && Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
 			// Eclair has no support for getExternalCacheDir()
 			// Save file to /Android/data/org.nof1trial.nof1/cache/
 			File temp = Environment.getExternalStorageDirectory();
-			
+
 			dir = new File(temp.getAbsoluteFile() + "/Android/data/org.nof1trial.nof1/files");
-			
+
 		} else if (storageWriteable) {
-			
+
 			dir = getExternalFilesDir(null);
-			
+
 		} else {
 			// Toast.makeText(this, "No external storage found. Using internal storage which may not work.",
 			// Toast.LENGTH_LONG).show();
@@ -301,96 +308,96 @@ public class HomeScreen extends SherlockActivity {
 			dir = getFilesDir();
 		}
 		mFile = new File(dir, FinishedService.CVS_FILE);
-		
+
 		if (storageInternal) {
 			try {
 				// File should be world readable so that GMail (or whatever the user uses) can read it
 				FileOutputStream fos = openFileOutput(FinishedService.CVS_FILE, MODE_WORLD_READABLE);
 				fos.write(getCVSString(cursor).getBytes());
 				fos.close();
-				
+
 			} catch (IOException e) {
 				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
 				return false;
 			}
-			
+
 		} else {
 			try {
 				// Write file to external storage
 				BufferedWriter writer = new BufferedWriter(new FileWriter(mFile));
 				writer.write(getCVSString(cursor));
 				writer.close();
-				
+
 			} catch (IOException e) {
 				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
 				return false;
 			}
 		}
 		return true;
-		
+
 	}
-	
+
 	private String getCVSString(Cursor cursor) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		cursor.moveToFirst();
 		String[] headers = cursor.getColumnNames();
 		int size = headers.length;
-		
+
 		// Add column headers
 		for (int i = 0; i < size; i++) {
 			sb.append(headers[i]).append(", ");
 		}
 		sb.append("\n");
-		
+
 		// Add data
 		while (!cursor.isAfterLast()) {
 			for (int i = 0; i < size; i++) {
 				sb.append(cursor.getString(i)).append(", ");
 			}
 			sb.append("\n");
-			
+
 			cursor.moveToNext();
 		}
-		
+
 		return sb.toString();
-		
+
 	}
-	
+
 	private class Loader extends AsyncTask<Void, Void, Void> {
-		
+
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
 			setSupportProgressBarIndeterminateVisibility(true);
 		}
-		
+
 		@Override
 		protected Void doInBackground(Void... params) {
 			DataSource data = new DataSource(HomeScreen.this);
 			data.open();
-			
+
 			Cursor cursor = data.getAllColumns();
-			
+
 			createCVS(cursor);
-			
+
 			cursor.close();
 			data.close();
-			
+
 			return null;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			setSupportProgressBarIndeterminateVisibility(false);
-			
+
 			// Send file
 			if (mFile != null) {
 				Uri uri = Uri.fromFile(mFile);
 				Resources res = getResources();
 				SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-				
+
 				try {
 					Intent intent = new Intent(Intent.ACTION_SEND);
 					intent.setType(HTTP.PLAIN_TEXT_TYPE);

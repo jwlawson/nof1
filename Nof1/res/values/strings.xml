@@ -208,4 +208,6 @@
     <string name="needs_account">To register this app, you must first create an account.</string>
 
     <string name="account_title">Connect to the cloud</string>
+
+    <string name="accounts">Accounts</string>
 </resources>

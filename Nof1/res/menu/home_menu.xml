@@ -22,6 +22,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/menu_home_settings" android:title="@string/settings" android:icon="@drawable/ic_action_settings"></item>
     <item android:id="@+id/menu_home_about" android:title="@string/about"></item>
+    <item android:id="@+id/menu_home_accounts" android:showAsAction="never|withText" android:title="@string/accounts"></item>
     
 
 </menu>
