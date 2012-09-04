@@ -27,11 +27,8 @@ import org.nof1trial.nof1.Scheduler;
 import android.annotation.TargetApi;
 import android.app.backup.BackupManager;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceCategory;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -40,43 +37,37 @@ import com.actionbarsherlock.app.SherlockPreferenceActivity;
 import com.actionbarsherlock.view.MenuItem;
 
 /**
- * Shows the user preferences, which are accessible with getDefaultPreferences(Context) Also provides access to doctor config.
+ * Shows the user preferences, which are accessible with getDefaultPreferences(Context) Also provides access to doctor
+ * config.
  * 
  * @author John Lawson
  * 
  */
 public class UserPrefs extends SherlockPreferenceActivity {
-	
+
 	private static final String TAG = "User Prefs";
 	private static final boolean DEBUG = false;
-	
+
 	public UserPrefs() {
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		// Load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.user_preferences);
-		
-		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
-			if (DEBUG) Log.d(TAG, "Pre-Froyo phone, removing backup option");
-			Preference backup = findPreference(Keys.DEFAULT_BACKUP);
-			
-			((PreferenceCategory) findPreference("category_general")).removePreference(backup);
-		}
-		
+
 		if (DEBUG) Log.d(TAG, "Preferences loaded");
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (DEBUG) Log.d(TAG, "Menu item selected: " + item.getTitle());
-		
+
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			Intent upIntent = new Intent(this, HomeScreen.class);
@@ -94,20 +85,18 @@ public class UserPrefs extends SherlockPreferenceActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	@TargetApi(8)
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		
-		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
-		
-		if (sp.getBoolean(Keys.DEFAULT_BACKUP, false) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			BackupManager bm = new BackupManager(this);
 			bm.dataChanged();
 			if (DEBUG) Log.d(TAG, "Requesting backup");
 		}
-		
+
 		// Tell Scheduler to redo alarms, as time could have changed
 		Intent intent = new Intent(this, Scheduler.class);
 		intent.putExtra(Keys.INTENT_BOOT, true);
