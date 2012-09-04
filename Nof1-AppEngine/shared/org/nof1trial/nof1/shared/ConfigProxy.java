@@ -32,7 +32,11 @@ public interface ConfigProxy extends ValueProxy {
 
 	public String getPatientEmail();
 
-	public void setPatientE1mail(String patientEmail);
+	public void setPatientEmail(String patientEmail);
+
+	public String getPatientName();
+
+	public void setPatientName(String name);
 
 	public String getDocEmail();
 

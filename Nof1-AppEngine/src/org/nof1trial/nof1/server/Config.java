@@ -133,6 +133,8 @@ public class Config {
 
 	private String patientEmail;
 
+	private String patientName;
+
 	private String pharmEmail;
 
 	private String treatmentA;
@@ -179,6 +181,14 @@ public class Config {
 
 	public void setPatientEmail(String patientEmail) {
 		this.patientEmail = patientEmail;
+	}
+
+	public String getPatientName() {
+		return patientName;
+	}
+
+	public void setPatientName(String patientName) {
+		this.patientName = patientName;
 	}
 
 	public String getDocEmail() {
