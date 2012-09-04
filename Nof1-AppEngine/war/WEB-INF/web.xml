@@ -15,7 +15,25 @@
   <welcome-file-list>
     <welcome-file>Nof1_AppEngine.html</welcome-file>
   </welcome-file-list>
+  
+  <!--  RequestFactory Servlet -->
+    <servlet>
+    <servlet-name>requestFactoryServlet</servlet-name>
+    <servlet-class>com.google.web.bindery.requestfactory.server.RequestFactoryServlet</servlet-class>
+    <init-param>
+      <param-name>symbolMapsDirectory</param-name>
+      <!-- You'll need to compile with -extras and move the symbolMaps directory
+           to this location if you want stack trace deobfuscation to work -->
+      <param-value>WEB-INF/classes/symbolMaps/</param-value>
+    </init-param>
+  </servlet>
 
+  <servlet-mapping>
+    <servlet-name>requestFactoryServlet</servlet-name>
+    <url-pattern>/gwtRequest</url-pattern>
+  </servlet-mapping>
+
+  <!--  System servlet -->
   <servlet>
     <servlet-name>SystemServiceServlet</servlet-name>
     <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
@@ -29,5 +47,25 @@
     <servlet-name>SystemServiceServlet</servlet-name>
     <url-pattern>/_ah/spi/*</url-pattern>
   </servlet-mapping>
+  
+  <!--  Not sure how important these are -->
+    <security-constraint>
+    <web-resource-collection>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>*</role-name>
+    </auth-constraint>
+  </security-constraint>
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>tasks</web-resource-name>
+      <url-pattern>/tasks/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+      <role-name>admin</role-name>
+    </auth-constraint>
+  </security-constraint>
 
 </web-app>
