@@ -21,6 +21,8 @@
 package org.nof1trial.nof1.server;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,6 +45,32 @@ import com.google.appengine.api.users.UserServiceFactory;
  */
 @Entity
 public class Config {
+	private static final Logger log = Logger.getLogger(Config.class.getName());
+
+	/**
+	 * Save the given config file to the data store
+	 * 
+	 * @param conf
+	 * @return
+	 */
+	public static Config update(Config conf) {
+		if (conf.patientEmail == null) {
+			conf.patientEmail = getUserEmail();
+		}
+		if (conf.version == null) {
+			conf.version = 0;
+		} else {
+			conf.version++;
+		}
+		conf.persist();
+
+		log.log(Level.ALL, "Config saved, this is where to send email");
+		return conf;
+	}
+
+	public static void delete(Config conf) {
+		conf.remove();
+	}
 
 	@SuppressWarnings("unchecked")
 	public static List<Config> findAllConfigs() {
@@ -131,6 +159,8 @@ public class Config {
 	@Size(min = 5)
 	private String doctorEmail;
 
+	private String doctorName;
+
 	private String patientEmail;
 
 	private String patientName;
@@ -157,6 +187,7 @@ public class Config {
 		EntityManager em = entityManager();
 		try {
 			em.persist(this);
+			log.log(Level.INFO, "Saving config file: " + toString());
 		} finally {
 			em.close();
 		}
@@ -197,6 +228,14 @@ public class Config {
 
 	public void setDocEmail(String docEmail) {
 		this.doctorEmail = docEmail;
+	}
+
+	public String getDoctorName() {
+		return doctorName;
+	}
+
+	public void setDoctorName(String doctorName) {
+		this.doctorName = doctorName;
 	}
 
 	public String getPharmEmail() {

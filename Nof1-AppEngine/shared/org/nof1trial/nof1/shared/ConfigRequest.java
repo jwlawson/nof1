@@ -43,4 +43,6 @@ public interface ConfigRequest extends RequestContext {
 
 	public Request<ConfigProxy> update(ConfigProxy config);
 
+	public void delete(ConfigProxy config);
+
 }
