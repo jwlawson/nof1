@@ -159,6 +159,11 @@
             android:name=".FinishedService"
             android:exported="false" >
         </service>
+        <activity android:name=".activities.AccountsActivity" android:label="@string/account_title">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.nof1trial.nof1.activities.UserPrefs" />
+        </activity>
     </application>
 
 </manifest>

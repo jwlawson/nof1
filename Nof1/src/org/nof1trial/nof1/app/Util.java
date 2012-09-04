@@ -23,19 +23,11 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
-import org.nof1trial.nof1.R;
-
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.Builder;
 import android.util.Log;
 
 import com.google.web.bindery.event.shared.SimpleEventBus;
@@ -85,37 +77,12 @@ public class Util {
 	/**
 	 * Key for shared preferences.
 	 */
-	private static final String SHARED_PREFS = "cloudtasks".toUpperCase(Locale.ENGLISH) + "_PREFS";
+	private static final String SHARED_PREFS = "ACCOUNT_PREFS";
 
 	/**
 	 * Cache containing the base URL for a given context.
 	 */
 	private static final Map<Context, String> URL_MAP = new HashMap<Context, String>();
-
-	/**
-	 * Display a notification containing the given string.
-	 */
-	public static void generateNotification(Context context, String message) {
-		int icon = R.drawable.ic_noti;
-		long when = System.currentTimeMillis();
-
-		NotificationCompat.Builder builder = new Builder(context);
-		builder.setSmallIcon(icon).setWhen(when).setContentTitle("Example").setContentText(message)
-				.setContentIntent(PendingIntent.getActivity(context, 0, null, PendingIntent.FLAG_CANCEL_CURRENT));
-
-		Notification notification = builder.build();
-		notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-		SharedPreferences settings = Util.getSharedPreferences(context);
-		int notificatonID = settings.getInt("notificationID", 0);
-
-		NotificationManager nm = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-		nm.notify(notificatonID, notification);
-
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putInt("notificationID", ++notificatonID % 32);
-		editor.commit();
-	}
 
 	/**
 	 * Returns the (debug or production) URL associated with the registration
