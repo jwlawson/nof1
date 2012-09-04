@@ -25,9 +25,12 @@ import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.ConfigRequest;
 import org.nof1trial.nof1.shared.MyRequestFactory;
 
+import android.annotation.TargetApi;
 import android.app.IntentService;
+import android.app.backup.BackupManager;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
+import android.os.Build;
 
 /**
  * @author John Lawson
@@ -47,92 +50,76 @@ public class Saver extends IntentService {
 
 		if (Keys.ACTION_SAVE_CONFIG.equals(intent.getAction())) {
 			// SAve config data to disk and online
-			/*
-			 * // Put config data into shared preferences editor
-			 * SharedPreferences.Editor editor = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE).edit();
-			 * 
-			 * Intent intent = new Intent(Keys.ACTION_SAVE_CONFIG);
-			 * 
-			 * int number = 0;
-			 * int length = 0;
-			 * 
-			 * // Names
-			 * editor.putString(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
-			 * editor.putString(Keys.CONFIG_DOCTOR_NAME, mDocName.getText().toString());
-			 * editor.putString(Keys.CONFIG_DOC, mDocEmail.getText().toString());
-			 * 
-			 * // Period number
-			 * if (mPeriodNumber.getVisibility() == View.VISIBLE) {
-			 * try {
-			 * number = Integer.parseInt(mPeriodNumber.getText().toString());
-			 * } catch (NumberFormatException e) {
-			 * Toast.makeText(this, R.string.invalid_period_input, Toast.LENGTH_LONG).show();
-			 * result = false;
-			 * }
-			 * } else {
-			 * number = mIntPeriodNumber;
-			 * }
-			 * editor.putInt(Keys.CONFIG_NUMBER_PERIODS, number);
-			 * 
-			 * // Period length
-			 * if (mPeriodLength.getVisibility() == View.VISIBLE) {
-			 * try {
-			 * length = Integer.parseInt(mPeriodLength.getText().toString());
-			 * } catch (NumberFormatException e) {
-			 * Toast.makeText(this, R.string.invalid_length_input, Toast.LENGTH_LONG).show();
-			 * result = false;
-			 * }
-			 * } else {
-			 * length = mIntPeriodLength;
-			 * }
-			 * editor.putInt(Keys.CONFIG_PERIOD_LENGTH, length);
-			 * 
-			 * editor.putBoolean(Keys.CONFIG_BUILT, mFormBuilt);
-			 * 
-			 * // Start date
-			 * editor.putString(Keys.CONFIG_START, mDate.getDate());
-			 * 
-			 * // Save times to remind to take medicine
-			 * String[] times = mTimeSetter.getTimes();
-			 * for (int i = 0; i < times.length; i++) {
-			 * editor.putString(Keys.CONFIG_TIME + i, times[i]);
-			 * }
-			 * 
-			 * editor.putString(Keys.CONFIG_TREATMENT_A, mTreatmentA.getText().toString());
-			 * editor.putString(Keys.CONFIG_TREATMENT_B, mTreatmentB.getText().toString());
-			 * editor.putString(Keys.CONFIG_TREATMENT_NOTES, mAnyNotes.getText().toString());
-			 * 
-			 * // save checked boxes
-			 * int[] arr = mArray.getSelected();
-			 * for (int j = 1; j < length + 1; j++) {
-			 * boolean contains = false;
-			 * for (int k = 0; k < arr.length; k++) {
-			 * if (j == arr[k]) contains = true;
-			 * }
-			 * editor.putBoolean(Keys.CONFIG_DAY + j, contains);
-			 * }
-			 * 
-			 * // Save changes
-			 * result &= editor.commit();
-			 * // Ask for backup
-			 * backup();
-			 */
-			new AsyncTask<Void, Void, Void>() {
 
-				@Override
-				protected Void doInBackground(Void... arg0) {
-					MyRequestFactory factory = (MyRequestFactory) Util.getRequestFactory(Saver.this, MyRequestFactory.class);
-					ConfigRequest request = factory.configRequest();
+			// get values from the intent
+			String patientName = intent.getStringExtra(Keys.CONFIG_PATIENT_NAME);
+			String doctorName = intent.getStringExtra(Keys.CONFIG_DOCTOR_NAME);
+			final String doctorEmail = intent.getStringExtra(Keys.CONFIG_DOC);
+			String pharmEmail = intent.getStringExtra(Keys.CONFIG_PHARM);
+			int numberPeriods = intent.getIntExtra(Keys.CONFIG_NUMBER_PERIODS, 0);
+			int periodLength = intent.getIntExtra(Keys.CONFIG_PERIOD_LENGTH, 0);
+			String startDate = intent.getStringExtra(Keys.CONFIG_START);
+			String treatmentA = intent.getStringExtra(Keys.CONFIG_TREATMENT_A);
+			String treatmentB = intent.getStringExtra(Keys.CONFIG_TREATMENT_B);
+			String treatmentNotes = intent.getStringExtra(Keys.CONFIG_TREATMENT_NOTES);
+			boolean formBuilt = intent.getBooleanExtra(Keys.CONFIG_BUILT, false);
 
-					ConfigProxy conf = request.create(ConfigProxy.class);
+			// Save to file
+			SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putString(Keys.CONFIG_PATIENT_NAME, patientName);
+			editor.putString(Keys.CONFIG_DOCTOR_NAME, doctorName);
+			editor.putString(Keys.CONFIG_DOC, doctorEmail);
+			editor.putInt(Keys.CONFIG_NUMBER_PERIODS, numberPeriods);
+			editor.putInt(Keys.CONFIG_PERIOD_LENGTH, periodLength);
+			editor.putBoolean(Keys.CONFIG_BUILT, formBuilt);
+			editor.putString(Keys.CONFIG_START, startDate);
 
-					request.update(conf).fire();
+			for (int i = 0; intent.hasExtra(Keys.CONFIG_TIME + i); i++) {
+				editor.putString(Keys.CONFIG_TIME + i, intent.getStringExtra(Keys.CONFIG_TIME + i));
+			}
 
-					return null;
-				}
+			editor.putString(Keys.CONFIG_TREATMENT_A, treatmentA);
+			editor.putString(Keys.CONFIG_TREATMENT_B, treatmentB);
+			editor.putString(Keys.CONFIG_TREATMENT_NOTES, treatmentNotes);
 
-			}.execute();
+			for (int i = 0; intent.hasExtra(Keys.CONFIG_DAY + i); i++) {
+				editor.putBoolean(Keys.CONFIG_DAY + i, intent.getBooleanExtra(Keys.CONFIG_DAY + i, false));
+			}
+			editor.commit();
+
+			// Request backup
+			backup();
+
+			// Save online
+			// Get request factory
+			MyRequestFactory factory = (MyRequestFactory) Util.getRequestFactory(Saver.this, MyRequestFactory.class);
+			ConfigRequest request = factory.configRequest();
+
+			// Build config
+			ConfigProxy conf = request.create(ConfigProxy.class);
+			conf.setDoctorEmail(doctorEmail);
+			conf.setDoctorName(doctorName);
+			conf.setPatientName(patientName);
+			conf.setPharmEmail(pharmEmail);
+			conf.setStartDate(startDate);
+			conf.setLengthPeriods((long) periodLength);
+			conf.setNumberPeriods((long) numberPeriods);
+			conf.setTreatmentA(treatmentA);
+			conf.setTreatmentB(treatmentB);
+			conf.setTreatmentNotes(treatmentNotes);
+
+			// Update online
+			request.update(conf).fire();
+
 		}
 	}
 
+	@TargetApi(8)
+	private void backup() {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			BackupManager backup = new BackupManager(this);
+			backup.dataChanged();
+		}
+	}
 }

@@ -34,6 +34,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.protocol.HTTP;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.Saver;
 import org.nof1trial.nof1.Scheduler;
 import org.nof1trial.nof1.fragments.CheckArray;
 import org.nof1trial.nof1.fragments.StartDate;
@@ -504,21 +505,16 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	/** Save the data to file. */
 	private boolean save() {
 		boolean result = true;
-		// Put config data into shared preferences editor
-		SharedPreferences.Editor editor = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE).edit();
 
-		Intent intent = new Intent(Keys.ACTION_SAVE_CONFIG);
+		Intent intent = new Intent(this, Saver.class);
+		intent.setAction(Keys.ACTION_SAVE_CONFIG);
 		intent.putExtra(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
 		intent.putExtra(Keys.CONFIG_DOCTOR_NAME, mDocName.getText().toString());
 		intent.putExtra(Keys.CONFIG_DOC, mDocEmail.getText().toString());
+		intent.putExtra(Keys.CONFIG_PHARM, mPharmEmail.getText().toString());
 
 		int number = 0;
 		int length = 0;
-
-		// Names
-		editor.putString(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
-		editor.putString(Keys.CONFIG_DOCTOR_NAME, mDocName.getText().toString());
-		editor.putString(Keys.CONFIG_DOC, mDocEmail.getText().toString());
 
 		// Period number
 		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
@@ -531,7 +527,6 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		} else {
 			number = mIntPeriodNumber;
 		}
-		editor.putInt(Keys.CONFIG_NUMBER_PERIODS, number);
 		intent.putExtra(Keys.CONFIG_NUMBER_PERIODS, number);
 
 		// Period length
@@ -545,25 +540,18 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		} else {
 			length = mIntPeriodLength;
 		}
-		editor.putInt(Keys.CONFIG_PERIOD_LENGTH, length);
 		intent.putExtra(Keys.CONFIG_PERIOD_LENGTH, length);
 
-		editor.putBoolean(Keys.CONFIG_BUILT, mFormBuilt);
 		intent.putExtra(Keys.CONFIG_BUILT, mFormBuilt);
 
 		// Start date
-		editor.putString(Keys.CONFIG_START, mDate.getDate());
 		intent.putExtra(Keys.CONFIG_START, mDate.getDate());
 
 		// Save times to remind to take medicine
 		String[] times = mTimeSetter.getTimes();
 		for (int i = 0; i < times.length; i++) {
-			editor.putString(Keys.CONFIG_TIME + i, times[i]);
+			intent.putExtra(Keys.CONFIG_TIME + i, times[i]);
 		}
-
-		editor.putString(Keys.CONFIG_TREATMENT_A, mTreatmentA.getText().toString());
-		editor.putString(Keys.CONFIG_TREATMENT_B, mTreatmentB.getText().toString());
-		editor.putString(Keys.CONFIG_TREATMENT_NOTES, mAnyNotes.getText().toString());
 
 		intent.putExtra(Keys.CONFIG_TREATMENT_A, mTreatmentA.getText().toString());
 		intent.putExtra(Keys.CONFIG_TREATMENT_B, mTreatmentB.getText().toString());
@@ -576,14 +564,11 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			for (int k = 0; k < arr.length; k++) {
 				if (j == arr[k]) contains = true;
 			}
-			editor.putBoolean(Keys.CONFIG_DAY + j, contains);
 			intent.putExtra(Keys.CONFIG_DAY + j, contains);
 		}
 
-		// Save changes
-		result &= editor.commit();
-		// Ask for backup
-		backup();
+		// offload saving to background service
+		startService(intent);
 
 		return result;
 	}

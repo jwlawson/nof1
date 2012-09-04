@@ -121,6 +121,9 @@ public class Keys {
 	/** Shared preference key for doctor's email */
 	public static final String CONFIG_DOC = "doc";
 
+	/** Shared preference key for pharm email */
+	public static final String CONFIG_PHARM = "pharm";
+
 	/** Shared preference key for whether this is the first time doctor has logged in */
 	public static final String CONFIG_FIRST = "first_run";
 
