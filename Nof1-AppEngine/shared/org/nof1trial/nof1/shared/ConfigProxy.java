@@ -27,7 +27,47 @@ import com.google.web.bindery.requestfactory.shared.ValueProxy;
  * @author John Lawson
  * 
  */
-@ProxyForName(value = "")
+@ProxyForName(value = "Config")
 public interface ConfigProxy extends ValueProxy {
+
+	public String getPatientEmail();
+
+	public void setPatientE1mail(String patientEmail);
+
+	public String getDocEmail();
+
+	public void setDocEmail(String docEmail);
+
+	public String getPharmEmail();
+
+	public void setPharmEmail(String pharmEmail);
+
+	public String getTreatmentA();
+
+	public void setTreatmentA(String treatmentA);
+
+	public String getTreatmentB();
+
+	public void setTreatmentB(String treatmentB);
+
+	public String getTreatmentNotes();
+
+	public void setTreatmentNotes(String treatmentNotes);
+
+	public String getStartDate();
+
+	public void setStartDate(String startDate);
+
+	public Long getNumberPeriods();
+
+	public void setNumberPeriods(Long numberPeriods);
+
+	public Long getLengthPeriods();
+
+	public void setLengthPeriods(Long lengthPeriods);
+
+	public Long getId();
+
+	public Integer getVersion();
 
 }

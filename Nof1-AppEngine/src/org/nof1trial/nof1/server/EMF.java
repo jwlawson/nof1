@@ -18,14 +18,18 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1.shared;
+package org.nof1trial.nof1.server;
 
-import com.google.web.bindery.requestfactory.shared.RequestFactory;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 /**
- * @author John Lawson
- * 
+ * Factory for creating EntityManager.
  */
-public interface ConfigRequestFactory extends RequestFactory {
+public final class EMF {
+	private static final EntityManagerFactory emfInstance = Persistence.createEntityManagerFactory("transactions-optional");
 
+	public static EntityManagerFactory get() {
+		return emfInstance;
+	}
 }

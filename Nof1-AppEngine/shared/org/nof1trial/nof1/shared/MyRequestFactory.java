@@ -18,19 +18,16 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1.server;
+package org.nof1trial.nof1.shared;
+
+import com.google.web.bindery.requestfactory.shared.RequestFactory;
 
 /**
- * @author lawson_j
- *
+ * @author John Lawson
+ * 
  */
-public class ConfigService {
+public interface MyRequestFactory extends RequestFactory {
 
-	/**
-	 * 
-	 */
-	public ConfigService() {
-		// TODO Auto-generated constructor stub
-	}
+	ConfigRequest configRequest();
 
 }
