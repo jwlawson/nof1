@@ -20,10 +20,19 @@
  ******************************************************************************/
 package org.nof1trial.nof1.server;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -57,14 +66,31 @@ public class Config {
 		if (conf.patientEmail == null) {
 			conf.patientEmail = getUserEmail();
 		}
-		if (conf.version == null) {
-			conf.version = 0;
-		} else {
-			conf.version++;
-		}
 		conf.persist();
+		log.info("Saving new config");
 
-		log.log(Level.ALL, "Config saved, this is where to send email");
+		Properties props = new Properties();
+		Session session = Session.getDefaultInstance(props, null);
+
+		String msgBody = "...";
+
+		try {
+			Message msg = new MimeMessage(session);
+			msg.setFrom(new InternetAddress("john@nof1trial.org", "Nof1 Admin"));
+			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(conf.doctorEmail, conf.doctorName));
+			msg.setSubject("Your Nof1 account has been activated");
+			msg.setText(msgBody);
+			Transport.send(msg);
+
+		} catch (AddressException e) {
+			log.warning("Email not sent, invalid address");
+		} catch (MessagingException e) {
+			log.warning("Email not sent, invalid message");
+		} catch (UnsupportedEncodingException e) {
+			log.warning("Email not sent, unsupported encoding");
+		}
+
+		log.info("Email sent");
 		return conf;
 	}
 
