@@ -20,6 +20,10 @@
  ******************************************************************************/
 package org.nof1trial.nof1;
 
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+
 import org.nof1trial.nof1.app.Util;
 import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.ConfigRequest;
@@ -32,6 +36,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
+
+import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 /**
  * @author John Lawson
@@ -106,7 +113,7 @@ public class Saver extends IntentService {
 
 			// Build config
 			ConfigProxy conf = request.create(ConfigProxy.class);
-			conf.setDoctorEmail(doctorEmail);
+			conf.setDocEmail(doctorEmail);
 			conf.setDoctorName(doctorName);
 			conf.setPatientName(patientName);
 			conf.setPharmEmail(pharmEmail);
@@ -119,7 +126,29 @@ public class Saver extends IntentService {
 
 			// Update online
 			if (DEBUG) Log.d(TAG, "RequestFactory Config update sent");
-			request.update(conf).fire();
+			request.update(conf).fire(new Receiver<ConfigProxy>() {
+
+				@Override
+				public void onSuccess(ConfigProxy response) {
+					if (DEBUG) Log.d(TAG, "Config request successful");
+				}
+
+				@Override
+				public void onConstraintViolation(Set<ConstraintViolation<?>> violations) {
+					// super.onConstraintViolation(violations);
+					for (ConstraintViolation<?> con : violations) {
+						Log.e(TAG, con.getMessage());
+					}
+				}
+
+				@Override
+				public void onFailure(ServerFailure error) {
+					Log.d(TAG, error.getMessage());
+					// super.onFailure(error);
+
+				}
+
+			});
 
 		}
 	}

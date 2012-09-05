@@ -80,11 +80,6 @@ public class AccountsActivity extends Activity {
 	private int mAccountSelectedPosition = 0;
 
 	/**
-	 * True if we are waiting for App Engine authorization.
-	 */
-	private boolean mPendingAuth = false;
-
-	/**
 	 * The current context.
 	 */
 	private Context mContext = this;

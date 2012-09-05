@@ -123,6 +123,7 @@ public class Util {
 			Log.w(TAG, "Bad URI: " + uriString, e);
 			return null;
 		}
+		if (DEBUG) Log.d(TAG, "Using uri: " + uri);
 		requestFactory.initialize(new SimpleEventBus(), new AndroidRequestTransport(uri, authCookie));
 		if (DEBUG) Log.d(TAG, "RequestFactory initialized");
 
