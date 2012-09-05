@@ -31,6 +31,7 @@ import android.app.backup.BackupManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.util.Log;
 
 /**
  * @author John Lawson
@@ -38,9 +39,13 @@ import android.os.Build;
  */
 public class Saver extends IntentService {
 
-	/**
-	 * @param name
-	 */
+	private static final String TAG = "Saver";
+	private static final boolean DEBUG = BuildConfig.DEBUG;
+
+	public Saver() {
+		this("Saver");
+	}
+
 	public Saver(String name) {
 		super(name);
 	}
@@ -48,8 +53,11 @@ public class Saver extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 
+		if (DEBUG) Log.d(TAG, "HAndling new intent");
+
 		if (Keys.ACTION_SAVE_CONFIG.equals(intent.getAction())) {
 			// SAve config data to disk and online
+			if (DEBUG) Log.d(TAG, "Saving config to disk");
 
 			// get values from the intent
 			String patientName = intent.getStringExtra(Keys.CONFIG_PATIENT_NAME);
@@ -110,6 +118,7 @@ public class Saver extends IntentService {
 			conf.setTreatmentNotes(treatmentNotes);
 
 			// Update online
+			if (DEBUG) Log.d(TAG, "RequestFactory Config update sent");
 			request.update(conf).fire();
 
 		}
