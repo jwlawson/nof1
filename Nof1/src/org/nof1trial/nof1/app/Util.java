@@ -44,6 +44,7 @@ public class Util {
 	 * Tag for logging.
 	 */
 	private static final String TAG = "Util";
+	private static final boolean DEBUG = true;
 
 	// Shared constants
 
@@ -92,9 +93,11 @@ public class Util {
 		String url = URL_MAP.get(context);
 		if (url == null) {
 			// if a debug_url raw resource exists, use its contents as the url
+			if (DEBUG) Log.d(TAG, "Getting debug url");
 			url = getDebugUrl(context);
 			// otherwise, use the production url
 			if (url == null) {
+				if (DEBUG) Log.d(TAG, "Using production url");
 				url = Setup.PROD_URL;
 			}
 			URL_MAP.put(context, url);
@@ -121,6 +124,7 @@ public class Util {
 			return null;
 		}
 		requestFactory.initialize(new SimpleEventBus(), new AndroidRequestTransport(uri, authCookie));
+		if (DEBUG) Log.d(TAG, "RequestFactory initialized");
 
 		return requestFactory;
 	}
@@ -162,6 +166,7 @@ public class Util {
 				}
 				if (s.startsWith("url=")) {
 					url = s.substring(4).trim();
+					if (DEBUG) Log.d(TAG, "Debug url: " + url);
 					break;
 				}
 			}
