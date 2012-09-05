@@ -70,20 +70,8 @@ public class Config {
 			log.info("Found old config for user: " + getUserEmail());
 
 			Config old = list.get(0);
-			old.doctorEmail = conf.doctorEmail;
-			old.doctorName = conf.doctorName;
-			old.lengthPeriods = conf.lengthPeriods;
-			old.numberPeriods = conf.numberPeriods;
-			old.patientName = conf.patientName;
-			old.pharmEmail = conf.pharmEmail;
-			old.questionList = conf.questionList;
-			old.startDate = conf.startDate;
-			old.treatmentA = conf.treatmentA;
-			old.treatmentB = conf.treatmentB;
-			old.treatmentNotes = conf.treatmentNotes;
 
-			// Change conf so it points to old entity, which will then be persisted
-			conf = old;
+			conf = conf.mergeWithExisting(old);
 
 		} else {
 
@@ -198,11 +186,11 @@ public class Config {
 
 			log.info("Email sent to Pharmacist");
 
-		}
+			// Save config to data store
+			conf.persist();
+			log.info("Saving new config");
 
-		// Save config to data store
-		conf.persist();
-		log.info("Saving new config");
+		}
 
 		// Make email text
 		StringBuilder sb = new StringBuilder("Thanks for choosing to use the Nof1 Trial app.");
@@ -287,7 +275,7 @@ public class Config {
 	public static List<Config> findConfigByDoctor(String doctorEmail, int maxResults) {
 		EntityManager em = entityManager();
 		try {
-			Query query = em.createQuery("select o from Employee o WHERE o.doctorEmail =:doctorEmail");
+			Query query = em.createQuery("select o from Config o WHERE o.doctorEmail =:doctorEmail");
 			query.setMaxResults(maxResults);
 			query.setParameter("doctorEmail", doctorEmail);
 			List<Config> resultList = query.getResultList();
@@ -303,7 +291,7 @@ public class Config {
 	public static List<Config> findConfigByPatient(String patientEmail, int maxResults) {
 		EntityManager em = entityManager();
 		try {
-			Query query = em.createQuery("select o from Employee o WHERE o.patientEmail =:patientEmail");
+			Query query = em.createQuery("select o from Config o WHERE o.patientEmail =:patientEmail");
 			query.setMaxResults(maxResults);
 			query.setParameter("patientEmail", patientEmail);
 			List<Config> resultList = query.getResultList();
@@ -387,6 +375,30 @@ public class Config {
 		try {
 			Config attached = em.find(Config.class, this.id);
 			em.remove(attached);
+		} finally {
+			em.close();
+		}
+	}
+
+	public Config mergeWithExisting(Config existing) {
+		log.info("Merging config " + getId() + " with config " + existing.getId());
+		EntityManager em = entityManager();
+		try {
+			Config old = em.find(Config.class, existing.getId());
+
+			old.doctorEmail = doctorEmail;
+			old.doctorName = doctorName;
+			old.lengthPeriods = lengthPeriods;
+			old.numberPeriods = numberPeriods;
+			old.patientName = patientName;
+			old.pharmEmail = pharmEmail;
+			old.questionList = questionList;
+			old.startDate = startDate;
+			old.treatmentA = treatmentA;
+			old.treatmentB = treatmentB;
+			old.treatmentNotes = treatmentNotes;
+
+			return old;
 		} finally {
 			em.close();
 		}
