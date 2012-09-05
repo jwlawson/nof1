@@ -30,6 +30,7 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
+import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.app.Setup;
 import org.nof1trial.nof1.app.Util;
@@ -66,6 +67,7 @@ public class AccountsActivity extends Activity {
 	 * Tag for logging.
 	 */
 	private static final String TAG = "AccountsActivity";
+	private static final boolean DEBUG = BuildConfig.DEBUG;
 
 	/**
 	 * Cookie name for authorization.
@@ -132,6 +134,12 @@ public class AccountsActivity extends Activity {
 	 */
 	private void setConnectScreenContent() {
 		List<String> accounts = getGoogleAccounts();
+		if (Util.isDebug(mContext)) {
+			// Use debug account
+			register("android@jwlawson.co.uk");
+			if (DEBUG) Log.d(TAG, "Using debug acount android@jwlawson.co.uk");
+			finish();
+		}
 		if (accounts.size() == 0) {
 			// Show a dialog and invoke the "Add Account" activity if requested
 			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -243,6 +251,14 @@ public class AccountsActivity extends Activity {
 		editor.putString(Util.ACCOUNT_NAME, accountName);
 		editor.putString(Util.AUTH_COOKIE, null);
 		editor.commit();
+
+		if (Util.isDebug(mContext)) {
+			// Use a fake cookie for the dev mode app engine server
+			// The cookie has the form email:isAdmin:userId
+			// We set the userId to be the same as the account name
+			String authCookie = "dev_appserver_login=" + accountName + ":false:" + accountName;
+			prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
+		}
 
 		// Obtain an auth token and register
 		AccountManager mgr = AccountManager.get(mContext);
