@@ -46,6 +46,7 @@
 
     <uses-permission android:name="org.nof1trial.nof1.permission.RECEIVER" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:name="org.nof1trial.nof1.App"
@@ -160,6 +161,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
+        
 
         <service
             android:name=".FinishedService"
@@ -170,6 +172,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.UserPrefs" />
         </activity>
+        <service android:name="Saver" android:exported="false">
+            <intent-filter>
+                <action android:name="org.nof1trial.nof1.SAVE_CONFIG"/>
+                <action android:name="org.nof1trial.nof1.SAVE_DATA"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
