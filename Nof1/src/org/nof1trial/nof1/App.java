@@ -21,8 +21,6 @@
 package org.nof1trial.nof1;
 
 import org.acra.ACRA;
-import org.acra.ReportField;
-import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
 import android.app.Application;
@@ -34,25 +32,15 @@ import android.app.Application;
  * 
  */
 // @formatter:off
-@ReportsCrashes(formKey = "", // will not be used
-		mailTo = "nof1@jwlawson.co.uk", 
-		mode = ReportingInteractionMode.TOAST, 
-		resToastText = R.string.crash_toast_text, 
-		customReportContent = {	ReportField.APP_VERSION_NAME, 
-								ReportField.ANDROID_VERSION,
-								ReportField.BRAND,
-								ReportField.PHONE_MODEL, 
-								ReportField.CRASH_CONFIGURATION,
-								ReportField.CUSTOM_DATA, 
-								ReportField.STACK_TRACE})
+@ReportsCrashes(formKey = "dFVwWmhnY3A0TFM1VnNhbVFTaXFfaUE6MQ") 
 // @formatter:on
 public class App extends Application {
-	
+
 	@Override
 	public void onCreate() {
 		// The following line triggers the initialization of ACRA
 		ACRA.init(this);
 		super.onCreate();
 	}
-	
+
 }
