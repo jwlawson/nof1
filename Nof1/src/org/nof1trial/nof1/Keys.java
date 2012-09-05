@@ -101,10 +101,10 @@ public class Keys {
 	public static final String INTENT_SCHEDULED = "org.nof1trial.nof1.scheduled";
 
 	/** Intent action for save config */
-	public static final String ACTION_SAVE_CONFIG = "org.nof1trial.nof1.save_config";
+	public static final String ACTION_SAVE_CONFIG = "org.nof1trial.nof1.SAVE_CONFIG";
 
 	/** Intent action for save data */
-	public static final String ACTION_SAVE_DATA = "org.nof1trial.nof1.save_data";
+	public static final String ACTION_SAVE_DATA = "org.nof1trial.nof1.SAVE_DATA";
 
 	/** SharedPrefernces holding config data */
 	public static final String CONFIG_NAME = "config";
