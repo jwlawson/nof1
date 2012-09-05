@@ -178,8 +178,9 @@
                 <action android:name="org.nof1trial.nof1.SAVE_DATA"/>
             </intent-filter>
         </service>
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.MainActivity" android:label="Debug Nof1">
             <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
