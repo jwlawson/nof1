@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="shared"/>
-	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path=".apt_generated">
@@ -12,5 +11,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/gwt-servlet-deps.jar"/>
 	<classpathentry kind="lib" path="libs/hibernate-validator-4.3.0.Final.jar"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/App Engine/v2"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
