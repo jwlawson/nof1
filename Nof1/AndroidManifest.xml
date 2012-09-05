@@ -178,6 +178,11 @@
                 <action android:name="org.nof1trial.nof1.SAVE_DATA"/>
             </intent-filter>
         </service>
+        <activity android:name=".activities.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
