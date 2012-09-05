@@ -67,6 +67,7 @@ public class Config {
 
 		if (list.size() > 0) {
 			// Patient config already in datastore, so update that
+			log.info("Found old config for user: " + getUserEmail());
 
 			Config old = list.get(0);
 			old.doctorEmail = conf.doctorEmail;
