@@ -41,8 +41,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Query;
 import javax.persistence.Version;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -72,7 +70,30 @@ public class Config {
 		Properties props = new Properties();
 		Session session = Session.getDefaultInstance(props, null);
 
-		String msgBody = "...";
+		// Make email text
+		StringBuilder sb = new StringBuilder("Thanks for choosing to use the Nof1 Trial app.");
+		sb.append("\n").append("Patient name: ").append(conf.patientName);
+		sb.append("\n").append("Treatment A: ").append(conf.treatmentA);
+		sb.append("\n").append("Treatment B: ").append(conf.treatmentB);
+		sb.append("\n").append("Treatment notes: ").append(conf.treatmentNotes);
+
+		// Medicine schedule
+
+		sb.append("\n\n").append("Start date:").append(conf.startDate);
+
+		// Treatment length
+		sb.append("\n").append("Number of treatment periods: ").append(conf.numberPeriods);
+		sb.append("\n").append("Length of each treatment period: ").append(conf.lengthPeriods);
+
+		// Recording days
+
+		// Questions
+		sb.append("\n\n").append("Patient questions: ").append("\n");
+
+		for (String str : conf.questionList) {
+			sb.append(str).append("\n");
+		}
+		String msgBody = sb.toString();
 
 		try {
 			Message msg = new MimeMessage(session);
@@ -182,7 +203,6 @@ public class Config {
 	@Column(name = "version")
 	private Integer version;
 
-	@Size(min = 5)
 	private String doctorEmail;
 
 	private String doctorName;
@@ -199,12 +219,13 @@ public class Config {
 
 	private String treatmentNotes;
 
-	@NotNull
 	private String startDate;
 
 	private Long numberPeriods;
 
 	private Long lengthPeriods;
+
+	private List<String> questionList;
 
 	/**
 	 * Store config file in datastore
@@ -318,6 +339,14 @@ public class Config {
 
 	public void setLengthPeriods(Long lengthPeriods) {
 		this.lengthPeriods = lengthPeriods;
+	}
+
+	public List<String> getQuestionList() {
+		return questionList;
+	}
+
+	public void setQuestionList(List<String> questionList) {
+		this.questionList = questionList;
 	}
 
 	public Long getId() {
