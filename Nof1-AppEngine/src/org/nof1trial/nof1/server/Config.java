@@ -21,8 +21,10 @@
 package org.nof1trial.nof1.server;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,14 +63,145 @@ public class Config {
 	 * @return
 	 */
 	public static Config update(Config conf) {
-		if (conf.patientEmail == null) {
-			conf.patientEmail = getUserEmail();
+		List<Config> list = findConfigByPatient(getUserEmail(), 1);
+
+		if (list.size() > 0) {
+			// Patient config already in datastore, so update that
+
+			Config old = list.get(0);
+			old.doctorEmail = conf.doctorEmail;
+			old.doctorName = conf.doctorName;
+			old.lengthPeriods = conf.lengthPeriods;
+			old.numberPeriods = conf.numberPeriods;
+			old.patientName = conf.patientName;
+			old.pharmEmail = conf.pharmEmail;
+			old.questionList = conf.questionList;
+			old.startDate = conf.startDate;
+			old.treatmentA = conf.treatmentA;
+			old.treatmentB = conf.treatmentB;
+			old.treatmentNotes = conf.treatmentNotes;
+
+			// Change conf so it points to old entity, which will then be persisted
+			conf = old;
+
+		} else {
+
+			if (conf.patientEmail == null) {
+				conf.patientEmail = getUserEmail();
+			}
+
+			Properties props = new Properties();
+			Session session = Session.getDefaultInstance(props, null);
+
+			// Get basic information
+			int number = conf.numberPeriods.intValue();
+			int length = conf.lengthPeriods.intValue();
+			// int perDay = mTimeSetter.getTimes().length;
+			String start = conf.startDate;
+
+			// Set up fields
+			Random rand = new Random();
+			StringBuilder sb1 = new StringBuilder();
+			StringBuilder dates = new StringBuilder();
+
+			// Set calendar instance to start date
+			Calendar cal = Calendar.getInstance();
+			String[] startArr = start.split(":");
+			int[] startInt = new int[] { Integer.parseInt(startArr[0]), Integer.parseInt(startArr[1]), Integer.parseInt(startArr[2]) };
+			cal.set(startInt[2], startInt[1], startInt[0]);
+
+			/*
+			 * For each pair of treatment periods, randomly assign A or B first
+			 * Record data in the string builders.
+			 * SB contains a short version either AB or BA
+			 * dates contains a list of which dates go with which medicine
+			 */
+			for (int i = 0; i < number; i++) {
+				if (rand.nextBoolean()) {
+					sb1.append("AB");
+					// Get start date
+					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append(" ").append(cal.get(Calendar.MONTH) + 1).append("/")
+							.append(cal.get(Calendar.YEAR)).append(" - ");
+					// Get end date
+					cal.add(Calendar.DAY_OF_MONTH, length - 1);
+					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+							.append(cal.get(Calendar.YEAR)).append(": ");
+					dates.append(conf.treatmentA).append("\n");
+					// add a day for next start date
+					cal.add(Calendar.DAY_OF_MONTH, 1);
+
+					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+							.append(cal.get(Calendar.YEAR)).append(" - ");
+					cal.add(Calendar.DAY_OF_MONTH, length - 1);
+					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+							.append(cal.get(Calendar.YEAR)).append(": ");
+					dates.append(conf.treatmentB).append("\n");
+					cal.add(Calendar.DAY_OF_MONTH, 1);
+				} else {
+					sb1.append("BA");
+					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+							.append(cal.get(Calendar.YEAR)).append(" - ");
+					cal.add(Calendar.DAY_OF_MONTH, length - 1);
+					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+							.append(cal.get(Calendar.YEAR)).append(": ");
+					dates.append(conf.treatmentB).append("\n");
+					cal.add(Calendar.DAY_OF_MONTH, 1);
+
+					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+							.append(cal.get(Calendar.YEAR)).append(" - ");
+					cal.add(Calendar.DAY_OF_MONTH, length - 1);
+					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+							.append(cal.get(Calendar.YEAR)).append(": ");
+					dates.append(conf.treatmentA).append("\n");
+					cal.add(Calendar.DAY_OF_MONTH, 1);
+				}
+				sb1.append("|");
+			}
+
+			conf.schedule = sb1.toString();
+			log.info("Config schedule set up: " + conf.schedule);
+
+			StringBuilder sb2 = new StringBuilder();
+			sb2.append("Thank you for agreeing to provide the treatments for an upcoming Nof1 trial. ");
+			sb2.append("The information supplied below will hopefully be sufficient for you to make up the treatment plan for the trial. ");
+			sb2.append("Should you have any questions, please contact the doctor administering the trial, do not reply to this email, as any reply will not be read. ");
+			sb2.append("Remember that the Nof1 trial should be done double blinded, so the treatment schedule below should not be disclosed with the clinician. ");
+			sb2.append("\n\nNof1 App team");
+			sb2.append("\n\n").append("Doctor Name: ").append(conf.doctorName);
+			sb2.append("\n").append("Doctor email: ").append(conf.doctorEmail);
+			sb2.append("\n").append("Patient Name: ").append(conf.patientName);
+			sb2.append("\n\n").append("Treatment A: ").append(conf.treatmentA);
+			sb2.append("\n").append("Treatment B: ").append(conf.treatmentB);
+			sb2.append("\n\n").append("Treatment notes: ").append(conf.treatmentNotes);
+			// sb.append("\n\n").append("Medicine taken ").append(5).append(" times a day");
+			sb2.append("\n\n");
+			sb2.append(dates);
+
+			String msgStr = sb2.toString();
+
+			try {
+				Message msg = new MimeMessage(session);
+				msg.setFrom(new InternetAddress("john@nof1trial.org", "Nof1 Admin"));
+				msg.addRecipient(Message.RecipientType.TO, new InternetAddress(conf.pharmEmail, ""));
+				msg.setSubject("Nof1 Trial Schedule");
+				msg.setText(msgStr);
+				Transport.send(msg);
+
+			} catch (AddressException e) {
+				log.warning("Email not sent, invalid address");
+			} catch (MessagingException e) {
+				log.warning("Email not sent, invalid message");
+			} catch (UnsupportedEncodingException e) {
+				log.warning("Email not sent, unsupported encoding");
+			}
+
+			log.info("Email sent to Pharmacist");
+
 		}
+
+		// Save config to data store
 		conf.persist();
 		log.info("Saving new config");
-
-		Properties props = new Properties();
-		Session session = Session.getDefaultInstance(props, null);
 
 		// Make email text
 		StringBuilder sb = new StringBuilder("Thanks for choosing to use the Nof1 Trial app.");
@@ -95,6 +228,9 @@ public class Config {
 		}
 		String msgBody = sb.toString();
 
+		Properties props = new Properties();
+		Session session = Session.getDefaultInstance(props, null);
+
 		try {
 			Message msg = new MimeMessage(session);
 			msg.setFrom(new InternetAddress("john@nof1trial.org", "Nof1 Admin"));
@@ -110,8 +246,8 @@ public class Config {
 		} catch (UnsupportedEncodingException e) {
 			log.warning("Email not sent, unsupported encoding");
 		}
+		log.info("Email sent to doctor");
 
-		log.info("Email sent");
 		return conf;
 	}
 
@@ -226,6 +362,8 @@ public class Config {
 	private Long lengthPeriods;
 
 	private List<String> questionList;
+
+	private String schedule;
 
 	/**
 	 * Store config file in datastore
@@ -349,6 +487,14 @@ public class Config {
 		this.questionList = questionList;
 	}
 
+	public String getSchedule() {
+		return schedule;
+	}
+
+	public void setSchedule(String schedule) {
+		this.schedule = schedule;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -363,7 +509,7 @@ public class Config {
 		sb.append("Config for patient: ").append(patientEmail).append(", ");
 		sb.append("Doctor: ").append(doctorEmail).append(", ");
 		sb.append("Pharm: ").append(pharmEmail).append(", ");
-		sb.append("Treatments: ").append(treatmentA).append(" and ").append(treatmentB).append(". Notes: ").append(treatmentNotes);
+		sb.append("Treatments: ").append(treatmentA).append(" and ").append(treatmentB).append(". Notes: ").append(treatmentNotes).append(", ");
 		sb.append("Starting: ").append(startDate).append(".");
 
 		return sb.toString();
