@@ -32,6 +32,7 @@ import java.util.Random;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.protocol.HTTP;
+import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.Saver;
@@ -83,7 +84,7 @@ import com.actionbarsherlock.view.MenuItem;
 public class DoctorConfig extends SherlockFragmentActivity implements AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener {
 
 	private static final String TAG = "DoctorConfig";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = BuildConfig.DEBUG;
 
 	private static final int REQUEST_FORM = 12;
 
@@ -282,7 +283,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 				if (mFormBuilt) {
 					save();
 					makeTreatmentPlan();
-					email();
+					// email();
 					runScheduler();
 					setResult(RESULT_OK);
 					finish();
