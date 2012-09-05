@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.nof1trial.nof1.shared;
 
+import java.util.List;
+
 import com.google.web.bindery.requestfactory.shared.EntityProxy;
 import com.google.web.bindery.requestfactory.shared.ProxyForName;
 
@@ -73,6 +75,10 @@ public interface ConfigProxy extends EntityProxy {
 	public Long getLengthPeriods();
 
 	public void setLengthPeriods(Long lengthPeriods);
+
+	public List<String> getQuestionList();
+
+	public void setQuestionList(List<String> questionList);
 
 	public Long getId();
 

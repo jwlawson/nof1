@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.nof1trial.nof1;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -78,6 +79,7 @@ public class Saver extends IntentService {
 			String treatmentB = intent.getStringExtra(Keys.CONFIG_TREATMENT_B);
 			String treatmentNotes = intent.getStringExtra(Keys.CONFIG_TREATMENT_NOTES);
 			boolean formBuilt = intent.getBooleanExtra(Keys.CONFIG_BUILT, false);
+			ArrayList<String> quesList = intent.getStringArrayListExtra(Keys.CONFIG_QUESTION_LIST);
 
 			// Save to file
 			SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
@@ -123,6 +125,7 @@ public class Saver extends IntentService {
 			conf.setTreatmentA(treatmentA);
 			conf.setTreatmentB(treatmentB);
 			conf.setTreatmentNotes(treatmentNotes);
+			conf.setQuestionList(quesList);
 
 			// Update online
 			if (DEBUG) Log.d(TAG, "RequestFactory Config update sent");
@@ -135,7 +138,6 @@ public class Saver extends IntentService {
 
 				@Override
 				public void onConstraintViolation(Set<ConstraintViolation<?>> violations) {
-					// super.onConstraintViolation(violations);
 					for (ConstraintViolation<?> con : violations) {
 						Log.e(TAG, con.getMessage());
 					}
@@ -144,7 +146,6 @@ public class Saver extends IntentService {
 				@Override
 				public void onFailure(ServerFailure error) {
 					Log.d(TAG, error.getMessage());
-					// super.onFailure(error);
 
 				}
 

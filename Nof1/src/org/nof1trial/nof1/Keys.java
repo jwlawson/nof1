@@ -163,6 +163,9 @@ public class Keys {
 	/** Shared preference key for database version */
 	public static final String CONFIG_DB_VERSION = "db_version";
 
+	/** Shared preference key for list of questions. Retrieve with getStringArrayList */
+	public static final String CONFIG_QUESTION_LIST = "question_list";
+
 	/** Shared preferences name for scheduler preferences */
 	public static final String SCHED_NAME = "config";
 

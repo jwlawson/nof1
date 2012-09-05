@@ -568,6 +568,14 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			intent.putExtra(Keys.CONFIG_DAY + j, contains);
 		}
 
+		// Get question data
+		SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+		ArrayList<String> quesList = new ArrayList<String>();
+		for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
+			quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
+		}
+		intent.putStringArrayListExtra(Keys.CONFIG_QUESTION_LIST, quesList);
+
 		// offload saving to background service
 		startService(intent);
 
