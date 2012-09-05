@@ -54,6 +54,10 @@ public class Scheduler extends IntentService {
 
 	private BackupManager mBackupManager;
 
+	public Scheduler() {
+		this("Scheduler");
+	}
+
 	public Scheduler(String name) {
 		super(name);
 	}
