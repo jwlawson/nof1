@@ -47,4 +47,11 @@
 		<nature>com.google.gwt.eclipse.core.gwtNature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>shared</name>
+			<type>2</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Nof1/shared</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
