@@ -22,9 +22,9 @@ package org.nof1trial.nof1.activities;
 
 import java.util.Calendar;
 
-import org.nof1trial.nof1.DataSource;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.Saver;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,41 +47,38 @@ import com.actionbarsherlock.view.Window;
  * 
  */
 public class AddNote extends SherlockActivity {
-	
+
 	private static final String TAG = "AddNote";
 	private static final boolean DEBUG = false;
-	
-	private DataSource mData;
-	
+
 	private EditText mNote;
-	
+
 	public AddNote() {
 	}
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_note_layout);
-		
+
 		setSupportProgressBarIndeterminateVisibility(false);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		mNote = (EditText) findViewById(R.id.add_note_edit);
-		
-		new DataLoader().execute();
+
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.menu_add_note, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (DEBUG) Log.d(TAG, "Option selected: " + item.getTitle());
-		
+
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			// up / home action bar button pressed
@@ -98,60 +95,28 @@ public class AddNote extends SherlockActivity {
 				NavUtils.navigateUpTo(this, upIntent);
 			}
 			return true;
-			
+
 		case R.id.menu_add_note_done:
 			// Save note
 			String note = mNote.getText().toString();
 			new DataSaver().execute(note);
-			
+
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		// Close database
-		if (mData != null) mData.close();
-	}
-	
-	private class DataLoader extends AsyncTask<Void, Void, Void> {
-		
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			setSupportProgressBarIndeterminateVisibility(true);
-		}
-		
-		@Override
-		protected Void doInBackground(Void... params) {
-			
-			mData = new DataSource(AddNote.this);
-			mData.open();
-			
-			return null;
-		}
-		
-		@Override
-		protected void onPostExecute(Void result) {
-			super.onPostExecute(result);
-			setSupportProgressBarIndeterminateVisibility(false);
-		}
-		
-	}
-	
+
 	private class DataSaver extends AsyncTask<String, Void, Void> {
-		
+
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
 			setSupportProgressBarIndeterminateVisibility(true);
 		}
-		
+
 		@Override
 		protected Void doInBackground(String... values) {
-			
+
 			boolean empty = true;
 			for (int i = 0; i < values.length; i++) {
 				empty = empty && values[i].length() == 0;
@@ -161,17 +126,15 @@ public class AddNote extends SherlockActivity {
 				if (DEBUG) Log.d(TAG, "Not saving empty note");
 				return null;
 			}
-			
+
 			// Find the cumulative day for saving data
 			SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 			String[] start = sp.getString(Keys.CONFIG_START, "").split(":");
 			int[] startInt = new int[] { Integer.parseInt(start[0]), Integer.parseInt(start[1]), Integer.parseInt(start[2]) };
 			Calendar calStart = Calendar.getInstance();
 			calStart.set(startInt[2], startInt[1], startInt[0]);
-			
+
 			Calendar calNow = Calendar.getInstance();
-			String time = calNow.get(Calendar.HOUR_OF_DAY) + ":"
-					+ (calNow.get(Calendar.MINUTE) < 10 ? "0" + calNow.get(Calendar.MINUTE) : calNow.get(Calendar.MINUTE));
 			// Add an hour to ensure that calStart is before calNow when they
 			// have the same date
 			calNow.add(Calendar.HOUR, 1);
@@ -181,23 +144,32 @@ public class AddNote extends SherlockActivity {
 				day1++;
 			}
 			if (DEBUG) Log.d(TAG, "Data input for day number " + day1);
-			
+
 			for (int i = 0; i < values.length; i++) {
-				mData.saveComment(day1, time, values[i]);
+				Intent saver = new Intent(AddNote.this, Saver.class);
+				saver.setAction(Keys.ACTION_SAVE_DATA);
+				saver.putExtra(Keys.DATA_DAY, day1);
+				saver.putExtra(Keys.DATA_TIME, System.currentTimeMillis());
+				saver.putExtra(Keys.DATA_COMMENT, values[i]);
+
+				// Offload saving to saver intent service
+				startService(saver);
+
+				// mData.saveComment(day1, time, values[i]);
 			}
 			return null;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
 			setSupportProgressBarIndeterminateVisibility(false);
-			
+
 			// Exit after save
 			setResult(RESULT_OK);
 			finish();
 		}
-		
+
 	}
-	
+
 }

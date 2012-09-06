@@ -138,7 +138,7 @@ public class DataSource {
 	 * @param comment
 	 * @return The row id saved
 	 */
-	public long saveComment(int day, String time, String comment) {
+	public long saveComment(int day, long time, String comment) {
 		ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_DAY, day);
 		values.put(SQLite.COLUMN_TIME, time);
