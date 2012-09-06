@@ -101,6 +101,16 @@ public class Data {
 		}
 	}
 
+	/**
+	 * Find all data instances that are linked to the current user. ie those where the current user is the patient or
+	 * the doctor
+	 * 
+	 * @return List of all matching data instances
+	 */
+	public static List<Data> findAllData() {
+		return findDataByEmail(getUserEmail(), Integer.MAX_VALUE);
+	}
+
 	public static String getUserId() {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
@@ -156,7 +166,7 @@ public class Data {
 
 	private String comment;
 
-	private String date;
+	private int day;
 
 	private Long time;
 
@@ -180,12 +190,12 @@ public class Data {
 		this.comment = comment;
 	}
 
-	public String getDate() {
-		return date;
+	public int getDay() {
+		return day;
 	}
 
-	public void setDate(String date) {
-		this.date = date;
+	public void setDay(int day) {
+		this.day = day;
 	}
 
 	public Long getTime() {

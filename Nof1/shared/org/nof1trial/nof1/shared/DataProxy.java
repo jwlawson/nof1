@@ -40,9 +40,9 @@ public interface DataProxy extends EntityProxy {
 
 	public void setComment(String comment);
 
-	public String getDate();
+	public int getDay();
 
-	public void setDate(String date);
+	public void setDay(int day);
 
 	public Long getTime();
 

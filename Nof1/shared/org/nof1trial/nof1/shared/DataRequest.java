@@ -39,4 +39,6 @@ public interface DataRequest extends RequestContext {
 
 	public Request<List<DataProxy>> findDataByEmail(String email, int maxResults);
 
+	public Request<List<DataProxy>> findAllData();
+
 }
