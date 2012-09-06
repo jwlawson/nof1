@@ -166,6 +166,9 @@ public class Keys {
 	/** Shared preference key for list of questions. Retrieve with getStringArrayList */
 	public static final String CONFIG_QUESTION_LIST = "question_list";
 
+	/** Shared preference key for schedule data. Should be something like AB|BA|BA|AB| */
+	public static final String CONFIG_SCHEDULE = "schedule";
+
 	/** Intent extra for day data was saved */
 	public static final String DATA_DAY = "day";
 
