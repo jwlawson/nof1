@@ -21,6 +21,7 @@
 package org.nof1trial.nof1;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -35,8 +36,13 @@ import org.nof1trial.nof1.shared.MyRequestFactory;
 import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.backup.BackupManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.util.Log;
 
@@ -51,6 +57,11 @@ public class Saver extends IntentService {
 
 	private static final String TAG = "Saver";
 	private static final boolean DEBUG = BuildConfig.DEBUG;
+
+	/** Shared Preferences file for storing cached data to be sent to server */
+	private static final String CACHE = "config";
+	private static final String NUM_DATA = "num_data_cache";
+	private static final String BOOL_CONFIG = "bool_config_cache";
 
 	public Saver() {
 		this("Saver");
@@ -110,49 +121,27 @@ public class Saver extends IntentService {
 			// Request backup
 			backup();
 
-			// Save online
-			// Get request factory
-			MyRequestFactory factory = (MyRequestFactory) Util.getRequestFactory(Saver.this, MyRequestFactory.class);
-			ConfigRequest request = factory.configRequest();
+			// If no internet, set flag and save data to shared_prefs then register broadcast receiver for connectivity
+			// changes
+			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-			// Build config
-			ConfigProxy conf = request.create(ConfigProxy.class);
-			conf.setDocEmail(doctorEmail);
-			conf.setDoctorName(doctorName);
-			conf.setPatientName(patientName);
-			conf.setPharmEmail(pharmEmail);
-			conf.setStartDate(startDate);
-			conf.setLengthPeriods((long) periodLength);
-			conf.setNumberPeriods((long) numberPeriods);
-			conf.setTreatmentA(treatmentA);
-			conf.setTreatmentB(treatmentB);
-			conf.setTreatmentNotes(treatmentNotes);
-			conf.setQuestionList(quesList);
+			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+			boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
 
-			// Update online
-			if (DEBUG) Log.d(TAG, "RequestFactory Config update sent");
-			request.update(conf).fire(new Receiver<ConfigProxy>() {
+			if (isConnected) {
+				// Save online
+				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, (long) periodLength, (long) numberPeriods, treatmentA,
+						treatmentB, treatmentNotes, quesList);
 
-				@Override
-				public void onSuccess(ConfigProxy response) {
-					if (DEBUG) Log.d(TAG, "Config request successful");
-				}
+			} else {
+				// No internet, so set flag to upload later
+				prefs.edit().putBoolean(BOOL_CONFIG, true);
 
-				@Override
-				public void onConstraintViolation(Set<ConstraintViolation<?>> violations) {
-					for (ConstraintViolation<?> con : violations) {
-						Log.e(TAG, con.getMessage());
-						// TODO Ask user to check config info
-					}
-				}
-
-				@Override
-				public void onFailure(ServerFailure error) {
-					Log.d(TAG, error.getMessage());
-					// TODO repeat request
-				}
-
-			});
+				// enable network change broadcast receiver
+				PackageManager pm = getPackageManager();
+				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+			}
 
 		} else if (Keys.ACTION_SAVE_DATA.equals(intent.getAction())) {
 			// Save patient inputted data from the intent
@@ -162,42 +151,302 @@ public class Saver extends IntentService {
 			String comment = intent.getStringExtra(Keys.DATA_COMMENT);
 			int[] data = intent.getIntArrayExtra(Keys.DATA_LIST);
 
+			// Open database
 			DataSource source = new DataSource(this);
 			source.open();
+			// Save data
 			source.saveData(day, time, data, comment);
 
-			MyRequestFactory requestFactory = (MyRequestFactory) Util.getRequestFactory(this, MyRequestFactory.class);
-			DataRequest request = requestFactory.dataRequest();
+			// Request backup
+			backup();
 
-			DataProxy proxy = request.create(DataProxy.class);
-			proxy.setDay(day);
-			proxy.setTime(time);
-			proxy.setComment(comment);
+			// If no internet, set flag and save data to shared_prefs then register broadcast receiver for connectivity
+			// changes
+			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-			ArrayList<Integer> list = new ArrayList<Integer>();
-			for (int i = 0; i < data.length; i++) {
-				list.add(data[i]);
+			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+			boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
+
+			if (isConnected) {
+				if (DEBUG) Log.d(TAG, "Connected to internet, sending data to server");
+
+				uploadData(day, time, data, comment);
+
+			} else {
+				// Not connected to internet
+				SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
+				SharedPreferences.Editor edit = sp.edit();
+
+				int count = sp.getInt(NUM_DATA, 0) + 1;
+				// Increment counter for number of cached data sets
+				edit.putInt(NUM_DATA, count);
+
+				edit.putInt(Keys.DATA_DAY + count, day);
+				edit.putLong(Keys.DATA_TIME + count, time);
+				edit.putString(Keys.DATA_COMMENT + count, comment);
+
+				// Convert int array to string, to allow storage in shared_prefs
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < data.length; i++) {
+					sb.append(data[i]).append(",");
+				}
+				// Remove trailing comma
+				sb.deleteCharAt(sb.length() - 1);
+				edit.putString(Keys.DATA_LIST + count, sb.toString());
+
+				edit.commit();
+
+				// enable network change broadcast receiver
+				PackageManager pm = getPackageManager();
+				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 			}
-			proxy.setQuestionData(list);
 
-			request.save(proxy).fire(new Receiver<DataProxy>() {
+		} else if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
+			// Phone has booted, check to see whether need to upload anything
+			// If so either do so, or enable Network change listener
 
-				@Override
-				public void onSuccess(DataProxy response) {
-					if (DEBUG) Log.d(TAG, "Data saved successfully");
+			boolean startListener = false;
+
+			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+			boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
+
+			SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
+			if (sp.getInt(NUM_DATA, 0) > 0) {
+				// Have data to upload
+
+				if (isConnected) {
+					// Have internet so upload data
+					for (int count = sp.getInt(NUM_DATA, 0); count > 0; count--) {
+
+						int day = sp.getInt(Keys.DATA_DAY + count, 0);
+						long time = sp.getLong(Keys.DATA_TIME + count, 0);
+						String comment = sp.getString(Keys.DATA_COMMENT + count, "");
+						String dataStr = sp.getString(Keys.DATA_LIST + count, "");
+
+						String[] dataStrArr = dataStr.split(",");
+						int[] data = new int[dataStrArr.length];
+						for (int i = 0; i < data.length; i++) {
+							data[i] = Integer.parseInt(dataStrArr[i]);
+						}
+
+						uploadData(day, time, data, comment);
+
+						// decrement counter in prefs
+						sp.edit().putInt(NUM_DATA, count - 1);
+					}
+
+				} else {
+					// Not connected, so want to start listener
+					startListener = true;
+				}
+			}
+
+			if (sp.getBoolean(BOOL_CONFIG, false)) {
+				// Have config data to upload
+				// Note, if config data not uploaded at start, there is no way that the schedule can be made or emails
+				// sent
+				if (isConnected) {
+					// Have internet so upload data
+
+					// get config from prefs and upload
+					SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+					String patientName = prefs.getString(Keys.CONFIG_PATIENT_NAME, "");
+					String doctorName = prefs.getString(Keys.CONFIG_DOCTOR_NAME, "");
+					final String doctorEmail = prefs.getString(Keys.CONFIG_DOC, "");
+					String pharmEmail = prefs.getString(Keys.CONFIG_PHARM, "");
+					int numberPeriods = prefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0);
+					int periodLength = prefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
+					String startDate = prefs.getString(Keys.CONFIG_START, "");
+					String treatmentA = prefs.getString(Keys.CONFIG_TREATMENT_A, "");
+					String treatmentB = prefs.getString(Keys.CONFIG_TREATMENT_B, "");
+					String treatmentNotes = prefs.getString(Keys.CONFIG_TREATMENT_NOTES, "");
+
+					ArrayList<String> quesList = new ArrayList<String>();
+					SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+					for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
+						quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
+					}
+
+					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
+							treatmentNotes, quesList);
+
+					// decrement counter in prefs
+					sp.edit().putBoolean(BOOL_CONFIG, false);
+
+				} else {
+					// Not connected, so want to start listener
+					startListener = true;
+				}
+			}
+
+			if (startListener) {
+				// enable network change broadcast receiver
+				PackageManager pm = getPackageManager();
+				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+			}
+
+		} else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
+			// Connectivity changed, should mean we are now connected
+
+			boolean uploadedData = false;
+
+			SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
+			if (sp.getInt(NUM_DATA, 0) > 0) {
+				// Have data to upload
+
+				for (int count = sp.getInt(NUM_DATA, 0); count > 0; count--) {
+
+					int day = sp.getInt(Keys.DATA_DAY + count, 0);
+					long time = sp.getLong(Keys.DATA_TIME + count, 0);
+					String comment = sp.getString(Keys.DATA_COMMENT + count, "");
+					String dataStr = sp.getString(Keys.DATA_LIST + count, "");
+
+					String[] dataStrArr = dataStr.split(",");
+					int[] data = new int[dataStrArr.length];
+					for (int i = 0; i < data.length; i++) {
+						data[i] = Integer.parseInt(dataStrArr[i]);
+					}
+
+					uploadData(day, time, data, comment);
+
+					// decrement counter in prefs
+					sp.edit().putInt(NUM_DATA, count - 1);
+				}
+				uploadedData = true;
+			}
+
+			if (sp.getBoolean(BOOL_CONFIG, false)) {
+				// Have config data to upload
+				// Note, if config data not uploaded at start, there is no way that the schedule can be made or emails
+				// sent
+
+				// get config from prefs and upload
+				SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+				String patientName = prefs.getString(Keys.CONFIG_PATIENT_NAME, "");
+				String doctorName = prefs.getString(Keys.CONFIG_DOCTOR_NAME, "");
+				final String doctorEmail = prefs.getString(Keys.CONFIG_DOC, "");
+				String pharmEmail = prefs.getString(Keys.CONFIG_PHARM, "");
+				int numberPeriods = prefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0);
+				int periodLength = prefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
+				String startDate = prefs.getString(Keys.CONFIG_START, "");
+				String treatmentA = prefs.getString(Keys.CONFIG_TREATMENT_A, "");
+				String treatmentB = prefs.getString(Keys.CONFIG_TREATMENT_B, "");
+				String treatmentNotes = prefs.getString(Keys.CONFIG_TREATMENT_NOTES, "");
+
+				ArrayList<String> quesList = new ArrayList<String>();
+				SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+				for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
+					quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 				}
 
-				@Override
-				public void onFailure(ServerFailure error) {
-					// super.onFailure(error);
-					Log.e(TAG, "Data not saved");
-					// TODO retry request
-				}
+				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
+						treatmentNotes, quesList);
 
-			});
+				// decrement counter in prefs
+				sp.edit().putBoolean(BOOL_CONFIG, false);
+				uploadedData = true;
+			}
 
+			if (uploadedData) {
+				// Disable network change listener, as not needed
+				PackageManager pm = getPackageManager();
+				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+			}
 		}
 
+	}
+
+	private void uploadConfig(String doctorEmail, String doctorName, String patientName, String pharmEmail, String startDate, long periodLength,
+			long numberPeriods, String treatmentA, String treatmentB, String treatmentNotes, List<String> quesList) {
+		// Get request factory
+		MyRequestFactory factory = (MyRequestFactory) Util.getRequestFactory(Saver.this, MyRequestFactory.class);
+		ConfigRequest request = factory.configRequest();
+
+		// Build config
+		ConfigProxy conf = request.create(ConfigProxy.class);
+		conf.setDocEmail(doctorEmail);
+		conf.setDoctorName(doctorName);
+		conf.setPatientName(patientName);
+		conf.setPharmEmail(pharmEmail);
+		conf.setStartDate(startDate);
+		conf.setLengthPeriods(periodLength);
+		conf.setNumberPeriods(numberPeriods);
+		conf.setTreatmentA(treatmentA);
+		conf.setTreatmentB(treatmentB);
+		conf.setTreatmentNotes(treatmentNotes);
+		conf.setQuestionList(quesList);
+
+		// Update online
+		if (DEBUG) Log.d(TAG, "RequestFactory Config update sent");
+		request.update(conf).fire(new Receiver<ConfigProxy>() {
+
+			@Override
+			public void onSuccess(ConfigProxy response) {
+				if (DEBUG) Log.d(TAG, "Config request successful");
+			}
+
+			@Override
+			public void onConstraintViolation(Set<ConstraintViolation<?>> violations) {
+				for (ConstraintViolation<?> con : violations) {
+					Log.e(TAG, con.getMessage());
+					// TODO Ask user to check config info
+				}
+			}
+
+			@Override
+			public void onFailure(ServerFailure error) {
+				Log.d(TAG, error.getMessage());
+				// TODO repeat request
+			}
+
+		});
+	}
+
+	/**
+	 * Upload data to server.
+	 * 
+	 * Should check whether internet is available before trying to call this.
+	 * 
+	 * @param day
+	 * @param time
+	 * @param data
+	 * @param comment
+	 */
+	private void uploadData(int day, long time, int[] data, String comment) {
+		// Send the data file to server
+		MyRequestFactory requestFactory = (MyRequestFactory) Util.getRequestFactory(this, MyRequestFactory.class);
+		DataRequest request = requestFactory.dataRequest();
+
+		DataProxy proxy = request.create(DataProxy.class);
+		proxy.setDay(day);
+		proxy.setTime(time);
+		proxy.setComment(comment);
+
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		for (int i = 0; i < data.length; i++) {
+			list.add(data[i]);
+		}
+		proxy.setQuestionData(list);
+
+		request.save(proxy).fire(new Receiver<DataProxy>() {
+
+			@Override
+			public void onSuccess(DataProxy response) {
+				if (DEBUG) Log.d(TAG, "Data saved successfully");
+			}
+
+			@Override
+			public void onFailure(ServerFailure error) {
+				// super.onFailure(error);
+				Log.e(TAG, "Data not saved");
+				// TODO retry request
+			}
+
+		});
 	}
 
 	@TargetApi(8)
