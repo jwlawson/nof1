@@ -64,6 +64,8 @@ public class Config {
 	 */
 	public static Config update(Config conf) {
 		List<Config> list = findConfigByPatient(getUserEmail(), 1);
+		Properties props = new Properties();
+		Session session = Session.getDefaultInstance(props, null);
 
 		if (list.size() > 0) {
 			// Patient config already in datastore, so update that
@@ -79,8 +81,7 @@ public class Config {
 				conf.patientEmail = getUserEmail();
 			}
 
-			Properties props = new Properties();
-			Session session = Session.getDefaultInstance(props, null);
+			// Generate schedule
 
 			// Get basic information
 			int number = conf.numberPeriods.intValue();
@@ -150,6 +151,8 @@ public class Config {
 			conf.schedule = sb1.toString();
 			log.info("Config schedule set up: " + conf.schedule);
 
+			// Pharmacist email
+
 			StringBuilder sb2 = new StringBuilder();
 			sb2.append("Thank you for agreeing to provide the treatments for an upcoming Nof1 trial. ");
 			sb2.append("The information supplied below will hopefully be sufficient for you to make up the treatment plan for the trial. ");
@@ -192,6 +195,8 @@ public class Config {
 
 		}
 
+		// Doctor Email
+
 		// Make email text
 		StringBuilder sb = new StringBuilder("Thanks for choosing to use the Nof1 Trial app.");
 		sb.append("\n").append("Patient name: ").append(conf.patientName);
@@ -200,14 +205,11 @@ public class Config {
 		sb.append("\n").append("Treatment notes: ").append(conf.treatmentNotes);
 
 		// Medicine schedule
-
 		sb.append("\n\n").append("Start date:").append(conf.startDate);
 
 		// Treatment length
 		sb.append("\n").append("Number of treatment periods: ").append(conf.numberPeriods);
 		sb.append("\n").append("Length of each treatment period: ").append(conf.lengthPeriods);
-
-		// Recording days
 
 		// Questions
 		sb.append("\n\n").append("Patient questions: ").append("\n");
@@ -216,9 +218,6 @@ public class Config {
 			sb.append(str).append("\n");
 		}
 		String msgBody = sb.toString();
-
-		Properties props = new Properties();
-		Session session = Session.getDefaultInstance(props, null);
 
 		try {
 			Message msg = new MimeMessage(session);
@@ -380,6 +379,13 @@ public class Config {
 		}
 	}
 
+	/**
+	 * Merge the data in the current Config instance with that of a Config in the data store. All data in the existing
+	 * config will be overwritten and the changes persisted in the store.
+	 * 
+	 * @param existing Config instance already in the datastore
+	 * @return An unmanaged instance of the existing config with updated values
+	 */
 	public Config mergeWithExisting(Config existing) {
 		log.info("Merging config " + getId() + " with config " + existing.getId());
 		EntityManager em = entityManager();
