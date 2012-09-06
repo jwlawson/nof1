@@ -166,6 +166,18 @@ public class Keys {
 	/** Shared preference key for list of questions. Retrieve with getStringArrayList */
 	public static final String CONFIG_QUESTION_LIST = "question_list";
 
+	/** Intent extra for day data was saved */
+	public static final String DATA_DAY = "day";
+
+	/** Intent extra for time data was saved */
+	public static final String DATA_TIME = "time";
+
+	/** Intent extra for additional comment */
+	public static final String DATA_COMMENT = "comment";
+
+	/** Intent extra for list of data */
+	public static final String DATA_LIST = "question_data";
+
 	/** Shared preferences name for scheduler preferences */
 	public static final String SCHED_NAME = "config";
 
