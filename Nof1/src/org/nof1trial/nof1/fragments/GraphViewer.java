@@ -180,6 +180,7 @@ public class GraphViewer extends SherlockFragment {
 			SharedPreferences schedPrefs = getActivity().getSharedPreferences(Keys.SCHED_NAME, Context.MODE_PRIVATE);
 			if (schedPrefs.getBoolean(Keys.SCHED_FINISHED, false)) {
 				// TODO Trial finished, so shade in regions for treatment b
+				// Can get schedule key from config shard_prefs - CONFIG_SCHEDULE
 
 			}
 
