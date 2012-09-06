@@ -110,8 +110,6 @@ public class Scheduler extends IntentService {
 		intent.putExtra(Keys.INTENT_ALARM, true);
 		setAlarm(intent, cal);
 
-		// Close service once done
-		Scheduler.this.stopSelf();
 	}
 
 	/** Load next date to set alarm from preferences and set alarm for then */
@@ -142,8 +140,10 @@ public class Scheduler extends IntentService {
 			Log.d(TAG, "Config not yet run");
 			return;
 		}
-
-		setAlarm(intent, dateStr, timeStr);
+		if (!sp.getBoolean(Keys.SCHED_FINISHED, false)) {
+			// Only set alarm if the trial has not finished
+			setAlarm(intent, dateStr, timeStr);
+		}
 	}
 
 	/** Set an alarm to fire off specified intent at time stored in calendar */
@@ -204,8 +204,11 @@ public class Scheduler extends IntentService {
 			// Make sure each medicine notification gets a different request id
 			PendingIntent pi = PendingIntent.getBroadcast(this, REQUEST_MED + i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-			mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
-			if (DEBUG) Log.d(TAG, "Scheduling a repeating medicine alarm at " + time);
+			if (!sp.getBoolean(Keys.SCHED_FINISHED, false)) {
+				// Only set medicine alarms when the trial is running
+				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
+				if (DEBUG) Log.d(TAG, "Scheduling a repeating medicine alarm at " + time);
+			}
 		}
 	}
 
@@ -243,7 +246,7 @@ public class Scheduler extends IntentService {
 					// TODO Finished trial!
 
 					schedEdit.putBoolean(Keys.SCHED_FINISHED, true);
-					return;
+					// return;
 				}
 				schedEdit.putInt(Keys.SCHED_CUR_PERIOD, period + 1);
 			}
