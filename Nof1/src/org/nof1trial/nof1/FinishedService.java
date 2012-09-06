@@ -27,6 +27,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
+
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.shared.ConfigProxy;
+import org.nof1trial.nof1.shared.ConfigRequest;
+import org.nof1trial.nof1.shared.MyRequestFactory;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -40,7 +46,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 /**
  * Service to save a copy of the results as a .csv file
@@ -50,6 +60,8 @@ import android.widget.Toast;
  */
 public class FinishedService extends Service {
 
+	private static final String TAG = "FinishedService";
+	private static final boolean DEBUG = BuildConfig.DEBUG;
 	public static final String CVS_FILE = "results.csv";
 
 	public FinishedService() {
@@ -63,6 +75,7 @@ public class FinishedService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		new Loader().execute();
+		if (DEBUG) Log.d(TAG, "New finished service started");
 		return super.onStartCommand(intent, flags, startId);
 	}
 
@@ -133,6 +146,7 @@ public class FinishedService extends Service {
 				return false;
 			}
 		}
+		if (DEBUG) Log.d(TAG, "csv file saved to disk");
 		return true;
 
 	}
@@ -150,7 +164,7 @@ public class FinishedService extends Service {
 		}
 		sb.append("\n");
 
-		DateFormat df = DateFormat.getDateInstance();
+		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
 
 		// Add data
 		while (!cursor.isAfterLast()) {
@@ -158,14 +172,16 @@ public class FinishedService extends Service {
 				if (i == 2) {
 					// Want to convert time to readable format
 					sb.append(df.format(new Date(cursor.getLong(i)))).append(", ");
+
+				} else {
+					sb.append(cursor.getString(i)).append(", ");
 				}
-				sb.append(cursor.getString(i)).append(", ");
 			}
 			sb.append("\n");
 
 			cursor.moveToNext();
 		}
-
+		if (DEBUG) Log.d(TAG, "csv string built");
 		return sb.toString();
 
 	}
@@ -185,7 +201,7 @@ public class FinishedService extends Service {
 			data.close();
 
 			// Cancel medicine alarms
-			SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+			final SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 			for (int i = 0; sp.contains(Keys.CONFIG_TIME + i); i++) {
 
@@ -197,6 +213,33 @@ public class FinishedService extends Service {
 
 				alarmManager.cancel(pi);
 			}
+
+			// Download config file and save schedule data to prefs
+			MyRequestFactory factory = (MyRequestFactory) Util.getRequestFactory(FinishedService.this, MyRequestFactory.class);
+			ConfigRequest request = factory.configRequest();
+
+			request.findAllConfigs().fire(new Receiver<List<ConfigProxy>>() {
+
+				@Override
+				public void onSuccess(List<ConfigProxy> list) {
+					if (list.size() == 0) {
+						Log.e(TAG, "No config file found on server. Please contact the pharmacist for treatment schedule.");
+
+					} else {
+						// get most recent config. Generally I would only expect a patient to have one.
+						ConfigProxy conf = list.get(list.size() - 1);
+						// Save schedule to prefs
+						sp.edit().putString(Keys.CONFIG_SCHEDULE, conf.getSchedule()).commit();
+					}
+
+				}
+
+				@Override
+				public void onFailure(ServerFailure error) {
+					super.onFailure(error);
+				}
+
+			});
 
 			return null;
 		}
