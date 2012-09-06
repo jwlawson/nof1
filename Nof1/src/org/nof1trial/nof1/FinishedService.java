@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -148,9 +150,15 @@ public class FinishedService extends Service {
 		}
 		sb.append("\n");
 
+		DateFormat df = DateFormat.getDateInstance();
+
 		// Add data
 		while (!cursor.isAfterLast()) {
 			for (int i = 0; i < size; i++) {
+				if (i == 2) {
+					// Want to convert time to readable format
+					sb.append(df.format(new Date(cursor.getLong(i)))).append(", ");
+				}
 				sb.append(cursor.getString(i)).append(", ");
 			}
 			sb.append("\n");

@@ -34,39 +34,39 @@ import android.util.Log;
  * 
  */
 public class DataSource {
-	
+
 	private static final String TAG = "DataSource";
 	private static final boolean DEBUG = false;
-	
+
 	/** SQLite helper class */
 	private final SQLite mHelper;
-	
+
 	/** SQLite database */
 	private SQLiteDatabase mDatabase;
-	
+
 	/** Array of all columns */
 	private String[] mColumns;
-	
+
 	static final int[] sDataLock = new int[0];
-	
+
 	public DataSource(Context context) {
 		mHelper = new SQLite(context);
-		
+
 		SharedPreferences sp = context.getSharedPreferences(Keys.QUES_NAME, Context.MODE_PRIVATE);
-		
+
 		if (!sp.contains(Keys.QUES_NUMBER_QUESTIONS)) {
 			throw new RuntimeException("Datasource run with no questionnaire");
 		}
-		
+
 		int num = sp.getInt(Keys.QUES_NUMBER_QUESTIONS, 0);
-		
+
 		mHelper.setQuestionNumber(num);
 	}
-	
+
 	/** Opens the database. Should not be called in a main thread */
 	public void open() {
 		mDatabase = mHelper.getWritableDatabase();
-		
+
 		int num = mHelper.getNumberQuestions();
 		mColumns = new String[num + 4];
 		mColumns[0] = SQLite.COLUMN_ID;
@@ -76,17 +76,17 @@ public class DataSource {
 			mColumns[i + 3] = SQLite.COLUMN_QUESTION + i;
 		}
 		mColumns[num + 3] = SQLite.COLUMN_COMMENT;
-		
+
 		if (DEBUG) Log.d(TAG, "Database loaded: " + num);
 	}
-	
+
 	/** Close database */
 	public void close() {
 		mHelper.close();
-		
+
 		if (DEBUG) Log.d(TAG, "Database closed");
 	}
-	
+
 	/**
 	 * Save data to the database. Open must have been called before this.
 	 * 
@@ -94,8 +94,8 @@ public class DataSource {
 	 * @param data Data to save
 	 * @return The row id saved
 	 */
-	public long saveData(int day, String time, int[] data) {
-		
+	public long saveData(int day, long time, int[] data) {
+
 		ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_DAY, day);
 		values.put(SQLite.COLUMN_TIME, time);
@@ -107,10 +107,10 @@ public class DataSource {
 			insertId = mDatabase.insert(SQLite.TABLE_INFO, null, values);
 		}
 		if (DEBUG) Log.d(TAG, "Saving data to database. ID: " + insertId);
-		
+
 		return insertId;
 	}
-	
+
 	/**
 	 * Save data to the database. Open must have been called before this.
 	 * 
@@ -119,18 +119,18 @@ public class DataSource {
 	 * @param comment
 	 * @return The row id saved
 	 */
-	public long saveData(int day, String time, int[] data, String comment) {
+	public long saveData(int day, long time, int[] data, String comment) {
 		long insertId = saveData(day, time, data);
-		
+
 		ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_COMMENT, comment);
-		
+
 		synchronized (sDataLock) {
 			mDatabase.update(SQLite.TABLE_INFO, values, SQLite.COLUMN_ID + "=" + insertId, null);
 		}
 		return insertId;
 	}
-	
+
 	/**
 	 * Save a single comment with no data
 	 * 
@@ -143,16 +143,16 @@ public class DataSource {
 		values.put(SQLite.COLUMN_DAY, day);
 		values.put(SQLite.COLUMN_TIME, time);
 		values.put(SQLite.COLUMN_COMMENT, comment);
-		
+
 		long insertId = -1;
 		synchronized (sDataLock) {
 			insertId = mDatabase.insert(SQLite.TABLE_INFO, null, values);
 		}
 		if (DEBUG) Log.d(TAG, "Saving data to database. ID: " + insertId);
-		
+
 		return insertId;
 	}
-	
+
 	/**
 	 * Get a column from the database
 	 * 
@@ -160,10 +160,10 @@ public class DataSource {
 	 * @return A cursor containing the day data was recorded and the requested column
 	 */
 	public Cursor getColumn(String column) {
-		
+
 		return getColumns(new String[] { SQLite.COLUMN_DAY, column });
 	}
-	
+
 	/**
 	 * Get columns from the database
 	 * 
@@ -172,17 +172,17 @@ public class DataSource {
 	 */
 	public Cursor getColumns(String[] columns) {
 		if (DEBUG) Log.d(TAG, "Getting data: " + columns[0]);
-		
+
 		Cursor cursor;
-		
+
 		synchronized (sDataLock) {
 			cursor = mDatabase.query(SQLite.TABLE_INFO, columns, null, null, null, null, null);
 		}
 		cursor.moveToFirst();
-		
+
 		return cursor;
 	}
-	
+
 	/**
 	 * Get all columns from the database
 	 * 
@@ -191,7 +191,7 @@ public class DataSource {
 	public Cursor getAllColumns() {
 		return getColumns(mColumns);
 	}
-	
+
 	/**
 	 * Get the data stored about a question
 	 * 

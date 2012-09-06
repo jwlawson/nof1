@@ -194,7 +194,7 @@ public class MainActivity extends SherlockActivity {
 				data[j] = rand.nextInt(10);
 			}
 
-			source.saveData(i * 5, "12:00", data);
+			source.saveData(i * 5, System.currentTimeMillis(), data);
 		}
 		source.close();
 	}
