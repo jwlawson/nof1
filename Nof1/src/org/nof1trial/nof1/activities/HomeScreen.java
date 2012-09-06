@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 
 import org.apache.http.protocol.HTTP;
 import org.nof1trial.nof1.DataSource;
@@ -150,7 +152,12 @@ public class HomeScreen extends SherlockActivity {
 
 			SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 			if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
-				// Trial finished. Show email csv button
+				// Trial finished.
+
+				// Disable data input button
+				btnData.setEnabled(false);
+
+				// Show email csv button
 				final Button btnEmail = (Button) findViewById(R.id.home_btn_email);
 				btnEmail.setVisibility(View.VISIBLE);
 
@@ -350,10 +357,18 @@ public class HomeScreen extends SherlockActivity {
 		}
 		sb.append("\n");
 
+		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
+
 		// Add data
 		while (!cursor.isAfterLast()) {
 			for (int i = 0; i < size; i++) {
-				sb.append(cursor.getString(i)).append(", ");
+				if (i == 2) {
+					// Want to convert time to readable format
+					sb.append(df.format(new Date(cursor.getLong(i)))).append(", ");
+
+				} else {
+					sb.append(cursor.getString(i)).append(", ");
+				}
 			}
 			sb.append("\n");
 
