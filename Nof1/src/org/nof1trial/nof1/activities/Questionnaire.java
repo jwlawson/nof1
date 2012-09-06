@@ -157,7 +157,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			// Save data to database
 
 			Calendar calNow = Calendar.getInstance();
-			String time = calNow.get(Calendar.HOUR_OF_DAY) + ":" + calNow.get(Calendar.MINUTE);
+			long time = calNow.getTimeInMillis();
 
 			// Disable buttons to show we are doing something
 			((Button) findViewById(R.id.data_input_button_ok)).setEnabled(false);
@@ -207,8 +207,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 
 			Calendar calNow = Calendar.getInstance();
 
-			String time = calNow.get(Calendar.HOUR_OF_DAY) + ":"
-					+ (calNow.get(Calendar.MINUTE) < 10 ? "0" + calNow.get(Calendar.MINUTE) : calNow.get(Calendar.MINUTE));
+			long time = calNow.getTimeInMillis();
 			// Add an hour to ensure that calStart is before calNow when they
 			// have the same date
 			calNow.add(Calendar.HOUR, 1);
@@ -284,7 +283,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 		}
 	}
 
-	private void saveData(final int day, final String time, final int[] data, final String comment) {
+	private void saveData(final int day, final long time, final int[] data, final String comment) {
 
 		Intent saver = new Intent(this, Saver.class);
 		saver.setAction(Keys.ACTION_SAVE_DATA);
