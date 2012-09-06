@@ -214,6 +214,9 @@ public class FinishedService extends Service {
 				alarmManager.cancel(pi);
 			}
 
+			// TODO Check internet connectivity
+			// If no internet, set flag to download and register broadcast receiver
+
 			// Download config file and save schedule data to prefs
 			MyRequestFactory factory = (MyRequestFactory) Util.getRequestFactory(FinishedService.this, MyRequestFactory.class);
 			ConfigRequest request = factory.configRequest();
