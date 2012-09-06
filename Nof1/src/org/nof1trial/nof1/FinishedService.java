@@ -237,6 +237,7 @@ public class FinishedService extends Service {
 				@Override
 				public void onFailure(ServerFailure error) {
 					super.onFailure(error);
+					// TODO retry download
 				}
 
 			});
