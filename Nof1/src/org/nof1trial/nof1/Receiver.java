@@ -56,6 +56,10 @@ public class Receiver extends BroadcastReceiver {
 			i.putExtra(Keys.INTENT_BOOT, true);
 			context.startService(i);
 
+			Intent saver = new Intent(context, Saver.class);
+			saver.setAction(Intent.ACTION_BOOT_COMPLETED);
+			context.startService(saver);
+
 		} else if (intent.getBooleanExtra(Keys.INTENT_ALARM, false)) {
 			if (DEBUG) Log.d(TAG, "AlarmManager alarm caught");
 
