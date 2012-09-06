@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.InputMismatchException;
 
-import org.nof1trial.nof1.DataSource;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.Saver;
@@ -77,9 +76,6 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 
 	/** True if in preview mode: no details saved */
 	private boolean mPreview;
-
-	/** DataSource to provide access to database. Used to save data */
-	private DataSource mData;
 
 	/** True if the questionnaire is shown after a scheduled alert */
 	private boolean mScheduled;
@@ -140,8 +136,6 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			Toast.makeText(this, R.string.questionnaire_preview_explain, Toast.LENGTH_LONG).show();
 		} else {
 			if (DEBUG) Log.d(TAG, "Building questionnaire and loading database");
-			mData = new DataSource(this);
-			new DataBaseLoader().execute();
 		}
 	}
 
@@ -399,16 +393,6 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 
 	}
 
-	private class DataBaseLoader extends AsyncTask<Void, Void, Void> {
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			mData.open();
-			return null;
-		}
-
-	}
-
 	@Override
 	public void onReschedule(boolean rescheduled) {
 		if (rescheduled) {
@@ -423,8 +407,5 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 		// Dismiss any open dialogs to prevent leaks
 		RescheduleDialog dialog = (RescheduleDialog) getSupportFragmentManager().findFragmentByTag("dialog");
 		if (dialog != null) dialog.dismiss();
-
-		// Close database connection
-		if (mData != null) mData.close();
 	}
 }
