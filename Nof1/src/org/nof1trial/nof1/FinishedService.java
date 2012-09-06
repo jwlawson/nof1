@@ -28,8 +28,11 @@ import java.io.IOException;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -44,23 +47,23 @@ import android.widget.Toast;
  * 
  */
 public class FinishedService extends Service {
-	
+
 	public static final String CVS_FILE = "results.csv";
-	
+
 	public FinishedService() {
 	}
-	
+
 	@Override
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
-	
+
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		new Loader().execute();
 		return super.onStartCommand(intent, flags, startId);
 	}
-	
+
 	@SuppressLint("WorldReadableFiles")
 	@TargetApi(8)
 	private boolean createCVS(Cursor cursor) {
@@ -74,7 +77,7 @@ public class FinishedService extends Service {
 		boolean storageWriteable = false;
 		boolean storageInternal = false;
 		String state = Environment.getExternalStorageState();
-		
+
 		if (Environment.MEDIA_MOUNTED.equals(state)) {
 			// We can read and write the media
 			storageWriteable = true;
@@ -84,18 +87,18 @@ public class FinishedService extends Service {
 			storageWriteable = false;
 		}
 		File dir = null;
-		
+
 		if (storageWriteable && Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
 			// Eclair has no support for getExternalCacheDir()
 			// Save file to /Android/data/org.nof1trial.nof1/cache/
 			File temp = Environment.getExternalStorageDirectory();
-			
+
 			dir = new File(temp.getAbsoluteFile() + "/Android/data/org.nof1trial.nof1/files");
-			
+
 		} else if (storageWriteable) {
-			
+
 			dir = getExternalFilesDir(null);
-			
+
 		} else {
 			// Toast.makeText(this, "No external storage found. Using internal storage which may not work.",
 			// Toast.LENGTH_LONG).show();
@@ -103,87 +106,101 @@ public class FinishedService extends Service {
 			dir = getFilesDir();
 		}
 		File file = new File(dir, CVS_FILE);
-		
+
 		if (storageInternal) {
 			try {
 				// File should be world readable so that GMail (or whatever the user uses) can read it
 				FileOutputStream fos = openFileOutput(CVS_FILE, MODE_WORLD_READABLE);
 				fos.write(getCVSString(cursor).getBytes());
 				fos.close();
-				
+
 			} catch (IOException e) {
 				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
 				return false;
 			}
-			
+
 		} else {
 			try {
 				// Write file to external storage
 				BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 				writer.write(getCVSString(cursor));
 				writer.close();
-				
+
 			} catch (IOException e) {
 				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
 				return false;
 			}
 		}
 		return true;
-		
+
 	}
-	
+
 	private String getCVSString(Cursor cursor) {
 		StringBuilder sb = new StringBuilder();
-		
+
 		cursor.moveToFirst();
 		String[] headers = cursor.getColumnNames();
 		int size = headers.length;
-		
+
 		// Add column headers
 		for (int i = 0; i < size; i++) {
 			sb.append(headers[i]).append(", ");
 		}
 		sb.append("\n");
-		
+
 		// Add data
 		while (!cursor.isAfterLast()) {
 			for (int i = 0; i < size; i++) {
 				sb.append(cursor.getString(i)).append(", ");
 			}
 			sb.append("\n");
-			
+
 			cursor.moveToNext();
 		}
-		
+
 		return sb.toString();
-		
+
 	}
-	
+
 	private class Loader extends AsyncTask<Void, Void, Void> {
-		
+
 		@Override
 		protected Void doInBackground(Void... params) {
 			DataSource data = new DataSource(FinishedService.this);
 			data.open();
-			
+
 			Cursor cursor = data.getAllColumns();
-			
+
 			createCVS(cursor);
-			
+
 			cursor.close();
 			data.close();
-			
+
+			// Cancel medicine alarms
+			SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+			for (int i = 0; sp.contains(Keys.CONFIG_TIME + i); i++) {
+
+				Intent intent = new Intent(FinishedService.this, Receiver.class);
+				intent.putExtra(Keys.INTENT_MEDICINE, true);
+
+				// Make sure each medicine notification gets a different request id
+				PendingIntent pi = PendingIntent.getBroadcast(FinishedService.this, 1 + i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+				alarmManager.cancel(pi);
+			}
+
 			return null;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Void result) {
 			super.onPostExecute(result);
-			
+
 			// Stop the service
 			stopSelf();
 		}
-		
+
 	}
-	
+
 }
