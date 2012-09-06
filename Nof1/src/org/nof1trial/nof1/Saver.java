@@ -28,6 +28,8 @@ import javax.validation.ConstraintViolation;
 import org.nof1trial.nof1.app.Util;
 import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.ConfigRequest;
+import org.nof1trial.nof1.shared.DataProxy;
+import org.nof1trial.nof1.shared.DataRequest;
 import org.nof1trial.nof1.shared.MyRequestFactory;
 
 import android.annotation.TargetApi;
@@ -140,18 +142,62 @@ public class Saver extends IntentService {
 				public void onConstraintViolation(Set<ConstraintViolation<?>> violations) {
 					for (ConstraintViolation<?> con : violations) {
 						Log.e(TAG, con.getMessage());
+						// TODO Ask user to check config info
 					}
 				}
 
 				@Override
 				public void onFailure(ServerFailure error) {
 					Log.d(TAG, error.getMessage());
+					// TODO repeat request
+				}
 
+			});
+
+		} else if (Keys.ACTION_SAVE_DATA.equals(intent.getAction())) {
+			// Save patient inputted data from the intent
+
+			int day = intent.getIntExtra(Keys.DATA_DAY, 0);
+			long time = intent.getLongExtra(Keys.DATA_TIME, 0);
+			String comment = intent.getStringExtra(Keys.DATA_COMMENT);
+			int[] data = intent.getIntArrayExtra(Keys.DATA_LIST);
+
+			DataSource source = new DataSource(this);
+			source.open();
+			source.saveData(day, time, data, comment);
+
+			MyRequestFactory requestFactory = (MyRequestFactory) Util.getRequestFactory(this, MyRequestFactory.class);
+			DataRequest request = requestFactory.dataRequest();
+
+			DataProxy proxy = request.create(DataProxy.class);
+			proxy.setDay(day);
+			proxy.setTime(time);
+			proxy.setComment(comment);
+
+			ArrayList<Integer> list = new ArrayList<Integer>();
+			for (int i = 0; i < data.length; i++) {
+				list.add(data[i]);
+			}
+			proxy.setQuestionData(list);
+
+			request.save(proxy).fire(new Receiver<DataProxy>() {
+
+				@Override
+				public void onSuccess(DataProxy response) {
+					if (DEBUG) Log.d(TAG, "Data saved successfully");
+				}
+
+				@Override
+				public void onFailure(ServerFailure error) {
+					// super.onFailure(error);
+					Log.e(TAG, "Data not saved");
+					// TODO retry request
 				}
 
 			});
 
 		}
+
 	}
 
 	@TargetApi(8)
