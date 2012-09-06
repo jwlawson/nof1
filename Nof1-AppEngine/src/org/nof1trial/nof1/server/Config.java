@@ -49,6 +49,9 @@ import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
 
 /**
+ * Config class. Holds data about a patient's app configuration. When the config is updated the server will send out
+ * emails to both doctor and pharmacist.
+ * 
  * @author John Lawson
  * 
  */
