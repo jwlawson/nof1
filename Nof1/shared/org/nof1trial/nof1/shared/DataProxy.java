@@ -20,16 +20,32 @@
  ******************************************************************************/
 package org.nof1trial.nof1.shared;
 
-import com.google.web.bindery.requestfactory.shared.RequestFactory;
+import java.util.List;
+
+import com.google.web.bindery.requestfactory.shared.EntityProxy;
+import com.google.web.bindery.requestfactory.shared.ProxyForName;
 
 /**
  * @author John Lawson
  * 
  */
-public interface MyRequestFactory extends RequestFactory {
+@ProxyForName("org.nof1trial.nof1.server.Data")
+public interface DataProxy extends EntityProxy {
 
-	ConfigRequest configRequest();
+	public List<Integer> getQuestionData();
 
-	DataRequest dataRequest();
+	public void setQuestionData(List<Integer> questionData);
+
+	public String getComment();
+
+	public void setComment(String comment);
+
+	public String getDate();
+
+	public void setDate(String date);
+
+	public Long getTime();
+
+	public void setTime(Long time);
 
 }

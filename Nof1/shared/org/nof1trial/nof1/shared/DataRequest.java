@@ -20,16 +20,23 @@
  ******************************************************************************/
 package org.nof1trial.nof1.shared;
 
-import com.google.web.bindery.requestfactory.shared.RequestFactory;
+import java.util.List;
+
+import com.google.web.bindery.requestfactory.shared.Request;
+import com.google.web.bindery.requestfactory.shared.RequestContext;
+import com.google.web.bindery.requestfactory.shared.ServiceName;
 
 /**
  * @author John Lawson
  * 
  */
-public interface MyRequestFactory extends RequestFactory {
+@ServiceName("org.nof1trial.nof1.server.Data")
+public interface DataRequest extends RequestContext {
 
-	ConfigRequest configRequest();
+	public Request<DataProxy> save(DataProxy data);
 
-	DataRequest dataRequest();
+	public Request<DataProxy> findData(Long id);
+
+	public Request<List<DataProxy>> findDataByEmail(String email, int maxResults);
 
 }
