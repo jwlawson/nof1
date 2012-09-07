@@ -32,3 +32,10 @@ h1 {
 #closeButton {
   margin: 15px 6px 6px;
 }
+
+/* stock list header row */
+.tableHeader {
+  background-color: #2062B8;
+  color: white;
+  font-style: italic;
+} 
