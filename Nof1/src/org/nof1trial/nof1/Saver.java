@@ -74,7 +74,7 @@ public class Saver extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 
-		if (DEBUG) Log.d(TAG, "HAndling new intent");
+		if (DEBUG) Log.d(TAG, "Handling new intent");
 
 		if (Keys.ACTION_SAVE_CONFIG.equals(intent.getAction())) {
 			// SAve config data to disk and online
@@ -130,12 +130,13 @@ public class Saver extends IntentService {
 
 			if (isConnected) {
 				// Save online
+
 				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, (long) periodLength, (long) numberPeriods, treatmentA,
 						treatmentB, treatmentNotes, quesList);
 
 			} else {
 				// No internet, so set flag to upload later
-				prefs.edit().putBoolean(BOOL_CONFIG, true);
+				prefs.edit().putBoolean(BOOL_CONFIG, true).commit();
 
 				// enable network change broadcast receiver
 				PackageManager pm = getPackageManager();
@@ -218,6 +219,7 @@ public class Saver extends IntentService {
 
 				if (isConnected) {
 					// Have internet so upload data
+
 					for (int count = sp.getInt(NUM_DATA, 0); count > 0; count--) {
 
 						int day = sp.getInt(Keys.DATA_DAY + count, 0);
@@ -273,7 +275,7 @@ public class Saver extends IntentService {
 							treatmentNotes, quesList);
 
 					// decrement counter in prefs
-					sp.edit().putBoolean(BOOL_CONFIG, false);
+					sp.edit().putBoolean(BOOL_CONFIG, false).commit();
 
 				} else {
 					// Not connected, so want to start listener
@@ -360,8 +362,9 @@ public class Saver extends IntentService {
 
 	}
 
-	private void uploadConfig(String doctorEmail, String doctorName, String patientName, String pharmEmail, String startDate, long periodLength,
-			long numberPeriods, String treatmentA, String treatmentB, String treatmentNotes, List<String> quesList) {
+	private void uploadConfig(final String doctorEmail, final String doctorName, final String patientName, final String pharmEmail,
+			final String startDate, final long periodLength, final long numberPeriods, final String treatmentA, final String treatmentB,
+			final String treatmentNotes, final List<String> quesList) {
 		// Get request factory
 		MyRequestFactory factory = (MyRequestFactory) Util.getRequestFactory(Saver.this, MyRequestFactory.class);
 		ConfigRequest request = factory.configRequest();
@@ -400,7 +403,14 @@ public class Saver extends IntentService {
 			@Override
 			public void onFailure(ServerFailure error) {
 				Log.d(TAG, error.getMessage());
-				// TODO repeat request
+
+				// TODO Only refresh cookie when error is an auth error
+				// Try refreshing auth cookie
+				Util.refreshAuthCookie(getApplicationContext());
+
+				// try uploading data again
+				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
+						treatmentNotes, quesList);
 			}
 
 		});
@@ -416,7 +426,7 @@ public class Saver extends IntentService {
 	 * @param data
 	 * @param comment
 	 */
-	private void uploadData(int day, long time, int[] data, String comment) {
+	private void uploadData(final int day, final long time, final int[] data, final String comment) {
 		// Send the data file to server
 		MyRequestFactory requestFactory = (MyRequestFactory) Util.getRequestFactory(this, MyRequestFactory.class);
 		DataRequest request = requestFactory.dataRequest();
@@ -443,7 +453,13 @@ public class Saver extends IntentService {
 			public void onFailure(ServerFailure error) {
 				// super.onFailure(error);
 				Log.e(TAG, "Data not saved");
-				// TODO retry request
+
+				// TODO Only refresh cookie when error is an auth error
+				// Try refreshing auth cookie
+				Util.refreshAuthCookie(getApplicationContext());
+
+				// try uploading data again
+				uploadData(day, time, data, comment);
 			}
 
 		});
