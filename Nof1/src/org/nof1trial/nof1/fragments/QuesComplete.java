@@ -43,57 +43,59 @@ import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockDialogFragment;
 
 /**
- * Dialog Fragment to show after user has completed questionnaire. Includes options to go back to home screen, view graphs or just exit.
+ * Dialog Fragment to show after user has completed questionnaire. Includes options to go back to home screen, view
+ * graphs or just exit.
  * 
  * @author John Lawson
  * 
  */
 public class QuesComplete extends SherlockDialogFragment {
-	
+
 	public static QuesComplete newInstance() {
 		QuesComplete frag = new QuesComplete();
-		
+
 		Bundle args = new Bundle();
-		
+
 		frag.setArguments(args);
-		
+
 		return frag;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setStyle(STYLE_NO_TITLE, 0);
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
+
 		View view = inflater.inflate(R.layout.complete_layout, container, false);
-		
+
 		SharedPreferences userPrefs = getActivity().getSharedPreferences(Keys.DEFAULT_PREFS, Context.MODE_PRIVATE);
 		SharedPreferences configPrefs = getActivity().getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
 		SharedPreferences schedPrefs = getActivity().getSharedPreferences(Keys.SCHED_NAME, Context.MODE_PRIVATE);
 		Resources res = getActivity().getResources();
-		
+
 		TextView thanks = (TextView) view.findViewById(R.id.complete_text_thanks);
 		thanks.setText(res.getText(R.string.thanks) + " " + userPrefs.getString(Keys.DEFAULT_PATIENT_NAME, ""));
-		
+
 		TextView progress = (TextView) view.findViewById(R.id.complete_text_progress);
 		progress.setText("" + res.getText(R.string.you_are_now) + schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 0) + res.getText(R.string.out_of)
 				+ (configPrefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0) * configPrefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0) * 2));
-		
+
 		// If the trial is finished, show some text saying this
 		if (schedPrefs.getBoolean(Keys.SCHED_FINISHED, false)) {
 			TextView finished = (TextView) view.findViewById(R.id.complete_text_finished);
 			finished.setVisibility(View.VISIBLE);
 			((RelativeLayout) finished.getParent()).requestLayout();
-			
+
 			// Start the service to create CSV file
 			Intent intent = new Intent(getActivity(), FinishedService.class);
+			intent.setAction(Keys.ACTION_COMPLETE);
 			getActivity().startService(intent);
 		}
-		
+
 		Button btnGraph = (Button) view.findViewById(R.id.complete_btn_graphs);
 		btnGraph.setOnClickListener(new OnClickListener() {
 			@Override
@@ -104,7 +106,7 @@ public class QuesComplete extends SherlockDialogFragment {
 				getActivity().finish();
 			}
 		});
-		
+
 		Button btnHome = (Button) view.findViewById(R.id.complete_btn_home);
 		btnHome.setOnClickListener(new OnClickListener() {
 			@Override
@@ -115,7 +117,7 @@ public class QuesComplete extends SherlockDialogFragment {
 				getActivity().finish();
 			}
 		});
-		
+
 		Button btnExit = (Button) view.findViewById(R.id.complete_btn_exit);
 		btnExit.setOnClickListener(new OnClickListener() {
 			@Override
@@ -127,7 +129,7 @@ public class QuesComplete extends SherlockDialogFragment {
 				getActivity().finish();
 			}
 		});
-		
+
 		return view;
 	}
 }
