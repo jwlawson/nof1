@@ -390,7 +390,9 @@ public class Saver extends IntentService {
 
 			@Override
 			public void onFailure(ServerFailure error) {
-				Log.d(TAG, error.getMessage());
+				Log.e(TAG, "Config not saved");
+				Log.e(TAG, error.getMessage());
+				Log.e(TAG, error.getStackTraceString());
 
 				// TODO Only refresh cookie when error is an auth error
 				// Try refreshing auth cookie up to 3 times
@@ -447,8 +449,10 @@ public class Saver extends IntentService {
 		proxy.setComment(comment);
 
 		ArrayList<Integer> list = new ArrayList<Integer>();
-		for (int i = 0; i < data.length; i++) {
-			list.add(data[i]);
+		if (data != null) {
+			for (int i = 0; i < data.length; i++) {
+				list.add(data[i]);
+			}
 		}
 		proxy.setQuestionData(list);
 
@@ -463,6 +467,7 @@ public class Saver extends IntentService {
 			public void onFailure(ServerFailure error) {
 				// super.onFailure(error);
 				Log.e(TAG, "Data not saved");
+				Log.e(TAG, error.getMessage());
 
 				// TODO Only refresh cookie when error is an auth error
 				// Try refreshing auth cookie up to 3 times

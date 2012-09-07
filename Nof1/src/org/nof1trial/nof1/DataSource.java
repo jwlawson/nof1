@@ -99,8 +99,10 @@ public class DataSource {
 		ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_DAY, day);
 		values.put(SQLite.COLUMN_TIME, time);
-		for (int i = 0; i < data.length; i++) {
-			values.put(SQLite.COLUMN_QUESTION + i, data[i]);
+		if (data != null) {
+			for (int i = 0; i < data.length; i++) {
+				values.put(SQLite.COLUMN_QUESTION + i, data[i]);
+			}
 		}
 		long insertId = -1;
 		synchronized (sDataLock) {
