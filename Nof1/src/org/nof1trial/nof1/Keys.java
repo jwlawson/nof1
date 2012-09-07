@@ -106,6 +106,9 @@ public class Keys {
 	/** Intent action for save data */
 	public static final String ACTION_SAVE_DATA = "org.nof1trial.nof1.SAVE_DATA";
 
+	/** Intent action for trial completed */
+	public static final String ACTION_COMPLETE = "org.nof1trial.nof1.TRIAL_COMPLETE";
+
 	/** SharedPrefernces holding config data */
 	public static final String CONFIG_NAME = "config";
 

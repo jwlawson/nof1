@@ -23,6 +23,7 @@ package org.nof1trial.nof1;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -55,10 +56,19 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 			if (DEBUG) Log.d(TAG, "Internet connected: " + isConnected);
 
 			if (isConnected) {
-				// Pass connectivity change to Saver
+				SharedPreferences sp = context.getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
+
+				// Pass connectivity change to saver
 				Intent saver = new Intent(context, Saver.class);
 				saver.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
 				context.startService(saver);
+
+				// Check whether should wake up finished service
+				if (sp.getBoolean(Keys.SCHED_FINISHED, false) && sp.contains(Keys.CONFIG_SCHEDULE)) {
+					Intent finished = new Intent(context, FinishedService.class);
+					finished.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
+					context.startService(finished);
+				}
 			}
 		}
 	}

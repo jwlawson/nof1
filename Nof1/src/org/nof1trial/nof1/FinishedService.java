@@ -37,15 +37,18 @@ import org.nof1trial.nof1.shared.MyRequestFactory;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
+import android.app.IntentService;
 import android.app.PendingIntent;
-import android.app.Service;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.os.AsyncTask;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
-import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -58,23 +61,22 @@ import com.google.web.bindery.requestfactory.shared.ServerFailure;
  * @author John Lawson
  * 
  */
-public class FinishedService extends Service {
+public class FinishedService extends IntentService {
 
 	private static final String TAG = "FinishedService";
 	private static final boolean DEBUG = BuildConfig.DEBUG;
 	public static final String CVS_FILE = "results.csv";
 
 	public FinishedService() {
+		this("FinishedService");
 	}
 
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
+	public FinishedService(String name) {
+		super(name);
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
-		new Loader().execute();
 		if (DEBUG) Log.d(TAG, "New finished service started");
 		return super.onStartCommand(intent, flags, startId);
 	}
@@ -121,6 +123,7 @@ public class FinishedService extends Service {
 			dir = getFilesDir();
 		}
 		File file = new File(dir, CVS_FILE);
+		if (DEBUG) Log.d(TAG, "Saving csv to file: " + file.getAbsolutePath());
 
 		if (storageInternal) {
 			try {
@@ -186,10 +189,51 @@ public class FinishedService extends Service {
 
 	}
 
-	private class Loader extends AsyncTask<Void, Void, Void> {
+	/**
+	 * Try to download the config file for this patient from server. Saves schedule to the supplied shared prefs.
+	 * 
+	 * Internet connection should be checked before running this.
+	 * 
+	 * @param sp
+	 */
+	private void downloadSchedule(final SharedPreferences sp) {
+		if (DEBUG) Log.d(TAG, "Trying to download schedule");
 
-		@Override
-		protected Void doInBackground(Void... params) {
+		// Download config file and save schedule data to prefs
+		MyRequestFactory factory = (MyRequestFactory) Util.getRequestFactory(FinishedService.this, MyRequestFactory.class);
+		ConfigRequest request = factory.configRequest();
+
+		request.findAllConfigs().fire(new Receiver<List<ConfigProxy>>() {
+
+			@Override
+			public void onSuccess(List<ConfigProxy> list) {
+				if (list.size() == 0) {
+					Log.e(TAG, "No config file found on server. Please contact the pharmacist for treatment schedule.");
+
+				} else {
+					// get most recent config. Generally I would only expect a patient to have one.
+					ConfigProxy conf = list.get(list.size() - 1);
+					// Save schedule to prefs
+					sp.edit().putString(Keys.CONFIG_SCHEDULE, conf.getSchedule()).commit();
+					if (DEBUG) Log.d(TAG, "Saved schedule: " + conf.getSchedule());
+				}
+
+			}
+
+			@Override
+			public void onFailure(ServerFailure error) {
+				super.onFailure(error);
+				// TODO retry download
+			}
+
+		});
+	}
+
+	@Override
+	protected void onHandleIntent(Intent intent) {
+
+		if (Keys.ACTION_COMPLETE.equals(intent.getAction())) {
+
 			DataSource data = new DataSource(FinishedService.this);
 			data.open();
 
@@ -205,57 +249,56 @@ public class FinishedService extends Service {
 			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 			for (int i = 0; sp.contains(Keys.CONFIG_TIME + i); i++) {
 
-				Intent intent = new Intent(FinishedService.this, Receiver.class);
-				intent.putExtra(Keys.INTENT_MEDICINE, true);
+				Intent receiver = new Intent(FinishedService.this, Receiver.class);
+				receiver.putExtra(Keys.INTENT_MEDICINE, true);
 
 				// Make sure each medicine notification gets a different request id
-				PendingIntent pi = PendingIntent.getBroadcast(FinishedService.this, 1 + i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+				PendingIntent pi = PendingIntent.getBroadcast(FinishedService.this, 1 + i, receiver, PendingIntent.FLAG_CANCEL_CURRENT);
 
 				alarmManager.cancel(pi);
 			}
 
-			// TODO Check internet connectivity
 			// If no internet, set flag to download and register broadcast receiver
+			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
-			// Download config file and save schedule data to prefs
-			MyRequestFactory factory = (MyRequestFactory) Util.getRequestFactory(FinishedService.this, MyRequestFactory.class);
-			ConfigRequest request = factory.configRequest();
+			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+			boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
 
-			request.findAllConfigs().fire(new Receiver<List<ConfigProxy>>() {
+			if (isConnected) {
 
-				@Override
-				public void onSuccess(List<ConfigProxy> list) {
-					if (list.size() == 0) {
-						Log.e(TAG, "No config file found on server. Please contact the pharmacist for treatment schedule.");
+				downloadSchedule(sp);
 
-					} else {
-						// get most recent config. Generally I would only expect a patient to have one.
-						ConfigProxy conf = list.get(list.size() - 1);
-						// Save schedule to prefs
-						sp.edit().putString(Keys.CONFIG_SCHEDULE, conf.getSchedule()).commit();
-					}
+			} else {
+				if (DEBUG) Log.d(TAG, "Not connected to internet, starting network change listener");
+				// enable network change broadcast receiver
+				PackageManager pm = getPackageManager();
+				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+			}
 
+		} else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
+			// Should now have internet
+			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+			boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
+
+			if (isConnected) {
+				SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+				if (!sp.contains(Keys.CONFIG_SCHEDULE)) {
+					// Try to download
+					downloadSchedule(sp);
 				}
 
-				@Override
-				public void onFailure(ServerFailure error) {
-					super.onFailure(error);
-					// TODO retry download
-				}
+				PackageManager pm = getPackageManager();
+				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
 
-			});
-
-			return null;
+			} else {
+				if (DEBUG) Log.e(TAG, "Got Connectivity changed, but not connected");
+			}
 		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			super.onPostExecute(result);
-
-			// Stop the service
-			stopSelf();
-		}
-
 	}
 
 }
