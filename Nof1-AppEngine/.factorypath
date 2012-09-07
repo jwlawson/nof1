@@ -1,3 +1,4 @@
 <factorypath>
     <factorypathentry kind="WKSPJAR" id="/Nof1-AppEngine/libs/requestfactory-apt.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="WKSPJAR" id="/Nof1-AppEngine/libs/hibernate-validator-4.3.0-annotation-processor.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>

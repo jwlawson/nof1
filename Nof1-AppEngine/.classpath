@@ -10,7 +10,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="libs/gwt-servlet-deps.jar"/>
-	<classpathentry kind="lib" path="libs/hibernate-validator-4.3.0.Final.jar"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/App Engine/v2"/>
+	<classpathentry kind="lib" path="libs/hibernate-validator-4.3.0.Final.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
