@@ -20,12 +20,12 @@
  ******************************************************************************/
 package org.nof1trial.nof1.client;
 
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
 import org.nof1trial.nof1.shared.DataProxy;
 
+import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.FlexTable;
 
 /**
@@ -69,7 +69,7 @@ public class DataTable extends FlexTable {
 		// Make the table header look nicer
 		this.getRowFormatter().addStyleName(0, "tableHeader");
 
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
+		DateTimeFormat df = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
 
 		List<DataProxy> rows = mData.getData();
 		int i = 1;
