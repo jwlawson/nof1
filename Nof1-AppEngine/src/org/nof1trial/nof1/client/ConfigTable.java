@@ -35,7 +35,6 @@ public class ConfigTable extends FlexTable {
 	public ConfigTable() {
 		this.setCellPadding(1);
 		this.setCellSpacing(0);
-		this.setWidth("100%");
 	}
 
 	public void setPatientData(PatientData data) {
