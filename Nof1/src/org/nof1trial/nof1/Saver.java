@@ -63,6 +63,8 @@ public class Saver extends IntentService {
 	private static final String NUM_DATA = "num_data_cache";
 	private static final String BOOL_CONFIG = "bool_config_cache";
 
+	private int mRetryNum = 0;
+
 	public Saver() {
 		this("Saver");
 	}
@@ -130,6 +132,7 @@ public class Saver extends IntentService {
 
 			if (isConnected) {
 				// Save online
+				mRetryNum = 0;
 
 				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, (long) periodLength, (long) numberPeriods, treatmentA,
 						treatmentB, treatmentNotes, quesList);
@@ -170,6 +173,7 @@ public class Saver extends IntentService {
 
 			if (isConnected) {
 				if (DEBUG) Log.d(TAG, "Connected to internet, sending data to server");
+				mRetryNum = 0;
 
 				uploadData(day, time, data, comment);
 
@@ -232,6 +236,7 @@ public class Saver extends IntentService {
 						for (int i = 0; i < data.length; i++) {
 							data[i] = Integer.parseInt(dataStrArr[i]);
 						}
+						mRetryNum = 0;
 
 						uploadData(day, time, data, comment);
 
@@ -251,6 +256,7 @@ public class Saver extends IntentService {
 				// sent
 				if (isConnected) {
 					// Have internet so upload data
+					mRetryNum = 0;
 
 					// get config from prefs and upload
 					SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
@@ -311,6 +317,7 @@ public class Saver extends IntentService {
 					for (int i = 0; i < data.length; i++) {
 						data[i] = Integer.parseInt(dataStrArr[i]);
 					}
+					mRetryNum = 0;
 
 					uploadData(day, time, data, comment);
 
@@ -343,6 +350,7 @@ public class Saver extends IntentService {
 				for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
 					quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 				}
+				mRetryNum = 0;
 
 				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
 						treatmentNotes, quesList);
@@ -405,12 +413,15 @@ public class Saver extends IntentService {
 				Log.d(TAG, error.getMessage());
 
 				// TODO Only refresh cookie when error is an auth error
-				// Try refreshing auth cookie
-				Util.refreshAuthCookie(getApplicationContext());
+				// Try refreshing auth cookie up to 3 times
+				if (mRetryNum < 3) {
+					Util.refreshAuthCookie(getApplicationContext());
 
-				// try uploading data again
-				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
-						treatmentNotes, quesList);
+					// try uploading data again
+					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
+							treatmentNotes, quesList);
+					mRetryNum++;
+				}
 			}
 
 		});
@@ -455,11 +466,14 @@ public class Saver extends IntentService {
 				Log.e(TAG, "Data not saved");
 
 				// TODO Only refresh cookie when error is an auth error
-				// Try refreshing auth cookie
-				Util.refreshAuthCookie(getApplicationContext());
+				// Try refreshing auth cookie up to 3 times
+				if (mRetryNum < 3) {
+					Util.refreshAuthCookie(getApplicationContext());
 
-				// try uploading data again
-				uploadData(day, time, data, comment);
+					// try uploading data again
+					uploadData(day, time, data, comment);
+					mRetryNum++;
+				}
 			}
 
 		});
