@@ -179,27 +179,7 @@ public class Saver extends IntentService {
 
 			} else {
 				// Not connected to internet
-				SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
-				SharedPreferences.Editor edit = sp.edit();
-
-				int count = sp.getInt(NUM_DATA, 0) + 1;
-				// Increment counter for number of cached data sets
-				edit.putInt(NUM_DATA, count);
-
-				edit.putInt(Keys.DATA_DAY + count, day);
-				edit.putLong(Keys.DATA_TIME + count, time);
-				edit.putString(Keys.DATA_COMMENT + count, comment);
-
-				// Convert int array to string, to allow storage in shared_prefs
-				StringBuilder sb = new StringBuilder();
-				for (int i = 0; i < data.length; i++) {
-					sb.append(data[i]).append(",");
-				}
-				// Remove trailing comma
-				sb.deleteCharAt(sb.length() - 1);
-				edit.putString(Keys.DATA_LIST + count, sb.toString());
-
-				edit.commit();
+				saveDataForLater(day, time, comment, data);
 
 				// enable network change broadcast receiver
 				PackageManager pm = getPackageManager();
@@ -241,7 +221,7 @@ public class Saver extends IntentService {
 						uploadData(day, time, data, comment);
 
 						// decrement counter in prefs
-						sp.edit().putInt(NUM_DATA, count - 1);
+						sp.edit().putInt(NUM_DATA, count - 1).commit();
 					}
 
 				} else {
@@ -280,7 +260,7 @@ public class Saver extends IntentService {
 					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
 							treatmentNotes, quesList);
 
-					// decrement counter in prefs
+					// remove flag in prefs
 					sp.edit().putBoolean(BOOL_CONFIG, false).commit();
 
 				} else {
@@ -322,7 +302,7 @@ public class Saver extends IntentService {
 					uploadData(day, time, data, comment);
 
 					// decrement counter in prefs
-					sp.edit().putInt(NUM_DATA, count - 1);
+					sp.edit().putInt(NUM_DATA, count - 1).commit();
 				}
 				uploadedData = true;
 			}
@@ -355,8 +335,8 @@ public class Saver extends IntentService {
 				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
 						treatmentNotes, quesList);
 
-				// decrement counter in prefs
-				sp.edit().putBoolean(BOOL_CONFIG, false);
+				// remove flag in prefs
+				sp.edit().putBoolean(BOOL_CONFIG, false).commit();
 				uploadedData = true;
 			}
 
@@ -421,6 +401,14 @@ public class Saver extends IntentService {
 					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
 							treatmentNotes, quesList);
 					mRetryNum++;
+				} else {
+					// Save for later
+					getSharedPreferences(CACHE, MODE_PRIVATE).edit().putBoolean(BOOL_CONFIG, true).commit();
+
+					// enable network change broadcast receiver
+					PackageManager pm = getPackageManager();
+					ComponentName comp = new ComponentName(getBaseContext(), NetworkChangeReceiver.class);
+					pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 				}
 			}
 
@@ -473,10 +461,43 @@ public class Saver extends IntentService {
 					// try uploading data again
 					uploadData(day, time, data, comment);
 					mRetryNum++;
+
+				} else {
+					// Save to upload later
+					saveDataForLater(day, time, comment, data);
+
+					// enable network change broadcast receiver
+					PackageManager pm = getPackageManager();
+					ComponentName comp = new ComponentName(getBaseContext(), NetworkChangeReceiver.class);
+					pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 				}
 			}
 
 		});
+	}
+
+	private void saveDataForLater(int day, long time, String comment, int[] data) {
+		SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
+		SharedPreferences.Editor edit = sp.edit();
+
+		int count = sp.getInt(NUM_DATA, 0) + 1;
+		// Increment counter for number of cached data sets
+		edit.putInt(NUM_DATA, count);
+
+		edit.putInt(Keys.DATA_DAY + count, day);
+		edit.putLong(Keys.DATA_TIME + count, time);
+		edit.putString(Keys.DATA_COMMENT + count, comment);
+
+		// Convert int array to string, to allow storage in shared_prefs
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < data.length; i++) {
+			sb.append(data[i]).append(",");
+		}
+		// Remove trailing comma
+		sb.deleteCharAt(sb.length() - 1);
+		edit.putString(Keys.DATA_LIST + count, sb.toString());
+
+		edit.commit();
 	}
 
 	@TargetApi(8)
