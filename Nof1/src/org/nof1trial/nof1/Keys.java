@@ -173,16 +173,16 @@ public class Keys {
 	public static final String CONFIG_SCHEDULE = "schedule";
 
 	/** Intent extra for day data was saved */
-	public static final String DATA_DAY = "day";
+	public static final String DATA_DAY = "data_day";
 
 	/** Intent extra for time data was saved */
-	public static final String DATA_TIME = "time";
+	public static final String DATA_TIME = "data_time";
 
 	/** Intent extra for additional comment */
-	public static final String DATA_COMMENT = "comment";
+	public static final String DATA_COMMENT = "data_comment";
 
 	/** Intent extra for list of data */
-	public static final String DATA_LIST = "question_data";
+	public static final String DATA_LIST = "data_question_data";
 
 	/** Shared preferences name for scheduler preferences */
 	public static final String SCHED_NAME = "config";

@@ -220,8 +220,15 @@ public class Saver extends IntentService {
 
 						uploadData(day, time, data, comment);
 
+						// Remove data from prefs
+						SharedPreferences.Editor editor = sp.edit();
+						editor.putString(Keys.DATA_DAY + count, null);
+						editor.putString(Keys.DATA_TIME + count, null);
+						editor.putString(Keys.DATA_COMMENT + count, null);
+						editor.putString(Keys.DATA_LIST + count, null);
+
 						// decrement counter in prefs
-						sp.edit().putInt(NUM_DATA, count - 1).commit();
+						editor.putInt(NUM_DATA, count - 1).commit();
 					}
 
 				} else {
@@ -291,18 +298,29 @@ public class Saver extends IntentService {
 					long time = sp.getLong(Keys.DATA_TIME + count, 0);
 					String comment = sp.getString(Keys.DATA_COMMENT + count, "");
 					String dataStr = sp.getString(Keys.DATA_LIST + count, "");
+					if (DEBUG) Log.d(TAG, "datastr = " + dataStr);
 
-					String[] dataStrArr = dataStr.split(",");
-					int[] data = new int[dataStrArr.length];
-					for (int i = 0; i < data.length; i++) {
-						data[i] = Integer.parseInt(dataStrArr[i]);
+					int[] data = null;
+					if (dataStr.length() != 0) {
+						String[] dataStrArr = dataStr.split(",");
+						data = new int[dataStrArr.length];
+						for (int i = 0; i < data.length; i++) {
+							data[i] = Integer.parseInt(dataStrArr[i]);
+						}
 					}
 					mRetryNum = 0;
 
 					uploadData(day, time, data, comment);
 
+					// Remove data from prefs
+					SharedPreferences.Editor editor = sp.edit();
+					editor.putString(Keys.DATA_DAY + count, null);
+					editor.putString(Keys.DATA_TIME + count, null);
+					editor.putString(Keys.DATA_COMMENT + count, null);
+					editor.putString(Keys.DATA_LIST + count, null);
+
 					// decrement counter in prefs
-					sp.edit().putInt(NUM_DATA, count - 1).commit();
+					editor.putInt(NUM_DATA, count - 1).commit();
 				}
 				uploadedData = true;
 			}
@@ -515,14 +533,16 @@ public class Saver extends IntentService {
 		edit.putLong(Keys.DATA_TIME + count, time);
 		edit.putString(Keys.DATA_COMMENT + count, comment);
 
-		// Convert int array to string, to allow storage in shared_prefs
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < data.length; i++) {
-			sb.append(data[i]).append(",");
+		if (data != null) {
+			// Convert int array to string, to allow storage in shared_prefs
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < data.length; i++) {
+				sb.append(data[i]).append(",");
+			}
+			// Remove trailing comma
+			sb.deleteCharAt(sb.length() - 1);
+			edit.putString(Keys.DATA_LIST + count, sb.toString());
 		}
-		// Remove trailing comma
-		sb.deleteCharAt(sb.length() - 1);
-		edit.putString(Keys.DATA_LIST + count, sb.toString());
 
 		edit.commit();
 	}
