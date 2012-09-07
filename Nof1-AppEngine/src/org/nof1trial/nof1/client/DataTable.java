@@ -85,7 +85,8 @@ public class DataTable extends FlexTable {
 				this.setText(i, j, String.valueOf(ques));
 				j++;
 			}
-			this.setText(i, j, proxy.getComment());
+			// Always want comment in the last column
+			this.setText(i, getCellCount(0) - 1, proxy.getComment());
 
 			i++;
 		}
