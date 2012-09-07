@@ -21,6 +21,7 @@
 package org.nof1trial.nof1.server;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
@@ -250,10 +251,18 @@ public class Config {
 	public static List<Config> findAllConfigs() {
 		EntityManager em = entityManager();
 		try {
-			List<Config> list = em.createQuery("select x from Config x where x.patientEmail = :email or x.doctorEmail = :email")
-					.setParameter("email", getUserEmail()).getResultList();
+			List<Config> list = new ArrayList<Config>();
+
+			// Need to do two queries, as DataStore throws error if "or" is used in query (for some stupid reason)
+			List<Config> patientList = em.createQuery("select x from Config x where x.patientEmail = :email").setParameter("email", getUserEmail())
+					.getResultList();
+			patientList.size();
+			List<Config> doctorList = em.createQuery("select x from Config x where x.doctorEmail = :email").setParameter("email", getUserEmail())
+					.getResultList();
+			doctorList.size();
 			// force to get all the employees
-			list.size();
+			list.addAll(patientList);
+			list.addAll(doctorList);
 			return list;
 		} finally {
 			em.close();

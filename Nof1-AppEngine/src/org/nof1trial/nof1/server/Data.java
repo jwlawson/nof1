@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.nof1trial.nof1.server;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -89,10 +90,17 @@ public class Data {
 		EntityManager em = entityManager();
 
 		try {
-			Query query = em.createQuery("select x from Data x WHERE x.doctorEmail =:Email OR x.patientEmail =:Email");
+			List<Data> resultList = new ArrayList<Data>();
+			Query query = em.createQuery("select x from Data x WHERE x.doctorEmail =:Email");
 			query.setMaxResults(maxResults);
 			query.setParameter("Email", email);
-			List<Data> resultList = query.getResultList();
+			resultList.addAll(query.getResultList());
+			resultList.size();
+
+			query = em.createQuery("select x from Data x WHERE x.patientEmail =:Email");
+			query.setMaxResults(maxResults);
+			query.setParameter("Email", email);
+			resultList.addAll(query.getResultList());
 			// force it to materialize
 			resultList.size();
 			return resultList;
