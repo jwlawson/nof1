@@ -32,7 +32,6 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.app.Setup;
 import org.nof1trial.nof1.app.Util;
 
 import android.accounts.Account;
@@ -41,7 +40,6 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -51,7 +49,6 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
@@ -59,10 +56,12 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.SherlockActivity;
+
 /**
  * Account selections activity - handles device registration and unregistration.
  */
-public class AccountsActivity extends Activity {
+public class AccountsActivity extends SherlockActivity {
 	/**
 	 * Tag for logging.
 	 */
@@ -84,16 +83,13 @@ public class AccountsActivity extends Activity {
 	 */
 	private Context mContext = this;
 
-	/**
-	 * Begins the activity.
-	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		SharedPreferences prefs = Util.getSharedPreferences(mContext);
-		String deviceRegistrationID = prefs.getString(Util.DEVICE_REGISTRATION_ID, null);
-		if (deviceRegistrationID == null) {
+		String account = prefs.getString(Util.ACCOUNT_NAME, null);
+		if (account == null) {
 			// Show the 'connect' screen if we are not connected
 			setScreenContent(R.layout.account_connect);
 		} else {
@@ -102,21 +98,6 @@ public class AccountsActivity extends Activity {
 		}
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		SharedPreferences prefs = Util.getSharedPreferences(mContext);
-		String deviceRegistrationID = prefs.getString(Util.DEVICE_REGISTRATION_ID, null);
-		if (deviceRegistrationID == null) {
-			setScreenContent(R.layout.account_connect);
-		} else {
-			setScreenContent(R.layout.account_disconnect);
-		}
-		return true;
-	}
-
-	/**
-	 * Resumes the activity.
-	 */
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -132,7 +113,7 @@ public class AccountsActivity extends Activity {
 		if (Util.isDebug(mContext)) {
 			// Use debug account
 			register("android@jwlawson.co.uk");
-			if (DEBUG) Log.d(TAG, "Using debug acount android@jwlawson.co.uk");
+			if (DEBUG) Log.d(TAG, "Using debug account android@jwlawson.co.uk");
 			finish();
 		}
 		if (accounts.size() == 0) {
@@ -201,7 +182,6 @@ public class AccountsActivity extends Activity {
 				// Delete the current account from shared preferences
 				Editor editor = prefs.edit();
 				editor.putString(Util.AUTH_COOKIE, null);
-				editor.putString(Util.DEVICE_REGISTRATION_ID, null);
 				editor.commit();
 
 				// Unregister in the background and terminate the activity
@@ -235,7 +215,7 @@ public class AccountsActivity extends Activity {
 	// Register and Unregister
 
 	/**
-	 * Registers for C2DM messaging with the given account name.
+	 * Gets the auth cookie from AccountManager and saves to shared prefs
 	 * 
 	 * @param accountName a String containing a Google account name
 	 */
@@ -306,8 +286,8 @@ public class AccountsActivity extends Activity {
 		try {
 			// Get SACSID cookie
 			DefaultHttpClient client = new DefaultHttpClient();
-			String continueURL = Setup.PROD_URL;
-			URI uri = new URI(Setup.PROD_URL + "/_ah/login?continue=" + URLEncoder.encode(continueURL, "UTF-8") + "&auth=" + authToken);
+			String continueURL = Util.PROD_URL;
+			URI uri = new URI(Util.PROD_URL + "/_ah/login?continue=" + URLEncoder.encode(continueURL, "UTF-8") + "&auth=" + authToken);
 			HttpGet method = new HttpGet(uri);
 			final HttpParams getParams = new BasicHttpParams();
 			HttpClientParams.setRedirecting(getParams, false);
