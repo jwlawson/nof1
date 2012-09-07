@@ -395,7 +395,18 @@ public class Saver extends IntentService {
 				// TODO Only refresh cookie when error is an auth error
 				// Try refreshing auth cookie up to 3 times
 				if (mRetryNum < 3) {
+
+					String cookie = Util.getSharedPreferences(getBaseContext()).getString(Util.AUTH_COOKIE, "");
 					Util.refreshAuthCookie(getApplicationContext());
+
+					while (cookie.equals(Util.getSharedPreferences(getBaseContext()).getString(Util.AUTH_COOKIE, ""))) {
+						// Cookie not yet changed, so wait
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// Don't care about interrupts
+						}
+					}
 
 					// try uploading data again
 					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
@@ -456,7 +467,18 @@ public class Saver extends IntentService {
 				// TODO Only refresh cookie when error is an auth error
 				// Try refreshing auth cookie up to 3 times
 				if (mRetryNum < 3) {
+
+					String cookie = Util.getSharedPreferences(getBaseContext()).getString(Util.AUTH_COOKIE, "");
 					Util.refreshAuthCookie(getApplicationContext());
+
+					while (cookie.equals(Util.getSharedPreferences(getBaseContext()).getString(Util.AUTH_COOKIE, ""))) {
+						// Cookie not yet changed, so wait
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// Don't care about interrupts
+						}
+					}
 
 					// try uploading data again
 					uploadData(day, time, data, comment);
