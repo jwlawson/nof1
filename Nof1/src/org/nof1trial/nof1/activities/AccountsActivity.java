@@ -115,6 +115,7 @@ public class AccountsActivity extends SherlockActivity {
 			register("android@jwlawson.co.uk");
 			if (DEBUG) Log.d(TAG, "Using debug account android@jwlawson.co.uk");
 			finish();
+			return;
 		}
 		if (accounts.size() == 0) {
 			// Show a dialog and invoke the "Add Account" activity if requested
