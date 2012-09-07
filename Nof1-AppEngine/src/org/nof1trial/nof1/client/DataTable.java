@@ -85,6 +85,7 @@ public class DataTable extends FlexTable {
 				this.setText(i, j, String.valueOf(ques));
 				j++;
 			}
+			this.setText(i, j, proxy.getComment());
 
 			i++;
 		}
