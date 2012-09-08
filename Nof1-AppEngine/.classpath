@@ -9,9 +9,9 @@
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="libs/gwt-servlet-deps.jar"/>
-	<classpathentry kind="lib" path="libs/hibernate-validator-4.3.0.Final.jar"/>
-	<classpathentry kind="lib" path="libs/jboss-logging-3.1.0.CR2.jar"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-servlet-deps.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/hibernate-validator-4.3.0.Final.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jboss-logging-3.1.0.CR2.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
