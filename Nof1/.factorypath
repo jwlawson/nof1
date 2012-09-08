@@ -1,3 +1,4 @@
 <factorypath>
-    <factorypathentry kind="WKSPJAR" id="/Nof1-AppEngine/libs/requestfactory-apt.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="PLUGIN" id="org.eclipse.jst.ws.annotations.core" enabled="false" runInBatchMode="false"/>
+    <factorypathentry kind="WKSPJAR" id="/Nof1/libs/requestfactory-apt.jar" enabled="true" runInBatchMode="false"/>
 </factorypath>
