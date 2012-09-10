@@ -6,14 +6,56 @@ html,body {
 	background: #eaeaea;
 }
 
-body {
-  color: black;
-  border: 0px;
-  padding: 0px;
-  background: #eaeaea;
-  direction: ltr;
+pre {
+	font-family: "courier new", courier;
+	font-size: small;
 }
 
+body {
+	color: black;
+	border: 0px;
+	padding: 0px;
+	background: #eaeaea !important;
+	direction: ltr;
+}
+
+body {
+	font-family: arial, helvetica, verdana, sans-serif;
+	font-size: small;
+	overflow-x: hidden;
+}
+
+/** Button styles */
+.gwt-Button {
+  margin: 0;
+  padding: 5px 7px;
+  text-decoration: none;
+  cursor: pointer;
+  cursor: hand;
+  font-size:small;
+  background: url("images/hborder.png") repeat-x 0px -2077px;
+  border:1px solid #bbb;
+  border-bottom: 1px solid #a0a0a0;
+  border-radius: 3px;
+ -moz-border-radius: 3px;
+}
+.gwt-Button:active {
+  border: 1px inset #ccc;
+}
+.gwt-Button:hover {
+  border-color: #939393;
+}
+.gwt-Button[disabled] {
+  cursor: default;
+  color: #888;
+}
+.gwt-Button[disabled]:hover {
+  border: 1px outset #ccc;
+}
+
+
+
+/** Main flowPanel style */
 .vPanel {
 	width: 90%;
 	background: #eaeaea;
@@ -21,6 +63,7 @@ body {
 	margin-left: auto;
 }
 
+/** Header panel style */
 .headerPanel {
 	width: 100%;
 }
@@ -40,7 +83,7 @@ body {
 	font-weight: bolder;
 }
 
-.spacer{
+.spacer {
 	clear: both;
 }
 

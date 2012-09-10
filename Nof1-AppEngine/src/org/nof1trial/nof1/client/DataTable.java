@@ -99,7 +99,7 @@ public class DataTable extends FlexTable {
 		CellFormatter cf = getCellFormatter();
 
 		for (int row = 0; row < getRowCount(); ++row) {
-			for (int col = 0; col < getCellCount(row); col++) {
+			for (int col = 1; col < getCellCount(row); col++) {
 				cf.addStyleName(row, col, "table-Cell");
 			}
 			if (row == 0) continue;
