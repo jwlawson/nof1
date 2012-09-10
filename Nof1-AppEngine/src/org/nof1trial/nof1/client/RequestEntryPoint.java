@@ -28,14 +28,14 @@ import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.DataProxy;
 import org.nof1trial.nof1.shared.MyRequestFactory;
 
-import com.google.appengine.api.users.User;
-import com.google.appengine.api.users.UserService;
-import com.google.appengine.api.users.UserServiceFactory;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratorPanel;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -52,9 +52,13 @@ public class RequestEntryPoint implements EntryPoint {
 
 	private MyRequestFactory mRequestFactory;
 
+	private GwtRequestFactory mGwtRequestFactory;
+
 	private FlowPanel vPanel;
 
 	private Label lblLoggedIn;
+
+	private Button btnLogout;
 
 	/** Comparator that sorts data by the time it is collected */
 	private static final Comparator<DataProxy> DATAPROXY_COMPARATOR = new Comparator<DataProxy>() {
@@ -79,6 +83,27 @@ public class RequestEntryPoint implements EntryPoint {
 	@Override
 	public void onModuleLoad() {
 		final EventBus eventBus = new SimpleEventBus();
+
+		mGwtRequestFactory = GWT.create(GwtRequestFactory.class);
+		mGwtRequestFactory.initialize(eventBus);
+
+		mGwtRequestFactory.userRequest().get().fire(new Receiver<GaeUserProxy>() {
+
+			@Override
+			public void onSuccess(final GaeUserProxy response) {
+				lblLoggedIn.setText("Logged in as: " + response.getEmail());
+
+				btnLogout.setEnabled(true);
+				btnLogout.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						Window.Location.assign(response.getLogoutUrl());
+					}
+				});
+			}
+		});
+
 		mRequestFactory = GWT.create(MyRequestFactory.class);
 		mRequestFactory.initialize(eventBus);
 
@@ -97,7 +122,6 @@ public class RequestEntryPoint implements EntryPoint {
 		vPanel.setStyleName("vPanel");
 
 		RootPanel rootPanel = RootPanel.get();
-		rootPanel.setSize("100%", "100%");
 		rootPanel.add(vPanel);
 
 		FlowPanel headerPanel = new FlowPanel();
@@ -108,12 +132,9 @@ public class RequestEntryPoint implements EntryPoint {
 		Image imgHeader = new Image("images/Nof1-Icon.png");
 		imgHeader.setStyleName("gwt-Image-header");
 		headerPanel.add(imgHeader);
-		imgHeader.setSize("128px", "128px");
 
 		// Header text
 		Label lblHeader = new Label("User data");
-		lblHeader.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
-		lblHeader.setWordWrap(false);
 		lblHeader.setStyleName("gwt-Label-header");
 		headerPanel.add(lblHeader);
 
@@ -122,12 +143,15 @@ public class RequestEntryPoint implements EntryPoint {
 		simplePanel.setStyleName("spacer");
 		headerPanel.add(simplePanel);
 
-		UserService userService = UserServiceFactory.getUserService();
-		User user = userService.getCurrentUser();
-
-		lblLoggedIn = new Label("Logged in as: " + user.getEmail());
-		lblLoggedIn.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_LEFT);
+		// User login label
+		lblLoggedIn = new Label("Not logged in.");
 		vPanel.add(lblLoggedIn);
+
+		// User log out button
+		btnLogout = new Button("Logout");
+		btnLogout.setEnabled(false);
+		vPanel.add(btnLogout);
+
 	}
 
 	private void addConfig(final ConfigProxy conf) {
