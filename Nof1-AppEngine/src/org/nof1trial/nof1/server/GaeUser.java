@@ -53,7 +53,7 @@ public class GaeUser {
 		User user = userService.getCurrentUser();
 
 		gaeUser.setEmail(user.getEmail());
-		gaeUser.setLogoutUrl(userService.createLogoutURL(""));
+		gaeUser.setLogoutUrl(userService.createLogoutURL("/"));
 
 		return gaeUser;
 	}
