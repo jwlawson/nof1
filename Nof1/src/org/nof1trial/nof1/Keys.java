@@ -73,6 +73,9 @@ public class Keys {
 	/** Shared preference key for comment bool. True = show comment */
 	public static final String COMMENT = "comment";
 
+	/** Intent key for account string */
+	public static final String INTENT_ACCOUNT = "org.nof1trial.nof1.account";
+
 	/** Intent key for preview mode */
 	public static final String INTENT_PREVIEW = "org.nof1trial.nof1.preview";
 
@@ -108,6 +111,12 @@ public class Keys {
 
 	/** Intent action for trial completed */
 	public static final String ACTION_COMPLETE = "org.nof1trial.nof1.TRIAL_COMPLETE";
+
+	/** Intent action for registering account */
+	public static final String ACTION_REGISTER = "org.nof1trial.nof1.REGISTER_ACCOUNT";
+
+	/** Intent action for refreshing account cookie */
+	public static final String ACTION_REFRESH = "org.nof1trial.nof1.REFRESH_CREDENTIALS";
 
 	/** SharedPrefernces holding config data */
 	public static final String CONFIG_NAME = "config";

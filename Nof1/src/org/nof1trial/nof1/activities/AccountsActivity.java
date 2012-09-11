@@ -15,32 +15,19 @@
  */
 package org.nof1trial.nof1.activities;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.HttpClientParams;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
 import org.nof1trial.nof1.BuildConfig;
+import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.services.AccountService;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -62,26 +49,18 @@ import com.actionbarsherlock.app.SherlockActivity;
  * Account selections activity - handles device registration and unregistration.
  */
 public class AccountsActivity extends SherlockActivity {
-	/**
-	 * Tag for logging.
-	 */
+
+	/** Tag for logging. */
 	private static final String TAG = "AccountsActivity";
 	private static final boolean DEBUG = BuildConfig.DEBUG;
 
-	/**
-	 * Cookie name for authorization.
-	 */
-	private static final String AUTH_COOKIE_NAME = "SACSID";
-
-	/**
-	 * The selected position in the ListView of accounts.
-	 */
+	/** The selected position in the ListView of accounts. */
 	private int mAccountSelectedPosition = 0;
 
-	/**
-	 * The current context.
-	 */
+	/** The current context. */
 	private Context mContext = this;
+
+	private Dialog mDialog;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -99,8 +78,13 @@ public class AccountsActivity extends SherlockActivity {
 	}
 
 	@Override
-	protected void onResume() {
-		super.onResume();
+	protected void onDestroy() {
+		super.onDestroy();
+
+		// Dismiss dialog on destroy to prevent window leaking
+		if (mDialog != null) {
+			mDialog.dismiss();
+		}
 	}
 
 	// Manage UI Screens
@@ -112,7 +96,10 @@ public class AccountsActivity extends SherlockActivity {
 		List<String> accounts = getGoogleAccounts();
 		if (Util.isDebug(mContext)) {
 			// Use debug account
-			register("android@jwlawson.co.uk");
+			Intent intent = new Intent(mContext, AccountService.class);
+			intent.putExtra(Keys.INTENT_ACCOUNT, "android@jwlawson.co.uk");
+			startService(intent);
+
 			if (DEBUG) Log.d(TAG, "Using debug account android@jwlawson.co.uk");
 			finish();
 			return;
@@ -134,7 +121,9 @@ public class AccountsActivity extends SherlockActivity {
 			});
 			builder.setIcon(android.R.drawable.stat_sys_warning);
 			builder.setTitle(R.string.attention);
-			builder.show();
+			mDialog = builder.create();
+			mDialog.show();
+
 		} else {
 			final ListView listView = (ListView) findViewById(R.id.select_account);
 			listView.setAdapter(new ArrayAdapter<String>(mContext, R.layout.account_list_item, accounts));
@@ -147,7 +136,12 @@ public class AccountsActivity extends SherlockActivity {
 					// Register in the background and terminate the activity
 					mAccountSelectedPosition = listView.getCheckedItemPosition();
 					TextView account = (TextView) listView.getChildAt(mAccountSelectedPosition);
-					register((String) account.getText());
+
+					// Offload registering to background service
+					Intent intent = new Intent(mContext, AccountService.class);
+					intent.putExtra(Keys.INTENT_ACCOUNT, account.getText().toString());
+					startService(intent);
+
 					AccountsActivity.this.setResult(RESULT_OK);
 					finish();
 				}
@@ -183,6 +177,7 @@ public class AccountsActivity extends SherlockActivity {
 				// Delete the current account from shared preferences
 				Editor editor = prefs.edit();
 				editor.putString(Util.AUTH_COOKIE, null);
+				editor.putString(Util.ACCOUNT_NAME, null);
 				editor.commit();
 
 				// Unregister in the background and terminate the activity
@@ -213,108 +208,7 @@ public class AccountsActivity extends SherlockActivity {
 		}
 	}
 
-	// Register and Unregister
-
-	/**
-	 * Gets the auth cookie from AccountManager and saves to shared prefs
-	 * 
-	 * @param accountName a String containing a Google account name
-	 */
-	private void register(final String accountName) {
-		// Store the account name in shared preferences
-		final SharedPreferences prefs = Util.getSharedPreferences(mContext);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(Util.ACCOUNT_NAME, accountName);
-		editor.putString(Util.AUTH_COOKIE, null);
-		editor.commit();
-
-		if (Util.isDebug(mContext)) {
-			// Use a fake cookie for the dev mode app engine server
-			// The cookie has the form email:isAdmin:userId
-			// We set the userId to be the same as the account name
-			String authCookie = "dev_appserver_login=" + accountName + ":false:" + accountName;
-			prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
-		}
-
-		// Obtain an auth token and register
-		AccountManager mgr = AccountManager.get(mContext);
-		Account[] accts = mgr.getAccountsByType("com.google");
-		for (Account acct : accts) {
-			if (acct.name.equals(accountName)) {
-				if (Util.isDebug(mContext)) {
-					// Use a fake cookie for the dev mode app engine server
-					// The cookie has the form email:isAdmin:userId
-					// We set the userId to be the same as the account name
-					String authCookie = "dev_appserver_login=" + accountName + ":false:" + accountName;
-					prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
-				} else {
-					// Get the auth token from the AccountManager and convert
-					// it into a cookie for the appengine server
-					mgr.getAuthToken(acct, "ah", null, this, new AccountManagerCallback<Bundle>() {
-						public void run(AccountManagerFuture<Bundle> future) {
-							try {
-								Bundle authTokenBundle = future.getResult();
-								String authToken = authTokenBundle.get(AccountManager.KEY_AUTHTOKEN).toString();
-								String authCookie = getAuthCookie(authToken);
-								prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
-
-							} catch (AuthenticatorException e) {
-								Log.w(TAG, "Got AuthenticatorException " + e);
-								Log.w(TAG, Log.getStackTraceString(e));
-							} catch (IOException e) {
-								Log.w(TAG, "Got IOException " + Log.getStackTraceString(e));
-								Log.w(TAG, Log.getStackTraceString(e));
-							} catch (OperationCanceledException e) {
-								Log.w(TAG, "Got OperationCanceledException " + e);
-								Log.w(TAG, Log.getStackTraceString(e));
-							}
-						}
-					}, null);
-				}
-				break;
-			}
-		}
-	}
-
 	// Utility Methods
-
-	/**
-	 * Retrieves the authorization cookie associated with the given token. This
-	 * method should only be used when running against a production appengine
-	 * backend (as opposed to a dev mode server).
-	 */
-	private String getAuthCookie(String authToken) {
-		try {
-			// Get SACSID cookie
-			DefaultHttpClient client = new DefaultHttpClient();
-			String continueURL = Util.PROD_URL;
-			URI uri = new URI(Util.PROD_URL + "/_ah/login?continue=" + URLEncoder.encode(continueURL, "UTF-8") + "&auth=" + authToken);
-			HttpGet method = new HttpGet(uri);
-			final HttpParams getParams = new BasicHttpParams();
-			HttpClientParams.setRedirecting(getParams, false);
-			method.setParams(getParams);
-
-			HttpResponse res = client.execute(method);
-			Header[] headers = res.getHeaders("Set-Cookie");
-			if (res.getStatusLine().getStatusCode() != 302 || headers.length == 0) {
-				return null;
-			}
-
-			for (Cookie cookie : client.getCookieStore().getCookies()) {
-				if (AUTH_COOKIE_NAME.equals(cookie.getName())) {
-					return AUTH_COOKIE_NAME + "=" + cookie.getValue();
-				}
-			}
-		} catch (IOException e) {
-			Log.w(TAG, "Got IOException " + e);
-			Log.w(TAG, Log.getStackTraceString(e));
-		} catch (URISyntaxException e) {
-			Log.w(TAG, "Got URISyntaxException " + e);
-			Log.w(TAG, Log.getStackTraceString(e));
-		}
-
-		return null;
-	}
 
 	/**
 	 * Returns a list of registered Google account names. If no Google accounts

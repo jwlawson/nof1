@@ -210,4 +210,6 @@
     <string name="account_title">Connect to the cloud</string>
 
     <string name="accounts">Accounts</string>
+    <string name="nof1_account_setup">Nof1 Account Setup</string>
+    <string name="retrieve_account">Retrieving account information</string>
 </resources>

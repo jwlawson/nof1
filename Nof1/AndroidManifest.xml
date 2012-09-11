@@ -192,12 +192,12 @@
         </activity>
 
         <service
-            android:name=".FinishedService"
+            android:name=".services.FinishedService"
             android:exported="false" >
         </service>
         
         <service
-            android:name="Saver"
+            andro.services.Saverme="Saver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="org.nof1trial.nof1.SAVE_CONFIG" />
@@ -205,11 +205,20 @@
             </intent-filter>
         </service>
         
-        <service android:name=".Scheduler" >
+        <service
+            android:name=".services.AccountService"
+            android:exported="false" >
+            <intent-filter >
+                <action android:name="org.nof1trial.nof1.REGISTER_ACCOUNT" />
+                <action android:name="org.nof1trial.nof1.REFRESH_CREDENTIALS" />
+            </intent-filter>
+        </service>
+        
+        <service android:name=".services.Scheduler" >
         </service>
 
         <receiver
-            android:name=".Receiver"
+            android:name=".AlarmReceiver"
             android:permission="org.nof1trial.nof1.permission.RECEIVER" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
