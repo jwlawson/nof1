@@ -200,4 +200,6 @@
     <string name="error_downloading_schedule">Error downloading schedule, please check network connection.\n\nIf the problem persists contact the pharmacist delivering the trial for the schedule.</string>
     <string name="downloading_schedule">Trying to download schedule now…</string>
     <string name="schedule">Schedule</string>
+    <string name="creating_file">Creating csv file…</string>
+    <string name="sending_email">Preparing to send email…</string>
 </resources>

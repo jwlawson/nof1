@@ -20,33 +20,18 @@
  ******************************************************************************/
 package org.nof1trial.nof1.activities;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Date;
-
-import org.apache.http.protocol.HTTP;
-import org.nof1trial.nof1.DataSource;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.services.FinishedService;
-
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,8 +44,17 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
+import org.apache.http.protocol.HTTP;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.services.FinishedService;
+
+import java.io.File;
+
 /**
- * The main home screen that users see when they open the app. On first run will also set up the task stack to allow
+ * The main home screen that users see when they open the app. On first run will
+ * also set up the task stack to allow
  * doctors to input data, then patients
  * preferences, then back to this screen.
  * 
@@ -72,7 +66,10 @@ public class HomeScreen extends SherlockActivity {
 	private static final String TAG = "HomeScreen";
 	private static final boolean DEBUG = false;
 
-	private File mFile;
+	/** Current context */
+	private final Context mContext = this;
+
+	private Button btnEmail;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +80,14 @@ public class HomeScreen extends SherlockActivity {
 		setSupportProgressBarIndeterminateVisibility(false);
 
 		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+
+		SharedPreferences accPrefs = Util.getSharedPreferences(mContext);
+
+		if (accPrefs.getString(Util.ACCOUNT_NAME, null) == null) {
+			// No account set up for app yet
+			Intent account = new Intent(mContext, AccountsActivity.class);
+			startActivity(account);
+		}
 
 		if (!sp.contains(Keys.DEFAULT_FIRST)) {
 			if (DEBUG) Log.d(TAG, "App launched for the first time");
@@ -126,7 +131,8 @@ public class HomeScreen extends SherlockActivity {
 					}
 				});
 			} else {
-				// Questionnaire not made, so don't want to create empty database
+				// Questionnaire not made, so don't want to create empty
+				// database
 				btnGraphs.setEnabled(false);
 			}
 
@@ -158,7 +164,7 @@ public class HomeScreen extends SherlockActivity {
 				btnData.setEnabled(false);
 
 				// Show email csv button
-				final Button btnEmail = (Button) findViewById(R.id.home_btn_email);
+				btnEmail = (Button) findViewById(R.id.home_btn_email);
 				btnEmail.setVisibility(View.VISIBLE);
 
 				btnEmail.setOnClickListener(new OnClickListener() {
@@ -167,33 +173,43 @@ public class HomeScreen extends SherlockActivity {
 
 						File file = findCSV();
 
+						btnEmail.setEnabled(false);
+
 						if (file == null) {
 							// File not found
-							btnEmail.setEnabled(false);
-							new Loader().execute();
+
+							btnEmail.setText(R.string.creating_file);
+
+							Intent maker = new Intent(mContext, FinishedService.class);
+							maker.setAction(Keys.ACTION_MAKE_FILE);
+							startService(maker);
+
+							LocalBroadcastManager manager = LocalBroadcastManager
+									.getInstance(mContext);
+							manager.registerReceiver(new FileReceiver(), null);
 
 						} else {
-							Uri uri = Uri.fromFile(file);
-							Resources res = getResources();
-							SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
-							try {
-								Intent intent = new Intent(Intent.ACTION_SEND);
-								intent.setType(HTTP.PLAIN_TEXT_TYPE);
-								intent.putExtra(Intent.EXTRA_EMAIL, "");
-								intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
-								intent.putExtra(Intent.EXTRA_TEXT,
-										res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
-								intent.putExtra(Intent.EXTRA_STREAM, uri);
-								startActivity(intent);
-							} catch (ActivityNotFoundException e) {
-								// No suitable email activity found
-								Toast.makeText(HomeScreen.this, R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
-							}
+							btnEmail.setText(R.string.sending_email);
+							sendEmail(file);
+
 						}
 
 					}
 				});
+
+				Button btnSchedule = (Button) findViewById(R.id.home_btn_schedule);
+				btnSchedule.setVisibility(View.VISIBLE);
+				btnSchedule.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// Start schedule viewer activity
+						Intent schedule = new Intent(mContext, ScheduleViewer.class);
+						startActivity(schedule);
+					}
+				});
+
 				// Reload relative layout to ensure button is shown
 				((RelativeLayout) btnEmail.getParent()).requestLayout();
 			}
@@ -232,13 +248,41 @@ public class HomeScreen extends SherlockActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	private void sendEmail(File file) {
+		Uri uri = Uri.fromFile(file);
+		Resources res = getResources();
+		SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+		try {
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType(HTTP.PLAIN_TEXT_TYPE);
+			intent.putExtra(Intent.EXTRA_EMAIL, "");
+			intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
+			intent.putExtra(
+					Intent.EXTRA_TEXT,
+					res.getText(R.string.results_attached)
+							+ sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+			intent.putExtra(Intent.EXTRA_STREAM, uri);
+			startActivity(intent);
+		} catch (ActivityNotFoundException e) {
+			// No suitable email activity found
+			Toast.makeText(HomeScreen.this, R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
+		}
+
+		if (btnEmail != null) {
+			btnEmail.setEnabled(true);
+			btnEmail.setText(R.string.email_csv);
+		}
+	}
+
 	private File findCSV() {
 		String state = Environment.getExternalStorageState();
 
 		File dir;
 		File file;
 
-		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) || Environment.MEDIA_MOUNTED.equals(state)) {
+		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)
+				|| Environment.MEDIA_MOUNTED.equals(state)) {
 			// External storage readable
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
 				// Eclair has no support for getExternalCacheDir()
@@ -273,160 +317,30 @@ public class HomeScreen extends SherlockActivity {
 		return null;
 	}
 
-	@SuppressLint("WorldReadableFiles")
-	@TargetApi(8)
-	private boolean createCVS(Cursor cursor) {
-		/*
-		 * We want to write the schedule file to external storage, as that way we know the email app will be able to
-		 * find it.
-		 * However if it cannot, use internal storage and a world readable file. This may or may not work depending on
-		 * the email client used.
-		 */
-		// Check state of external storage
-		boolean storageWriteable = false;
-		boolean storageInternal = false;
-		String state = Environment.getExternalStorageState();
+	private class FileReceiver extends BroadcastReceiver {
 
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			// We can read and write the media
-			storageWriteable = true;
-		} else {
-			// Something else is wrong. It may be one of many other states, but all we need
-			// to know is we can neither read nor write
-			storageWriteable = false;
-		}
-		File dir = null;
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (Keys.ACTION_MAKE_FILE.equals(intent.getAction())) {
+				// File made successfully
 
-		if (storageWriteable && Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
-			// Eclair has no support for getExternalCacheDir()
-			// Save file to /Android/data/org.nof1trial.nof1/cache/
-			File temp = Environment.getExternalStorageDirectory();
-
-			dir = new File(temp.getAbsoluteFile() + "/Android/data/org.nof1trial.nof1/files");
-
-		} else if (storageWriteable) {
-
-			dir = getExternalFilesDir(null);
-
-		} else {
-			// Toast.makeText(this, "No external storage found. Using internal storage which may not work.",
-			// Toast.LENGTH_LONG).show();
-			storageInternal = true;
-			dir = getFilesDir();
-		}
-		mFile = new File(dir, FinishedService.CVS_FILE);
-
-		if (storageInternal) {
-			try {
-				// File should be world readable so that GMail (or whatever the user uses) can read it
-				FileOutputStream fos = openFileOutput(FinishedService.CVS_FILE, MODE_WORLD_READABLE);
-				fos.write(getCVSString(cursor).getBytes());
-				fos.close();
-
-			} catch (IOException e) {
-				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
-				return false;
-			}
-
-		} else {
-			try {
-				// Write file to external storage
-				BufferedWriter writer = new BufferedWriter(new FileWriter(mFile));
-				writer.write(getCVSString(cursor));
-				writer.close();
-
-			} catch (IOException e) {
-				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
-				return false;
-			}
-		}
-		return true;
-
-	}
-
-	private String getCVSString(Cursor cursor) {
-		StringBuilder sb = new StringBuilder();
-
-		cursor.moveToFirst();
-		String[] headers = cursor.getColumnNames();
-		int size = headers.length;
-
-		// Add column headers
-		for (int i = 0; i < size; i++) {
-			sb.append(headers[i]).append(", ");
-		}
-		sb.append("\n");
-
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
-
-		// Add data
-		while (!cursor.isAfterLast()) {
-			for (int i = 0; i < size; i++) {
-				if (i == 2) {
-					// Want to convert time to readable format
-					sb.append(df.format(new Date(cursor.getLong(i)))).append(", ");
-
-				} else {
-					sb.append(cursor.getString(i)).append(", ");
+				// Only want to send email if user still on home screen,
+				// otherwise it would be a but jarring
+				if (HomeScreen.this != null) {
+					File file = findCSV();
+					if (file != null) {
+						sendEmail(file);
+					}
 				}
+
+				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
+				manager.unregisterReceiver(this);
+
+			} else if (Keys.ACTION_ERROR.equals(intent.getAction())) {
+				// Some error
+
 			}
-			sb.append("\n");
-
-			cursor.moveToNext();
 		}
 
-		return sb.toString();
-
-	}
-
-	private class Loader extends AsyncTask<Void, Void, Void> {
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			setSupportProgressBarIndeterminateVisibility(true);
-		}
-
-		@Override
-		protected Void doInBackground(Void... params) {
-			DataSource data = new DataSource(HomeScreen.this);
-			data.open();
-
-			Cursor cursor = data.getAllColumns();
-
-			createCVS(cursor);
-
-			cursor.close();
-			data.close();
-
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			super.onPostExecute(result);
-			setSupportProgressBarIndeterminateVisibility(false);
-
-			// Send file
-			if (mFile != null) {
-				Uri uri = Uri.fromFile(mFile);
-				Resources res = getResources();
-				SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-
-				try {
-					Intent intent = new Intent(Intent.ACTION_SEND);
-					intent.setType(HTTP.PLAIN_TEXT_TYPE);
-					intent.putExtra(Intent.EXTRA_EMAIL, "");
-					intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
-					intent.putExtra(Intent.EXTRA_TEXT, res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
-					intent.putExtra(Intent.EXTRA_STREAM, uri);
-					startActivity(intent);
-				} catch (ActivityNotFoundException e) {
-					// No suitable email activity found
-					Toast.makeText(HomeScreen.this, R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
-				}
-			}
-			((Button) findViewById(R.id.home_btn_email)).setEnabled(true);
-		}
 	}
 }

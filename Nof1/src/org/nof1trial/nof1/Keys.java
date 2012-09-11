@@ -137,6 +137,9 @@ public class Keys {
 	/** Intent action for an error */
 	public static final String ACTION_ERROR = "org.nof1trial.nof1.ERROR";
 
+	/** Intent action for making a new file */
+	public static final String ACTION_MAKE_FILE = "org.nof1trial.nof1.MAKE_FILE";
+
 	/** SharedPrefernces holding config data */
 	public static final String CONFIG_NAME = "config";
 

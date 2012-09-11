@@ -400,6 +400,32 @@ public class FinishedService extends IntentService {
 						PackageManager.DONT_KILL_APP);
 			}
 
+		} else if (Keys.ACTION_MAKE_FILE.equals(intent.getAction())) {
+			// Make the csv file
+			DataSource data = new DataSource(FinishedService.this);
+			data.open();
+
+			Cursor cursor = data.getAllColumns();
+
+			boolean done = createCVS(cursor);
+
+			cursor.close();
+			data.close();
+
+			if (done) {
+
+				// Send local broadcast to say the download is complete
+				Intent broadcast = new Intent(Keys.ACTION_MAKE_FILE);
+				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+				manager.sendBroadcast(broadcast);
+
+			} else {
+				// Send local broadcast to say the download is complete
+				Intent broadcast = new Intent(Keys.ACTION_ERROR);
+				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+				manager.sendBroadcast(broadcast);
+			}
+
 		}
 	}
 }

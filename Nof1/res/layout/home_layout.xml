@@ -75,5 +75,15 @@
         android:layout_below="@id/home_btn_add_note"
         android:text="@string/email_csv"
         android:visibility="gone" />
+
+    <Button
+        android:id="@+id/home_btn_schedule"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/home_btn_add_note"
+        android:layout_alignRight="@+id/home_btn_add_note"
+        android:layout_below="@id/home_btn_email"
+        android:text="@string/schedule"
+        android:visibility="gone" />
 
 </RelativeLayout>
