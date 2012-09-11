@@ -20,13 +20,6 @@
  ******************************************************************************/
 package org.nof1trial.nof1.services;
 
-import java.util.Calendar;
-
-import org.nof1trial.nof1.AlarmReceiver;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.preferences.TimePreference;
-
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -37,7 +30,12 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
+
+import org.nof1trial.nof1.AlarmReceiver;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.preferences.TimePreference;
+
+import java.util.Calendar;
 
 /**
  * Handles scheduling next notification.
@@ -99,7 +97,8 @@ public class Scheduler extends IntentService {
 		schedEdit.putInt(Keys.SCHED_NEXT_DAY, schedPrefs.getInt(Keys.SCHED_LAST_DAY, 1));
 		schedEdit.putInt(Keys.SCHED_CUR_PERIOD, schedPrefs.getInt(Keys.SCHED_LAST_PERIOD, 1));
 		schedEdit.putString(Keys.SCHED_NEXT_DATE, schedPrefs.getString(Keys.SCHED_LAST_DATE, null));
-		schedEdit.putInt(Keys.SCHED_NEXT_CUMULATIVE_DAY, schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 1));
+		schedEdit.putInt(Keys.SCHED_NEXT_CUMULATIVE_DAY,
+				schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 1));
 
 		// Get calendar for this time + mins
 		Calendar cal = Calendar.getInstance();
@@ -131,7 +130,9 @@ public class Scheduler extends IntentService {
 		setAlarmFromPrefs(intent);
 	}
 
-	/** Sets an alarm for time saved in prefs which fires off the supplied intent */
+	/**
+	 * Sets an alarm for time saved in prefs which fires off the supplied intent
+	 */
 	private void setAlarmFromPrefs(Intent intent) {
 		SharedPreferences sp = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 
@@ -151,7 +152,8 @@ public class Scheduler extends IntentService {
 
 	/** Set an alarm to fire off specified intent at time stored in calendar */
 	private void setAlarm(Intent intent, Calendar cal) {
-		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES, intent,
+				PendingIntent.FLAG_CANCEL_CURRENT);
 
 		mAlarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
 	}
@@ -160,24 +162,30 @@ public class Scheduler extends IntentService {
 	 * Set an alarm at specified date and time.
 	 * 
 	 * @param intent
-	 * @param dateStr DD:MM:YYYY
-	 * @param timeStr HH:MM
+	 * @param dateStr
+	 *            DD:MM:YYYY
+	 * @param timeStr
+	 *            HH:MM
 	 */
 	private void setAlarm(Intent intent, String dateStr, String timeStr) {
 
 		String[] dateArr = dateStr.split(":");
 		String[] timeArr = timeStr.split(":");
 
-		int[] dateInt = new int[] { Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]), Integer.parseInt(dateArr[2]) };
+		int[] dateInt = new int[] { Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]),
+				Integer.parseInt(dateArr[2]) };
 		int[] timeInt = new int[] { Integer.parseInt(timeArr[0]), Integer.parseInt(timeArr[1]) };
 
 		Calendar cal = Calendar.getInstance();
 		cal.set(dateInt[2], dateInt[1], dateInt[0], timeInt[0], timeInt[1]);
 
-		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES, intent,
+				PendingIntent.FLAG_CANCEL_CURRENT);
 
 		mAlarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
-		if (DEBUG) Log.d(TAG, "Scheduled alarm for: " + dateInt[2] + " " + dateInt[1] + " " + dateInt[0] + " " + timeInt[0] + " " + timeInt[1]);
+		if (DEBUG)
+			Log.d(TAG, "Scheduled alarm for: " + dateInt[2] + " " + dateInt[1] + " " + dateInt[0]
+					+ " " + timeInt[0] + " " + timeInt[1]);
 	}
 
 	private void setMedicineAlarm() {
@@ -196,7 +204,8 @@ public class Scheduler extends IntentService {
 			cal.set(Calendar.MINUTE, min);
 
 			if (cal.before(now)) {
-				// If we would be setting a notification in the past, add an extra day to ensure it is only called in
+				// If we would be setting a notification in the past, add an
+				// extra day to ensure it is only called in
 				// the future
 				cal.add(Calendar.DAY_OF_MONTH, 1);
 			}
@@ -205,20 +214,23 @@ public class Scheduler extends IntentService {
 			intent.putExtra(Keys.INTENT_MEDICINE, true);
 
 			// Make sure each medicine notification gets a different request id
-			PendingIntent pi = PendingIntent.getBroadcast(this, REQUEST_MED + i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+			PendingIntent pi = PendingIntent.getBroadcast(this, REQUEST_MED + i, intent,
+					PendingIntent.FLAG_CANCEL_CURRENT);
 
 			if (!sp.getBoolean(Keys.SCHED_FINISHED, false)) {
 				// Only set medicine alarms when the trial is running
-				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
+				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
+						AlarmManager.INTERVAL_DAY, pi);
 				if (DEBUG) Log.d(TAG, "Scheduling a repeating medicine alarm at " + time);
 			}
 		}
 	}
 
-	private Runnable mNotiSchedule = new Runnable() {
+	private final Runnable mNotiSchedule = new Runnable() {
 		@Override
 		public void run() {
-			// Work out when next to set the alarm, set it and save in preferences
+			// Work out when next to set the alarm, set it and save in
+			// preferences
 			SharedPreferences schedPrefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 			SharedPreferences.Editor schedEdit = schedPrefs.edit();
 
@@ -231,7 +243,8 @@ public class Scheduler extends IntentService {
 			// TODO on the very first day, could have add = 0
 			for (add = 1; add <= periodLength; add++) {
 				nextDay = (lastDay + add) % (periodLength);
-				// Because of modulo, when the nextday would be the last in period nextDay is set to zero
+				// Because of modulo, when the nextday would be the last in
+				// period nextDay is set to zero
 				if (nextDay == 0) nextDay = periodLength;
 
 				if (configPrefs.getBoolean(Keys.CONFIG_DAY + nextDay, false)) {
@@ -245,7 +258,8 @@ public class Scheduler extends IntentService {
 			int period = schedPrefs.getInt(Keys.SCHED_CUR_PERIOD, 1);
 			if (nextDay < lastDay) {
 				// Moving into next treatment period
-				if (period + 1 > 2 * configPrefs.getInt(Keys.CONFIG_NUMBER_PERIODS, Integer.MAX_VALUE)) {
+				if (period + 1 > 2 * configPrefs.getInt(Keys.CONFIG_NUMBER_PERIODS,
+						Integer.MAX_VALUE)) {
 					// TODO Finished trial!
 
 					schedEdit.putBoolean(Keys.SCHED_FINISHED, true);
@@ -262,7 +276,8 @@ public class Scheduler extends IntentService {
 			// Get the new date to set the alarm on
 			String lastDate = schedPrefs.getString(Keys.SCHED_NEXT_DATE, null);
 			String[] lastArr = lastDate.split(":");
-			int[] lastInt = new int[] { Integer.parseInt(lastArr[0]), Integer.parseInt(lastArr[1]), Integer.parseInt(lastArr[2]) };
+			int[] lastInt = new int[] { Integer.parseInt(lastArr[0]), Integer.parseInt(lastArr[1]),
+					Integer.parseInt(lastArr[2]) };
 			Calendar cal = Calendar.getInstance();
 			cal.set(lastInt[2], lastInt[1], lastInt[0]);
 			cal.add(Calendar.DAY_OF_MONTH, add);
@@ -291,7 +306,7 @@ public class Scheduler extends IntentService {
 		}
 	};
 
-	private Runnable mFirstRun = new Runnable() {
+	private final Runnable mFirstRun = new Runnable() {
 		@Override
 		public void run() {
 			// Load preferences to hold information.
@@ -306,8 +321,8 @@ public class Scheduler extends IntentService {
 			String start = configPrefs.getString(Keys.CONFIG_START, null);
 			if (start == null) {
 				Log.e(TAG, "Start date not initialised, config needs to be run");
-				Toast.makeText(Scheduler.this, R.string.config_not_run, Toast.LENGTH_SHORT).show();
-
+				// TODO This should not happen, but may want some sort of
+				// handler if it does
 			} else {
 				schedEdit.putString(Keys.SCHED_NEXT_DATE, start);
 				schedEdit.putInt(Keys.SCHED_NEXT_DAY, 1);
@@ -325,7 +340,7 @@ public class Scheduler extends IntentService {
 		}
 	};
 
-	private Runnable mBootSchedule = new Runnable() {
+	private final Runnable mBootSchedule = new Runnable() {
 		@Override
 		public void run() {
 			// Get the next alarm time from preferences and set it
@@ -361,7 +376,8 @@ public class Scheduler extends IntentService {
 			thread.start();
 
 			if (intent.getBooleanExtra(Keys.INTENT_FIRST, false)) {
-				// If first is sent as well, then need to set up medicine reminders
+				// If first is sent as well, then need to set up medicine
+				// reminders
 				Thread t = new Thread(new Runnable() {
 					@Override
 					public void run() {
