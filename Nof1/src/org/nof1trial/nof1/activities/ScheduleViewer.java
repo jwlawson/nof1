@@ -67,6 +67,8 @@ public class ScheduleViewer extends SherlockActivity {
 				mText.setText(prefs.getString(Keys.CONFIG_SCHEDULE, ""));
 
 			} else {
+				mText.setText(R.string.downloading_schedule);
+
 				// Try to download the schedule
 				Intent download = new Intent(mContext, FinishedService.class);
 				download.setAction(Keys.ACTION_DOWNLOAD_SCHEDULE);
