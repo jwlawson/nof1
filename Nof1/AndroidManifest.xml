@@ -216,6 +216,8 @@
             <intent-filter>
                 <action android:name="org.nof1trial.nof1.SAVE_CONFIG" />
                 <action android:name="org.nof1trial.nof1.SAVE_DATA" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </service>
         
@@ -230,7 +232,7 @@
         
         <service 
             android:name=".services.Scheduler"
-            android:exported="false" >"
+            android:exported="false" >
         </service>
 
         <receiver
