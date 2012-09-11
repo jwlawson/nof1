@@ -173,12 +173,20 @@
                 android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
         
+        <activity 
+            android:name=".activities.ScheduleViewer"
+            android:label="@string/schedule" >
+            <meta-data 
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.nof1trial.nof1.activities.HomeScreen"/> 
+        </activity>
+        
         <activity
             android:name=".activities.AccountsActivity"
             android:label="@string/account_title" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.UserPrefs" />
+                android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
         
         <activity
@@ -202,6 +210,7 @@
             <intent-filter>
                 <action android:name="org.nof1trial.nof1.SAVE_CONFIG" />
                 <action android:name="org.nof1trial.nof1.SAVE_DATA" />
+                <action android:name="org.nof1trial.nof1.DOWNLOAD_SCHEDULE" />
             </intent-filter>
         </service>
         

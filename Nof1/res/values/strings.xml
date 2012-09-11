@@ -196,4 +196,8 @@
     <string name="accounts">Accounts</string>
     <string name="nof1_account_setup">Nof1 Account Setup</string>
     <string name="retrieve_account">Retrieving account information</string>
+    <string name="schedule_into">The treatment schedule is only available once the trial is over. It shows which treatment was undertaken in each treatment period.</string>
+    <string name="error_downloading_schedule">Error downloading schedule, please check network connection.\n\nIf the problem persists contact the pharmacist delivering the trial for the schedule.</string>
+    <string name="downloading_schedule">Trying to download schedule now…</string>
+    <string name="schedule">Schedule</string>
 </resources>
