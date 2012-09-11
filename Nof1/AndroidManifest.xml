@@ -202,6 +202,12 @@
         <service
             android:name=".services.FinishedService"
             android:exported="false" >
+            <intent-filter>
+                <action android:name="org.nof1trial.nof1.MAKE_FILE"/>
+                <action android:name="org.nof1trial.nof1.DOWNLOAD_SCHEDULE" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="org.nof1trial.nof1.TRIAL_COMPLETE"/>
+            </intent-filter>
         </service>
         
         <service
@@ -210,7 +216,6 @@
             <intent-filter>
                 <action android:name="org.nof1trial.nof1.SAVE_CONFIG" />
                 <action android:name="org.nof1trial.nof1.SAVE_DATA" />
-                <action android:name="org.nof1trial.nof1.DOWNLOAD_SCHEDULE" />
             </intent-filter>
         </service>
         
