@@ -16,7 +16,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -109,9 +109,6 @@
             android:layout_below="@id/main_btn_about"
             android:text="Home" />
 
-
-
-
         <Button
             android:id="@+id/main_btn_pop"
             android:layout_width="wrap_content"
@@ -120,11 +117,6 @@
             android:layout_alignParentRight="true"
             android:layout_below="@+id/main_btn_home"
             android:text="Populate database" />
-
-
-
-
-
 
         <Button
             android:id="@+id/main_btn_comments"
@@ -135,11 +127,6 @@
             android:layout_below="@id/main_btn_pop"
             android:text="@string/view_comments" />
 
-
-
-
-
-
         <Button
             android:id="@+id/main_btn_crash"
             android:layout_width="wrap_content"
@@ -147,12 +134,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_below="@id/main_btn_comments"
-            android:text="Crash" />
-
-
-
-
-
+            android:text="Accounts" />
 
         <Button
             android:id="@+id/main_btn_createcsv"
@@ -162,7 +144,6 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/main_btn_crash"
             android:text="Create CSV" />
-
     </RelativeLayout>
 
 </ScrollView>

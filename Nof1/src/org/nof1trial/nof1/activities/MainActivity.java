@@ -162,7 +162,8 @@ public class MainActivity extends SherlockActivity {
 
 			@Override
 			public void onClick(View v) {
-				throw new RuntimeException();
+				Intent i = new Intent(getBaseContext(), AccountsActivity.class);
+				startActivity(i);
 			}
 		});
 
