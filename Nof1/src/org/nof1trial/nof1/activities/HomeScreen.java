@@ -30,9 +30,9 @@ import java.util.Date;
 
 import org.apache.http.protocol.HTTP;
 import org.nof1trial.nof1.DataSource;
-import org.nof1trial.nof1.FinishedService;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.services.FinishedService;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;

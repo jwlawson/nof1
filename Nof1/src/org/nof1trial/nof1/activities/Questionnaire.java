@@ -26,7 +26,6 @@ import java.util.InputMismatchException;
 
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.Saver;
 import org.nof1trial.nof1.containers.Question;
 import org.nof1trial.nof1.fragments.AdHocEntryComplete;
 import org.nof1trial.nof1.fragments.CheckFragment;
@@ -36,6 +35,7 @@ import org.nof1trial.nof1.fragments.QuesComplete;
 import org.nof1trial.nof1.fragments.QuestionFragment;
 import org.nof1trial.nof1.fragments.RadioFragment;
 import org.nof1trial.nof1.fragments.RescheduleDialog;
+import org.nof1trial.nof1.services.Saver;
 
 import android.content.Intent;
 import android.content.SharedPreferences;

@@ -27,11 +27,11 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.Saver;
-import org.nof1trial.nof1.Scheduler;
 import org.nof1trial.nof1.fragments.CheckArray;
 import org.nof1trial.nof1.fragments.StartDate;
 import org.nof1trial.nof1.fragments.TimeSetter;
+import org.nof1trial.nof1.services.Saver;
+import org.nof1trial.nof1.services.Scheduler;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;

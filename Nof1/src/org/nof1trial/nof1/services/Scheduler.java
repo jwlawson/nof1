@@ -18,10 +18,13 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1;
+package org.nof1trial.nof1.services;
 
 import java.util.Calendar;
 
+import org.nof1trial.nof1.AlarmReceiver;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.preferences.TimePreference;
 
 import android.annotation.TargetApi;
@@ -106,7 +109,7 @@ public class Scheduler extends IntentService {
 		backup();
 
 		// Finally, use the new values to set an alarm
-		Intent intent = new Intent(Scheduler.this, Receiver.class);
+		Intent intent = new Intent(Scheduler.this, AlarmReceiver.class);
 		intent.putExtra(Keys.INTENT_ALARM, true);
 		setAlarm(intent, cal);
 
@@ -114,7 +117,7 @@ public class Scheduler extends IntentService {
 
 	/** Load next date to set alarm from preferences and set alarm for then */
 	private void setRepeatAlarm() {
-		Intent intent = new Intent(Scheduler.this, Receiver.class);
+		Intent intent = new Intent(Scheduler.this, AlarmReceiver.class);
 		intent.putExtra(Keys.INTENT_ALARM, true);
 
 		setAlarmFromPrefs(intent);
@@ -122,7 +125,7 @@ public class Scheduler extends IntentService {
 
 	/** Load first date to set alarm from preferences and set alarm for then */
 	private void setFirstAlarm() {
-		Intent intent = new Intent(Scheduler.this, Receiver.class);
+		Intent intent = new Intent(Scheduler.this, AlarmReceiver.class);
 		intent.putExtra(Keys.INTENT_FIRST, true);
 
 		setAlarmFromPrefs(intent);
@@ -198,7 +201,7 @@ public class Scheduler extends IntentService {
 				cal.add(Calendar.DAY_OF_MONTH, 1);
 			}
 
-			Intent intent = new Intent(this, Receiver.class);
+			Intent intent = new Intent(this, AlarmReceiver.class);
 			intent.putExtra(Keys.INTENT_MEDICINE, true);
 
 			// Make sure each medicine notification gets a different request id

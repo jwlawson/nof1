@@ -24,7 +24,7 @@ import java.util.Calendar;
 
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.Saver;
+import org.nof1trial.nof1.services.Saver;
 
 import android.content.Intent;
 import android.content.SharedPreferences;

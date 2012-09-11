@@ -20,11 +20,11 @@
  ******************************************************************************/
 package org.nof1trial.nof1.fragments;
 
-import org.nof1trial.nof1.FinishedService;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.activities.GraphChooser;
 import org.nof1trial.nof1.activities.HomeScreen;
+import org.nof1trial.nof1.services.FinishedService;
 
 import android.content.Context;
 import android.content.Intent;

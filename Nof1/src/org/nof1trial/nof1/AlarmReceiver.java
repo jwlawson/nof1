@@ -21,6 +21,8 @@
 package org.nof1trial.nof1;
 
 import org.nof1trial.nof1.activities.Questionnaire;
+import org.nof1trial.nof1.services.Saver;
+import org.nof1trial.nof1.services.Scheduler;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -40,9 +42,9 @@ import android.util.Log;
  * @author John Lawson
  * 
  */
-public class Receiver extends BroadcastReceiver {
+public class AlarmReceiver extends BroadcastReceiver {
 
-	private static final String TAG = "Receiver";
+	private static final String TAG = "AlarmReceiver";
 	private static final boolean DEBUG = false;
 
 	@Override

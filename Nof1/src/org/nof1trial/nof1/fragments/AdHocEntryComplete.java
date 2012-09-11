@@ -24,9 +24,9 @@ import java.util.Calendar;
 
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.Scheduler;
 import org.nof1trial.nof1.activities.GraphChooser;
 import org.nof1trial.nof1.activities.HomeScreen;
+import org.nof1trial.nof1.services.Scheduler;
 
 import android.content.Context;
 import android.content.Intent;

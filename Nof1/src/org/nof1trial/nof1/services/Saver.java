@@ -18,7 +18,7 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1;
+package org.nof1trial.nof1.services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +26,10 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
+import org.nof1trial.nof1.BuildConfig;
+import org.nof1trial.nof1.DataSource;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.NetworkChangeReceiver;
 import org.nof1trial.nof1.app.Util;
 import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.ConfigRequest;

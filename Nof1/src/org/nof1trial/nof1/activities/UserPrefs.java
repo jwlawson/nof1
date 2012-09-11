@@ -22,7 +22,7 @@ package org.nof1trial.nof1.activities;
 
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.Scheduler;
+import org.nof1trial.nof1.services.Scheduler;
 
 import android.annotation.TargetApi;
 import android.app.backup.BackupManager;

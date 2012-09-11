@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.nof1trial.nof1;
 
+import org.nof1trial.nof1.services.FinishedService;
+import org.nof1trial.nof1.services.Saver;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
