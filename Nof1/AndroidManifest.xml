@@ -197,7 +197,7 @@
         </service>
         
         <service
-            andro.services.Saverme=".services.Saver"
+            android:name=".services.Saver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="org.nof1trial.nof1.SAVE_CONFIG" />
