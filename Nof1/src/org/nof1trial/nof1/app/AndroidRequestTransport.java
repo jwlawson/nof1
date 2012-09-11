@@ -15,6 +15,8 @@
  */
 package org.nof1trial.nof1.app;
 
+import android.util.Log;
+
 import com.google.web.bindery.requestfactory.shared.RequestTransport;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
@@ -37,75 +39,84 @@ import java.net.URI;
  */
 public class AndroidRequestTransport implements RequestTransport {
 
-    private final URI uri;
+	private static final String TAG = "AndroidRequestTransport";
+	private static final boolean DEBUG = true;
 
-    private final String cookie;
+	private final URI uri;
 
-    /**
-     * Constructs an AndroidRequestTransport instance.
-     * 
-     * @param uri the URI for the RequestFactory service
-     * @param cookie the ACSID or SACSID cookie used for authentication
-     */
-    public AndroidRequestTransport(URI uri, String cookie) {
-        this.uri = uri;
-        this.cookie = cookie;
-    }
+	private final String cookie;
 
-    public void send(String payload, TransportReceiver receiver) {
-        HttpClient client = new DefaultHttpClient();
-        HttpPost post = new HttpPost();
-        post.setHeader("Content-Type", "application/json;charset=UTF-8");
-        post.setHeader("Cookie", cookie);
+	/**
+	 * Constructs an AndroidRequestTransport instance.
+	 * 
+	 * @param uri
+	 *            the URI for the RequestFactory service
+	 * @param cookie
+	 *            the ACSID or SACSID cookie used for authentication
+	 */
+	public AndroidRequestTransport(URI uri, String cookie) {
+		this.uri = uri;
+		this.cookie = cookie;
+	}
 
-        post.setURI(uri);
-        Throwable ex;
-        try {
-            post.setEntity(new StringEntity(payload, "UTF-8"));
-            HttpResponse response = client.execute(post);
-            if (200 == response.getStatusLine().getStatusCode()) {
-                String contents = readStreamAsString(response.getEntity().getContent());
-                receiver.onTransportSuccess(contents);
-            } else {
-                receiver.onTransportFailure(new ServerFailure(response.getStatusLine()
-                        .getReasonPhrase()));
-            }
-            return;
-        } catch (UnsupportedEncodingException e) {
-            ex = e;
-        } catch (ClientProtocolException e) {
-            ex = e;
-        } catch (IOException e) {
-            ex = e;
-        }
-        receiver.onTransportFailure(new ServerFailure(ex.getMessage()));
-    }
+	@Override
+	public void send(String payload, TransportReceiver receiver) {
+		HttpClient client = new DefaultHttpClient();
+		HttpPost post = new HttpPost();
+		post.setHeader("Content-Type", "application/json;charset=UTF-8");
+		post.setHeader("Cookie", cookie);
 
-    /**
-     * Reads an entire input stream as a String. Closes the input stream.
-     */
-    private String readStreamAsString(InputStream in) {
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-            byte[] buffer = new byte[1024];
-            int count;
-            do {
-                count = in.read(buffer);
-                if (count > 0) {
-                    out.write(buffer, 0, count);
-                }
-            } while (count >= 0);
-            return out.toString("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("The JVM does not support the compiler's default encoding.",
-                    e);
-        } catch (IOException e) {
-            return null;
-        } finally {
-            try {
-                in.close();
-            } catch (IOException ignored) {
-            }
-        }
-    }
+		post.setURI(uri);
+		Throwable ex;
+		try {
+			post.setEntity(new StringEntity(payload, "UTF-8"));
+			HttpResponse response = client.execute(post);
+			if (200 == response.getStatusLine().getStatusCode()) {
+				String contents = readStreamAsString(response.getEntity().getContent());
+				if (DEBUG) Log.d(TAG, contents);
+				// TODO Throw some sort of error on auth failure
+				// ie returns html page rather than requestfactory object
+				receiver.onTransportSuccess(contents);
+			} else {
+				receiver.onTransportFailure(new ServerFailure(response.getStatusLine()
+						.getReasonPhrase()));
+			}
+			return;
+		} catch (UnsupportedEncodingException e) {
+			ex = e;
+		} catch (ClientProtocolException e) {
+			ex = e;
+		} catch (IOException e) {
+			ex = e;
+		}
+		receiver.onTransportFailure(new ServerFailure(ex.getMessage()));
+	}
+
+	/**
+	 * Reads an entire input stream as a String. Closes the input stream.
+	 */
+	private String readStreamAsString(InputStream in) {
+		try {
+			ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+			byte[] buffer = new byte[1024];
+			int count;
+			do {
+				count = in.read(buffer);
+				if (count > 0) {
+					out.write(buffer, 0, count);
+				}
+			} while (count >= 0);
+			return out.toString("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("The JVM does not support the compiler's default encoding.",
+					e);
+		} catch (IOException e) {
+			return null;
+		} finally {
+			try {
+				in.close();
+			} catch (IOException ignored) {
+			}
+		}
+	}
 }
