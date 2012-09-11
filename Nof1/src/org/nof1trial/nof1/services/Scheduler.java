@@ -300,9 +300,6 @@ public class Scheduler extends IntentService {
 
 			// Finally, use the new values to set an alarm
 			setRepeatAlarm();
-
-			// Close service once done
-			// Scheduler.this.stopSelf();
 		}
 	};
 
@@ -335,8 +332,6 @@ public class Scheduler extends IntentService {
 				// Set up first time run notification
 				setFirstAlarm();
 			}
-			// Close service once done
-			// Scheduler.this.stopSelf();
 		}
 	};
 
@@ -346,9 +341,6 @@ public class Scheduler extends IntentService {
 			// Get the next alarm time from preferences and set it
 			setRepeatAlarm();
 			setMedicineAlarm();
-
-			// Close service once done
-			// Scheduler.this.stopSelf();
 		}
 
 	};
