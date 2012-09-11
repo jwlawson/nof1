@@ -92,7 +92,7 @@ public class GraphView extends View {
 	private float mScaleX;
 
 	/** Scale in y direction */
-	private float mScaleY;
+	// private float mScaleY;
 
 	/** Largest value of x */
 	private int mMaxX;
@@ -484,7 +484,7 @@ public class GraphView extends View {
 		mWidth = w - RIGHT_PAD - LEFT_PAD;
 
 		mScaleX = (float) mWidth / mMaxX;
-		mScaleY = (float) h / mMaxY;
+		// mScaleY = (float) h / mMaxY;
 
 		if (mCursor != null) setCursor(mCursor);
 		else if (mVecList.isEmpty()) setVecList(mVecList);
