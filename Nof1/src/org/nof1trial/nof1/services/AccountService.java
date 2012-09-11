@@ -51,9 +51,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 /**
@@ -115,6 +117,12 @@ public class AccountService extends IntentService {
 			if (DEBUG) Log.d(TAG, "Refreshing account cookie");
 
 			refreshAuthCookie();
+
+			// Broadcast the change to receiver
+			Intent broadcast = new Intent(ConnectivityManager.CONNECTIVITY_ACTION);
+			LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+			manager.sendBroadcast(broadcast);
+
 		}
 		if (Keys.ACTION_REGISTER.equals(intent.getAction())) {
 			String account = intent.getStringExtra(Keys.INTENT_ACCOUNT);

@@ -48,6 +48,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.web.bindery.requestfactory.shared.Receiver;
@@ -67,7 +68,8 @@ public class Saver extends IntentService {
 	private static final String NUM_DATA = "num_data_cache";
 	private static final String BOOL_CONFIG = "bool_config_cache";
 
-	private int mRetryNum = 0;
+	/** Current context */
+	private Context mContext = this;
 
 	public Saver() {
 		this("Saver");
@@ -136,7 +138,6 @@ public class Saver extends IntentService {
 
 			if (isConnected) {
 				// Save online
-				mRetryNum = 0;
 
 				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, (long) periodLength, (long) numberPeriods, treatmentA,
 						treatmentB, treatmentNotes, quesList);
@@ -177,7 +178,6 @@ public class Saver extends IntentService {
 
 			if (isConnected) {
 				if (DEBUG) Log.d(TAG, "Connected to internet, sending data to server");
-				mRetryNum = 0;
 
 				uploadData(day, time, data, comment);
 
@@ -220,7 +220,6 @@ public class Saver extends IntentService {
 						for (int i = 0; i < data.length; i++) {
 							data[i] = Integer.parseInt(dataStrArr[i]);
 						}
-						mRetryNum = 0;
 
 						uploadData(day, time, data, comment);
 
@@ -247,7 +246,6 @@ public class Saver extends IntentService {
 				// sent
 				if (isConnected) {
 					// Have internet so upload data
-					mRetryNum = 0;
 
 					// get config from prefs and upload
 					SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
@@ -312,7 +310,6 @@ public class Saver extends IntentService {
 							data[i] = Integer.parseInt(dataStrArr[i]);
 						}
 					}
-					mRetryNum = 0;
 
 					uploadData(day, time, data, comment);
 
@@ -352,7 +349,6 @@ public class Saver extends IntentService {
 				for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
 					quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 				}
-				mRetryNum = 0;
 
 				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
 						treatmentNotes, quesList);
@@ -417,34 +413,18 @@ public class Saver extends IntentService {
 				Log.e(TAG, error.getStackTraceString());
 
 				// TODO Only refresh cookie when error is an auth error
-				// Try refreshing auth cookie up to 3 times
-				if (mRetryNum < 3) {
+				// TODO Only allow looping a certain number of times
+				// Try refreshing auth cookie
+				Intent intent = new Intent(mContext, AccountService.class);
+				intent.setAction(Keys.ACTION_REFRESH);
+				startService(intent);
 
-					String cookie = Util.getSharedPreferences(getBaseContext()).getString(Util.AUTH_COOKIE, "");
-					Util.refreshAuthCookie(getApplicationContext());
+				// Save for later
+				getSharedPreferences(CACHE, MODE_PRIVATE).edit().putBoolean(BOOL_CONFIG, true).commit();
 
-					while (cookie.equals(Util.getSharedPreferences(getBaseContext()).getString(Util.AUTH_COOKIE, ""))) {
-						// Cookie not yet changed, so wait
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							// Don't care about interrupts
-						}
-					}
+				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+				manager.registerReceiver(new NetworkChangeReceiver(), null);
 
-					// try uploading data again
-					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
-							treatmentNotes, quesList);
-					mRetryNum++;
-				} else {
-					// Save for later
-					getSharedPreferences(CACHE, MODE_PRIVATE).edit().putBoolean(BOOL_CONFIG, true).commit();
-
-					// enable network change broadcast receiver
-					PackageManager pm = getPackageManager();
-					ComponentName comp = new ComponentName(getBaseContext(), NetworkChangeReceiver.class);
-					pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-				}
 			}
 
 		});
@@ -492,34 +472,19 @@ public class Saver extends IntentService {
 				Log.e(TAG, error.getMessage());
 
 				// TODO Only refresh cookie when error is an auth error
-				// Try refreshing auth cookie up to 3 times
-				if (mRetryNum < 3) {
+				// TODO Only allow looping a certain number of times
+				// Try refreshing auth cookie
+				Intent intent = new Intent(mContext, AccountService.class);
+				intent.setAction(Keys.ACTION_REFRESH);
+				startService(intent);
 
-					String cookie = Util.getSharedPreferences(getBaseContext()).getString(Util.AUTH_COOKIE, "");
-					Util.refreshAuthCookie(getApplicationContext());
+				// Save to upload later
+				saveDataForLater(day, time, comment, data);
 
-					while (cookie.equals(Util.getSharedPreferences(getBaseContext()).getString(Util.AUTH_COOKIE, ""))) {
-						// Cookie not yet changed, so wait
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							// Don't care about interrupts
-						}
-					}
+				// Register receiver to get callback from the AccountService when cookie refreshed
+				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+				manager.registerReceiver(new NetworkChangeReceiver(), null);
 
-					// try uploading data again
-					uploadData(day, time, data, comment);
-					mRetryNum++;
-
-				} else {
-					// Save to upload later
-					saveDataForLater(day, time, comment, data);
-
-					// enable network change broadcast receiver
-					PackageManager pm = getPackageManager();
-					ComponentName comp = new ComponentName(getBaseContext(), NetworkChangeReceiver.class);
-					pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-				}
 			}
 
 		});
