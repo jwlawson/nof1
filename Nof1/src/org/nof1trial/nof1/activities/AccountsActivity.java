@@ -15,15 +15,6 @@
  */
 package org.nof1trial.nof1.activities;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.nof1trial.nof1.BuildConfig;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.app.Util;
-import org.nof1trial.nof1.services.AccountService;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
@@ -45,6 +36,15 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 
+import org.nof1trial.nof1.BuildConfig;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.services.AccountService;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Account selections activity - handles device registration and unregistration.
  */
@@ -58,7 +58,7 @@ public class AccountsActivity extends SherlockActivity {
 	private int mAccountSelectedPosition = 0;
 
 	/** The current context. */
-	private Context mContext = this;
+	private final Context mContext = this;
 
 	private Dialog mDialog;
 
@@ -109,11 +109,13 @@ public class AccountsActivity extends SherlockActivity {
 			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 			builder.setMessage(R.string.needs_account);
 			builder.setPositiveButton(R.string.add_account, new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					startActivity(new Intent(Settings.ACTION_ADD_ACCOUNT));
 				}
 			});
 			builder.setNegativeButton(R.string.skip, new DialogInterface.OnClickListener() {
+				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					AccountsActivity.this.setResult(RESULT_CANCELED);
 					finish();
@@ -126,12 +128,14 @@ public class AccountsActivity extends SherlockActivity {
 
 		} else {
 			final ListView listView = (ListView) findViewById(R.id.select_account);
-			listView.setAdapter(new ArrayAdapter<String>(mContext, R.layout.account_list_item, accounts));
+			listView.setAdapter(new ArrayAdapter<String>(mContext, R.layout.account_list_item,
+					accounts));
 			listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			listView.setItemChecked(mAccountSelectedPosition, true);
 
 			final Button connectButton = (Button) findViewById(R.id.connect);
 			connectButton.setOnClickListener(new OnClickListener() {
+				@Override
 				public void onClick(View v) {
 					// Register in the background and terminate the activity
 					mAccountSelectedPosition = listView.getCheckedItemPosition();
@@ -139,8 +143,10 @@ public class AccountsActivity extends SherlockActivity {
 
 					// Offload registering to background service
 					Intent intent = new Intent(mContext, AccountService.class);
+					intent.setAction(Keys.ACTION_REGISTER);
 					intent.putExtra(Keys.INTENT_ACCOUNT, account.getText().toString());
 					startService(intent);
+					if (DEBUG) Log.d(TAG, "Account service intent fired ");
 
 					AccountsActivity.this.setResult(RESULT_OK);
 					finish();
@@ -149,6 +155,7 @@ public class AccountsActivity extends SherlockActivity {
 
 			final Button exitButton = (Button) findViewById(R.id.exit);
 			exitButton.setOnClickListener(new OnClickListener() {
+				@Override
 				public void onClick(View v) {
 					AccountsActivity.this.setResult(RESULT_CANCELED);
 					finish();
@@ -173,8 +180,10 @@ public class AccountsActivity extends SherlockActivity {
 
 		Button disconnectButton = (Button) findViewById(R.id.disconnect);
 		disconnectButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				// Delete the current account from shared preferences
+				if (DEBUG) Log.d(TAG, "Deleting account info");
 				Editor editor = prefs.edit();
 				editor.putString(Util.AUTH_COOKIE, null);
 				editor.putString(Util.ACCOUNT_NAME, null);
@@ -187,6 +196,7 @@ public class AccountsActivity extends SherlockActivity {
 
 		Button exitButton = (Button) findViewById(R.id.exit);
 		exitButton.setOnClickListener(new OnClickListener() {
+			@Override
 			public void onClick(View v) {
 				finish();
 			}
