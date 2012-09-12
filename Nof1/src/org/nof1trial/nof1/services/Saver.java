@@ -84,6 +84,18 @@ public class Saver extends IntentService {
 	}
 
 	@Override
+	public void onCreate() {
+		if (DEBUG) Log.d(TAG, "Saver service started");
+		super.onCreate();
+	}
+
+	@Override
+	public void onDestroy() {
+		if (DEBUG) Log.d(TAG, "Saver service destroyed");
+		super.onDestroy();
+	}
+
+	@Override
 	protected void onHandleIntent(Intent intent) {
 
 		if (DEBUG) Log.d(TAG, "Handling new intent");
@@ -617,7 +629,10 @@ public class Saver extends IntentService {
 			Intent saver = new Intent(context, Saver.class);
 			saver.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
 			context.startService(saver);
-			if (DEBUG) Log.d(TAG, "Saver started");
+			if (DEBUG) Log.d(TAG, "Saver started from CookieReceiver");
+
+			LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
+			manager.unregisterReceiver(this);
 		}
 
 	}
