@@ -20,8 +20,11 @@
  ******************************************************************************/
 package org.nof1trial.nof1;
 
+import java.util.Calendar;
+
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -59,9 +62,13 @@ public class SQLite extends SQLiteOpenHelper {
 	/** Database file name */
 	public static final String DATABASE_NAME = "info.db";
 
+	private Context mContext;
+
 	/** Construct database with custom name and version number */
 	public SQLite(Context context) {
 		super(context, DATABASE_NAME, null, context.getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE).getInt(Keys.CONFIG_DB_VERSION, 1));
+
+		mContext = context;
 	}
 
 	/**
@@ -113,9 +120,48 @@ public class SQLite extends SQLiteOpenHelper {
 
 		cursor.moveToFirst();
 
+		// If time is of form HH:MM need to convert to long
+		boolean updateTimeToLong = cursor.getString(2).contains(":");
+
+		Calendar startCal = null;
+		Calendar cal = null;
+		if (updateTimeToLong) {
+			SharedPreferences prefs = mContext.getSharedPreferences(Keys.CONFIG_START, Context.MODE_PRIVATE);
+			String startDate = prefs.getString(Keys.CONFIG_START, null);
+			if (startDate == null) {
+				updateTimeToLong = false;
+			} else {
+				// Get start date of the trial
+				String[] arr = startDate.split(":");
+				int startDay = Integer.parseInt(arr[0]);
+				int startMonth = Integer.parseInt(arr[1]);
+				int startYear = Integer.parseInt(arr[2]);
+
+				startCal = Calendar.getInstance();
+				startCal.set(startYear, startMonth, startDay);
+
+				cal = Calendar.getInstance();
+			}
+		}
+
 		for (int i = 0; i < size; i++) {
 			days[i] = cursor.getInt(1);
-			times[i] = cursor.getLong(2);
+
+			if (updateTimeToLong) {
+				// convert from hh:mm to standard time in millis
+				String time = cursor.getString(2);
+				int hour = Integer.parseInt(time.substring(0, 2));
+				int min = Integer.parseInt(time.substring(3, 5));
+
+				cal.setTimeInMillis(startCal.getTimeInMillis());
+				cal.set(Calendar.HOUR, hour);
+				cal.set(Calendar.MINUTE, min);
+				cal.add(Calendar.DAY_OF_MONTH, days[i]);
+
+				times[i] = cal.getTimeInMillis();
+			} else {
+				times[i] = cursor.getLong(2);
+			}
 			for (int j = 0; j < num; j++) {
 				questions[i][j] = cursor.getInt(j + 3);
 			}
@@ -128,10 +174,8 @@ public class SQLite extends SQLiteOpenHelper {
 		// Delete current table
 		synchronized (DataSource.sDataLock) {
 			db.execSQL("DROP TABLE IF EXISTS " + TABLE_INFO);
-		}
 
-		// Make new table
-		synchronized (DataSource.sDataLock) {
+			// Make new table
 			onCreate(db);
 		}
 

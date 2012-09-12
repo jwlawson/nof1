@@ -30,6 +30,7 @@ import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.DataSource;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.NetworkChangeReceiver;
+import org.nof1trial.nof1.SQLite;
 import org.nof1trial.nof1.app.Util;
 import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.ConfigRequest;
@@ -45,6 +46,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -363,6 +365,59 @@ public class Saver extends IntentService {
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
 				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+			}
+
+		} else if (Keys.ACTION_UPLOAD_ALL.equals(intent.getAction())) {
+
+			// get config from prefs and upload
+			SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+			String patientName = prefs.getString(Keys.CONFIG_PATIENT_NAME, "");
+			String doctorName = prefs.getString(Keys.CONFIG_DOCTOR_NAME, "");
+			final String doctorEmail = prefs.getString(Keys.CONFIG_DOC, "");
+			String pharmEmail = prefs.getString(Keys.CONFIG_PHARM, "");
+			int numberPeriods = prefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0);
+			int periodLength = prefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
+			String startDate = prefs.getString(Keys.CONFIG_START, "");
+			String treatmentA = prefs.getString(Keys.CONFIG_TREATMENT_A, "");
+			String treatmentB = prefs.getString(Keys.CONFIG_TREATMENT_B, "");
+			String treatmentNotes = prefs.getString(Keys.CONFIG_TREATMENT_NOTES, "");
+
+			ArrayList<String> quesList = new ArrayList<String>();
+			SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+			for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
+				quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
+			}
+
+			uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
+					treatmentNotes, quesList);
+
+			// Query database for all saved data
+			DataSource datasource = new DataSource(mContext);
+			datasource.open();
+			Cursor cursor = datasource.getAllColumns();
+			cursor.moveToFirst();
+
+			// Upload all data from the database
+			while (!cursor.isAfterLast()) {
+
+				int dayCol = cursor.getColumnIndex(SQLite.COLUMN_DAY);
+				int timeCol = cursor.getColumnIndex(SQLite.COLUMN_TIME);
+				int commentCol = cursor.getColumnIndex(SQLite.COLUMN_COMMENT);
+
+				int day = cursor.getInt(dayCol);
+				long time = cursor.getLong(timeCol);
+				String comment = cursor.getString(commentCol);
+				int size = commentCol - timeCol - 1;
+				int[] data = new int[size];
+
+				// Iterate over to get
+				for (int i = 0; i < size; i++) {
+					data[i] = cursor.getInt(timeCol + 1 + i);
+				}
+
+				uploadData(day, time, data, comment);
+
+				cursor.moveToNext();
 			}
 		}
 

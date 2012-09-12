@@ -53,6 +53,9 @@ public class Keys {
 	/** Shared preference key for whether to flash lights on notification */
 	public static final String DEFAULT_FLASH = "prefs_flash";
 
+	/** Shared preference key for last version of the app to run */
+	public static final String DEFAULT_VERSION = "version";
+
 	/** Name of shared preferences holding the questions */
 	public static final String QUES_NAME = "questions";
 
@@ -121,6 +124,9 @@ public class Keys {
 
 	/** Intent action for save data */
 	public static final String ACTION_SAVE_DATA = "org.nof1trial.nof1.SAVE_DATA";
+
+	/** Intent action for uploading all previously saved data */
+	public static final String ACTION_UPLOAD_ALL = "org.nof1trial.nof1.UPLOAD_ALL";
 
 	/** Intent action for trial completed */
 	public static final String ACTION_COMPLETE = "org.nof1trial.nof1.TRIAL_COMPLETE";

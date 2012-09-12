@@ -20,11 +20,22 @@
  ******************************************************************************/
 package org.nof1trial.nof1.activities;
 
+import java.io.File;
+
+import org.apache.http.protocol.HTTP;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.services.FinishedService;
+import org.nof1trial.nof1.services.Saver;
+
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
@@ -43,14 +54,6 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
-
-import org.apache.http.protocol.HTTP;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.app.Util;
-import org.nof1trial.nof1.services.FinishedService;
-
-import java.io.File;
 
 /**
  * The main home screen that users see when they open the app. On first run will
@@ -88,6 +91,9 @@ public class HomeScreen extends SherlockActivity {
 			Intent account = new Intent(mContext, AccountsActivity.class);
 			startActivity(account);
 		}
+
+		// Want account set up before configuring updates
+		findUpdates(sp);
 
 		if (!sp.contains(Keys.DEFAULT_FIRST)) {
 			if (DEBUG) Log.d(TAG, "App launched for the first time");
@@ -184,8 +190,7 @@ public class HomeScreen extends SherlockActivity {
 							maker.setAction(Keys.ACTION_MAKE_FILE);
 							startService(maker);
 
-							LocalBroadcastManager manager = LocalBroadcastManager
-									.getInstance(mContext);
+							LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
 							manager.registerReceiver(new FileReceiver(), null);
 
 						} else {
@@ -258,10 +263,7 @@ public class HomeScreen extends SherlockActivity {
 			intent.setType(HTTP.PLAIN_TEXT_TYPE);
 			intent.putExtra(Intent.EXTRA_EMAIL, "");
 			intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
-			intent.putExtra(
-					Intent.EXTRA_TEXT,
-					res.getText(R.string.results_attached)
-							+ sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+			intent.putExtra(Intent.EXTRA_TEXT, res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 			intent.putExtra(Intent.EXTRA_STREAM, uri);
 			startActivity(intent);
 		} catch (ActivityNotFoundException e) {
@@ -281,8 +283,7 @@ public class HomeScreen extends SherlockActivity {
 		File dir;
 		File file;
 
-		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)
-				|| Environment.MEDIA_MOUNTED.equals(state)) {
+		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) || Environment.MEDIA_MOUNTED.equals(state)) {
 			// External storage readable
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
 				// Eclair has no support for getExternalCacheDir()
@@ -315,6 +316,48 @@ public class HomeScreen extends SherlockActivity {
 		}
 		// File not found :(
 		return null;
+	}
+
+	private void findUpdates(SharedPreferences prefs) {
+
+		int lastVersion = prefs.getInt(Keys.DEFAULT_VERSION, 0);
+
+		try {
+			PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+
+			int currentVersion = info.versionCode;
+
+			if (lastVersion < currentVersion) {
+				// Have update to do
+				boolean done = handleUpdates(lastVersion, currentVersion);
+
+				if (done) prefs.edit().putInt(Keys.DEFAULT_VERSION, currentVersion);
+			}
+
+		} catch (NameNotFoundException e) {
+			// I would hope that this package exists, seeing as it's what's running this code
+		}
+	}
+
+	private boolean handleUpdates(int lastVersion, int currentVersion) {
+
+		boolean result = true;
+
+		if (lastVersion <= 5) {
+			// v1 of app. Need to update database and upload config data to server
+			SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+			SharedPreferences.Editor edit = prefs.edit();
+			// Increment db version to force update
+			edit.putInt(Keys.CONFIG_DB_VERSION, prefs.getInt(Keys.CONFIG_DB_VERSION, 1) + 1);
+			edit.commit();
+
+			Intent saveConfig = new Intent(mContext, Saver.class);
+			saveConfig.setAction(Keys.ACTION_UPLOAD_ALL);
+			startService(saveConfig);
+		}
+
+		return result;
+
 	}
 
 	private class FileReceiver extends BroadcastReceiver {
