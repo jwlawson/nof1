@@ -29,7 +29,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-
+
         <TextView
             android:id="@+id/config_change_login_text_cur_email"
             android:layout_width="wrap_content"
@@ -41,6 +41,7 @@
             android:layout_marginLeft="@dimen/padding_large"
             android:layout_marginRight="@dimen/padding_large"
             android:layout_marginTop="@dimen/padding_large"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/current_email"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -56,35 +57,16 @@
 
             <requestFocus />
         </EditText>
-
-        <TextView
-            android:id="@+id/config_change_login_text_new_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/config_change_login_edit_cur_email"
-            android:layout_below="@+id/config_change_login_edit_cur_email"
-            android:layout_marginTop="@dimen/padding_large"
-            android:text="@string/new_email"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <EditText
-            android:id="@+id/config_change_login_edit_new_email"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/config_change_login_text_new_email"
-            android:layout_alignRight="@+id/config_change_login_edit_cur_email"
-            android:layout_below="@+id/config_change_login_text_new_email"
-            android:ems="10"
-            android:inputType="textEmailAddress" />
-
+
         <TextView
             android:id="@+id/config_change_login_text_cur_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/config_change_login_edit_new_email"
-            android:layout_alignRight="@+id/config_change_login_edit_new_email"
-            android:layout_below="@+id/config_change_login_edit_new_email"
+            android:layout_alignLeft="@id/config_change_login_edit_cur_email"
+            android:layout_alignRight="@+id/config_change_login_edit_cur_email"
+            android:layout_below="@id/config_change_login_edit_cur_email"
             android:layout_marginTop="@dimen/padding_large"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/current_password"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -97,15 +79,16 @@
             android:layout_below="@+id/config_change_login_text_cur_password"
             android:ems="10"
             android:inputType="textPassword" />
-
+
         <TextView
             android:id="@+id/config_change_login_text_new_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/config_change_login_edit_cur_password"
+            android:layout_alignLeft="@id/config_change_login_text_cur_email"
             android:layout_alignRight="@+id/config_change_login_edit_cur_password"
             android:layout_below="@+id/config_change_login_edit_cur_password"
             android:layout_marginTop="@dimen/padding_large"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/new_password"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -118,7 +101,7 @@
             android:layout_below="@+id/config_change_login_text_new_password"
             android:ems="10"
             android:inputType="textPassword" />
-
+
         <TextView
             android:id="@+id/config_change_login_text_new_pass2"
             android:layout_width="wrap_content"
@@ -126,6 +109,7 @@
             android:layout_alignLeft="@+id/config_change_login_edit_new_password"
             android:layout_below="@+id/config_change_login_edit_new_password"
             android:layout_marginTop="@dimen/padding_large"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/repeat_password"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 

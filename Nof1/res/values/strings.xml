@@ -81,7 +81,7 @@
     <string name="new_email">New email</string>
     <string name="current_password">Current password</string>
     <string name="new_password">New password</string>
-    <string name="login_change_explain">Input your current login details and either a new email or new password you would like to use.</string>
+    <string name="login_change_explain">Input your current login details and the new password you would like to use.</string>
     <string name="change_login_details">Change login details</string>
     <string name="new_login_details">Set up new login details</string>
     <string name="passwords_not_equal">Passwords do not match</string>

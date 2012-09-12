@@ -441,8 +441,6 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		final EditText email = (EditText) view.findViewById(R.id.config_change_login_edit_cur_email);
 		email.setText(mDocEmail.getText().toString());
 
-		final EditText newEmail = (EditText) view.findViewById(R.id.config_change_login_edit_new_email);
-
 		final EditText pass = (EditText) view.findViewById(R.id.config_change_login_edit_cur_password);
 
 		final EditText newPass = (EditText) view.findViewById(R.id.config_change_login_edit_new_password);
@@ -467,13 +465,6 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 						editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
 
-					}
-
-					String newEmailStr = newEmail.getText().toString();
-					if (newEmailStr != null && newEmailStr != "") {
-						// Change email
-						editor.putString(Keys.CONFIG_EMAIL, new String(Hex.encodeHex(DigestUtils.sha512(newEmailStr))));
-						setEmail(newEmailStr);
 					}
 					// Save changes
 					editor.commit();
@@ -511,11 +502,6 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			backup();
 		}
 		super.onDestroy();
-	}
-
-	/** Used to set the email field in EditText from an onClick call */
-	private void setEmail(String email) {
-		mDocEmail.setText(email);
 	}
 
 	/** Nasty hack to ensure text in alertdialog is readable */
