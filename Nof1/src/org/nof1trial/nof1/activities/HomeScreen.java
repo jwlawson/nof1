@@ -48,6 +48,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
 import org.apache.http.protocol.HTTP;
+import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.app.Util;
@@ -68,7 +69,7 @@ import java.io.File;
 public class HomeScreen extends SherlockActivity {
 
 	private static final String TAG = "HomeScreen";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = BuildConfig.DEBUG;
 
 	/** Current context */
 	private final Context mContext = this;
@@ -90,138 +91,144 @@ public class HomeScreen extends SherlockActivity {
 		if (accPrefs.getString(Util.ACCOUNT_NAME, null) == null) {
 			// No account set up for app yet
 			if (DEBUG) Log.d(TAG, "No account found. Loading account activity");
-			Intent account = new Intent(mContext, AccountsActivity.class);
-			startActivity(account);
-		}
-
-		// Want account set up before configuring updates
-		findUpdates(sp);
-
-		if (!sp.contains(Keys.DEFAULT_FIRST)) {
-			if (DEBUG) Log.d(TAG, "App launched for the first time");
 
 			TaskStackBuilder builder = TaskStackBuilder.create(this);
 
 			builder.addNextIntent(new Intent(this, HomeScreen.class));
-			builder.addNextIntent(new Intent(this, UserPrefs.class));
-			builder.addNextIntent(new Intent(this, DoctorLogin.class));
+			builder.addNextIntent(new Intent(this, AccountsActivity.class));
 
 			builder.startActivities();
 
 		} else {
-			// Not the first time app is run
 
-			setContentView(R.layout.home_layout);
+			// Want account set up before configuring updates
+			findUpdates(sp);
 
-			Button btnData = (Button) findViewById(R.id.home_btn_data);
-			btnData.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					// Launch questionnaire
-					Intent intent = new Intent(HomeScreen.this, Questionnaire.class);
-					startActivity(intent);
-				}
-			});
+			if (!sp.contains(Keys.DEFAULT_FIRST)) {
+				if (DEBUG) Log.d(TAG, "App launched for the first time");
 
-			SharedPreferences quesPrefs = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+				TaskStackBuilder builder = TaskStackBuilder.create(this);
 
-			Button btnGraphs = (Button) findViewById(R.id.home_btn_graph);
+				builder.addNextIntent(new Intent(this, HomeScreen.class));
+				builder.addNextIntent(new Intent(this, UserPrefs.class));
+				builder.addNextIntent(new Intent(this, DoctorLogin.class));
 
-			if (quesPrefs.contains(Keys.QUES_TEXT + 0)) {
-				// Enable viewing graphs, as questionnaire built
+				builder.startActivities();
 
-				btnGraphs.setOnClickListener(new OnClickListener() {
+			} else {
+				// Not the first time app is run
+
+				setContentView(R.layout.home_layout);
+
+				Button btnData = (Button) findViewById(R.id.home_btn_data);
+				btnData.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						// Launch graph activity
-						Intent intent = new Intent(HomeScreen.this, GraphChooser.class);
+						// Launch questionnaire
+						Intent intent = new Intent(HomeScreen.this, Questionnaire.class);
 						startActivity(intent);
 					}
 				});
-			} else {
-				// Questionnaire not made, so don't want to create empty
-				// database
-				btnGraphs.setEnabled(false);
-			}
 
-			Button btnComment = (Button) findViewById(R.id.home_btn_comment);
+				SharedPreferences quesPrefs = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 
-			btnComment.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(HomeScreen.this, CommentList.class);
-					startActivity(intent);
+				Button btnGraphs = (Button) findViewById(R.id.home_btn_graph);
+
+				if (quesPrefs.contains(Keys.QUES_TEXT + 0)) {
+					// Enable viewing graphs, as questionnaire built
+
+					btnGraphs.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// Launch graph activity
+							Intent intent = new Intent(HomeScreen.this, GraphChooser.class);
+							startActivity(intent);
+						}
+					});
+				} else {
+					// Questionnaire not made, so don't want to create empty
+					// database
+					btnGraphs.setEnabled(false);
 				}
-			});
 
-			Button btnNewNote = (Button) findViewById(R.id.home_btn_add_note);
+				Button btnComment = (Button) findViewById(R.id.home_btn_comment);
 
-			btnNewNote.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(HomeScreen.this, AddNote.class);
-					startActivity(intent);
-				}
-			});
-
-			SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
-			if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
-				// Trial finished.
-
-				// Disable data input button
-				btnData.setEnabled(false);
-
-				// Show email csv button
-				btnEmail = (Button) findViewById(R.id.home_btn_email);
-				btnEmail.setVisibility(View.VISIBLE);
-
-				btnEmail.setOnClickListener(new OnClickListener() {
+				btnComment.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
+						Intent intent = new Intent(HomeScreen.this, CommentList.class);
+						startActivity(intent);
+					}
+				});
 
-						File file = findCSV();
+				Button btnNewNote = (Button) findViewById(R.id.home_btn_add_note);
 
-						btnEmail.setEnabled(false);
+				btnNewNote.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(HomeScreen.this, AddNote.class);
+						startActivity(intent);
+					}
+				});
 
-						if (file == null) {
-							// File not found
+				SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
+				if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
+					// Trial finished.
 
-							btnEmail.setText(R.string.creating_file);
+					// Disable data input button
+					btnData.setEnabled(false);
 
-							Intent maker = new Intent(mContext, FinishedService.class);
-							maker.setAction(Keys.ACTION_MAKE_FILE);
-							startService(maker);
+					// Show email csv button
+					btnEmail = (Button) findViewById(R.id.home_btn_email);
+					btnEmail.setVisibility(View.VISIBLE);
 
-							LocalBroadcastManager manager = LocalBroadcastManager
-									.getInstance(mContext);
-							manager.registerReceiver(new FileReceiver(), new IntentFilter());
+					btnEmail.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
 
-						} else {
+							File file = findCSV();
 
-							btnEmail.setText(R.string.sending_email);
-							sendEmail(file);
+							btnEmail.setEnabled(false);
+
+							if (file == null) {
+								// File not found
+
+								btnEmail.setText(R.string.creating_file);
+
+								Intent maker = new Intent(mContext, FinishedService.class);
+								maker.setAction(Keys.ACTION_MAKE_FILE);
+								startService(maker);
+
+								LocalBroadcastManager manager = LocalBroadcastManager
+										.getInstance(mContext);
+								manager.registerReceiver(new FileReceiver(), new IntentFilter());
+
+							} else {
+
+								btnEmail.setText(R.string.sending_email);
+								sendEmail(file);
+
+							}
 
 						}
+					});
 
-					}
-				});
+					Button btnSchedule = (Button) findViewById(R.id.home_btn_schedule);
+					btnSchedule.setVisibility(View.VISIBLE);
+					btnSchedule.setOnClickListener(new OnClickListener() {
 
-				Button btnSchedule = (Button) findViewById(R.id.home_btn_schedule);
-				btnSchedule.setVisibility(View.VISIBLE);
-				btnSchedule.setOnClickListener(new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							// Start schedule viewer activity
+							Intent schedule = new Intent(mContext, ScheduleViewer.class);
+							startActivity(schedule);
+						}
+					});
 
-					@Override
-					public void onClick(View v) {
-						// Start schedule viewer activity
-						Intent schedule = new Intent(mContext, ScheduleViewer.class);
-						startActivity(schedule);
-					}
-				});
-
-				// Reload relative layout to ensure button is shown
-				((RelativeLayout) btnEmail.getParent()).requestLayout();
+					// Reload relative layout to ensure button is shown
+					((RelativeLayout) btnEmail.getParent()).requestLayout();
+				}
 			}
-
 		}
 
 	}
@@ -327,23 +334,28 @@ public class HomeScreen extends SherlockActivity {
 
 	private void findUpdates(SharedPreferences prefs) {
 
-		int lastVersion = prefs.getInt(Keys.DEFAULT_VERSION, 0);
+		// If no password hash, then the app has not been run before, so don't
+		// need to update
+		if (prefs.contains(Keys.CONFIG_PASS)) {
 
-		try {
-			PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+			int lastVersion = prefs.getInt(Keys.DEFAULT_VERSION, 0);
 
-			int currentVersion = info.versionCode;
+			try {
+				PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
 
-			if (lastVersion < currentVersion) {
-				// Have update to do
-				boolean done = handleUpdates(lastVersion, currentVersion);
+				int currentVersion = info.versionCode;
 
-				if (done) prefs.edit().putInt(Keys.DEFAULT_VERSION, currentVersion);
+				if (lastVersion < currentVersion) {
+					// Have update to do
+					boolean done = handleUpdates(lastVersion, currentVersion);
+
+					if (done) prefs.edit().putInt(Keys.DEFAULT_VERSION, currentVersion);
+				}
+
+			} catch (NameNotFoundException e) {
+				// I would hope that this package exists, seeing as it's what's
+				// running this code
 			}
-
-		} catch (NameNotFoundException e) {
-			// I would hope that this package exists, seeing as it's what's
-			// running this code
 		}
 	}
 
