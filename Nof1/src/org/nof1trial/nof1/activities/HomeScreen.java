@@ -20,19 +20,11 @@
  ******************************************************************************/
 package org.nof1trial.nof1.activities;
 
-import java.io.File;
-
-import org.apache.http.protocol.HTTP;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.app.Util;
-import org.nof1trial.nof1.services.FinishedService;
-import org.nof1trial.nof1.services.Saver;
-
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -54,6 +46,15 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
+
+import org.apache.http.protocol.HTTP;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.services.FinishedService;
+import org.nof1trial.nof1.services.Saver;
+
+import java.io.File;
 
 /**
  * The main home screen that users see when they open the app. On first run will
@@ -88,6 +89,7 @@ public class HomeScreen extends SherlockActivity {
 
 		if (accPrefs.getString(Util.ACCOUNT_NAME, null) == null) {
 			// No account set up for app yet
+			if (DEBUG) Log.d(TAG, "No account found. Loading account activity");
 			Intent account = new Intent(mContext, AccountsActivity.class);
 			startActivity(account);
 		}
@@ -190,8 +192,9 @@ public class HomeScreen extends SherlockActivity {
 							maker.setAction(Keys.ACTION_MAKE_FILE);
 							startService(maker);
 
-							LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-							manager.registerReceiver(new FileReceiver(), null);
+							LocalBroadcastManager manager = LocalBroadcastManager
+									.getInstance(mContext);
+							manager.registerReceiver(new FileReceiver(), new IntentFilter());
 
 						} else {
 
@@ -263,7 +266,10 @@ public class HomeScreen extends SherlockActivity {
 			intent.setType(HTTP.PLAIN_TEXT_TYPE);
 			intent.putExtra(Intent.EXTRA_EMAIL, "");
 			intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
-			intent.putExtra(Intent.EXTRA_TEXT, res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+			intent.putExtra(
+					Intent.EXTRA_TEXT,
+					res.getText(R.string.results_attached)
+							+ sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 			intent.putExtra(Intent.EXTRA_STREAM, uri);
 			startActivity(intent);
 		} catch (ActivityNotFoundException e) {
@@ -283,7 +289,8 @@ public class HomeScreen extends SherlockActivity {
 		File dir;
 		File file;
 
-		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) || Environment.MEDIA_MOUNTED.equals(state)) {
+		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)
+				|| Environment.MEDIA_MOUNTED.equals(state)) {
 			// External storage readable
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
 				// Eclair has no support for getExternalCacheDir()
@@ -335,7 +342,8 @@ public class HomeScreen extends SherlockActivity {
 			}
 
 		} catch (NameNotFoundException e) {
-			// I would hope that this package exists, seeing as it's what's running this code
+			// I would hope that this package exists, seeing as it's what's
+			// running this code
 		}
 	}
 
@@ -344,7 +352,8 @@ public class HomeScreen extends SherlockActivity {
 		boolean result = true;
 
 		if (lastVersion <= 5) {
-			// v1 of app. Need to update database and upload config data to server
+			// v1 of app. Need to update database and upload config data to
+			// server
 			SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 			SharedPreferences.Editor edit = prefs.edit();
 			// Increment db version to force update

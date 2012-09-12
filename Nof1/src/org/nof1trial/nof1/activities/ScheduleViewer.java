@@ -23,6 +23,7 @@ package org.nof1trial.nof1.activities;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -76,7 +77,7 @@ public class ScheduleViewer extends SherlockActivity {
 
 				// Register listener for response
 				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new ScheduleReceiver(), null);
+				manager.registerReceiver(new ScheduleReceiver(), new IntentFilter());
 
 			}
 

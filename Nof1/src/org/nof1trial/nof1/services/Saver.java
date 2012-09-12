@@ -26,6 +26,7 @@ import android.app.backup.BackupManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -491,7 +492,7 @@ public class Saver extends IntentService {
 						.commit();
 
 				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new NetworkChangeReceiver(), null);
+				manager.registerReceiver(new NetworkChangeReceiver(), new IntentFilter());
 
 			}
 
@@ -552,7 +553,7 @@ public class Saver extends IntentService {
 				// Register receiver to get callback from the AccountService
 				// when cookie refreshed
 				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new NetworkChangeReceiver(), null);
+				manager.registerReceiver(new NetworkChangeReceiver(), new IntentFilter());
 
 			}
 
