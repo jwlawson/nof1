@@ -132,8 +132,7 @@ public class AccountService extends IntentService {
 			LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
 			manager.sendBroadcast(broadcast);
 
-		}
-		if (Keys.ACTION_REGISTER.equals(intent.getAction())) {
+		} else if (Keys.ACTION_REGISTER.equals(intent.getAction())) {
 			String account = intent.getStringExtra(Keys.INTENT_ACCOUNT);
 			if (DEBUG) Log.d(TAG, "Registering account: " + account);
 
