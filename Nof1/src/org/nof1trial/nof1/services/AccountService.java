@@ -126,6 +126,8 @@ public class AccountService extends IntentService {
 
 			refreshAuthCookie();
 
+			if (DEBUG) Log.d(TAG, "Cookie refreshed. Sending broadcast");
+
 			// Broadcast the change to receiver
 			Intent broadcast = new Intent(Keys.ACTION_COMPLETE);
 			LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);

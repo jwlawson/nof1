@@ -232,8 +232,6 @@ public class Saver extends IntentService {
 							data[i] = Integer.parseInt(dataStrArr[i]);
 						}
 
-						uploadData(day, time, data, comment);
-
 						// Remove data from prefs
 						SharedPreferences.Editor editor = sp.edit();
 						editor.putString(Keys.DATA_DAY + count, null);
@@ -243,6 +241,9 @@ public class Saver extends IntentService {
 
 						// decrement counter in prefs
 						editor.putInt(NUM_DATA, count - 1).commit();
+
+						uploadData(day, time, data, comment);
+
 					}
 
 				} else {
@@ -277,13 +278,12 @@ public class Saver extends IntentService {
 					for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
 						quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 					}
+					// remove flag in prefs
+					sp.edit().putBoolean(BOOL_CONFIG, false).commit();
 
 					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate,
 							periodLength, numberPeriods, treatmentA, treatmentB, treatmentNotes,
 							quesList);
-
-					// remove flag in prefs
-					sp.edit().putBoolean(BOOL_CONFIG, false).commit();
 
 				} else {
 					// Not connected, so want to start listener
@@ -327,8 +327,6 @@ public class Saver extends IntentService {
 						}
 					}
 
-					uploadData(day, time, data, comment);
-
 					// Remove data from prefs
 					SharedPreferences.Editor editor = sp.edit();
 					editor.putString(Keys.DATA_DAY + count, null);
@@ -338,6 +336,9 @@ public class Saver extends IntentService {
 
 					// decrement counter in prefs
 					editor.putInt(NUM_DATA, count - 1).commit();
+
+					uploadData(day, time, data, comment);
+
 				}
 				uploadedData = true;
 			}
@@ -368,12 +369,13 @@ public class Saver extends IntentService {
 					quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 				}
 
+				// remove flag in prefs
+				sp.edit().putBoolean(BOOL_CONFIG, false).commit();
+
 				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate,
 						periodLength, numberPeriods, treatmentA, treatmentB, treatmentNotes,
 						quesList);
 
-				// remove flag in prefs
-				sp.edit().putBoolean(BOOL_CONFIG, false).commit();
 				uploadedData = true;
 			}
 
