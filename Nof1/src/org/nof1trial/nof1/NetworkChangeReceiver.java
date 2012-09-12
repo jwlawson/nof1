@@ -20,9 +20,6 @@
  ******************************************************************************/
 package org.nof1trial.nof1;
 
-import org.nof1trial.nof1.services.FinishedService;
-import org.nof1trial.nof1.services.Saver;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -31,8 +28,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import org.nof1trial.nof1.services.FinishedService;
+import org.nof1trial.nof1.services.Saver;
+
 /**
- * Broadcast receiver that is disabled by default. Will be enabled if there is data to upload, so the app can wait until
+ * Broadcast receiver that is disabled by default. Will be enabled if there is
+ * data to upload, so the app can wait until
  * there is an internet connection, then upload data.
  * 
  * @author John Lawson
@@ -49,22 +50,28 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
+		if (DEBUG) Log.d(TAG, "Context: " + context.getPackageName());
+
 		if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
 			if (DEBUG) Log.d(TAG, "Network connection changed");
 
-			ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+			ConnectivityManager cm = (ConnectivityManager) context
+					.getSystemService(Context.CONNECTIVITY_SERVICE);
 
 			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-			boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnectedOrConnecting());
+			boolean isConnected = (activeNetwork == null ? false : activeNetwork
+					.isConnectedOrConnecting());
 			if (DEBUG) Log.d(TAG, "Internet connected: " + isConnected);
 
 			if (isConnected) {
-				SharedPreferences sp = context.getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
+				SharedPreferences sp = context.getSharedPreferences(Keys.CONFIG_NAME,
+						Context.MODE_PRIVATE);
 
 				// Pass connectivity change to saver
 				Intent saver = new Intent(context, Saver.class);
 				saver.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
 				context.startService(saver);
+				if (DEBUG) Log.d(TAG, "Saver started");
 
 				// Check whether should wake up finished service
 				if (sp.getBoolean(Keys.SCHED_FINISHED, false) && !sp.contains(Keys.CONFIG_SCHEDULE)) {
@@ -73,6 +80,15 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 					context.startService(finished);
 				}
 			}
+		} else if (Keys.ACTION_COMPLETE.equals(intent.getAction())) {
+			// Account finished refreshing cookie
+
+			// Pass connectivity change to saver
+			Intent saver = new Intent(context, Saver.class);
+			saver.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
+			context.startService(saver);
+			if (DEBUG) Log.d(TAG, "Saver started");
+
 		}
 	}
 
