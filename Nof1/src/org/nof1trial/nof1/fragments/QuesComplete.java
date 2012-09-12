@@ -27,6 +27,7 @@ import org.nof1trial.nof1.activities.HomeScreen;
 import org.nof1trial.nof1.services.FinishedService;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -85,6 +86,8 @@ public class QuesComplete extends SherlockDialogFragment {
 				+ (configPrefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0) * configPrefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0) * 2));
 
 		// If the trial is finished, show some text saying this
+		// SCHED_FINISHED gets set by Scheduler when the last questionnaire noti is posted
+		// So should be set before the user has completed the questionnaire
 		if (schedPrefs.getBoolean(Keys.SCHED_FINISHED, false)) {
 			TextView finished = (TextView) view.findViewById(R.id.complete_text_finished);
 			finished.setVisibility(View.VISIBLE);
@@ -100,6 +103,7 @@ public class QuesComplete extends SherlockDialogFragment {
 		btnGraph.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				// Show graphs
 				TaskStackBuilder builder = TaskStackBuilder.create(getActivity());
 				builder.addNextIntent(new Intent(getActivity(), HomeScreen.class)).addNextIntent(new Intent(getActivity(), GraphChooser.class));
 				builder.startActivities();
@@ -111,6 +115,7 @@ public class QuesComplete extends SherlockDialogFragment {
 		btnHome.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				// Show HomeScreen
 				TaskStackBuilder builder = TaskStackBuilder.create(getActivity());
 				builder.addNextIntent(new Intent(getActivity(), HomeScreen.class));
 				builder.startActivities();
@@ -122,14 +127,20 @@ public class QuesComplete extends SherlockDialogFragment {
 		btnExit.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent i = new Intent();
-				i.setAction(Intent.ACTION_MAIN);
-				i.addCategory(Intent.CATEGORY_HOME);
-				startActivity(i);
+				// Finish activity. As user got here from notification, this should be the only thing in task stack
 				getActivity().finish();
 			}
 		});
 
 		return view;
+	}
+
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		super.onDismiss(dialog);
+
+		// Finish activity when the dialog is closed to prevent user pressing back, clearing the dialog and being back
+		// at data input screen
+		getActivity().finish();
 	}
 }

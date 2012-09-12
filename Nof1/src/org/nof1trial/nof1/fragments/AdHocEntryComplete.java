@@ -29,6 +29,7 @@ import org.nof1trial.nof1.activities.HomeScreen;
 import org.nof1trial.nof1.services.Scheduler;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -157,5 +158,14 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 		});
 
 		return view;
+	}
+
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		super.onDismiss(dialog);
+
+		// Finish activity when the dialog is closed to prevent user pressing back, clearing the dialog and being back
+		// at data input screen
+		getActivity().finish();
 	}
 }
