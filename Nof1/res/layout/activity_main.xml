@@ -16,13 +16,16 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_scroll"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    tools:ignore="HardcodedText" >
+
+    <!-- Don't care about hardcoded text, as this will not be in public release -->
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -144,7 +147,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/main_btn_crash"
             android:text="Create CSV" />
-
+
         <Button
             android:id="@+id/main_btn_schedule"
             android:layout_width="wrap_content"
@@ -153,7 +156,6 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/main_btn_createcsv"
             android:text="Schedule" />
-
     </RelativeLayout>
 
 </ScrollView>
