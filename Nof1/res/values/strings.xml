@@ -126,7 +126,6 @@
     <string name="noti_first_text">Your trial is due to start today</string>
     <string name="noti_repeat_title">Nof1 Trials</string>
     <string name="noti_repeat_text">Please fill in this questionnaire</string>
-    <string name="config_not_run">Start date has not been set up. Please run the config tool.</string>
     <string name="medicine_explain">Please enter details about the treatments used in the trial. Include any information the pharmacist may need to make the prescription.</string>
     <string name="treatment_a">Treatment A</string>
     <string name="treatment_b">Treatment B</string>
@@ -151,6 +150,7 @@
     <string name="doctors_name">Doctor\'s name</string>
     <string name="thanks">Thanks</string>
     <string name="you_are_now">"You have now completed day "</string>
+    <string name="ad_hoc_you_are_now">"You have entered data for day "</string>
     <string name="out_of">" out of "</string>
     <string name="what_now">What would you like to do now?</string>
     <string name="go_home">Go to main screen</string>

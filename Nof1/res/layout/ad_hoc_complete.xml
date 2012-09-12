@@ -41,7 +41,7 @@
         android:layout_alignLeft="@+id/ad_hoc_text_thanks"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/ad_hoc_text_thanks"
-        android:text="@string/you_are_now"
+        android:text="@string/ad_hoc_you_are_now"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView

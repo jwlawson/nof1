@@ -51,49 +51,50 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
  * 
  */
 public class AdHocEntryComplete extends SherlockDialogFragment {
-	
+
 	public static AdHocEntryComplete newInstance() {
 		AdHocEntryComplete frag = new AdHocEntryComplete();
-		
+
 		return frag;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setStyle(STYLE_NO_TITLE, 0);
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
+
 		View view = inflater.inflate(R.layout.ad_hoc_complete, container, false);
-		
+
 		TextView thanks = (TextView) view.findViewById(R.id.ad_hoc_text_thanks);
-		
+
 		// Get layout, as we might need to refresh later
 		RelativeLayout layout = (RelativeLayout) thanks.getParent();
-		
+
 		// Load preferences
 		SharedPreferences userPrefs = getActivity().getSharedPreferences(Keys.DEFAULT_PREFS, Context.MODE_PRIVATE);
 		SharedPreferences configPrefs = getActivity().getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
 		SharedPreferences schedPrefs = getActivity().getSharedPreferences(Keys.SCHED_NAME, Context.MODE_PRIVATE);
 		Resources res = getActivity().getResources();
-		
+
 		thanks.setText(res.getText(R.string.thanks) + " " + userPrefs.getString(Keys.DEFAULT_PATIENT_NAME, ""));
-		
+
 		TextView progress = (TextView) view.findViewById(R.id.ad_hoc_text_you_are);
-		progress.setText("" + res.getText(R.string.you_are_now) + schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 0) + res.getText(R.string.out_of)
+		progress.setText("" + res.getText(R.string.ad_hoc_you_are_now) + schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 0)
+				+ res.getText(R.string.out_of)
 				+ (configPrefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0) * configPrefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0) * 2));
-		
+
 		TextView cancelText = (TextView) view.findViewById(R.id.ad_hoc_text_cancel_today);
 		final Button btnCancel = (Button) view.findViewById(R.id.ad_hoc_btn_cancel_today);
-		
+
 		// Get next date for scheduler to run
 		SharedPreferences sp = getActivity().getSharedPreferences(Keys.SCHED_NAME, Context.MODE_PRIVATE);
 		String alarm = sp.getString(Keys.SCHED_NEXT_DATE, "");
 		Calendar cal = Calendar.getInstance();
-		
+
 		String now = cal.get(Calendar.DAY_OF_MONTH) + ":" + cal.get(Calendar.MONTH) + ":" + cal.get(Calendar.YEAR);
 		if (alarm.equalsIgnoreCase(now)) {
 			// Will have an alarm today
@@ -108,7 +109,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 					getActivity().startService(intent);
 				}
 			});
-			
+
 		} else {
 			// Was not scheduled to enter data today, hide buttons
 			cancelText.setVisibility(View.GONE);
@@ -116,7 +117,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 			// refresh layout
 			layout.requestLayout();
 		}
-		
+
 		Button btnGraph = (Button) view.findViewById(R.id.ad_hoc_btn_graphs);
 		btnGraph.setOnClickListener(new OnClickListener() {
 			@Override
@@ -128,7 +129,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 				getActivity().finish();
 			}
 		});
-		
+
 		Button btnHome = (Button) view.findViewById(R.id.ad_hoc_btn_home);
 		btnHome.setOnClickListener(new OnClickListener() {
 			@Override
@@ -140,7 +141,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 				getActivity().finish();
 			}
 		});
-		
+
 		Button btnExit = (Button) view.findViewById(R.id.ad_hoc_btn_exit);
 		btnExit.setOnClickListener(new OnClickListener() {
 			@Override
@@ -154,7 +155,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 				getActivity().finish();
 			}
 		});
-		
+
 		return view;
 	}
 }
