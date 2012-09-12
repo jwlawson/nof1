@@ -78,7 +78,6 @@
     <string name="questionnaire_preview_explain">This is a preview of the questionnaire the patient will have to fill in. Please check any details, spelling etc and if you are happy press Save, otherwise Cancel will take you back to the previous screen.</string>
     <string name="save">Save</string>
     <string name="current_email">Current email</string>
-    <string name="new_email">New email</string>
     <string name="current_password">Current password</string>
     <string name="new_password">New password</string>
     <string name="login_change_explain">Input your current login details and the new password you would like to use.</string>
@@ -168,7 +167,7 @@
     <string name="cancel_todays_alarm">You are scheduled to fill in this questionnaire later today. Would you like to cancel today\'s alarm?</string>
     <string name="email_csv">Email data file</string>
     <string name="no_email_app_found">"No email app found."</string>
-    <string name="trial_data">"N-of-1 Trial data"</string>
+    <string name="trial_data">"Nof1 Trial data"</string>
     <string name="results_attached">"Find attached the data from the N-of-1 trial for "</string>
     <string name="include_samples">Include sample questions?</string>
     <string name="add_sample">Add sample questions</string>
@@ -180,7 +179,7 @@
     <string name="attention">Attention</string>
 
     <!-- Informational text for "Connected" screen with placeholder for account name [CHAR LIMIT=NONE] -->
-    <string name="disconnect_text">This device is currently connected to the cloud as %1$s.  To disconnect, press the button below.</string>
+    <string name="disconnect_text">This device is currently connected to the cloud as %1$s.</string>
 
     <!-- Button text [CHAR LIMIT=NONE] -->
     <string name="exit">Close</string>
@@ -202,4 +201,9 @@
     <string name="schedule">Schedule</string>
     <string name="creating_file">Creating csv file…</string>
     <string name="sending_email">Preparing to send email…</string>
+    <string name="account_connect_explain">The app will upload data to Google app engine, so that your doctor can view your progress through the trial. To do this please choose an account to store the data under.\n\nYou will be able to view the data when logged in on our website nof1trial.org.</string>
+    <string name="select_account">Select the account you wish to authorise:</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="connected_to_our_servers">Connected to our servers</string>
 </resources>

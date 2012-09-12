@@ -33,7 +33,6 @@
         android:layout_above="@+id/footer"
         android:layout_below="@id/divider"
         android:textSize="16dip" >
-
     </ListView>
 
     <LinearLayout
@@ -44,20 +43,20 @@
         android:orientation="horizontal" >
 
         <Button
-            android:id="@+id/connect"
-            android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:layout_weight="1"
-            android:text="@string/connect" />
-
-        <Button
             android:id="@+id/exit"
             android:layout_width="0dip"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:text="@string/exit" />
+
+        <Button
+            android:id="@+id/connect"
+            android:layout_width="0dip"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:text="@string/connect" />
     </LinearLayout>
 
 </RelativeLayout>
