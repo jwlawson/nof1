@@ -20,6 +20,25 @@
  ******************************************************************************/
 package org.nof1trial.nof1.services;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.nof1trial.nof1.BuildConfig;
+import org.nof1trial.nof1.DataSource;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.NetworkChangeReceiver;
+import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.shared.ConfigProxy;
+import org.nof1trial.nof1.shared.ConfigRequest;
+import org.nof1trial.nof1.shared.MyRequestFactory;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
@@ -42,27 +61,14 @@ import android.widget.Toast;
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
-import org.nof1trial.nof1.BuildConfig;
-import org.nof1trial.nof1.DataSource;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.NetworkChangeReceiver;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.app.Util;
-import org.nof1trial.nof1.shared.ConfigProxy;
-import org.nof1trial.nof1.shared.ConfigRequest;
-import org.nof1trial.nof1.shared.MyRequestFactory;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
-
 /**
  * Service to save a copy of the results as a .csv file
+ * 
+ * Actions:
+ * org.nof1trial.nof1.TRIAL_COMPLETE
+ * android.net.conn.CONNECTIVITY_CHANGE
+ * org.nof1trial.nof1.DOWNLOAD_SCHEDULE
+ * org.nof1trial.nof1.MAKE_FILE
  * 
  * @author John Lawson
  * 
@@ -215,8 +221,7 @@ public class FinishedService extends IntentService {
 		if (DEBUG) Log.d(TAG, "Trying to download schedule");
 
 		// Download config file and save schedule data to prefs
-		MyRequestFactory factory = Util.getRequestFactory(FinishedService.this,
-				MyRequestFactory.class);
+		MyRequestFactory factory = Util.getRequestFactory(FinishedService.this, MyRequestFactory.class);
 		ConfigRequest request = factory.configRequest();
 
 		request.findAllConfigs().fire(new Receiver<List<ConfigProxy>>() {
@@ -224,8 +229,7 @@ public class FinishedService extends IntentService {
 			@Override
 			public void onSuccess(List<ConfigProxy> list) {
 				if (list.size() == 0) {
-					Log.e(TAG,
-							"No config file found on server. Please contact the pharmacist for treatment schedule.");
+					Log.e(TAG, "No config file found on server. Please contact the pharmacist for treatment schedule.");
 
 				} else {
 					// get most recent config. Generally I would only expect a
@@ -272,8 +276,7 @@ public class FinishedService extends IntentService {
 
 				// Make sure each medicine notification gets a different request
 				// id
-				PendingIntent pi = PendingIntent.getBroadcast(FinishedService.this, 1 + i,
-						receiver, PendingIntent.FLAG_CANCEL_CURRENT);
+				PendingIntent pi = PendingIntent.getBroadcast(FinishedService.this, 1 + i, receiver, PendingIntent.FLAG_CANCEL_CURRENT);
 
 				alarmManager.cancel(pi);
 			}
@@ -290,13 +293,11 @@ public class FinishedService extends IntentService {
 				downloadSchedule(sp);
 
 			} else {
-				if (DEBUG)
-					Log.d(TAG, "Not connected to internet, starting network change listener");
+				if (DEBUG) Log.d(TAG, "Not connected to internet, starting network change listener");
 				// enable network change broadcast receiver
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-						PackageManager.DONT_KILL_APP);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 			}
 
 		} else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
@@ -316,8 +317,7 @@ public class FinishedService extends IntentService {
 
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp,
-						PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
 
 			} else {
 				if (DEBUG) Log.e(TAG, "Got Connectivity changed, but not connected");
@@ -339,12 +339,10 @@ public class FinishedService extends IntentService {
 
 					if (DEBUG) Log.d(TAG, "Trying to download schedule");
 
-					final SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME,
-							MODE_PRIVATE);
+					final SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
 					// Download config file and save schedule data to prefs
-					MyRequestFactory factory = Util.getRequestFactory(FinishedService.this,
-							MyRequestFactory.class);
+					MyRequestFactory factory = Util.getRequestFactory(FinishedService.this, MyRequestFactory.class);
 					ConfigRequest request = factory.configRequest();
 
 					request.findAllConfigs().fire(new Receiver<List<ConfigProxy>>() {
@@ -352,8 +350,7 @@ public class FinishedService extends IntentService {
 						@Override
 						public void onSuccess(List<ConfigProxy> list) {
 							if (list.size() == 0) {
-								Log.e(TAG,
-										"No config file found on server. Please contact the pharmacist for treatment schedule.");
+								Log.e(TAG, "No config file found on server. Please contact the pharmacist for treatment schedule.");
 								// TODO somehow notify user. Possibly use
 								// notification?
 
@@ -362,15 +359,13 @@ public class FinishedService extends IntentService {
 								// only expect a patient to have one.
 								ConfigProxy conf = list.get(list.size() - 1);
 								// Save schedule to prefs
-								sp.edit().putString(Keys.CONFIG_SCHEDULE, conf.getSchedule())
-										.commit();
+								sp.edit().putString(Keys.CONFIG_SCHEDULE, conf.getSchedule()).commit();
 								if (DEBUG) Log.d(TAG, "Saved schedule: " + conf.getSchedule());
 
 								// Send local broadcast to say the download is
 								// complete
 								Intent broadcast = new Intent(Keys.ACTION_DOWNLOAD_SCHEDULE);
-								LocalBroadcastManager manager = LocalBroadcastManager
-										.getInstance(mContext);
+								LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
 								manager.sendBroadcast(broadcast);
 
 							}
@@ -382,8 +377,7 @@ public class FinishedService extends IntentService {
 							super.onFailure(error);
 							// Broadcast error
 							Intent broadcast = new Intent(Keys.ACTION_ERROR);
-							LocalBroadcastManager manager = LocalBroadcastManager
-									.getInstance(mContext);
+							LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
 							manager.sendBroadcast(broadcast);
 						}
 
@@ -391,13 +385,11 @@ public class FinishedService extends IntentService {
 				}
 
 			} else {
-				if (DEBUG)
-					Log.d(TAG, "Not connected to internet, starting network change listener");
+				if (DEBUG) Log.d(TAG, "Not connected to internet, starting network change listener");
 				// enable network change broadcast receiver
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-						PackageManager.DONT_KILL_APP);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 			}
 
 		} else if (Keys.ACTION_MAKE_FILE.equals(intent.getAction())) {
@@ -426,6 +418,8 @@ public class FinishedService extends IntentService {
 				manager.sendBroadcast(broadcast);
 			}
 
+		} else {
+			Log.w(TAG, "Intent Service started with unrecognisd action");
 		}
 	}
 }
