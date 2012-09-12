@@ -22,7 +22,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+
     <TextView
         android:id="@+id/config_doctor_medicine_timing_text"
         android:layout_width="wrap_content"
@@ -33,11 +33,9 @@
         android:layout_marginLeft="@dimen/padding_large"
         android:layout_marginRight="@dimen/padding_large"
         android:layout_marginTop="@dimen/padding_large"
+        android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/medicine_timing"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
-
-
 
     <LinearLayout
         android:id="@+id/config_doctor_medicine_timing_layout"

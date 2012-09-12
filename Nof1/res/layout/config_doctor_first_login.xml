@@ -17,7 +17,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/config_doctor_first_scroll"
@@ -38,6 +38,7 @@
             android:layout_marginLeft="@dimen/padding_large"
             android:layout_marginRight="@dimen/padding_large"
             android:layout_marginTop="@dimen/padding_large"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/email"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -61,6 +62,7 @@
             android:layout_alignLeft="@+id/config_doctor_first_edit_email"
             android:layout_below="@+id/config_doctor_first_edit_email"
             android:layout_marginTop="@dimen/padding_large"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/password"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -81,6 +83,7 @@
             android:layout_alignLeft="@+id/config_doctor_first_edit_pass"
             android:layout_below="@+id/config_doctor_first_edit_pass"
             android:layout_marginTop="@dimen/padding_large"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/repeat_password"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -93,7 +96,7 @@
             android:layout_below="@+id/config_doctor_first_text_pass2"
             android:ems="10"
             android:inputType="textPassword" />
-
+
         <TextView
             android:id="@+id/config_doctor_first_explain"
             android:layout_width="wrap_content"
@@ -102,8 +105,11 @@
             android:layout_alignParentTop="true"
             android:layout_alignRight="@+id/config_doctor_first_text_email"
             android:layout_marginTop="@dimen/padding_large"
+            android:paddingLeft="@dimen/padding_text_lineup"
+            android:paddingRight="@dimen/padding_text_lineup"
             android:text="@string/login_first_explain"
             android:textAppearance="?android:attr/textAppearanceSmall" />
+
     </RelativeLayout>
 
 </ScrollView>

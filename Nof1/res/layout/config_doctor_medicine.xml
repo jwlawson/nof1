@@ -22,7 +22,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+
     <TextView
         android:id="@+id/config_doctor_medicine_text_explain"
         android:layout_width="wrap_content"
@@ -33,9 +33,11 @@
         android:layout_marginLeft="@dimen/padding_large"
         android:layout_marginRight="@dimen/padding_large"
         android:layout_marginTop="@dimen/padding_large"
+        android:paddingLeft="@dimen/padding_text_lineup"
+        android:paddingRight="@dimen/padding_text_lineup"
         android:text="@string/medicine_explain"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
     <TextView
         android:id="@+id/config_doctor_medicine_text_treatmenta"
         android:layout_width="wrap_content"
@@ -43,6 +45,7 @@
         android:layout_alignLeft="@+id/config_doctor_medicine_text_explain"
         android:layout_below="@+id/config_doctor_medicine_text_explain"
         android:layout_marginTop="@dimen/padding_large"
+        android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/treatment_a"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -56,7 +59,7 @@
         android:ems="10"
         android:inputType="textCapSentences" >
     </EditText>
-
+
     <TextView
         android:id="@+id/config_doctor_medicine_text_treatmentb"
         android:layout_width="wrap_content"
@@ -64,6 +67,7 @@
         android:layout_alignLeft="@+id/config_doctor_medicine_edit_treatmenta"
         android:layout_below="@+id/config_doctor_medicine_edit_treatmenta"
         android:layout_marginTop="@dimen/padding_large"
+        android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/treatment_b"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -76,7 +80,7 @@
         android:layout_below="@+id/config_doctor_medicine_text_treatmentb"
         android:ems="10"
         android:inputType="textCapSentences" />
-
+
     <TextView
         android:id="@+id/config_doctor_medicine_text_notes"
         android:layout_width="wrap_content"
@@ -84,6 +88,7 @@
         android:layout_alignLeft="@+id/config_doctor_medicine_edit_treatmentb"
         android:layout_below="@+id/config_doctor_medicine_edit_treatmentb"
         android:layout_marginTop="@dimen/padding_large"
+        android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/any_notes"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
