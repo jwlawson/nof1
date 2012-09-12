@@ -17,7 +17,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -32,14 +32,14 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:text="@string/enter_data" />
-
+
     <Button
         android:id="@+id/home_btn_graph"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/home_btn_data"
+        android:layout_below="@+id/home_btn_add_note"
         android:text="@string/view_graphs" />
 
     <Button
@@ -50,32 +50,26 @@
         android:layout_alignRight="@+id/home_btn_graph"
         android:layout_below="@+id/home_btn_graph"
         android:text="@string/view_comments" />
-
+
     <Button
         android:id="@+id/home_btn_add_note"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/home_btn_comment"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/home_btn_comment"
+        android:layout_below="@+id/home_btn_data"
         android:text="@string/add_note" />
-
-
-
-
-
-
-
+
     <Button
         android:id="@+id/home_btn_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/home_btn_add_note"
         android:layout_alignRight="@+id/home_btn_add_note"
-        android:layout_below="@id/home_btn_add_note"
+        android:layout_below="@id/home_btn_comment"
         android:text="@string/email_csv"
         android:visibility="gone" />
-
+
     <Button
         android:id="@+id/home_btn_schedule"
         android:layout_width="wrap_content"
