@@ -121,7 +121,7 @@ public class Saver extends IntentService {
 			editor.putString(Keys.CONFIG_TREATMENT_B, treatmentB);
 			editor.putString(Keys.CONFIG_TREATMENT_NOTES, treatmentNotes);
 
-			for (int i = 0; intent.hasExtra(Keys.CONFIG_DAY + i); i++) {
+			for (int i = 1; intent.hasExtra(Keys.CONFIG_DAY + i); i++) {
 				editor.putBoolean(Keys.CONFIG_DAY + i, intent.getBooleanExtra(Keys.CONFIG_DAY + i, false));
 			}
 			editor.commit();

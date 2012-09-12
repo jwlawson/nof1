@@ -24,7 +24,6 @@ import java.util.ArrayList;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.fragments.CheckArray;
@@ -73,7 +72,7 @@ import com.actionbarsherlock.view.MenuItem;
 public class DoctorConfig extends SherlockFragmentActivity implements AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener {
 
 	private static final String TAG = "DoctorConfig";
-	private static final boolean DEBUG = BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private static final int REQUEST_FORM = 12;
 
@@ -149,7 +148,10 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		String email = intent.getStringExtra(Keys.INTENT_EMAIL);
 
 		mDocEmail = (EditText) findViewById(R.id.config_doctor_details_edit_doc_email);
-		if (email != null && email.length() != 0) mDocEmail.setText(email);
+		if (email != null && email.length() != 0) {
+			mDocEmail.setText(email);
+			mDocEmail.setEnabled(false);
+		}
 		if (DEBUG) mDocEmail.setText("doc@jwlawson.co.uk");
 
 		mPharmEmail = (EditText) findViewById(R.id.config_doctor_details_edit_pharm_email);
@@ -401,7 +403,10 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		for (int j = 1; j < length + 1; j++) {
 			boolean contains = false;
 			for (int k = 0; k < arr.length; k++) {
-				if (j == arr[k]) contains = true;
+				if (j == arr[k]) {
+					contains = true;
+					break;
+				}
 			}
 			intent.putExtra(Keys.CONFIG_DAY + j, contains);
 		}
