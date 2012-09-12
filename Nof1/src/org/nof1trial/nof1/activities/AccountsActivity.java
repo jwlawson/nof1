@@ -15,6 +15,15 @@
  */
 package org.nof1trial.nof1.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.nof1trial.nof1.BuildConfig;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.services.AccountService;
+
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
@@ -23,9 +32,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,18 +45,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
-
-import org.nof1trial.nof1.BuildConfig;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.app.Util;
-import org.nof1trial.nof1.services.AccountService;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.actionbarsherlock.view.MenuItem;
 
 /**
- * Account selections activity - handles device registration and unregistration.
+ * Account selections activity - offloads connecting to AccountService
  */
 public class AccountsActivity extends SherlockActivity {
 
@@ -65,6 +67,8 @@ public class AccountsActivity extends SherlockActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		SharedPreferences prefs = Util.getSharedPreferences(mContext);
 		String account = prefs.getString(Util.ACCOUNT_NAME, null);
@@ -85,6 +89,28 @@ public class AccountsActivity extends SherlockActivity {
 		if (mDialog != null) {
 			mDialog.dismiss();
 		}
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			// Home / up button
+			Intent upIntent = new Intent(this, HomeScreen.class);
+			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
+				// This activity is not part of the application's task, so create a new task
+				// with a synthesised back stack.
+				TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
+				finish();
+			} else {
+				// This activity is part of the application's task, so simply
+				// navigate up to the hierarchical parent activity.
+				NavUtils.navigateUpTo(this, upIntent);
+			}
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	// Manage UI Screens
@@ -117,6 +143,7 @@ public class AccountsActivity extends SherlockActivity {
 			builder.setNegativeButton(R.string.skip, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
+					// TODO Show some warning that the app needs an account?
 					AccountsActivity.this.setResult(RESULT_CANCELED);
 					finish();
 				}
@@ -128,8 +155,7 @@ public class AccountsActivity extends SherlockActivity {
 
 		} else {
 			final ListView listView = (ListView) findViewById(R.id.select_account);
-			listView.setAdapter(new ArrayAdapter<String>(mContext, R.layout.account_list_item,
-					accounts));
+			listView.setAdapter(new ArrayAdapter<String>(mContext, R.layout.account_list_item, accounts));
 			listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			listView.setItemChecked(mAccountSelectedPosition, true);
 
@@ -177,30 +203,6 @@ public class AccountsActivity extends SherlockActivity {
 		String message = getResources().getString(R.string.disconnect_text);
 		String formatted = String.format(message, accountName);
 		disconnectText.setText(formatted);
-
-		Button disconnectButton = (Button) findViewById(R.id.disconnect);
-		disconnectButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// Delete the current account from shared preferences
-				if (DEBUG) Log.d(TAG, "Deleting account info");
-				Editor editor = prefs.edit();
-				editor.putString(Util.AUTH_COOKIE, null);
-				editor.putString(Util.ACCOUNT_NAME, null);
-				editor.commit();
-
-				// Unregister in the background and terminate the activity
-				finish();
-			}
-		});
-
-		Button exitButton = (Button) findViewById(R.id.exit);
-		exitButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				finish();
-			}
-		});
 	}
 
 	/**
