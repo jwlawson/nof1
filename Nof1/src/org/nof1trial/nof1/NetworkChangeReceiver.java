@@ -80,15 +80,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 					context.startService(finished);
 				}
 			}
-		} else if (Keys.ACTION_COMPLETE.equals(intent.getAction())) {
-			// Account finished refreshing cookie
-
-			// Pass connectivity change to saver
-			Intent saver = new Intent(context, Saver.class);
-			saver.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
-			context.startService(saver);
-			if (DEBUG) Log.d(TAG, "Saver started");
-
 		}
 	}
 

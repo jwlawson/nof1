@@ -23,6 +23,7 @@ package org.nof1trial.nof1.services;
 import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.backup.BackupManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -502,7 +503,7 @@ public class Saver extends IntentService {
 						.commit();
 
 				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new NetworkChangeReceiver(), new IntentFilter(
+				manager.registerReceiver(new CookieReceiver(), new IntentFilter(
 						Keys.ACTION_COMPLETE));
 
 			}
@@ -564,7 +565,7 @@ public class Saver extends IntentService {
 				// Register receiver to get callback from the AccountService
 				// when cookie refreshed
 				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new NetworkChangeReceiver(), new IntentFilter(
+				manager.registerReceiver(new CookieReceiver(), new IntentFilter(
 						Keys.ACTION_COMPLETE));
 
 			}
@@ -604,5 +605,20 @@ public class Saver extends IntentService {
 			BackupManager backup = new BackupManager(this);
 			backup.dataChanged();
 		}
+	}
+
+	private class CookieReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (DEBUG) Log.d(TAG, "Received broadcast");
+
+			// Pass connectivity change to saver
+			Intent saver = new Intent(context, Saver.class);
+			saver.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
+			context.startService(saver);
+			if (DEBUG) Log.d(TAG, "Saver started");
+		}
+
 	}
 }
