@@ -20,11 +20,24 @@
  ******************************************************************************/
 package org.nof1trial.nof1.services;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import android.annotation.TargetApi;
+import android.app.IntentService;
+import android.app.backup.BackupManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
-import javax.validation.ConstraintViolation;
+import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.DataSource;
@@ -38,23 +51,11 @@ import org.nof1trial.nof1.shared.DataProxy;
 import org.nof1trial.nof1.shared.DataRequest;
 import org.nof1trial.nof1.shared.MyRequestFactory;
 
-import android.annotation.TargetApi;
-import android.app.IntentService;
-import android.app.backup.BackupManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.Build;
-import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
+import javax.validation.ConstraintViolation;
 
 /**
  * @author John Lawson
@@ -71,7 +72,7 @@ public class Saver extends IntentService {
 	private static final String BOOL_CONFIG = "bool_config_cache";
 
 	/** Current context */
-	private Context mContext = this;
+	private final Context mContext = this;
 
 	public Saver() {
 		this("Saver");
@@ -124,14 +125,16 @@ public class Saver extends IntentService {
 			editor.putString(Keys.CONFIG_TREATMENT_NOTES, treatmentNotes);
 
 			for (int i = 1; intent.hasExtra(Keys.CONFIG_DAY + i); i++) {
-				editor.putBoolean(Keys.CONFIG_DAY + i, intent.getBooleanExtra(Keys.CONFIG_DAY + i, false));
+				editor.putBoolean(Keys.CONFIG_DAY + i,
+						intent.getBooleanExtra(Keys.CONFIG_DAY + i, false));
 			}
 			editor.commit();
 
 			// Request backup
 			backup();
 
-			// If no internet, set flag and save data to shared_prefs then register broadcast receiver for connectivity
+			// If no internet, set flag and save data to shared_prefs then
+			// register broadcast receiver for connectivity
 			// changes
 			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -141,8 +144,9 @@ public class Saver extends IntentService {
 			if (isConnected) {
 				// Save online
 
-				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, (long) periodLength, (long) numberPeriods, treatmentA,
-						treatmentB, treatmentNotes, quesList);
+				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate,
+						periodLength, numberPeriods, treatmentA, treatmentB, treatmentNotes,
+						quesList);
 
 			} else {
 				// No internet, so set flag to upload later
@@ -151,7 +155,8 @@ public class Saver extends IntentService {
 				// enable network change broadcast receiver
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+						PackageManager.DONT_KILL_APP);
 			}
 
 		} else if (Keys.ACTION_SAVE_DATA.equals(intent.getAction())) {
@@ -171,7 +176,8 @@ public class Saver extends IntentService {
 			// Request backup
 			backup();
 
-			// If no internet, set flag and save data to shared_prefs then register broadcast receiver for connectivity
+			// If no internet, set flag and save data to shared_prefs then
+			// register broadcast receiver for connectivity
 			// changes
 			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
@@ -190,7 +196,8 @@ public class Saver extends IntentService {
 				// enable network change broadcast receiver
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+						PackageManager.DONT_KILL_APP);
 			}
 
 		} else if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
@@ -244,7 +251,8 @@ public class Saver extends IntentService {
 
 			if (sp.getBoolean(BOOL_CONFIG, false)) {
 				// Have config data to upload
-				// Note, if config data not uploaded at start, there is no way that the schedule can be made or emails
+				// Note, if config data not uploaded at start, there is no way
+				// that the schedule can be made or emails
 				// sent
 				if (isConnected) {
 					// Have internet so upload data
@@ -268,8 +276,9 @@ public class Saver extends IntentService {
 						quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 					}
 
-					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
-							treatmentNotes, quesList);
+					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate,
+							periodLength, numberPeriods, treatmentA, treatmentB, treatmentNotes,
+							quesList);
 
 					// remove flag in prefs
 					sp.edit().putBoolean(BOOL_CONFIG, false).commit();
@@ -284,7 +293,8 @@ public class Saver extends IntentService {
 				// enable network change broadcast receiver
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+						PackageManager.DONT_KILL_APP);
 			}
 
 		} else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
@@ -330,7 +340,8 @@ public class Saver extends IntentService {
 
 			if (sp.getBoolean(BOOL_CONFIG, false)) {
 				// Have config data to upload
-				// Note, if config data not uploaded at start, there is no way that the schedule can be made or emails
+				// Note, if config data not uploaded at start, there is no way
+				// that the schedule can be made or emails
 				// sent
 
 				// get config from prefs and upload
@@ -352,8 +363,9 @@ public class Saver extends IntentService {
 					quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 				}
 
-				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
-						treatmentNotes, quesList);
+				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate,
+						periodLength, numberPeriods, treatmentA, treatmentB, treatmentNotes,
+						quesList);
 
 				// remove flag in prefs
 				sp.edit().putBoolean(BOOL_CONFIG, false).commit();
@@ -364,7 +376,8 @@ public class Saver extends IntentService {
 				// Disable network change listener, as not needed
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+				pm.setComponentEnabledSetting(comp,
+						PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
 			}
 
 		} else if (Keys.ACTION_UPLOAD_ALL.equals(intent.getAction())) {
@@ -388,46 +401,49 @@ public class Saver extends IntentService {
 				quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 			}
 
-			uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
-					treatmentNotes, quesList);
+			uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength,
+					numberPeriods, treatmentA, treatmentB, treatmentNotes, quesList);
 
-			// Query database for all saved data
-			DataSource datasource = new DataSource(mContext);
-			datasource.open();
-			Cursor cursor = datasource.getAllColumns();
-			cursor.moveToFirst();
+			if (quesList.size() >= 1) {
+				// Query database for all saved data
+				DataSource datasource = new DataSource(mContext);
+				datasource.open();
+				Cursor cursor = datasource.getAllColumns();
+				cursor.moveToFirst();
 
-			// Upload all data from the database
-			while (!cursor.isAfterLast()) {
+				// Upload all data from the database
+				while (!cursor.isAfterLast()) {
 
-				int dayCol = cursor.getColumnIndex(SQLite.COLUMN_DAY);
-				int timeCol = cursor.getColumnIndex(SQLite.COLUMN_TIME);
-				int commentCol = cursor.getColumnIndex(SQLite.COLUMN_COMMENT);
+					int dayCol = cursor.getColumnIndex(SQLite.COLUMN_DAY);
+					int timeCol = cursor.getColumnIndex(SQLite.COLUMN_TIME);
+					int commentCol = cursor.getColumnIndex(SQLite.COLUMN_COMMENT);
 
-				int day = cursor.getInt(dayCol);
-				long time = cursor.getLong(timeCol);
-				String comment = cursor.getString(commentCol);
-				int size = commentCol - timeCol - 1;
-				int[] data = new int[size];
+					int day = cursor.getInt(dayCol);
+					long time = cursor.getLong(timeCol);
+					String comment = cursor.getString(commentCol);
+					int size = commentCol - timeCol - 1;
+					int[] data = new int[size];
 
-				// Iterate over to get
-				for (int i = 0; i < size; i++) {
-					data[i] = cursor.getInt(timeCol + 1 + i);
+					// Iterate over to get
+					for (int i = 0; i < size; i++) {
+						data[i] = cursor.getInt(timeCol + 1 + i);
+					}
+
+					uploadData(day, time, data, comment);
+
+					cursor.moveToNext();
 				}
-
-				uploadData(day, time, data, comment);
-
-				cursor.moveToNext();
 			}
 		}
 
 	}
 
-	private void uploadConfig(final String doctorEmail, final String doctorName, final String patientName, final String pharmEmail,
-			final String startDate, final long periodLength, final long numberPeriods, final String treatmentA, final String treatmentB,
-			final String treatmentNotes, final List<String> quesList) {
+	private void uploadConfig(final String doctorEmail, final String doctorName,
+			final String patientName, final String pharmEmail, final String startDate,
+			final long periodLength, final long numberPeriods, final String treatmentA,
+			final String treatmentB, final String treatmentNotes, final List<String> quesList) {
 		// Get request factory
-		MyRequestFactory factory = (MyRequestFactory) Util.getRequestFactory(Saver.this, MyRequestFactory.class);
+		MyRequestFactory factory = Util.getRequestFactory(Saver.this, MyRequestFactory.class);
 		ConfigRequest request = factory.configRequest();
 
 		// Build config
@@ -465,7 +481,6 @@ public class Saver extends IntentService {
 			public void onFailure(ServerFailure error) {
 				Log.e(TAG, "Config not saved");
 				Log.e(TAG, error.getMessage());
-				Log.e(TAG, error.getStackTraceString());
 
 				// TODO Only refresh cookie when error is an auth error
 				// TODO Only allow looping a certain number of times
@@ -475,10 +490,11 @@ public class Saver extends IntentService {
 				startService(intent);
 
 				// Save for later
-				getSharedPreferences(CACHE, MODE_PRIVATE).edit().putBoolean(BOOL_CONFIG, true).commit();
+				getSharedPreferences(CACHE, MODE_PRIVATE).edit().putBoolean(BOOL_CONFIG, true)
+						.commit();
 
 				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new NetworkChangeReceiver(), null);
+				manager.registerReceiver(new NetworkChangeReceiver(), new IntentFilter());
 
 			}
 
@@ -497,7 +513,7 @@ public class Saver extends IntentService {
 	 */
 	private void uploadData(final int day, final long time, final int[] data, final String comment) {
 		// Send the data file to server
-		MyRequestFactory requestFactory = (MyRequestFactory) Util.getRequestFactory(this, MyRequestFactory.class);
+		MyRequestFactory requestFactory = Util.getRequestFactory(this, MyRequestFactory.class);
 		DataRequest request = requestFactory.dataRequest();
 
 		DataProxy proxy = request.create(DataProxy.class);
@@ -536,9 +552,10 @@ public class Saver extends IntentService {
 				// Save to upload later
 				saveDataForLater(day, time, comment, data);
 
-				// Register receiver to get callback from the AccountService when cookie refreshed
+				// Register receiver to get callback from the AccountService
+				// when cookie refreshed
 				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new NetworkChangeReceiver(), null);
+				manager.registerReceiver(new NetworkChangeReceiver(), new IntentFilter());
 
 			}
 
