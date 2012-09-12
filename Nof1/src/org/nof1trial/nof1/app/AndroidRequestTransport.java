@@ -15,10 +15,11 @@
  */
 package org.nof1trial.nof1.app;
 
-import android.util.Log;
-
-import com.google.web.bindery.requestfactory.shared.RequestTransport;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -27,11 +28,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
+import android.util.Log;
+
+import com.google.web.bindery.requestfactory.shared.RequestTransport;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 /**
  * An implementation of RequestTransport for use between an Android client and a
@@ -73,13 +73,18 @@ public class AndroidRequestTransport implements RequestTransport {
 			HttpResponse response = client.execute(post);
 			if (200 == response.getStatusLine().getStatusCode()) {
 				String contents = readStreamAsString(response.getEntity().getContent());
-				if (DEBUG) Log.d(TAG, contents);
-				// TODO Throw some sort of error on auth failure
+				// Throw some sort of error on auth failure
 				// ie returns html page rather than requestfactory object
-				receiver.onTransportSuccess(contents);
+				if (contents.startsWith("<!DOCTYPE html>")) {
+					if (DEBUG) Log.d(TAG, "Auth error encountered");
+					receiver.onTransportFailure(new ServerFailure("Auth failure"));
+
+				} else {
+					receiver.onTransportSuccess(contents);
+				}
 			} else {
-				receiver.onTransportFailure(new ServerFailure(response.getStatusLine()
-						.getReasonPhrase()));
+				if (DEBUG) Log.d(TAG, "Problem sending file: " + response.getStatusLine().getReasonPhrase());
+				receiver.onTransportFailure(new ServerFailure(response.getStatusLine().getReasonPhrase()));
 			}
 			return;
 		} catch (UnsupportedEncodingException e) {
@@ -108,8 +113,7 @@ public class AndroidRequestTransport implements RequestTransport {
 			} while (count >= 0);
 			return out.toString("UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			throw new RuntimeException("The JVM does not support the compiler's default encoding.",
-					e);
+			throw new RuntimeException("The JVM does not support the compiler's default encoding.", e);
 		} catch (IOException e) {
 			return null;
 		} finally {
