@@ -404,33 +404,35 @@ public class Saver extends IntentService {
 			uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength,
 					numberPeriods, treatmentA, treatmentB, treatmentNotes, quesList);
 
-			// Query database for all saved data
-			DataSource datasource = new DataSource(mContext);
-			datasource.open();
-			Cursor cursor = datasource.getAllColumns();
-			cursor.moveToFirst();
+			if (quesList.size() >= 1) {
+				// Query database for all saved data
+				DataSource datasource = new DataSource(mContext);
+				datasource.open();
+				Cursor cursor = datasource.getAllColumns();
+				cursor.moveToFirst();
 
-			// Upload all data from the database
-			while (!cursor.isAfterLast()) {
+				// Upload all data from the database
+				while (!cursor.isAfterLast()) {
 
-				int dayCol = cursor.getColumnIndex(SQLite.COLUMN_DAY);
-				int timeCol = cursor.getColumnIndex(SQLite.COLUMN_TIME);
-				int commentCol = cursor.getColumnIndex(SQLite.COLUMN_COMMENT);
+					int dayCol = cursor.getColumnIndex(SQLite.COLUMN_DAY);
+					int timeCol = cursor.getColumnIndex(SQLite.COLUMN_TIME);
+					int commentCol = cursor.getColumnIndex(SQLite.COLUMN_COMMENT);
 
-				int day = cursor.getInt(dayCol);
-				long time = cursor.getLong(timeCol);
-				String comment = cursor.getString(commentCol);
-				int size = commentCol - timeCol - 1;
-				int[] data = new int[size];
+					int day = cursor.getInt(dayCol);
+					long time = cursor.getLong(timeCol);
+					String comment = cursor.getString(commentCol);
+					int size = commentCol - timeCol - 1;
+					int[] data = new int[size];
 
-				// Iterate over to get
-				for (int i = 0; i < size; i++) {
-					data[i] = cursor.getInt(timeCol + 1 + i);
+					// Iterate over to get
+					for (int i = 0; i < size; i++) {
+						data[i] = cursor.getInt(timeCol + 1 + i);
+					}
+
+					uploadData(day, time, data, comment);
+
+					cursor.moveToNext();
 				}
-
-				uploadData(day, time, data, comment);
-
-				cursor.moveToNext();
 			}
 		}
 
