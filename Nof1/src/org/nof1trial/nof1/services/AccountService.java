@@ -208,7 +208,7 @@ public class AccountService extends IntentService {
 	 * 
 	 * Will call invlidateAuthToken in account manager, so the next authToken is new, then save the new cookie to prefs
 	 */
-	public void refreshAuthCookie() {
+	private void refreshAuthCookie() {
 		// Get account name from prefs
 		final SharedPreferences prefs = Util.getSharedPreferences(mContext);
 		String accountName = prefs.getString(Util.ACCOUNT_NAME, "error");

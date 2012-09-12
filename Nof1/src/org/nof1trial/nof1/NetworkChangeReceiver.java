@@ -67,7 +67,7 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 				context.startService(saver);
 
 				// Check whether should wake up finished service
-				if (sp.getBoolean(Keys.SCHED_FINISHED, false) && sp.contains(Keys.CONFIG_SCHEDULE)) {
+				if (sp.getBoolean(Keys.SCHED_FINISHED, false) && !sp.contains(Keys.CONFIG_SCHEDULE)) {
 					Intent finished = new Intent(context, FinishedService.class);
 					finished.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
 					context.startService(finished);

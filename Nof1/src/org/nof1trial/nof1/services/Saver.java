@@ -20,6 +20,24 @@
  ******************************************************************************/
 package org.nof1trial.nof1.services;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+
+import org.nof1trial.nof1.BuildConfig;
+import org.nof1trial.nof1.DataSource;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.NetworkChangeReceiver;
+import org.nof1trial.nof1.SQLite;
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.shared.ConfigProxy;
+import org.nof1trial.nof1.shared.ConfigRequest;
+import org.nof1trial.nof1.shared.DataProxy;
+import org.nof1trial.nof1.shared.DataRequest;
+import org.nof1trial.nof1.shared.MyRequestFactory;
+
 import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.backup.BackupManager;
@@ -38,24 +56,6 @@ import android.util.Log;
 
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
-
-import org.nof1trial.nof1.BuildConfig;
-import org.nof1trial.nof1.DataSource;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.NetworkChangeReceiver;
-import org.nof1trial.nof1.SQLite;
-import org.nof1trial.nof1.app.Util;
-import org.nof1trial.nof1.shared.ConfigProxy;
-import org.nof1trial.nof1.shared.ConfigRequest;
-import org.nof1trial.nof1.shared.DataProxy;
-import org.nof1trial.nof1.shared.DataRequest;
-import org.nof1trial.nof1.shared.MyRequestFactory;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
 
 /**
  * @author John Lawson
@@ -125,8 +125,7 @@ public class Saver extends IntentService {
 			editor.putString(Keys.CONFIG_TREATMENT_NOTES, treatmentNotes);
 
 			for (int i = 1; intent.hasExtra(Keys.CONFIG_DAY + i); i++) {
-				editor.putBoolean(Keys.CONFIG_DAY + i,
-						intent.getBooleanExtra(Keys.CONFIG_DAY + i, false));
+				editor.putBoolean(Keys.CONFIG_DAY + i, intent.getBooleanExtra(Keys.CONFIG_DAY + i, false));
 			}
 			editor.commit();
 
@@ -144,9 +143,8 @@ public class Saver extends IntentService {
 			if (isConnected) {
 				// Save online
 
-				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate,
-						periodLength, numberPeriods, treatmentA, treatmentB, treatmentNotes,
-						quesList);
+				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
+						treatmentNotes, quesList);
 
 			} else {
 				// No internet, so set flag to upload later
@@ -155,8 +153,7 @@ public class Saver extends IntentService {
 				// enable network change broadcast receiver
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-						PackageManager.DONT_KILL_APP);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 			}
 
 		} else if (Keys.ACTION_SAVE_DATA.equals(intent.getAction())) {
@@ -196,8 +193,7 @@ public class Saver extends IntentService {
 				// enable network change broadcast receiver
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-						PackageManager.DONT_KILL_APP);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 			}
 
 		} else if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
@@ -276,9 +272,8 @@ public class Saver extends IntentService {
 						quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 					}
 
-					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate,
-							periodLength, numberPeriods, treatmentA, treatmentB, treatmentNotes,
-							quesList);
+					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
+							treatmentNotes, quesList);
 
 					// remove flag in prefs
 					sp.edit().putBoolean(BOOL_CONFIG, false).commit();
@@ -293,8 +288,7 @@ public class Saver extends IntentService {
 				// enable network change broadcast receiver
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-						PackageManager.DONT_KILL_APP);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 			}
 
 		} else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
@@ -363,9 +357,8 @@ public class Saver extends IntentService {
 					quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 				}
 
-				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate,
-						periodLength, numberPeriods, treatmentA, treatmentB, treatmentNotes,
-						quesList);
+				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
+						treatmentNotes, quesList);
 
 				// remove flag in prefs
 				sp.edit().putBoolean(BOOL_CONFIG, false).commit();
@@ -376,8 +369,7 @@ public class Saver extends IntentService {
 				// Disable network change listener, as not needed
 				PackageManager pm = getPackageManager();
 				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp,
-						PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
 			}
 
 		} else if (Keys.ACTION_UPLOAD_ALL.equals(intent.getAction())) {
@@ -401,8 +393,8 @@ public class Saver extends IntentService {
 				quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 			}
 
-			uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength,
-					numberPeriods, treatmentA, treatmentB, treatmentNotes, quesList);
+			uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
+					treatmentNotes, quesList);
 
 			if (quesList.size() >= 1) {
 				// Query database for all saved data
@@ -438,10 +430,9 @@ public class Saver extends IntentService {
 
 	}
 
-	private void uploadConfig(final String doctorEmail, final String doctorName,
-			final String patientName, final String pharmEmail, final String startDate,
-			final long periodLength, final long numberPeriods, final String treatmentA,
-			final String treatmentB, final String treatmentNotes, final List<String> quesList) {
+	private void uploadConfig(final String doctorEmail, final String doctorName, final String patientName, final String pharmEmail,
+			final String startDate, final long periodLength, final long numberPeriods, final String treatmentA, final String treatmentB,
+			final String treatmentNotes, final List<String> quesList) {
 		// Get request factory
 		MyRequestFactory factory = Util.getRequestFactory(Saver.this, MyRequestFactory.class);
 		ConfigRequest request = factory.configRequest();
@@ -490,11 +481,10 @@ public class Saver extends IntentService {
 				startService(intent);
 
 				// Save for later
-				getSharedPreferences(CACHE, MODE_PRIVATE).edit().putBoolean(BOOL_CONFIG, true)
-						.commit();
+				getSharedPreferences(CACHE, MODE_PRIVATE).edit().putBoolean(BOOL_CONFIG, true).commit();
 
 				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new NetworkChangeReceiver(), new IntentFilter());
+				manager.registerReceiver(new NetworkChangeReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
 			}
 
@@ -555,7 +545,7 @@ public class Saver extends IntentService {
 				// Register receiver to get callback from the AccountService
 				// when cookie refreshed
 				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new NetworkChangeReceiver(), new IntentFilter());
+				manager.registerReceiver(new NetworkChangeReceiver(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
 			}
 
