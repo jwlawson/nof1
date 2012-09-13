@@ -365,6 +365,8 @@ public class Config {
 
 	private String schedule;
 
+	private Long endDate;
+
 	/**
 	 * Store config file in datastore
 	 */
@@ -404,6 +406,7 @@ public class Config {
 		try {
 			Config old = em.find(Config.class, existing.getId());
 
+			// TODO Only update fields which are not null
 			old.doctorEmail = doctorEmail;
 			old.doctorName = doctorName;
 			old.lengthPeriods = lengthPeriods;
@@ -415,6 +418,7 @@ public class Config {
 			old.treatmentA = treatmentA;
 			old.treatmentB = treatmentB;
 			old.treatmentNotes = treatmentNotes;
+			old.endDate = endDate;
 
 			return old;
 		} finally {
@@ -524,6 +528,14 @@ public class Config {
 
 	public void setSchedule(String schedule) {
 		this.schedule = schedule;
+	}
+
+	public Long getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Long endDate) {
+		this.endDate = endDate;
 	}
 
 	public Long getId() {
