@@ -20,25 +20,6 @@
  ******************************************************************************/
 package org.nof1trial.nof1.services;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
-
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.HttpClientParams;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.nof1trial.nof1.BuildConfig;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.activities.AccountsActivity;
-import org.nof1trial.nof1.app.Util;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -57,6 +38,25 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
+import org.apache.http.Header;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
+import org.nof1trial.nof1.BuildConfig;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.activities.AccountsActivity;
+import org.nof1trial.nof1.app.Util;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 /**
  * Service to handle registering accounts. Can register an account for the first
@@ -97,8 +97,9 @@ public class AccountService extends IntentService {
 
 		// Show notification
 		NotificationCompat.Builder builder = new Builder(mContext);
-		builder.setContentTitle(res.getString(R.string.nof1_account_setup)).setContentText(res.getString(R.string.retrieve_account))
-				.setAutoCancel(false).setSmallIcon(R.drawable.noti_account).setProgress(0, 0, true);
+		builder.setContentTitle(res.getString(R.string.nof1_account_setup))
+				.setContentText(res.getString(R.string.retrieve_account)).setAutoCancel(false)
+				.setSmallIcon(R.drawable.noti_account).setProgress(0, 0, true);
 
 		mNM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		mNM.notify(NOTIFICATION_ID, builder.build());
@@ -124,13 +125,6 @@ public class AccountService extends IntentService {
 			if (DEBUG) Log.d(TAG, "Refreshing account cookie");
 
 			refreshAuthCookie();
-
-			if (DEBUG) Log.d(TAG, "Cookie refreshed. Sending broadcast");
-
-			// Broadcast the change to receiver
-			Intent broadcast = new Intent(Keys.ACTION_COMPLETE);
-			LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-			manager.sendBroadcast(broadcast);
 
 		} else if (Keys.ACTION_REGISTER.equals(intent.getAction())) {
 			String account = intent.getStringExtra(Keys.INTENT_ACCOUNT);
@@ -175,32 +169,35 @@ public class AccountService extends IntentService {
 					// Use a fake cookie for the dev mode app engine server
 					// The cookie has the form email:isAdmin:userId
 					// We set the userId to be the same as the account name
-					String authCookie = "dev_appserver_login=" + accountName + ":false:" + accountName;
+					String authCookie = "dev_appserver_login=" + accountName + ":false:"
+							+ accountName;
 					prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
 				} else {
 					// Get the auth token from the AccountManager and convert
 					// it into a cookie for the appengine server
-					mgr.getAuthToken(acct, "ah", null, new AccountsActivity(), new AccountManagerCallback<Bundle>() {
-						@Override
-						public void run(AccountManagerFuture<Bundle> future) {
-							try {
-								Bundle authTokenBundle = future.getResult();
-								String authToken = authTokenBundle.get(AccountManager.KEY_AUTHTOKEN).toString();
+					mgr.getAuthToken(acct, "ah", null, new AccountsActivity(),
+							new AccountManagerCallback<Bundle>() {
+								@Override
+								public void run(AccountManagerFuture<Bundle> future) {
+									try {
+										Bundle authTokenBundle = future.getResult();
+										String authToken = authTokenBundle.get(
+												AccountManager.KEY_AUTHTOKEN).toString();
 
-								new CookieSaver().execute(authToken);
+										new CookieSaver().execute(authToken);
 
-							} catch (AuthenticatorException e) {
-								Log.w(TAG, "Got AuthenticatorException " + e);
-								Log.w(TAG, Log.getStackTraceString(e));
-							} catch (IOException e) {
-								Log.w(TAG, "Got IOException " + Log.getStackTraceString(e));
-								Log.w(TAG, Log.getStackTraceString(e));
-							} catch (OperationCanceledException e) {
-								Log.w(TAG, "Got OperationCanceledException " + e);
-								Log.w(TAG, Log.getStackTraceString(e));
-							}
-						}
-					}, null);
+									} catch (AuthenticatorException e) {
+										Log.w(TAG, "Got AuthenticatorException " + e);
+										Log.w(TAG, Log.getStackTraceString(e));
+									} catch (IOException e) {
+										Log.w(TAG, "Got IOException " + Log.getStackTraceString(e));
+										Log.w(TAG, Log.getStackTraceString(e));
+									} catch (OperationCanceledException e) {
+										Log.w(TAG, "Got OperationCanceledException " + e);
+										Log.w(TAG, Log.getStackTraceString(e));
+									}
+								}
+							}, null);
 				}
 				break;
 			}
@@ -239,7 +236,8 @@ public class AccountService extends IntentService {
 					// Use a fake cookie for the dev mode app engine server
 					// The cookie has the form email:isAdmin:userId
 					// We set the userId to be the same as the account name
-					String authCookie = "dev_appserver_login=" + accountName + ":false:" + accountName;
+					String authCookie = "dev_appserver_login=" + accountName + ":false:"
+							+ accountName;
 					prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
 				} else {
 					// Get the auth token from the AccountManager and convert
@@ -256,34 +254,41 @@ public class AccountService extends IntentService {
 						public void run(AccountManagerFuture<Bundle> future) {
 							try {
 								Bundle authTokenBundle = future.getResult();
-								String authToken = authTokenBundle.get(AccountManager.KEY_AUTHTOKEN).toString();
+								String authToken = authTokenBundle
+										.get(AccountManager.KEY_AUTHTOKEN).toString();
 
 								// Invalidate auth token, so next time Account
 								// Manager requests a new one
 								mgr.invalidateAuthToken("com.google", authToken);
 
 								// Request new one
-								mgr.getAuthToken(acct, "ah", null, act, new AccountManagerCallback<Bundle>() {
-									@Override
-									public void run(AccountManagerFuture<Bundle> future) {
-										try {
-											Bundle authTokenBundle = future.getResult();
-											String authToken = authTokenBundle.get(AccountManager.KEY_AUTHTOKEN).toString();
+								mgr.getAuthToken(acct, "ah", null, act,
+										new AccountManagerCallback<Bundle>() {
+											@Override
+											public void run(AccountManagerFuture<Bundle> future) {
+												try {
+													Bundle authTokenBundle = future.getResult();
+													String authToken = authTokenBundle.get(
+															AccountManager.KEY_AUTHTOKEN)
+															.toString();
 
-											new CookieSaver().execute(authToken);
+													new CookieSaver().execute(authToken);
 
-										} catch (AuthenticatorException e) {
-											Log.w(TAG, "Got AuthenticatorException " + e);
-											Log.w(TAG, Log.getStackTraceString(e));
-										} catch (IOException e) {
-											Log.w(TAG, "Got IOException " + Log.getStackTraceString(e));
-											Log.w(TAG, Log.getStackTraceString(e));
-										} catch (OperationCanceledException e) {
-											Log.w(TAG, "Got OperationCanceledException " + e);
-											Log.w(TAG, Log.getStackTraceString(e));
-										}
-									}
-								}, null);
+												} catch (AuthenticatorException e) {
+													Log.w(TAG, "Got AuthenticatorException " + e);
+													Log.w(TAG, Log.getStackTraceString(e));
+												} catch (IOException e) {
+													Log.w(TAG,
+															"Got IOException "
+																	+ Log.getStackTraceString(e));
+													Log.w(TAG, Log.getStackTraceString(e));
+												} catch (OperationCanceledException e) {
+													Log.w(TAG, "Got OperationCanceledException "
+															+ e);
+													Log.w(TAG, Log.getStackTraceString(e));
+												}
+											}
+										}, null);
 
 							} catch (AuthenticatorException e) {
 								Log.w(TAG, "Got AuthenticatorException " + e);
@@ -313,7 +318,8 @@ public class AccountService extends IntentService {
 			// Get SACSID cookie
 			DefaultHttpClient client = new DefaultHttpClient();
 			String continueURL = Util.PROD_URL;
-			URI uri = new URI(Util.PROD_URL + "/_ah/login?continue=" + URLEncoder.encode(continueURL, "UTF-8") + "&auth=" + authToken);
+			URI uri = new URI(Util.PROD_URL + "/_ah/login?continue="
+					+ URLEncoder.encode(continueURL, "UTF-8") + "&auth=" + authToken);
 			HttpGet method = new HttpGet(uri);
 			final HttpParams getParams = new BasicHttpParams();
 			HttpClientParams.setRedirecting(getParams, false);
@@ -362,6 +368,13 @@ public class AccountService extends IntentService {
 			final SharedPreferences prefs = Util.getSharedPreferences(mContext);
 
 			prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
+
+			if (DEBUG) Log.d(TAG, "Cookie refreshed. Sending broadcast");
+
+			// Broadcast the change to receiver
+			Intent broadcast = new Intent(Keys.ACTION_COMPLETE);
+			LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+			manager.sendBroadcast(broadcast);
 		}
 
 	}
