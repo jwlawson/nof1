@@ -69,7 +69,8 @@ import com.actionbarsherlock.view.MenuItem;
  * @author John Lawson
  * 
  */
-public class DoctorConfig extends SherlockFragmentActivity implements AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener {
+public class DoctorConfig extends SherlockFragmentActivity implements AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener,
+		View.OnFocusChangeListener {
 
 	private static final String TAG = "DoctorConfig";
 	private static final boolean DEBUG = false;
@@ -168,7 +169,10 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		}
 
 		mPeriodLength = (EditText) findViewById(R.id.config_timescale_edit_period);
+
+		// Set listeners to show the correct number of checkboxes for the number of days
 		mPeriodLength.setOnEditorActionListener(this);
+		mPeriodLength.setOnFocusChangeListener(this);
 
 		Spinner spinLength = (Spinner) findViewById(R.id.config_timescale_spinner_length);
 		spinLength.setOnItemSelectedListener(this);
@@ -664,5 +668,26 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			mArray.setSelected(selected);
 		}
 		return false;
+	}
+
+	@Override
+	public void onFocusChange(View v, boolean hasFocus) {
+		if (DEBUG) Log.d(TAG, "Editor action caught " + v.getId() + ":" + mPeriodLength.getId());
+		// Get the number entered and set the check array
+		String text = mPeriodLength.getText().toString();
+		if (text.length() != 0) {
+
+			int num = Integer.parseInt(text);
+			mArray.setNumber(num);
+
+			// Set which boxes in check array are selected
+			SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+			boolean[] selected = new boolean[num];
+			for (int i = 0; i < num; i++) {
+				selected[i] = sp.getBoolean(Keys.CONFIG_DAY + (i + 1), false);
+			}
+			mArray.setSelected(selected);
+		}
 	}
 }
