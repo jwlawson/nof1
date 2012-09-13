@@ -32,7 +32,8 @@
             android:dialogTitle="Questionnaire time"
             android:key="prefs_reminder_time"
             android:summary="What time would you like to be reminded to fill in a questionnaire?"
-            android:title="Questionnaire time" />
+            android:title="Questionnaire time" 
+            android:defaultValue="12:00"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/notifications">
         <CheckBoxPreference

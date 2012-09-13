@@ -26,9 +26,11 @@ import org.nof1trial.nof1.services.Scheduler;
 
 import android.annotation.TargetApi;
 import android.app.backup.BackupManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -48,6 +50,8 @@ public class UserPrefs extends SherlockPreferenceActivity {
 	private static final String TAG = "User Prefs";
 	private static final boolean DEBUG = false;
 
+	private final Context mContext = this;
+
 	public UserPrefs() {
 	}
 
@@ -57,6 +61,8 @@ public class UserPrefs extends SherlockPreferenceActivity {
 		super.onCreate(savedInstanceState);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+		PreferenceManager.setDefaultValues(mContext, R.xml.user_preferences, false);
 
 		// Load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.user_preferences);
