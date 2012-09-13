@@ -21,6 +21,7 @@
 package org.nof1trial.nof1.services;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 
@@ -460,6 +461,13 @@ public class Saver extends IntentService {
 		MyRequestFactory factory = Util.getRequestFactory(Saver.this, MyRequestFactory.class);
 		ConfigRequest request = factory.configRequest();
 
+		// Parse start date
+		String[] arr = startDate.split(":");
+		int[] date = new int[] { Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Integer.parseInt(arr[2]) };
+		Calendar cal = Calendar.getInstance();
+		cal.set(date[2], date[1], date[0], 23, 59);
+		cal.add(Calendar.DAY_OF_MONTH, (int) (2 * periodLength * numberPeriods));
+
 		// Build config
 		ConfigProxy conf = request.create(ConfigProxy.class);
 		conf.setDocEmail(doctorEmail);
@@ -473,6 +481,7 @@ public class Saver extends IntentService {
 		conf.setTreatmentB(treatmentB);
 		conf.setTreatmentNotes(treatmentNotes);
 		conf.setQuestionList(quesList);
+		conf.setEndDate(cal.getTimeInMillis());
 
 		// Update online
 		if (DEBUG) Log.d(TAG, "RequestFactory Config update sent");
