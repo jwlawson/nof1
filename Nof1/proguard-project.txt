@@ -24,6 +24,11 @@
 -keep class org.nof1trial.nof1.Backup { *; }
 
 ####################################################
+# RequestFactory
+####################################################
+-keep interface org.nof1trial.nof1.shared.** {*;}
+
+####################################################
 # ActionBarSherlock
 ####################################################
 -keep class android.support.v4.app.** { *; }
@@ -32,6 +37,7 @@
 -keep interface com.actionbarsherlock.** { *; }
 
 -keepattributes *Annotation*
+
 ####################################################
 # ACRA
 ####################################################
@@ -39,9 +45,7 @@
 -keepattributes SourceFile,LineNumberTable
 
 # keep this around for some enums that ACRA needs
--keep class org.acra.ReportingInteractionMode {
-   *;
-}
+-keep class org.acra.ReportingInteractionMode {*;}
 
 # keep this otherwise it is removed by ProGuard
 -keep public class org.acra.ErrorReporter
@@ -57,7 +61,5 @@ public org.acra.ErrorReporter$ReportsSenderWorker handleSilentException(java.lan
 
 # keep this class so that logging will show 'ACRA' and not a obfuscated name like 'a'.
 # Note: if you are removing log messages elsewhere in this file then this isn't necessary
--keep class org.acra.ReportField {
-        *;
-}
+-keep class org.acra.ReportField {*;}
 
