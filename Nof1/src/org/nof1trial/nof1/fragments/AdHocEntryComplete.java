@@ -20,6 +20,15 @@
  ******************************************************************************/
 package org.nof1trial.nof1.fragments;
 
+import java.util.Calendar;
+
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.activities.GraphChooser;
+import org.nof1trial.nof1.activities.HomeScreen;
+import org.nof1trial.nof1.services.Scheduler;
+
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -36,14 +45,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
-
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.activities.GraphChooser;
-import org.nof1trial.nof1.activities.HomeScreen;
-import org.nof1trial.nof1.services.Scheduler;
-
-import java.util.Calendar;
 
 /**
  * Dialog fragment to show when the user fills in the questionnaire without
@@ -77,37 +78,28 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 		RelativeLayout layout = (RelativeLayout) thanks.getParent();
 
 		// Load preferences
-		SharedPreferences userPrefs = getActivity().getSharedPreferences(Keys.DEFAULT_PREFS,
-				Context.MODE_PRIVATE);
-		SharedPreferences configPrefs = getActivity().getSharedPreferences(Keys.CONFIG_NAME,
-				Context.MODE_PRIVATE);
-		SharedPreferences schedPrefs = getActivity().getSharedPreferences(Keys.SCHED_NAME,
-				Context.MODE_PRIVATE);
+		SharedPreferences userPrefs = getActivity().getSharedPreferences(Keys.DEFAULT_PREFS, Context.MODE_PRIVATE);
+		SharedPreferences configPrefs = getActivity().getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
+		SharedPreferences schedPrefs = getActivity().getSharedPreferences(Keys.SCHED_NAME, Context.MODE_PRIVATE);
 		Resources res = getActivity().getResources();
 
-		thanks.setText(res.getText(R.string.thanks) + " "
-				+ userPrefs.getString(Keys.DEFAULT_PATIENT_NAME, ""));
+		thanks.setText(res.getText(R.string.thanks) + " " + userPrefs.getString(Keys.DEFAULT_PATIENT_NAME, ""));
 
 		TextView progress = (TextView) view.findViewById(R.id.ad_hoc_text_you_are);
-		progress.setText(""
-				+ res.getText(R.string.ad_hoc_you_are_now)
-				+ schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 0)
+		progress.setText("" + res.getText(R.string.ad_hoc_you_are_now) + schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 0)
 				+ res.getText(R.string.out_of)
-				+ (configPrefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0)
-						* configPrefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0) * 2));
+				+ (configPrefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0) * configPrefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0) * 2));
 
 		TextView cancelText = (TextView) view.findViewById(R.id.ad_hoc_text_cancel_today);
 		final Button btnCancel = (Button) view.findViewById(R.id.ad_hoc_btn_cancel_today);
 
 		// Get next date for scheduler to run
-		SharedPreferences sp = getActivity().getSharedPreferences(Keys.SCHED_NAME,
-				Context.MODE_PRIVATE);
+		SharedPreferences sp = getActivity().getSharedPreferences(Keys.SCHED_NAME, Context.MODE_PRIVATE);
 		String alarm = sp.getString(Keys.SCHED_NEXT_DATE, "");
 		Calendar cal = Calendar.getInstance();
 
-		String now = cal.get(Calendar.DAY_OF_MONTH) + ":" + cal.get(Calendar.MONTH) + ":"
-				+ cal.get(Calendar.YEAR);
-		if (alarm.equalsIgnoreCase(now)) {
+		String now = cal.get(Calendar.DAY_OF_MONTH) + ":" + cal.get(Calendar.MONTH) + ":" + cal.get(Calendar.YEAR);
+		if (alarm.equalsIgnoreCase(now) && !sp.getString(Keys.CONFIG_START, "").equals(now)) {
 			// Will have an alarm today
 			btnCancel.setOnClickListener(new OnClickListener() {
 				@Override
@@ -135,8 +127,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 			public void onClick(View v) {
 				// Show graphs
 				TaskStackBuilder builder = TaskStackBuilder.create(getActivity());
-				builder.addNextIntent(new Intent(getActivity(), HomeScreen.class)).addNextIntent(
-						new Intent(getActivity(), GraphChooser.class));
+				builder.addNextIntent(new Intent(getActivity(), HomeScreen.class)).addNextIntent(new Intent(getActivity(), GraphChooser.class));
 				builder.startActivities();
 				getActivity().finish();
 			}
@@ -161,10 +152,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 				// Go to android home screen
 				// TODO possibly finish with result to tell home screen to
 				// finish
-				Intent i = new Intent();
-				i.setAction(Intent.ACTION_MAIN);
-				i.addCategory(Intent.CATEGORY_HOME);
-				startActivity(i);
+				getActivity().setResult(Activity.RESULT_CANCELED);
 				getActivity().finish();
 			}
 		});
