@@ -225,6 +225,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		mArray = (CheckArray) getSupportFragmentManager().findFragmentById(R.id.config_timescale_check_array);
 
 		mDate = (StartDate) getSupportFragmentManager().findFragmentById(R.id.config_doctor_date_frag);
+		if (sp.contains(Keys.CONFIG_START)) mDate.setDate(sp.getString(Keys.CONFIG_START, ""));
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			mBackupManager = new BackupManager(this);

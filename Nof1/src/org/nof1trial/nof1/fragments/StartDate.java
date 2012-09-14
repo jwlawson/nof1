@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.nof1trial.nof1.fragments;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 
 import org.nof1trial.nof1.R;
@@ -44,22 +45,25 @@ import com.actionbarsherlock.app.SherlockFragment;
  * 
  */
 public class StartDate extends SherlockFragment implements OnCheckedChangeListener, OnDateSetListener {
-	
+
 	private static final String TAG = "StartDate";
 	private static final boolean DEBUG = false;
-	
+
 	private static final String ARGS_DATE = "date";
-	
+
 	private CheckBox mCheck;
-	
+
 	private Button mPicker;
-	
+
 	private int[] mDate;
-	
+
 	public StartDate() {
 		mDate = new int[3];
+
+		Bundle args = new Bundle();
+		setArguments(args);
 	}
-	
+
 	/**
 	 * Create and initialise a new StartDate fragment
 	 * 
@@ -68,45 +72,45 @@ public class StartDate extends SherlockFragment implements OnCheckedChangeListen
 	 */
 	public static StartDate newInstance(String startDate) {
 		StartDate frag = new StartDate();
-		
-		Bundle args = new Bundle();
+
+		Bundle args = frag.getArguments();
 		args.putString(ARGS_DATE, startDate);
-		frag.setArguments(args);
-		
+		// frag.setArguments(args);
+
 		return frag;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		Bundle args = getArguments();
-		
+
 		if (args != null && (args.getString(ARGS_DATE) != null)) {
-			
+
 			String date = args.getString(ARGS_DATE);
-			String[] dates = date.split(":");
-			mDate[0] = Integer.parseInt(dates[0]);
-			mDate[1] = Integer.parseInt(dates[1]);
-			mDate[2] = Integer.parseInt(dates[2]);
-			
+
+			mDate = parseString(date);
+
 		} else {
-			
+
 			Calendar c = Calendar.getInstance();
 			mDate[0] = c.get(Calendar.DAY_OF_MONTH);
 			mDate[1] = c.get(Calendar.MONTH);
 			mDate[2] = c.get(Calendar.YEAR);
+
 		}
+
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
+
 		View view = inflater.inflate(R.layout.start_date, container, false);
-		
+
 		mCheck = (CheckBox) view.findViewById(R.id.start_date_check);
 		mCheck.setOnCheckedChangeListener(this);
-		
+
 		mPicker = (Button) view.findViewById(R.id.start_date_picker);
 		mPicker.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -115,51 +119,84 @@ public class StartDate extends SherlockFragment implements OnCheckedChangeListen
 				showDatePicker();
 			}
 		});
-		
+
 		return view;
 	}
-	
+
 	private void showDatePicker() {
 		DatePickerDialog dialog = new DatePickerDialog(getActivity(), R.style.dialog_theme, this, mDate[2], mDate[1], mDate[0]);
 		dialog.show();
 	}
-	
+
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		if (buttonView == mCheck) {
 			mPicker.setEnabled(!isChecked);
 		}
 	}
-	
+
 	@Override
 	public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 		if (DEBUG) Log.d(TAG, "Date set: " + dayOfMonth + ":" + monthOfYear + ":" + year);
 		mDate[0] = dayOfMonth;
 		mDate[1] = monthOfYear;
 		mDate[2] = year;
+
+		updateButton();
 	}
-	
+
 	public void setDate(String date) {
+
 		getArguments().putString(ARGS_DATE, date);
+		mDate = parseString(date);
+
+		// Will call onCheckChanged
+		mCheck.setChecked(false);
+		updateButton();
+
 	}
-	
+
 	public String getDate() {
 		StringBuilder sb = new StringBuilder();
 		if (mCheck.isChecked()) {
-			
+
 			Calendar c = Calendar.getInstance();
 			mDate[0] = c.get(Calendar.DAY_OF_MONTH);
 			mDate[1] = c.get(Calendar.MONTH);
 			mDate[2] = c.get(Calendar.YEAR);
-			
+
 		}
-		
+
 		sb.append(mDate[0]).append(":");
 		sb.append(mDate[1]).append(":");
 		sb.append(mDate[2]);
-		
+
 		return sb.toString();
-		
+
 	}
-	
+
+	/** Parse a date string like 28:05:12 into an int array */
+	private int[] parseString(String date) {
+		int[] result = new int[3];
+
+		String[] dates = date.split(":");
+		result[0] = Integer.parseInt(dates[0]);
+		result[1] = Integer.parseInt(dates[1]);
+		result[2] = Integer.parseInt(dates[2]);
+
+		return result;
+	}
+
+	/** Update the button to show the selected date */
+	private void updateButton() {
+
+		Calendar cal = Calendar.getInstance();
+		cal.set(mDate[2], mDate[1], mDate[0]);
+
+		DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+
+		mPicker.setText(df.format(cal.getTime()));
+
+	}
+
 }
