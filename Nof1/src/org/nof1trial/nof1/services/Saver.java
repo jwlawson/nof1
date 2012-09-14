@@ -185,6 +185,8 @@ public class Saver extends IntentService {
 			// Save data
 			source.saveData(day, time, data, comment);
 
+			source.close();
+
 			// Request backup
 			backup();
 
@@ -447,6 +449,8 @@ public class Saver extends IntentService {
 
 					cursor.moveToNext();
 				}
+				cursor.close();
+				datasource.close();
 			}
 		} else {
 			Log.w(TAG, "IntentService started with unrecognised action");
