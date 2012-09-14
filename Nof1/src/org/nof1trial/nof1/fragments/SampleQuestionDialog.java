@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import org.nof1trial.nof1.R;
 
 import android.app.Activity;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,83 +44,89 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
  * 
  */
 public class SampleQuestionDialog extends SherlockDialogFragment implements OnClickListener {
-	
+
 	private ArrayList<CheckBox> mList;
-	
+
 	private OnSamplesCheckedListener mListener;
-	
+
 	public static SampleQuestionDialog newInstance() {
-		
+
 		SampleQuestionDialog frag = new SampleQuestionDialog();
-		
+
 		return frag;
 	}
-	
+
 	public interface OnSamplesCheckedListener {
 		public abstract void onSampleChecked(boolean[] checked);
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mList = new ArrayList<CheckBox>();
 		setStyle(STYLE_NO_TITLE, 0);
 	}
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		
+
 		try {
 			mListener = (OnSamplesCheckedListener) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.getClass().getName() + " must implement OnSamplesCheckedListener");
 		}
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
+
 		View view = inflater.inflate(R.layout.sample_questions, container, false);
-		
+
 		String[] questions = getResources().getStringArray(R.array.sample_ques_brief);
-		
+
 		RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.sample_questions_text).getParent();
-		
+
 		int id = R.id.sample_questions_text;
-		
+
 		for (int i = 0; i < questions.length; i++) {
 			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			params.addRule(RelativeLayout.BELOW, id);
-			
+
 			CheckBox chk = new CheckBox(getActivity());
 			chk.setText(questions[i]);
 			chk.setId(0x1000 + i);
+
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+				// Pre honeycomb have dark dialogs, so need to set text as white
+				chk.setTextColor(Color.WHITE);
+			}
+
 			layout.addView(chk, params);
-			
+
 			mList.add(chk);
-			
+
 			id = 0x1000 + i;
 		}
-		
+
 		layout.requestLayout();
-		
+
 		Button btnOk = (Button) view.findViewById(R.id.sample_questions_btn_ok);
 		btnOk.setOnClickListener(this);
-		
+
 		return view;
 	}
-	
+
 	@Override
 	public void onClick(View v) {
 		boolean[] result = new boolean[mList.size()];
-		
+
 		for (int i = 0; i < mList.size(); i++) {
 			result[i] = mList.get(i).isChecked();
 		}
-		
+
 		mListener.onSampleChecked(result);
 		dismiss();
 	}
-	
+
 }
