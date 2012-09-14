@@ -1,4 +1,4 @@
-N of 1 Trial Helper (working title)
+Nof1 Trial App
 ===================================
 
 An Android app to help the administration and implementation of N-of-1 trials in 
@@ -21,11 +21,22 @@ configure any preferences they have.
 At points specified by their treatment plan, the app will give reminders to the 
 patient to enter the information tracked by the trial and provide feedback over 
 the course of treatment.
- 
+
+
+Build
+-----
+
+The project is developed in Eclipse. Pulling the source should allow building in 
+eclipse provided that the required plugins are installed:
+
+ - Android development tools
+ - Google plugin
+ - App engine SDK
+ - GWT SDK
 
 License
 -------
-	Copyright (C) 2012 WMG, University of Warwick
+	Copyright (C) 2012 John Lawson, University of Warwick
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
