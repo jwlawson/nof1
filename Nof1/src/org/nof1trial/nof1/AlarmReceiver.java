@@ -102,20 +102,20 @@ public class AlarmReceiver extends BroadcastReceiver {
 		intent.putExtra(Keys.INTENT_SCHEDULED, true);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-		setNotification(context, intent, R.string.noti_repeat_title, R.string.noti_repeat_text);
+		setNotification(context, intent, R.string.noti_repeat_title, R.string.noti_repeat_text, 0x101);
 	}
 
 	/** Set the first notification at start of trial */
 	private void setFirstNotification(Context context) {
 		// TODO What should first notification do?
 
-		setNotification(context, new Intent(), R.string.noti_first_title, R.string.noti_first_text);
+		setNotification(context, new Intent(), R.string.noti_first_title, R.string.noti_first_text, 0x102);
 
 	}
 
 	private void setMedicineNotification(Context context) {
 
-		setNotification(context, new Intent(), R.string.noti_medicine_title, R.string.noti_medicine_text);
+		setNotification(context, new Intent(), R.string.noti_medicine_title, R.string.noti_medicine_text, 0x103);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 	 * @param title Title of notification
 	 * @param text Text in notification
 	 */
-	private void setNotification(Context context, Intent intent, String title, String text) {
+	private void setNotification(Context context, Intent intent, String title, String text, int id) {
 
 		SharedPreferences sp = context.getSharedPreferences(Keys.DEFAULT_PREFS, Context.MODE_PRIVATE);
 
@@ -160,7 +160,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
 		Notification noti = builder.build();
 
-		((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(0x100, noti);
+		((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(id, noti);
 
 		if (DEBUG) Log.d(TAG, "Notification posted");
 
@@ -174,10 +174,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 	 * @param title Resource with title of notification
 	 * @param text Resource with text in notification
 	 */
-	private void setNotification(Context context, Intent intent, int title, int text) {
+	private void setNotification(Context context, Intent intent, int title, int text, int id) {
 		Resources res = context.getResources();
 		String titleStr = res.getString(title);
 		String textStr = res.getString(text);
-		setNotification(context, intent, titleStr, textStr);
+		setNotification(context, intent, titleStr, textStr, id);
 	}
 }
