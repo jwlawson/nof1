@@ -102,11 +102,14 @@ public class AccountsActivity extends SherlockActivity {
 				// This activity is not part of the application's task, so create a new task
 				// with a synthesised back stack.
 				TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
+				setResult(RESULT_CANCELED);
 				finish();
 			} else {
 				// This activity is part of the application's task, so simply
 				// navigate up to the hierarchical parent activity.
 				NavUtils.navigateUpTo(this, upIntent);
+				setResult(RESULT_CANCELED);
+				finish();
 			}
 			return true;
 		}
@@ -123,10 +126,12 @@ public class AccountsActivity extends SherlockActivity {
 		if (Util.isDebug(mContext)) {
 			// Use debug account
 			Intent intent = new Intent(mContext, AccountService.class);
+			intent.setAction(Keys.ACTION_REGISTER);
 			intent.putExtra(Keys.INTENT_ACCOUNT, "android@jwlawson.co.uk");
 			startService(intent);
 
 			if (DEBUG) Log.d(TAG, "Using debug account android@jwlawson.co.uk");
+			setResult(RESULT_OK);
 			finish();
 			return;
 		}

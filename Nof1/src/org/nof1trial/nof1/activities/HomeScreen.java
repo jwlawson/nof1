@@ -20,6 +20,16 @@
  ******************************************************************************/
 package org.nof1trial.nof1.activities;
 
+import java.io.File;
+
+import org.apache.http.protocol.HTTP;
+import org.nof1trial.nof1.BuildConfig;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.services.FinishedService;
+import org.nof1trial.nof1.services.Saver;
+
 import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -47,16 +57,6 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
-import org.apache.http.protocol.HTTP;
-import org.nof1trial.nof1.BuildConfig;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.app.Util;
-import org.nof1trial.nof1.services.FinishedService;
-import org.nof1trial.nof1.services.Saver;
-
-import java.io.File;
-
 /**
  * The main home screen that users see when they open the app. On first run will
  * also set up the task stack to allow
@@ -71,6 +71,8 @@ public class HomeScreen extends SherlockActivity {
 	private static final String TAG = "HomeScreen";
 	private static final boolean DEBUG = BuildConfig.DEBUG;
 
+	private static final int ACCOUNT_REQUEST = 101;
+
 	/** Current context */
 	private final Context mContext = this;
 
@@ -84,153 +86,41 @@ public class HomeScreen extends SherlockActivity {
 		getSupportActionBar().setHomeButtonEnabled(false);
 		setSupportProgressBarIndeterminateVisibility(false);
 
-		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
-
 		SharedPreferences accPrefs = Util.getSharedPreferences(mContext);
 
 		if (accPrefs.getString(Util.ACCOUNT_NAME, null) == null) {
 			// No account set up for app yet
 			if (DEBUG) Log.d(TAG, "No account found. Loading account activity");
 
-			TaskStackBuilder builder = TaskStackBuilder.create(this);
-
-			builder.addNextIntent(new Intent(this, HomeScreen.class));
-			builder.addNextIntent(new Intent(this, AccountsActivity.class));
-
-			builder.startActivities();
+			Intent account = new Intent(mContext, AccountsActivity.class);
+			startActivityForResult(account, ACCOUNT_REQUEST);
 
 		} else {
-
-			// Want account set up before configuring updates
-			findUpdates(sp);
-
-			if (!sp.contains(Keys.DEFAULT_FIRST)) {
-				if (DEBUG) Log.d(TAG, "App launched for the first time");
-
-				TaskStackBuilder builder = TaskStackBuilder.create(this);
-
-				builder.addNextIntent(new Intent(this, HomeScreen.class));
-				builder.addNextIntent(new Intent(this, UserPrefs.class));
-				builder.addNextIntent(new Intent(this, DoctorLogin.class));
-
-				builder.startActivities();
-
-			} else {
-				// Not the first time app is run
-
-				setContentView(R.layout.home_layout);
-
-				Button btnData = (Button) findViewById(R.id.home_btn_data);
-				btnData.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// Launch questionnaire
-						Intent intent = new Intent(HomeScreen.this, Questionnaire.class);
-						startActivity(intent);
-					}
-				});
-
-				SharedPreferences quesPrefs = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
-
-				Button btnGraphs = (Button) findViewById(R.id.home_btn_graph);
-
-				if (quesPrefs.contains(Keys.QUES_TEXT + 0)) {
-					// Enable viewing graphs, as questionnaire built
-
-					btnGraphs.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							// Launch graph activity
-							Intent intent = new Intent(HomeScreen.this, GraphChooser.class);
-							startActivity(intent);
-						}
-					});
-				} else {
-					// Questionnaire not made, so don't want to create empty
-					// database
-					btnGraphs.setEnabled(false);
-				}
-
-				Button btnComment = (Button) findViewById(R.id.home_btn_comment);
-
-				btnComment.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Intent intent = new Intent(HomeScreen.this, CommentList.class);
-						startActivity(intent);
-					}
-				});
-
-				Button btnNewNote = (Button) findViewById(R.id.home_btn_add_note);
-
-				btnNewNote.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						Intent intent = new Intent(HomeScreen.this, AddNote.class);
-						startActivity(intent);
-					}
-				});
-
-				SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
-				if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
-					// Trial finished.
-
-					// Disable data input button
-					btnData.setEnabled(false);
-
-					// Show email csv button
-					btnEmail = (Button) findViewById(R.id.home_btn_email);
-					btnEmail.setVisibility(View.VISIBLE);
-
-					btnEmail.setOnClickListener(new OnClickListener() {
-						@Override
-						public void onClick(View v) {
-
-							File file = findCSV();
-
-							btnEmail.setEnabled(false);
-
-							if (file == null) {
-								// File not found
-
-								btnEmail.setText(R.string.creating_file);
-
-								Intent maker = new Intent(mContext, FinishedService.class);
-								maker.setAction(Keys.ACTION_MAKE_FILE);
-								startService(maker);
-
-								LocalBroadcastManager manager = LocalBroadcastManager
-										.getInstance(mContext);
-								manager.registerReceiver(new FileReceiver(), new IntentFilter());
-
-							} else {
-
-								btnEmail.setText(R.string.sending_email);
-								sendEmail(file);
-
-							}
-
-						}
-					});
-
-					Button btnSchedule = (Button) findViewById(R.id.home_btn_schedule);
-					btnSchedule.setVisibility(View.VISIBLE);
-					btnSchedule.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							// Start schedule viewer activity
-							Intent schedule = new Intent(mContext, ScheduleViewer.class);
-							startActivity(schedule);
-						}
-					});
-
-					// Reload relative layout to ensure button is shown
-					((RelativeLayout) btnEmail.getParent()).requestLayout();
-				}
-			}
+			createRedirectOrUi();
 		}
 
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		switch (requestCode) {
+		case ACCOUNT_REQUEST:
+			if (DEBUG) Log.d(TAG, "Account request finished");
+			switch (resultCode) {
+			case RESULT_OK:
+				// New account set up
+				createRedirectOrUi();
+				break;
+			case RESULT_CANCELED:
+				// No account set up
+				finish();
+				break;
+			}
+			return;
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
@@ -273,10 +163,7 @@ public class HomeScreen extends SherlockActivity {
 			intent.setType(HTTP.PLAIN_TEXT_TYPE);
 			intent.putExtra(Intent.EXTRA_EMAIL, "");
 			intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
-			intent.putExtra(
-					Intent.EXTRA_TEXT,
-					res.getText(R.string.results_attached)
-							+ sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+			intent.putExtra(Intent.EXTRA_TEXT, res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 			intent.putExtra(Intent.EXTRA_STREAM, uri);
 			startActivity(intent);
 		} catch (ActivityNotFoundException e) {
@@ -296,8 +183,7 @@ public class HomeScreen extends SherlockActivity {
 		File dir;
 		File file;
 
-		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)
-				|| Environment.MEDIA_MOUNTED.equals(state)) {
+		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) || Environment.MEDIA_MOUNTED.equals(state)) {
 			// External storage readable
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
 				// Eclair has no support for getExternalCacheDir()
@@ -379,6 +265,139 @@ public class HomeScreen extends SherlockActivity {
 
 		return result;
 
+	}
+
+	private void createRedirectOrUi() {
+
+		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+
+		// Want account set up before configuring updates
+		findUpdates(sp);
+
+		if (!sp.contains(Keys.DEFAULT_FIRST)) {
+			if (DEBUG) Log.d(TAG, "App launched for the first time");
+
+			TaskStackBuilder builder = TaskStackBuilder.create(this);
+
+			builder.addNextIntent(new Intent(this, HomeScreen.class));
+			builder.addNextIntent(new Intent(this, UserPrefs.class));
+			builder.addNextIntent(new Intent(this, DoctorLogin.class));
+
+			builder.startActivities();
+
+		} else {
+			// Not the first time app is run
+
+			setContentView(R.layout.home_layout);
+
+			Button btnData = (Button) findViewById(R.id.home_btn_data);
+			btnData.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// Launch questionnaire
+					Intent intent = new Intent(HomeScreen.this, Questionnaire.class);
+					startActivity(intent);
+				}
+			});
+
+			SharedPreferences quesPrefs = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+
+			Button btnGraphs = (Button) findViewById(R.id.home_btn_graph);
+
+			if (quesPrefs.contains(Keys.QUES_TEXT + 0)) {
+				// Enable viewing graphs, as questionnaire built
+
+				btnGraphs.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						// Launch graph activity
+						Intent intent = new Intent(HomeScreen.this, GraphChooser.class);
+						startActivity(intent);
+					}
+				});
+			} else {
+				// Questionnaire not made, so don't want to create empty
+				// database
+				btnGraphs.setEnabled(false);
+			}
+
+			Button btnComment = (Button) findViewById(R.id.home_btn_comment);
+
+			btnComment.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(HomeScreen.this, CommentList.class);
+					startActivity(intent);
+				}
+			});
+
+			Button btnNewNote = (Button) findViewById(R.id.home_btn_add_note);
+
+			btnNewNote.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(HomeScreen.this, AddNote.class);
+					startActivity(intent);
+				}
+			});
+
+			SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
+			if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
+				// Trial finished.
+
+				// Disable data input button
+				btnData.setEnabled(false);
+
+				// Show email csv button
+				btnEmail = (Button) findViewById(R.id.home_btn_email);
+				btnEmail.setVisibility(View.VISIBLE);
+
+				btnEmail.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+
+						File file = findCSV();
+
+						btnEmail.setEnabled(false);
+
+						if (file == null) {
+							// File not found
+
+							btnEmail.setText(R.string.creating_file);
+
+							Intent maker = new Intent(mContext, FinishedService.class);
+							maker.setAction(Keys.ACTION_MAKE_FILE);
+							startService(maker);
+
+							LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+							manager.registerReceiver(new FileReceiver(), new IntentFilter());
+
+						} else {
+
+							btnEmail.setText(R.string.sending_email);
+							sendEmail(file);
+
+						}
+
+					}
+				});
+
+				Button btnSchedule = (Button) findViewById(R.id.home_btn_schedule);
+				btnSchedule.setVisibility(View.VISIBLE);
+				btnSchedule.setOnClickListener(new OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						// Start schedule viewer activity
+						Intent schedule = new Intent(mContext, ScheduleViewer.class);
+						startActivity(schedule);
+					}
+				});
+
+				// Reload relative layout to ensure button is shown
+				((RelativeLayout) btnEmail.getParent()).requestLayout();
+			}
+		}
 	}
 
 	private class FileReceiver extends BroadcastReceiver {

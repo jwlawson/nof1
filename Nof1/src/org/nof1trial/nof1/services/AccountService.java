@@ -35,7 +35,6 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.activities.AccountsActivity;
 import org.nof1trial.nof1.app.Util;
 
@@ -46,23 +45,21 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.IntentService;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 /**
  * Service to handle registering accounts. Can register an account for the first
- * time and refresh the saved auth cookie
- * for the account.
+ * time and refresh the saved auth cookie for the account.
+ * 
+ * Handled actions:
+ * org.nof1trial.nof1.REFRESH_CREDENTIALS
+ * org.nof1trial.nof1.REGISTER_ACCOUNT
  * 
  * @author John Lawson
  * 
@@ -72,14 +69,10 @@ public class AccountService extends IntentService {
 	private static final String TAG = "AccountService";
 	private static final boolean DEBUG = BuildConfig.DEBUG;
 
-	private static final int NOTIFICATION_ID = 0xff;
-
 	/** Cookie name for authorisation. */
 	private static final String AUTH_COOKIE_NAME = "SACSID";
 
 	private final Context mContext = this;
-
-	private NotificationManager mNM;
 
 	public AccountService() {
 		this("AccountService");
@@ -93,28 +86,13 @@ public class AccountService extends IntentService {
 	public void onCreate() {
 		super.onCreate();
 
-		final Resources res = getResources();
 		if (DEBUG) Log.d(TAG, "Account service started");
-
-		final PendingIntent empty = PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0);
-
-		// Show notification
-		final NotificationCompat.Builder builder = new Builder(mContext);
-		builder.setContentTitle(res.getString(R.string.nof1_account_setup)).setContentText(res.getString(R.string.retrieve_account))
-				.setContentIntent(empty).setAutoCancel(false).setSmallIcon(R.drawable.noti_account).setProgress(0, 0, true);
-
-		mNM = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		mNM.notify(NOTIFICATION_ID, builder.build());
-
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		if (DEBUG) Log.d(TAG, "Account service stopped");
-
-		// Remove notification
-		mNM.cancel(NOTIFICATION_ID);
 	}
 
 	@Override
