@@ -187,6 +187,19 @@ public class Scheduler extends IntentService {
 
 		Calendar now = Calendar.getInstance();
 
+		// Only want alarms to start after the trial has started
+		String startStr = sp.getString(Keys.CONFIG_START, "");
+		Calendar startCal = Calendar.getInstance();
+		String[] startarr = startStr.split(":");
+		int year = Integer.parseInt(startarr[2]);
+		int month = Integer.parseInt(startarr[1]);
+		int day = Integer.parseInt(startarr[0]);
+		startCal.set(year, month, day);
+
+		if (now.before(startCal)) {
+			now.set(year, month, day);
+		}
+
 		for (int i = 0; sp.contains(Keys.CONFIG_TIME + i); i++) {
 
 			Calendar cal = Calendar.getInstance();
@@ -197,7 +210,7 @@ public class Scheduler extends IntentService {
 			cal.set(Calendar.HOUR_OF_DAY, hour);
 			cal.set(Calendar.MINUTE, min);
 
-			if (cal.before(now)) {
+			while (cal.before(now)) {
 				// If we would be setting a notification in the past, add an
 				// extra day to ensure it is only called in
 				// the future
