@@ -23,6 +23,13 @@
 ####################################################
 -keep class org.nof1trial.nof1.Backup { *; }
 
+# Remove debug logging
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+}
+
+
 ####################################################
 # RequestFactory
 ####################################################
@@ -48,14 +55,12 @@
 -keep class org.acra.ReportingInteractionMode {*;}
 
 # keep this otherwise it is removed by ProGuard
--keep public class org.acra.ErrorReporter
-{
+-keep public class org.acra.ErrorReporter{
 public void addCustomData(java.lang.String,java.lang.String);
 }
 
 # keep this otherwise it is removed by ProGuard
--keep public class org.acra.ErrorReporter
-{
+-keep public class org.acra.ErrorReporter{
 public org.acra.ErrorReporter$ReportsSenderWorker handleSilentException(java.lang.Throwable);
 }
 
