@@ -20,6 +20,10 @@
  ******************************************************************************/
 package org.nof1trial.nof1.activities;
 
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.services.FinishedService;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -33,10 +37,6 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
-
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.services.FinishedService;
 
 /**
  * Activity to view the treatment schedule
@@ -91,13 +91,9 @@ public class ScheduleViewer extends SherlockActivity {
 			// Up/home pressed
 			Intent upIntent = new Intent(this, HomeScreen.class);
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-				// This activity is not part of the application's task, so
-				// create a new task with a synthesised back stack.
 				TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
 				finish();
 			} else {
-				// This activity is part of the application's task, so simply
-				// navigate up to the hierarchical parent activity.
 				NavUtils.navigateUpTo(this, upIntent);
 			}
 			return true;
@@ -112,8 +108,7 @@ public class ScheduleViewer extends SherlockActivity {
 
 			if (Keys.ACTION_DOWNLOAD_SCHEDULE.equals(intent.getAction())) {
 
-				SharedPreferences prefs = context.getSharedPreferences(Keys.CONFIG_NAME,
-						MODE_PRIVATE);
+				SharedPreferences prefs = context.getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
 				// Schedule was downloaded successfully
 				if (mText != null) {

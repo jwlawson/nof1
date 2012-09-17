@@ -78,13 +78,9 @@ public class UserPrefs extends SherlockPreferenceActivity {
 		case android.R.id.home:
 			Intent upIntent = new Intent(this, HomeScreen.class);
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-				// This activity is not part of the application's task, so create a new task
-				// with a synthesized back stack.
 				TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
 				finish();
 			} else {
-				// This activity is part of the application's task, so simply
-				// navigate up to the hierarchical parent activity.
 				NavUtils.navigateUpTo(this, upIntent);
 			}
 			return true;
@@ -94,9 +90,7 @@ public class UserPrefs extends SherlockPreferenceActivity {
 
 	@TargetApi(8)
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-
+	protected void onPause() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			BackupManager bm = new BackupManager(this);
 			bm.dataChanged();
@@ -107,5 +101,6 @@ public class UserPrefs extends SherlockPreferenceActivity {
 		Intent intent = new Intent(this, Scheduler.class);
 		intent.putExtra(Keys.INTENT_BOOT, true);
 		startService(intent);
+		super.onPause();
 	}
 }
