@@ -91,9 +91,6 @@ public class GraphView extends View {
 	/** Scale in x direction */
 	private float mScaleX;
 
-	/** Scale in y direction */
-	// private float mScaleY;
-
 	/** Largest value of x */
 	private int mMaxX;
 
@@ -114,8 +111,6 @@ public class GraphView extends View {
 
 	/** Array of which vertical regions should be shaded */
 	private boolean[] mShaded;
-
-	private float[] floatarr;
 
 	private Path mPath;
 
@@ -163,7 +158,7 @@ public class GraphView extends View {
 
 		mVecList = vecList;
 
-		floatarr = new float[vecList.size() * 2];
+		float[] floatarr = new float[vecList.size() * 2];
 
 		int i = 0;
 		for (Vec2 vec : vecList) {
@@ -198,7 +193,7 @@ public class GraphView extends View {
 		}
 		cursor.moveToFirst();
 
-		floatarr = new float[count * 2];
+		float[] floatarr = new float[count * 2];
 
 		int i = 0;
 		while (!cursor.isAfterLast()) {
@@ -418,8 +413,7 @@ public class GraphView extends View {
 	/**
 	 * Determines the width of this view
 	 * 
-	 * @param measureSpec
-	 *            A measureSpec packed into an int
+	 * @param measureSpec A measureSpec packed into an int
 	 * @return The width of the view, honoring constraints from measureSpec
 	 */
 	private int measureWidth(int measureSpec) {
@@ -446,8 +440,7 @@ public class GraphView extends View {
 	/**
 	 * Determines the height of this view
 	 * 
-	 * @param measureSpec
-	 *            A measureSpec packed into an int
+	 * @param measureSpec A measureSpec packed into an int
 	 * @return The height of the view, honoring constraints from measureSpec
 	 */
 	private int measureHeight(int measureSpec, int width) {
@@ -474,17 +467,11 @@ public class GraphView extends View {
 	@Override
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
-		/*
-		 * Want to scale the graph to fill the view
-		 * The drawing of the data is initially restrained to pixels, so the
-		 * scale will likely be a large number.
-		 */
 		if (DEBUG) Log.d(TAG, "Layout changed. New height: " + h + " New width: " + w);
 		mHeight = h;
 		mWidth = w - RIGHT_PAD - LEFT_PAD;
 
 		mScaleX = (float) mWidth / mMaxX;
-		// mScaleY = (float) h / mMaxY;
 
 		if (mCursor != null) setCursor(mCursor);
 		else if (mVecList.isEmpty()) setVecList(mVecList);
