@@ -105,113 +105,13 @@ public class Saver extends IntentService {
 			// SAve config data to disk and online
 			if (DEBUG) Log.d(TAG, "Saving config to disk");
 
-			// get values from the intent
-			String patientName = intent.getStringExtra(Keys.CONFIG_PATIENT_NAME);
-			String doctorName = intent.getStringExtra(Keys.CONFIG_DOCTOR_NAME);
-			final String doctorEmail = intent.getStringExtra(Keys.CONFIG_DOC);
-			String pharmEmail = intent.getStringExtra(Keys.CONFIG_PHARM);
-			int numberPeriods = intent.getIntExtra(Keys.CONFIG_NUMBER_PERIODS, 0);
-			int periodLength = intent.getIntExtra(Keys.CONFIG_PERIOD_LENGTH, 0);
-			String startDate = intent.getStringExtra(Keys.CONFIG_START);
-			String treatmentA = intent.getStringExtra(Keys.CONFIG_TREATMENT_A);
-			String treatmentB = intent.getStringExtra(Keys.CONFIG_TREATMENT_B);
-			String treatmentNotes = intent.getStringExtra(Keys.CONFIG_TREATMENT_NOTES);
-			boolean formBuilt = intent.getBooleanExtra(Keys.CONFIG_BUILT, false);
-			ArrayList<String> quesList = intent.getStringArrayListExtra(Keys.CONFIG_QUESTION_LIST);
-
-			// Save to file
-			SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putString(Keys.CONFIG_PATIENT_NAME, patientName);
-			editor.putString(Keys.CONFIG_DOCTOR_NAME, doctorName);
-			editor.putString(Keys.CONFIG_DOC, doctorEmail);
-			editor.putInt(Keys.CONFIG_NUMBER_PERIODS, numberPeriods);
-			editor.putInt(Keys.CONFIG_PERIOD_LENGTH, periodLength);
-			editor.putBoolean(Keys.CONFIG_BUILT, formBuilt);
-			editor.putString(Keys.CONFIG_START, startDate);
-
-			for (int i = 0; intent.hasExtra(Keys.CONFIG_TIME + i); i++) {
-				editor.putString(Keys.CONFIG_TIME + i, intent.getStringExtra(Keys.CONFIG_TIME + i));
-			}
-
-			editor.putString(Keys.CONFIG_TREATMENT_A, treatmentA);
-			editor.putString(Keys.CONFIG_TREATMENT_B, treatmentB);
-			editor.putString(Keys.CONFIG_TREATMENT_NOTES, treatmentNotes);
-
-			for (int i = 1; intent.hasExtra(Keys.CONFIG_DAY + i); i++) {
-				editor.putBoolean(Keys.CONFIG_DAY + i, intent.getBooleanExtra(Keys.CONFIG_DAY + i, false));
-			}
-			editor.commit();
-
-			// Request backup
-			backup();
-
-			// If no internet, set flag and save data to shared_prefs then
-			// register broadcast receiver for connectivity
-			// changes
-			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-			boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
-
-			if (isConnected) {
-				// Save online
-
-				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
-						treatmentNotes, quesList);
-
-			} else {
-				// No internet, so set flag to upload later
-				prefs.edit().putBoolean(BOOL_CONFIG, true).commit();
-
-				// enable network change broadcast receiver
-				PackageManager pm = getPackageManager();
-				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-			}
+			saveConfig(intent);
 
 		} else if (Keys.ACTION_SAVE_DATA.equals(intent.getAction())) {
 			// Save patient inputted data from the intent
 			if (DEBUG) Log.d(TAG, "Savng data to disk");
 
-			int day = intent.getIntExtra(Keys.DATA_DAY, 0);
-			long time = intent.getLongExtra(Keys.DATA_TIME, 0);
-			String comment = intent.getStringExtra(Keys.DATA_COMMENT);
-			int[] data = intent.getIntArrayExtra(Keys.DATA_LIST);
-
-			// Open database
-			DataSource source = new DataSource(this);
-			source.open();
-			// Save data
-			source.saveData(day, time, data, comment);
-
-			source.close();
-
-			// Request backup
-			backup();
-
-			// If no internet, set flag and save data to shared_prefs then
-			// register broadcast receiver for connectivity
-			// changes
-			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-			boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
-
-			if (isConnected) {
-				if (DEBUG) Log.d(TAG, "Connected to internet, sending data to server");
-
-				uploadData(day, time, data, comment);
-
-			} else {
-				// Not connected to internet
-				saveDataForLater(day, time, comment, data);
-
-				// enable network change broadcast receiver
-				PackageManager pm = getPackageManager();
-				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
-			}
+			saveData(intent);
 
 		} else if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
 			// Phone has booted, check to see whether need to upload anything
@@ -267,34 +167,11 @@ public class Saver extends IntentService {
 			if (sp.getBoolean(BOOL_CONFIG, false)) {
 				// Have config data to upload
 				// Note, if config data not uploaded at start, there is no way
-				// that the schedule can be made or emails
-				// sent
+				// that the schedule can be made or emails sent
 				if (isConnected) {
 					// Have internet so upload data
 
-					// get config from prefs and upload
-					SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-					String patientName = prefs.getString(Keys.CONFIG_PATIENT_NAME, "");
-					String doctorName = prefs.getString(Keys.CONFIG_DOCTOR_NAME, "");
-					final String doctorEmail = prefs.getString(Keys.CONFIG_DOC, "");
-					String pharmEmail = prefs.getString(Keys.CONFIG_PHARM, "");
-					int numberPeriods = prefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0);
-					int periodLength = prefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
-					String startDate = prefs.getString(Keys.CONFIG_START, "");
-					String treatmentA = prefs.getString(Keys.CONFIG_TREATMENT_A, "");
-					String treatmentB = prefs.getString(Keys.CONFIG_TREATMENT_B, "");
-					String treatmentNotes = prefs.getString(Keys.CONFIG_TREATMENT_NOTES, "");
-
-					ArrayList<String> quesList = new ArrayList<String>();
-					SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
-					for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
-						quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
-					}
-					// remove flag in prefs
-					sp.edit().putBoolean(BOOL_CONFIG, false).commit();
-
-					uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
-							treatmentNotes, quesList);
+					uploadConfigFromPrefs(sp);
 
 				} else {
 					// Not connected, so want to start listener
@@ -360,30 +237,7 @@ public class Saver extends IntentService {
 				// sent
 				if (DEBUG) Log.d(TAG, "Have config to send");
 
-				// get config from prefs and upload
-				SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-				String patientName = prefs.getString(Keys.CONFIG_PATIENT_NAME, "");
-				String doctorName = prefs.getString(Keys.CONFIG_DOCTOR_NAME, "");
-				final String doctorEmail = prefs.getString(Keys.CONFIG_DOC, "");
-				String pharmEmail = prefs.getString(Keys.CONFIG_PHARM, "");
-				int numberPeriods = prefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0);
-				int periodLength = prefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
-				String startDate = prefs.getString(Keys.CONFIG_START, "");
-				String treatmentA = prefs.getString(Keys.CONFIG_TREATMENT_A, "");
-				String treatmentB = prefs.getString(Keys.CONFIG_TREATMENT_B, "");
-				String treatmentNotes = prefs.getString(Keys.CONFIG_TREATMENT_NOTES, "");
-
-				ArrayList<String> quesList = new ArrayList<String>();
-				SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
-				for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
-					quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
-				}
-
-				// remove flag in prefs
-				sp.edit().putBoolean(BOOL_CONFIG, false).commit();
-
-				uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
-						treatmentNotes, quesList);
+				uploadConfigFromPrefs(sp);
 
 				uploadedData = true;
 			}
@@ -456,6 +310,141 @@ public class Saver extends IntentService {
 			Log.w(TAG, "IntentService started with unrecognised action");
 		}
 
+	}
+
+	private void saveData(Intent intent) {
+		int day = intent.getIntExtra(Keys.DATA_DAY, 0);
+		long time = intent.getLongExtra(Keys.DATA_TIME, 0);
+		String comment = intent.getStringExtra(Keys.DATA_COMMENT);
+		int[] data = intent.getIntArrayExtra(Keys.DATA_LIST);
+
+		// Open database
+		DataSource source = new DataSource(this);
+		source.open();
+		// Save data
+		source.saveData(day, time, data, comment);
+
+		source.close();
+
+		// Request backup
+		backup();
+
+		// If no internet, set flag and save data to shared_prefs then
+		// register broadcast receiver for connectivity
+		// changes
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
+
+		if (isConnected) {
+			if (DEBUG) Log.d(TAG, "Connected to internet, sending data to server");
+
+			uploadData(day, time, data, comment);
+
+		} else {
+			// Not connected to internet
+			saveDataForLater(day, time, comment, data);
+
+			// enable network change broadcast receiver
+			PackageManager pm = getPackageManager();
+			ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
+			pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+		}
+	}
+
+	private void saveConfig(Intent intent) {
+		// get values from the intent
+		String patientName = intent.getStringExtra(Keys.CONFIG_PATIENT_NAME);
+		String doctorName = intent.getStringExtra(Keys.CONFIG_DOCTOR_NAME);
+		final String doctorEmail = intent.getStringExtra(Keys.CONFIG_DOC);
+		String pharmEmail = intent.getStringExtra(Keys.CONFIG_PHARM);
+		int numberPeriods = intent.getIntExtra(Keys.CONFIG_NUMBER_PERIODS, 0);
+		int periodLength = intent.getIntExtra(Keys.CONFIG_PERIOD_LENGTH, 0);
+		String startDate = intent.getStringExtra(Keys.CONFIG_START);
+		String treatmentA = intent.getStringExtra(Keys.CONFIG_TREATMENT_A);
+		String treatmentB = intent.getStringExtra(Keys.CONFIG_TREATMENT_B);
+		String treatmentNotes = intent.getStringExtra(Keys.CONFIG_TREATMENT_NOTES);
+		boolean formBuilt = intent.getBooleanExtra(Keys.CONFIG_BUILT, false);
+		ArrayList<String> quesList = intent.getStringArrayListExtra(Keys.CONFIG_QUESTION_LIST);
+
+		// Save to file
+		SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putString(Keys.CONFIG_PATIENT_NAME, patientName);
+		editor.putString(Keys.CONFIG_DOCTOR_NAME, doctorName);
+		editor.putString(Keys.CONFIG_DOC, doctorEmail);
+		editor.putInt(Keys.CONFIG_NUMBER_PERIODS, numberPeriods);
+		editor.putInt(Keys.CONFIG_PERIOD_LENGTH, periodLength);
+		editor.putBoolean(Keys.CONFIG_BUILT, formBuilt);
+		editor.putString(Keys.CONFIG_START, startDate);
+		editor.putString(Keys.CONFIG_PHARM, pharmEmail);
+
+		for (int i = 0; intent.hasExtra(Keys.CONFIG_TIME + i); i++) {
+			editor.putString(Keys.CONFIG_TIME + i, intent.getStringExtra(Keys.CONFIG_TIME + i));
+		}
+
+		editor.putString(Keys.CONFIG_TREATMENT_A, treatmentA);
+		editor.putString(Keys.CONFIG_TREATMENT_B, treatmentB);
+		editor.putString(Keys.CONFIG_TREATMENT_NOTES, treatmentNotes);
+
+		for (int i = 1; intent.hasExtra(Keys.CONFIG_DAY + i); i++) {
+			editor.putBoolean(Keys.CONFIG_DAY + i, intent.getBooleanExtra(Keys.CONFIG_DAY + i, false));
+		}
+		editor.commit();
+
+		// Request backup
+		backup();
+
+		// If no internet, set flag and save data to shared_prefs then
+		// register broadcast receiver for connectivity
+		// changes
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
+
+		if (isConnected) {
+			// Save online
+
+			uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
+					treatmentNotes, quesList);
+
+		} else {
+			// No internet, so set flag to upload later
+			prefs.edit().putBoolean(BOOL_CONFIG, true).commit();
+
+			// enable network change broadcast receiver
+			PackageManager pm = getPackageManager();
+			ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
+			pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+		}
+	}
+
+	private void uploadConfigFromPrefs(SharedPreferences sp) {
+		// get config from prefs and upload
+		SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+		String patientName = prefs.getString(Keys.CONFIG_PATIENT_NAME, "");
+		String doctorName = prefs.getString(Keys.CONFIG_DOCTOR_NAME, "");
+		final String doctorEmail = prefs.getString(Keys.CONFIG_DOC, "");
+		String pharmEmail = prefs.getString(Keys.CONFIG_PHARM, "");
+		int numberPeriods = prefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0);
+		int periodLength = prefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
+		String startDate = prefs.getString(Keys.CONFIG_START, "");
+		String treatmentA = prefs.getString(Keys.CONFIG_TREATMENT_A, "");
+		String treatmentB = prefs.getString(Keys.CONFIG_TREATMENT_B, "");
+		String treatmentNotes = prefs.getString(Keys.CONFIG_TREATMENT_NOTES, "");
+	
+		ArrayList<String> quesList = new ArrayList<String>();
+		SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+		for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
+			quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
+		}
+		// remove flag in prefs
+		sp.edit().putBoolean(BOOL_CONFIG, false).commit();
+	
+		uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
+				treatmentNotes, quesList);
 	}
 
 	private void uploadConfig(final String doctorEmail, final String doctorName, final String patientName, final String pharmEmail,

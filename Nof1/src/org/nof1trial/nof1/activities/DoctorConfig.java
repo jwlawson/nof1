@@ -159,6 +159,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		}
 
 		mPharmEmail = (EditText) findViewById(R.id.config_doctor_details_edit_pharm_email);
+		mPharmEmail.setText(sp.getString(Keys.CONFIG_PHARM, ""));
 
 		mPatientName = (EditText) findViewById(R.id.config_doctor_details_edit_name);
 		if (sp.contains(Keys.CONFIG_PATIENT_NAME)) {
