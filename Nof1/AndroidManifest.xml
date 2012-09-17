@@ -17,7 +17,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.nof1trial.nof1"
@@ -48,7 +48,7 @@
 
     <!-- Permission to allow app to check whether connected to internet or not -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    
+
     <permission
         android:name="org.nof1trial.nof1.permission.RECEIVER"
         android:description="@string/receiver_permission"
@@ -58,7 +58,6 @@
 
     <!-- Custom permission to prevent access to Receiver -->
     <uses-permission android:name="org.nof1trial.nof1.permission.RECEIVER" />
-    
 
     <application
         android:name="org.nof1trial.nof1.App"
@@ -71,15 +70,20 @@
             android:name="com.google.android.backup.api_key"
             android:value="AEdPqrEAAAAI1FtYRWzPgQfAIPsUOLpPYqusCdbY0cXGbfgIMQ" />
 
+        <activity android:name=".activities.HomeScreen" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
-            android:name=".activities.UserPrefs"
-            android:exported="false"
-            android:label="@string/settings" >
+            android:name=".activities.AccountsActivity"
+            android:label="@string/account_title" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
-        
         <activity
             android:name=".activities.DoctorLogin"
             android:exported="false" >
@@ -87,7 +91,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.UserPrefs" />
         </activity>
-        
         <activity
             android:name=".activities.DoctorConfig"
             android:exported="false"
@@ -97,7 +100,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.UserPrefs" />
         </activity>
-        
         <activity
             android:name=".activities.FormBuilder"
             android:exported="false"
@@ -108,7 +110,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.DoctorConfig" />
         </activity>
-        
+        <activity
+            android:name=".activities.UserPrefs"
+            android:exported="false"
+            android:label="@string/settings" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.nof1trial.nof1.activities.HomeScreen" />
+        </activity>
         <activity
             android:name=".activities.Questionnaire"
             android:label="@string/data_input"
@@ -118,7 +127,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
-        
         <activity
             android:name=".activities.GraphChooser"
             android:label="@string/view_graphs" >
@@ -126,29 +134,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
-        
         <activity android:name=".activities.GraphDisplay" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.GraphChooser" />
         </activity>
-        
-        <activity
-            android:name=".activities.About"
-            android:label="@string/about" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.HomeScreen" />
-        </activity>
-        
-        <activity android:name=".activities.HomeScreen" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        
         <activity
             android:name=".activities.CommentList"
             android:label="@string/title_comment_list" >
@@ -156,7 +146,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
-        
         <activity
             android:name=".activities.CommentDetail"
             android:label="@string/title_comment_detail" >
@@ -164,7 +153,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.CommentList" />
         </activity>
-        
         <activity
             android:name=".activities.AddNote"
             android:label="@string/add_note" >
@@ -172,23 +160,20 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
-        
-        <activity 
+        <activity
             android:name=".activities.ScheduleViewer"
             android:label="@string/schedule" >
-            <meta-data 
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.nof1trial.nof1.activities.HomeScreen"/> 
-        </activity>
-        
-        <activity
-            android:name=".activities.AccountsActivity"
-            android:label="@string/account_title" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.HomeScreen" />
         </activity>
-        
+        <activity
+            android:name=".activities.About"
+            android:label="@string/about" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.nof1trial.nof1.activities.HomeScreen" />
+        </activity>
         <activity
             android:name=".activities.MainActivity"
             android:label="Debug Nof1" >
@@ -203,34 +188,31 @@
             android:name=".services.FinishedService"
             android:exported="false" >
             <intent-filter>
-                <action android:name="org.nof1trial.nof1.MAKE_FILE"/>
+                <action android:name="org.nof1trial.nof1.MAKE_FILE" />
                 <action android:name="org.nof1trial.nof1.DOWNLOAD_SCHEDULE" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
-                <action android:name="org.nof1trial.nof1.TRIAL_COMPLETE"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="org.nof1trial.nof1.TRIAL_COMPLETE" />
             </intent-filter>
         </service>
-        
         <service
             android:name=".services.Saver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="org.nof1trial.nof1.SAVE_CONFIG" />
                 <action android:name="org.nof1trial.nof1.SAVE_DATA" />
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </service>
-        
         <service
             android:name=".services.AccountService"
             android:exported="false" >
-            <intent-filter >
+            <intent-filter>
                 <action android:name="org.nof1trial.nof1.REGISTER_ACCOUNT" />
                 <action android:name="org.nof1trial.nof1.REFRESH_CREDENTIALS" />
             </intent-filter>
         </service>
-        
-        <service 
+        <service
             android:name=".services.Scheduler"
             android:exported="false" >
         </service>
@@ -242,7 +224,6 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        
         <receiver
             android:name=".NetworkChangeReceiver"
             android:enabled="false"
