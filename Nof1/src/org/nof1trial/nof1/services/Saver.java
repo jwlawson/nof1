@@ -120,9 +120,7 @@ public class Saver extends IntentService {
 
 			boolean startListener = false;
 
-			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-			boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
+			boolean isConnected = isConnected();
 
 			SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
 			if (sp.getInt(NUM_DATA, 0) > 0) {
@@ -133,29 +131,7 @@ public class Saver extends IntentService {
 
 					for (int count = sp.getInt(NUM_DATA, 0); count > 0; count--) {
 
-						int day = sp.getInt(Keys.DATA_DAY + count, 0);
-						long time = sp.getLong(Keys.DATA_TIME + count, 0);
-						String comment = sp.getString(Keys.DATA_COMMENT + count, "");
-						String dataStr = sp.getString(Keys.DATA_LIST + count, "");
-
-						String[] dataStrArr = dataStr.split(",");
-						int[] data = new int[dataStrArr.length];
-						for (int i = 0; i < data.length; i++) {
-							data[i] = Integer.parseInt(dataStrArr[i]);
-						}
-
-						// Remove data from prefs
-						SharedPreferences.Editor editor = sp.edit();
-						editor.putString(Keys.DATA_DAY + count, null);
-						editor.putString(Keys.DATA_TIME + count, null);
-						editor.putString(Keys.DATA_COMMENT + count, null);
-						editor.putString(Keys.DATA_LIST + count, null);
-
-						// decrement counter in prefs
-						editor.putInt(NUM_DATA, count - 1).commit();
-
-						uploadData(day, time, data, comment);
-
+						uploadCachedDataAt(count, sp);
 					}
 
 				} else {
@@ -166,24 +142,15 @@ public class Saver extends IntentService {
 
 			if (sp.getBoolean(BOOL_CONFIG, false)) {
 				// Have config data to upload
-				// Note, if config data not uploaded at start, there is no way
-				// that the schedule can be made or emails sent
 				if (isConnected) {
-					// Have internet so upload data
-
 					uploadConfigFromPrefs(sp);
-
 				} else {
 					// Not connected, so want to start listener
 					startListener = true;
 				}
 			}
-
 			if (startListener) {
-				// enable network change broadcast receiver
-				PackageManager pm = getPackageManager();
-				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+				enableNetworkChangeReceiver();
 			}
 
 		} else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
@@ -199,32 +166,7 @@ public class Saver extends IntentService {
 
 				for (int count = sp.getInt(NUM_DATA, 0); count > 0; count--) {
 
-					int day = sp.getInt(Keys.DATA_DAY + count, 0);
-					long time = sp.getLong(Keys.DATA_TIME + count, 0);
-					String comment = sp.getString(Keys.DATA_COMMENT + count, "");
-					String dataStr = sp.getString(Keys.DATA_LIST + count, "");
-					if (DEBUG) Log.d(TAG, "datastr = " + dataStr);
-
-					int[] data = null;
-					if (dataStr.length() != 0) {
-						String[] dataStrArr = dataStr.split(",");
-						data = new int[dataStrArr.length];
-						for (int i = 0; i < data.length; i++) {
-							data[i] = Integer.parseInt(dataStrArr[i]);
-						}
-					}
-
-					// Remove data from prefs
-					SharedPreferences.Editor editor = sp.edit();
-					editor.putString(Keys.DATA_DAY + count, null);
-					editor.putString(Keys.DATA_TIME + count, null);
-					editor.putString(Keys.DATA_COMMENT + count, null);
-					editor.putString(Keys.DATA_LIST + count, null);
-
-					// decrement counter in prefs
-					editor.putInt(NUM_DATA, count - 1).commit();
-
-					uploadData(day, time, data, comment);
+					uploadCachedDataAt(count, sp);
 
 				}
 				uploadedData = true;
@@ -244,9 +186,7 @@ public class Saver extends IntentService {
 
 			if (uploadedData) {
 				// Disable network change listener, as not needed
-				PackageManager pm = getPackageManager();
-				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+				disableNetworkChangeReceiver();
 			}
 
 		} else if (Keys.ACTION_UPLOAD_ALL.equals(intent.getAction())) {
@@ -284,22 +224,7 @@ public class Saver extends IntentService {
 				// Upload all data from the database
 				while (!cursor.isAfterLast()) {
 
-					int dayCol = cursor.getColumnIndex(SQLite.COLUMN_DAY);
-					int timeCol = cursor.getColumnIndex(SQLite.COLUMN_TIME);
-					int commentCol = cursor.getColumnIndex(SQLite.COLUMN_COMMENT);
-
-					int day = cursor.getInt(dayCol);
-					long time = cursor.getLong(timeCol);
-					String comment = cursor.getString(commentCol);
-					int size = commentCol - timeCol - 1;
-					int[] data = new int[size];
-
-					// Iterate over to get
-					for (int i = 0; i < size; i++) {
-						data[i] = cursor.getInt(timeCol + 1 + i);
-					}
-
-					uploadData(day, time, data, comment);
+					uploadDataFromCursor(cursor);
 
 					cursor.moveToNext();
 				}
@@ -310,6 +235,25 @@ public class Saver extends IntentService {
 			Log.w(TAG, "IntentService started with unrecognised action");
 		}
 
+	}
+
+	private void uploadDataFromCursor(Cursor cursor) {
+		int dayCol = cursor.getColumnIndex(SQLite.COLUMN_DAY);
+		int timeCol = cursor.getColumnIndex(SQLite.COLUMN_TIME);
+		int commentCol = cursor.getColumnIndex(SQLite.COLUMN_COMMENT);
+
+		int day = cursor.getInt(dayCol);
+		long time = cursor.getLong(timeCol);
+		String comment = cursor.getString(commentCol);
+		int size = commentCol - timeCol - 1;
+		int[] data = new int[size];
+
+		// Iterate over to get
+		for (int i = 0; i < size; i++) {
+			data[i] = cursor.getInt(timeCol + 1 + i);
+		}
+
+		uploadData(day, time, data, comment);
 	}
 
 	private void saveData(Intent intent) {
@@ -329,13 +273,7 @@ public class Saver extends IntentService {
 		// Request backup
 		backup();
 
-		// If no internet, set flag and save data to shared_prefs then
-		// register broadcast receiver for connectivity
-		// changes
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-		boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
+		boolean isConnected = isConnected();
 
 		if (isConnected) {
 			if (DEBUG) Log.d(TAG, "Connected to internet, sending data to server");
@@ -346,10 +284,7 @@ public class Saver extends IntentService {
 			// Not connected to internet
 			saveDataForLater(day, time, comment, data);
 
-			// enable network change broadcast receiver
-			PackageManager pm = getPackageManager();
-			ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-			pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+			enableNetworkChangeReceiver();
 		}
 	}
 
@@ -392,21 +327,9 @@ public class Saver extends IntentService {
 			editor.putBoolean(Keys.CONFIG_DAY + i, intent.getBooleanExtra(Keys.CONFIG_DAY + i, false));
 		}
 		editor.commit();
-
-		// Request backup
 		backup();
 
-		// If no internet, set flag and save data to shared_prefs then
-		// register broadcast receiver for connectivity
-		// changes
-		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
-		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-		boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
-
-		if (isConnected) {
-			// Save online
-
+		if (isConnected()) {
 			uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
 					treatmentNotes, quesList);
 
@@ -414,11 +337,36 @@ public class Saver extends IntentService {
 			// No internet, so set flag to upload later
 			prefs.edit().putBoolean(BOOL_CONFIG, true).commit();
 
-			// enable network change broadcast receiver
-			PackageManager pm = getPackageManager();
-			ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
-			pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+			enableNetworkChangeReceiver();
 		}
+	}
+
+	private void uploadCachedDataAt(int id, SharedPreferences cachPrefs) {
+		int day = cachPrefs.getInt(Keys.DATA_DAY + id, 0);
+		long time = cachPrefs.getLong(Keys.DATA_TIME + id, 0);
+		String comment = cachPrefs.getString(Keys.DATA_COMMENT + id, "");
+		String dataStr = cachPrefs.getString(Keys.DATA_LIST + id, "");
+
+		int[] data = null;
+		if (dataStr.length() != 0) {
+			String[] dataStrArr = dataStr.split(",");
+			data = new int[dataStrArr.length];
+			for (int i = 0; i < data.length; i++) {
+				data[i] = Integer.parseInt(dataStrArr[i]);
+			}
+		}
+
+		// Remove data from prefs
+		SharedPreferences.Editor editor = cachPrefs.edit();
+		editor.putString(Keys.DATA_DAY + id, null);
+		editor.putString(Keys.DATA_TIME + id, null);
+		editor.putString(Keys.DATA_COMMENT + id, null);
+		editor.putString(Keys.DATA_LIST + id, null);
+
+		// decrement counter in prefs
+		editor.putInt(NUM_DATA, id - 1).commit();
+
+		uploadData(day, time, data, comment);
 	}
 
 	private void uploadConfigFromPrefs(SharedPreferences sp) {
@@ -434,7 +382,7 @@ public class Saver extends IntentService {
 		String treatmentA = prefs.getString(Keys.CONFIG_TREATMENT_A, "");
 		String treatmentB = prefs.getString(Keys.CONFIG_TREATMENT_B, "");
 		String treatmentNotes = prefs.getString(Keys.CONFIG_TREATMENT_NOTES, "");
-	
+
 		ArrayList<String> quesList = new ArrayList<String>();
 		SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 		for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
@@ -442,7 +390,7 @@ public class Saver extends IntentService {
 		}
 		// remove flag in prefs
 		sp.edit().putBoolean(BOOL_CONFIG, false).commit();
-	
+
 		uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
 				treatmentNotes, quesList);
 	}
@@ -601,6 +549,25 @@ public class Saver extends IntentService {
 		}
 
 		edit.commit();
+	}
+
+	private void enableNetworkChangeReceiver() {
+		PackageManager pm = getPackageManager();
+		ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
+		pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+	}
+
+	private void disableNetworkChangeReceiver() {
+		PackageManager pm = getPackageManager();
+		ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
+		pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, 0);
+	}
+
+	private boolean isConnected() {
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
+		return isConnected;
 	}
 
 	@TargetApi(8)
