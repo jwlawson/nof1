@@ -32,17 +32,15 @@
 ####################################################
 # RequestFactory
 ####################################################
--keep interface org.nof1trial.nof1.shared.** {*;}
--keep class org.nof1trial.nof1.shared.** {*;}
-#-keep class com.google.web.bindery.requestfactory.shared.** {*;}
-#-keep interface com.google.web.bindery.requestfactory.shared.** {*;}
-#-keep @interface com.google.web.bindery.requestfactory.shared.** {*;}
-#-keepnames class com.google.web.bindery.autobean.** {*;}
-#-keepnames interface com.google.web.bindery.autobean.** {*;}
--keeppackagenames com.google.**
--keep class com.google.** {*;}
--keep interface com.google.** {*;}
--keep @interface com.google.** {*;}
+-keep interface org.nof1trial.nof1.shared.* {*;}
+-keep class org.nof1trial.nof1.shared.MyRequestFactoryDeobfuscatorBuilder {*;}
+-keep interface com.google.web.bindery.requestfactory.shared.BaseProxy {*;}
+-keep interface com.google.web.bindery.requestfactory.shared.EntityProxy {*;}
+
+-keepnames class com.google.web.bindery.requestfactory.shared.** {*;}
+
+-keep interface com.google.web.bindery.autobean.shared.** {*;}
+-keep interface com.google.web.bindery.requestfactory.shared.** {*;}
 
 -keepattributes Exceptions,InnerClasses,Signature,SourceFile,LineNumberTable,*Annotation*
 
