@@ -80,7 +80,7 @@ public class RemoveOld extends HttpServlet {
 
 			final Query query = em.createQuery("select x from Config x where x.endDate < :date");
 			final Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.YEAR, year);
+			cal.add(Calendar.YEAR, -year);
 			query.setParameter("date", cal.getTimeInMillis());
 			// Set max result just to keep data store transactions low each day
 			// Doesn't really matter whether data is deleted exactly on time or a bit late
