@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <cronentries>
 
-    <cron>
-        <url>/cron/removeOld</url>
-        <description>Remove data for trials older than 2 years</description>
-        <schedule>every day 12:00</schedule>
-    </cron>
-
 </cronentries>
