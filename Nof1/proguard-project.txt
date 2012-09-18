@@ -29,21 +29,30 @@
     public static *** v(...);
 }
 
-
 ####################################################
 # RequestFactory
 ####################################################
 -keep interface org.nof1trial.nof1.shared.** {*;}
+-keep class org.nof1trial.nof1.shared.** {*;}
+#-keep class com.google.web.bindery.requestfactory.shared.** {*;}
+#-keep interface com.google.web.bindery.requestfactory.shared.** {*;}
+#-keep @interface com.google.web.bindery.requestfactory.shared.** {*;}
+#-keepnames class com.google.web.bindery.autobean.** {*;}
+#-keepnames interface com.google.web.bindery.autobean.** {*;}
+-keeppackagenames com.google.**
+-keep class com.google.** {*;}
+-keep interface com.google.** {*;}
+-keep @interface com.google.** {*;}
+
+-keepattributes Exceptions,InnerClasses,Signature,SourceFile,LineNumberTable,*Annotation*
 
 ####################################################
 # ActionBarSherlock
 ####################################################
--keep class android.support.v4.app.** { *; }
--keep interface android.support.v4.app.** { *; }
+-keepnames class android.support.v4.app.** { *; }
+-keepnames interface android.support.v4.app.** { *; }
 -keep class com.actionbarsherlock.** { *; }
 -keep interface com.actionbarsherlock.** { *; }
-
--keepattributes *Annotation*
 
 ####################################################
 # ACRA
