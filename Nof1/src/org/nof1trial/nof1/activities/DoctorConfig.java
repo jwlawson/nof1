@@ -26,6 +26,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.containers.Question;
 import org.nof1trial.nof1.fragments.CheckArray;
 import org.nof1trial.nof1.fragments.StartDate;
 import org.nof1trial.nof1.fragments.TimeSetter;
@@ -352,56 +353,46 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	private boolean save() {
 		boolean result = true;
 
-		Intent intent = new Intent(this, Saver.class);
-		intent.setAction(Keys.ACTION_SAVE_CONFIG);
-		intent.putExtra(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
-		intent.putExtra(Keys.CONFIG_DOCTOR_NAME, mDocName.getText().toString());
-		intent.putExtra(Keys.CONFIG_DOC, mDocEmail.getText().toString());
-		intent.putExtra(Keys.CONFIG_PHARM, mPharmEmail.getText().toString());
+		Intent saver = new Intent(this, Saver.class);
+		saver.setAction(Keys.ACTION_SAVE_CONFIG);
+		saver.putExtra(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
+		saver.putExtra(Keys.CONFIG_DOCTOR_NAME, mDocName.getText().toString());
+		saver.putExtra(Keys.CONFIG_DOC, mDocEmail.getText().toString());
+		saver.putExtra(Keys.CONFIG_PHARM, mPharmEmail.getText().toString());
 
 		int number = 0;
 		int length = 0;
 
-		// Period number
-		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
-			try {
-				number = Integer.parseInt(mPeriodNumber.getText().toString());
-			} catch (NumberFormatException e) {
-				Toast.makeText(this, R.string.invalid_period_input, Toast.LENGTH_LONG).show();
-				result = false;
-			}
-		} else {
-			number = mIntPeriodNumber;
+		try {
+			number = getNumberPeriods();
+		} catch (NumberFormatException e) {
+			Toast.makeText(this, R.string.invalid_period_input, Toast.LENGTH_LONG).show();
+			result = false;
 		}
-		intent.putExtra(Keys.CONFIG_NUMBER_PERIODS, number);
+		saver.putExtra(Keys.CONFIG_NUMBER_PERIODS, number);
 
-		// Period length
-		if (mPeriodLength.getVisibility() == View.VISIBLE) {
-			try {
-				length = Integer.parseInt(mPeriodLength.getText().toString());
-			} catch (NumberFormatException e) {
-				Toast.makeText(this, R.string.invalid_length_input, Toast.LENGTH_LONG).show();
-				result = false;
-			}
-		} else {
-			length = mIntPeriodLength;
+		try {
+			length = getPeriodLength();
+		} catch (NumberFormatException e) {
+			Toast.makeText(this, R.string.invalid_length_input, Toast.LENGTH_LONG).show();
+			result = false;
 		}
-		intent.putExtra(Keys.CONFIG_PERIOD_LENGTH, length);
+		saver.putExtra(Keys.CONFIG_PERIOD_LENGTH, length);
 
-		intent.putExtra(Keys.CONFIG_BUILT, mFormBuilt);
+		saver.putExtra(Keys.CONFIG_BUILT, mFormBuilt);
 
 		// Start date
-		intent.putExtra(Keys.CONFIG_START, mDate.getDate());
+		saver.putExtra(Keys.CONFIG_START, mDate.getDate());
 
 		// Save times to remind to take medicine
 		String[] times = mTimeSetter.getTimes();
 		for (int i = 0; i < times.length; i++) {
-			intent.putExtra(Keys.CONFIG_TIME + i, times[i]);
+			saver.putExtra(Keys.CONFIG_TIME + i, times[i]);
 		}
 
-		intent.putExtra(Keys.CONFIG_TREATMENT_A, mTreatmentA.getText().toString());
-		intent.putExtra(Keys.CONFIG_TREATMENT_B, mTreatmentB.getText().toString());
-		intent.putExtra(Keys.CONFIG_TREATMENT_NOTES, mAnyNotes.getText().toString());
+		saver.putExtra(Keys.CONFIG_TREATMENT_A, mTreatmentA.getText().toString());
+		saver.putExtra(Keys.CONFIG_TREATMENT_B, mTreatmentB.getText().toString());
+		saver.putExtra(Keys.CONFIG_TREATMENT_NOTES, mAnyNotes.getText().toString());
 
 		// save checked boxes
 		int[] arr = mArray.getSelected();
@@ -413,21 +404,68 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 					break;
 				}
 			}
-			intent.putExtra(Keys.CONFIG_DAY + j, contains);
+			saver.putExtra(Keys.CONFIG_DAY + j, contains);
 		}
 
 		// Get question data
 		SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 		ArrayList<String> quesList = new ArrayList<String>();
 		for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
-			quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
+			String questionStr = ques.getString(Keys.QUES_TEXT + i, "") + getQuestionSuffix(ques, i);
+			quesList.add(questionStr);
 		}
-		intent.putStringArrayListExtra(Keys.CONFIG_QUESTION_LIST, quesList);
+		saver.putStringArrayListExtra(Keys.CONFIG_QUESTION_LIST, quesList);
 
 		// offload saving to background service
-		startService(intent);
+		startService(saver);
 
 		return result;
+	}
+
+	private int getNumberPeriods() throws NumberFormatException {
+		int number = 0;
+		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
+			try {
+				number = Integer.parseInt(mPeriodNumber.getText().toString());
+			} catch (NumberFormatException e) {
+				throw new NumberFormatException(e.getMessage());
+			}
+		} else {
+			number = mIntPeriodNumber;
+		}
+		return number;
+	}
+
+	private int getPeriodLength() throws NumberFormatException {
+		int length;
+		if (mPeriodLength.getVisibility() == View.VISIBLE) {
+			try {
+				length = Integer.parseInt(mPeriodLength.getText().toString());
+			} catch (NumberFormatException e) {
+				throw new NumberFormatException(e.getMessage());
+			}
+		} else {
+			length = mIntPeriodLength;
+		}
+		return length;
+	}
+
+	private String getQuestionSuffix(SharedPreferences ques, int id) {
+		int type = ques.getInt(Keys.QUES_TYPE + id, 0);
+		String suffix = "";
+
+		switch (type) {
+		case Question.SCALE:
+			suffix = " [0 - 6]";
+			break;
+		case Question.CHECK:
+			suffix = " [0 - 1]";
+			break;
+		case Question.NUMBER:
+			break;
+		}
+		return suffix;
+
 	}
 
 	/** Helper to ask for backup, if supported */
