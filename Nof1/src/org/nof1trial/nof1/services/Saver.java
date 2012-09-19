@@ -103,30 +103,17 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 		} else if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
 			if (DEBUG) Log.d(TAG, "Checking for data to upload");
 
-			boolean startListener = false;
-			boolean isConnected = isConnected();
+			if (isConnected()) {
+				SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
 
-			SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
-			if (sp.getInt(NUM_DATA, 0) > 0) {
-				// Have data to upload
-				if (isConnected) {
-					for (int count = sp.getInt(NUM_DATA, 0); count > 0; count--) {
-						uploadCachedDataAt(count, sp);
-					}
-				} else {
-					startListener = true;
+				if (sp.getInt(NUM_DATA, 0) > 0) {
+					uploadAllCachedData(sp);
 				}
-			}
-
-			if (sp.getBoolean(BOOL_CONFIG, false)) {
-				// Have config data to upload
-				if (isConnected) {
+				if (sp.getBoolean(BOOL_CONFIG, false)) {
 					uploadConfigFromPrefs();
-				} else {
-					startListener = true;
 				}
-			}
-			if (startListener) {
+
+			} else {
 				enableNetworkChangeReceiver();
 			}
 
@@ -138,10 +125,7 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 				SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
 				if (sp.getInt(NUM_DATA, 0) > 0) {
 					if (DEBUG) Log.d(TAG, "Have data to upload");
-
-					for (int count = sp.getInt(NUM_DATA, 0); count > 0; count--) {
-						uploadCachedDataAt(count, sp);
-					}
+					uploadAllCachedData(sp);
 					uploadedData = true;
 				}
 				if (sp.getBoolean(BOOL_CONFIG, false)) {
@@ -323,6 +307,12 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 		}
 	}
 
+	private void uploadAllCachedData(SharedPreferences cachePrefs) {
+		for (int count = cachePrefs.getInt(NUM_DATA, 0); count > 0; count--) {
+			uploadCachedDataAt(count, cachePrefs);
+		}
+	}
+
 	private void uploadCachedDataAt(int id, SharedPreferences cachPrefs) {
 		int day = cachPrefs.getInt(Keys.DATA_DAY + id, 0);
 		long time = cachPrefs.getLong(Keys.DATA_TIME + id, 0);
@@ -338,17 +328,22 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 			}
 		}
 
+		clearDataCache(id, cachPrefs);
+
+		uploadData(day, time, data, comment);
+	}
+
+	private void clearDataCache(int id, SharedPreferences cachePrefs) {
 		// Remove data from prefs
-		SharedPreferences.Editor editor = cachPrefs.edit();
+		SharedPreferences.Editor editor = cachePrefs.edit();
 		editor.putString(Keys.DATA_DAY + id, null);
 		editor.putString(Keys.DATA_TIME + id, null);
 		editor.putString(Keys.DATA_COMMENT + id, null);
 		editor.putString(Keys.DATA_LIST + id, null);
 
 		// decrement counter in prefs
-		editor.putInt(NUM_DATA, id - 1).commit();
-
-		uploadData(day, time, data, comment);
+		int count = cachePrefs.getInt(NUM_DATA, 1);
+		editor.putInt(NUM_DATA, count - 1).commit();
 	}
 
 	private void uploadConfigFromPrefs() {
