@@ -150,8 +150,6 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 			@Override
 			public void onClick(View v) {
 				// Go to android home screen
-				// TODO possibly finish with result to tell home screen to
-				// finish
 				getActivity().setResult(Activity.RESULT_CANCELED);
 				getActivity().finish();
 			}

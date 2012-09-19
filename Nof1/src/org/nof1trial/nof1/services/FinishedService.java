@@ -244,7 +244,6 @@ public class FinishedService extends IntentService {
 
 			@Override
 			public void onFailure(ServerFailure error) {
-				super.onFailure(error);
 				// TODO retry download
 			}
 
@@ -351,8 +350,6 @@ public class FinishedService extends IntentService {
 						public void onSuccess(List<ConfigProxy> list) {
 							if (list.size() == 0) {
 								Log.e(TAG, "No config file found on server. Please contact the pharmacist for treatment schedule.");
-								// TODO somehow notify user. Possibly use
-								// notification?
 
 							} else {
 								// get most recent config. Generally I would
