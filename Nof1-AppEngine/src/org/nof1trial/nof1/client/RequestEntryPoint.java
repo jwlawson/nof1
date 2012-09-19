@@ -63,6 +63,8 @@ public class RequestEntryPoint implements EntryPoint {
 
 	private Button btnLogout;
 
+	private FlowPanel loadingPanel;
+
 	@Override
 	public void onModuleLoad() {
 		final EventBus eventBus = new SimpleEventBus();
@@ -123,6 +125,18 @@ public class RequestEntryPoint implements EntryPoint {
 		btnLogout.setEnabled(false);
 		btnLogout.setWidth("75px");
 		vPanel.add(btnLogout);
+
+		loadingPanel = new FlowPanel();
+		loadingPanel.setStyleName("loading-frame");
+		rootPanel.add(loadingPanel);
+
+		Label lblLoading = new Label("Loading user data...");
+		lblLoading.setStyleName("gwt-Label-loading");
+		loadingPanel.add(lblLoading);
+
+		Image imgLoading = new Image("images/spinner.gif");
+		loadingPanel.add(imgLoading);
+		imgLoading.setStyleName("gwt-Image-loader");
 	}
 
 	private void findUser() {
@@ -168,6 +182,8 @@ public class RequestEntryPoint implements EntryPoint {
 
 			@Override
 			public void onSuccess(List<ConfigProxy> confList) {
+				RootPanel.get().remove(loadingPanel);
+
 				for (ConfigProxy conf : confList) {
 					addConfig(conf);
 				}

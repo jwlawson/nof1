@@ -185,3 +185,17 @@ body {
 	height: 5px;
 	overflow: hidden;
 }
+.gwt-Image-loader {
+	position: absolute;
+	top: 50%;
+	text-align: centre;
+	display: inline;
+}
+.loading-frame {
+	margin: auto;
+	width: 128px;
+}
+.gwt-Label-loading {
+	position: absolute;
+	top: 40%;
+}
