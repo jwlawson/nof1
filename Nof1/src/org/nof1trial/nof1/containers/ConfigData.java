@@ -77,8 +77,8 @@ public class ConfigData {
 		editor.putString(Keys.CONFIG_TREATMENT_B, treatmentB);
 		editor.putString(Keys.CONFIG_TREATMENT_NOTES, treatmentNotes);
 
-		for (int i = 1; i < dayList.size(); i++) {
-			editor.putBoolean(Keys.CONFIG_DAY + i, dayList.get(i));
+		for (int i = 0; i < dayList.size(); i++) {
+			editor.putBoolean(Keys.CONFIG_DAY + (i + 1), dayList.get(i));
 		}
 		editor.commit();
 
