@@ -7,16 +7,15 @@
         android:id="@+id/connect_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="10dip"
-        android:text="@string/account_connect_explain"
-        android:textSize="16dip" />
+        android:padding="@dimen/padding_medium"
+        android:text="@string/account_connect_explain" />
 
     <TextView
         android:id="@+id/select_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/connect_text"
-        android:layout_margin="5dip"
+        android:paddingLeft="@dimen/padding_medium"
         android:text="@string/select_account" />
 
     <View
