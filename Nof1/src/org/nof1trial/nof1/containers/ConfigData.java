@@ -35,6 +35,12 @@ public class ConfigData {
 
 	private OnConfigRequestListener listener;
 
+	private ConfigData() {
+		quesList = new ArrayList<String>();
+		timeList = new ArrayList<String>();
+		dayList = new ArrayList<Boolean>();
+	}
+
 	public interface OnConfigRequestListener {
 		/**
 		 * Called when config uploaded successfully
