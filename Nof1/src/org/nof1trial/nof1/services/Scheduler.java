@@ -247,6 +247,10 @@ public class Scheduler extends IntentService {
 
 		// Only want alarms to start after the trial has started
 		String startStr = sp.getString(Keys.CONFIG_START, "");
+		if (startStr == "") {
+			return;
+		}
+
 		Calendar startCal = getCalendarFromString(startStr);
 
 		if (now.before(startCal)) {
