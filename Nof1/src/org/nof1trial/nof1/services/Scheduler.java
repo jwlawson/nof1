@@ -23,6 +23,7 @@ package org.nof1trial.nof1.services;
 import java.util.Calendar;
 
 import org.nof1trial.nof1.AlarmReceiver;
+import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.preferences.TimePreference;
 
@@ -46,7 +47,7 @@ import android.util.Log;
 public class Scheduler extends IntentService {
 
 	private static final String TAG = "Scheduler";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = BuildConfig.DEBUG;
 
 	private static final int REQUEST_QUES = 0;
 
@@ -131,7 +132,7 @@ public class Scheduler extends IntentService {
 			backup();
 
 			// Set up first time run notification
-			setFirstAlarm();
+			setFirstAlarm(start);
 		}
 	}
 
@@ -225,11 +226,43 @@ public class Scheduler extends IntentService {
 	}
 
 	/** Load first date to set alarm from preferences and set alarm for then */
-	private void setFirstAlarm() {
+	private void setFirstAlarm(String startDate) {
 		Intent intent = new Intent(Scheduler.this, AlarmReceiver.class);
 		intent.putExtra(Keys.INTENT_FIRST, true);
 
-		setAlarmFromPrefs(intent);
+		SharedPreferences config = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+		String time = getEarliestMedicineTime(config);
+		if (DEBUG) Log.d(TAG, "Scheduling first time notification at " + startDate + " " + time);
+
+		Calendar start = getCalendarFromString(startDate, time);
+		Calendar yesterday = Calendar.getInstance();
+		yesterday.add(Calendar.DATE, -1);
+
+		// Use yesterday, so that this will run if the trial starts today
+		if (start.after(yesterday)) {
+			setAlarm(intent, start);
+		}
+	}
+
+	// TODO This really needs reworking to be less of a mess
+	private String getEarliestMedicineTime(SharedPreferences config) {
+		int hour = 12;
+		int min = 00;
+
+		for (int i = 0; config.contains(Keys.CONFIG_TIME + i); i++) {
+			String time = config.getString(Keys.CONFIG_TIME + i, "12:00");
+			String[] timeArr = time.split(":");
+			int timeHour = Integer.parseInt(timeArr[0]);
+			int timeMin = Integer.parseInt(timeArr[1]);
+			if (timeHour < hour) {
+				hour = timeHour;
+				min = timeMin;
+			} else if (timeHour == hour && timeMin < min) {
+				min = timeMin;
+			}
+		}
+		String time = hour + ":" + min;
+		return time;
 	}
 
 	/** Load next date to set alarm from preferences and set alarm for then */
@@ -252,6 +285,8 @@ public class Scheduler extends IntentService {
 		}
 
 		Calendar startCal = getCalendarFromString(startStr);
+		startCal.set(Calendar.HOUR, 0);
+		startCal.set(Calendar.MINUTE, 0);
 
 		if (now.before(startCal)) {
 			now.setTimeInMillis(startCal.getTimeInMillis());
@@ -297,7 +332,7 @@ public class Scheduler extends IntentService {
 		String dateStr = sp.getString(Keys.SCHED_NEXT_DATE, null);
 		String timeStr = userPrefs.getString(Keys.DEFAULT_TIME, "12:00");
 		if (dateStr == null) {
-			Log.d(TAG, "Config not yet run");
+			Log.e(TAG, "Config not yet run");
 			return;
 		}
 		// Only set alarm if the trial has not finished
