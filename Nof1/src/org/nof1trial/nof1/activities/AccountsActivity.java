@@ -132,6 +132,19 @@ public class AccountsActivity extends SherlockActivity {
 			finish();
 			return;
 		}
+
+		final Button exitButton = (Button) findViewById(R.id.exit);
+		exitButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AccountsActivity.this.setResult(RESULT_CANCELED);
+				finish();
+			}
+		});
+
+		final Button connectButton = (Button) findViewById(R.id.connect);
+		connectButton.setEnabled(false);
+
 		if (accounts.size() == 0) {
 			// Show a dialog and invoke the "Add Account" activity if requested
 			final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
@@ -145,7 +158,6 @@ public class AccountsActivity extends SherlockActivity {
 			builder.setNegativeButton(R.string.skip, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					// TODO Show some warning that the app needs an account?
 					AccountsActivity.this.setResult(RESULT_CANCELED);
 					finish();
 				}
@@ -161,7 +173,7 @@ public class AccountsActivity extends SherlockActivity {
 			listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			listView.setItemChecked(mAccountSelectedPosition, true);
 
-			final Button connectButton = (Button) findViewById(R.id.connect);
+			connectButton.setEnabled(true);
 			connectButton.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
@@ -176,15 +188,6 @@ public class AccountsActivity extends SherlockActivity {
 					if (DEBUG) Log.d(TAG, "Account service intent fired ");
 
 					AccountsActivity.this.setResult(RESULT_OK);
-					finish();
-				}
-			});
-
-			final Button exitButton = (Button) findViewById(R.id.exit);
-			exitButton.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					AccountsActivity.this.setResult(RESULT_CANCELED);
 					finish();
 				}
 			});
