@@ -33,6 +33,7 @@ import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.NetworkChangeReceiver;
 import org.nof1trial.nof1.SQLite;
 import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.containers.ConfigData;
 import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.ConfigRequest;
 import org.nof1trial.nof1.shared.DataProxy;
@@ -63,7 +64,7 @@ import com.google.web.bindery.requestfactory.shared.ServerFailure;
  * @author John Lawson
  * 
  */
-public class Saver extends IntentService {
+public class Saver extends IntentService implements ConfigData.OnConfigRequestListener {
 
 	private static final String TAG = "Saver";
 	private static final boolean DEBUG = BuildConfig.DEBUG;
@@ -77,11 +78,7 @@ public class Saver extends IntentService {
 	private final Context mContext = this;
 
 	public Saver() {
-		this("Saver");
-	}
-
-	public Saver(String name) {
-		super(name);
+		super("Saver");
 	}
 
 	@Override
@@ -102,40 +99,27 @@ public class Saver extends IntentService {
 		if (DEBUG) Log.d(TAG, "Handling new intent");
 
 		if (Keys.ACTION_SAVE_CONFIG.equals(intent.getAction())) {
-			// SAve config data to disk and online
 			if (DEBUG) Log.d(TAG, "Saving config to disk");
-
 			saveConfig(intent);
 
 		} else if (Keys.ACTION_SAVE_DATA.equals(intent.getAction())) {
-			// Save patient inputted data from the intent
-			if (DEBUG) Log.d(TAG, "Savng data to disk");
-
+			if (DEBUG) Log.d(TAG, "Saving data to disk");
 			saveData(intent);
 
 		} else if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-			// Phone has booted, check to see whether need to upload anything
-			// If so either do so, or enable Network change listener
 			if (DEBUG) Log.d(TAG, "Checking for data to upload");
 
 			boolean startListener = false;
-
 			boolean isConnected = isConnected();
 
 			SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
 			if (sp.getInt(NUM_DATA, 0) > 0) {
 				// Have data to upload
-
 				if (isConnected) {
-					// Have internet so upload data
-
 					for (int count = sp.getInt(NUM_DATA, 0); count > 0; count--) {
-
 						uploadCachedDataAt(count, sp);
 					}
-
 				} else {
-					// Not connected, so want to start listener
 					startListener = true;
 				}
 			}
@@ -143,9 +127,8 @@ public class Saver extends IntentService {
 			if (sp.getBoolean(BOOL_CONFIG, false)) {
 				// Have config data to upload
 				if (isConnected) {
-					uploadConfigFromPrefs(sp);
+					uploadConfigFromPrefs();
 				} else {
-					// Not connected, so want to start listener
 					startListener = true;
 				}
 			}
@@ -154,39 +137,27 @@ public class Saver extends IntentService {
 			}
 
 		} else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
-			// Connectivity changed, should mean we are now connected
-			if (DEBUG) Log.d(TAG, "Uploading previously saved data");
 
-			boolean uploadedData = false;
+			if (isConnected()) {
+				if (DEBUG) Log.d(TAG, "Uploading previously saved data");
+				boolean uploadedData = false;
+				SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
+				if (sp.getInt(NUM_DATA, 0) > 0) {
+					if (DEBUG) Log.d(TAG, "Have data to upload");
 
-			SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
-			if (sp.getInt(NUM_DATA, 0) > 0) {
-				// Have data to upload
-				if (DEBUG) Log.d(TAG, "Have data to upload");
-
-				for (int count = sp.getInt(NUM_DATA, 0); count > 0; count--) {
-
-					uploadCachedDataAt(count, sp);
-
+					for (int count = sp.getInt(NUM_DATA, 0); count > 0; count--) {
+						uploadCachedDataAt(count, sp);
+					}
+					uploadedData = true;
 				}
-				uploadedData = true;
-			}
-
-			if (sp.getBoolean(BOOL_CONFIG, false)) {
-				// Have config data to upload
-				// Note, if config data not uploaded at start, there is no way
-				// that the schedule can be made or emails
-				// sent
-				if (DEBUG) Log.d(TAG, "Have config to send");
-
-				uploadConfigFromPrefs(sp);
-
-				uploadedData = true;
-			}
-
-			if (uploadedData) {
-				// Disable network change listener, as not needed
-				disableNetworkChangeReceiver();
+				if (sp.getBoolean(BOOL_CONFIG, false)) {
+					if (DEBUG) Log.d(TAG, "Have config to send");
+					uploadConfigFromPrefs();
+					uploadedData = true;
+				}
+				if (uploadedData) {
+					disableNetworkChangeReceiver();
+				}
 			}
 
 		} else if (Keys.ACTION_UPLOAD_ALL.equals(intent.getAction())) {
@@ -215,26 +186,27 @@ public class Saver extends IntentService {
 					treatmentNotes, quesList);
 
 			if (quesList.size() >= 1) {
-				// Query database for all saved data
-				DataSource datasource = new DataSource(mContext);
-				datasource.open();
-				Cursor cursor = datasource.getAllColumns();
-				cursor.moveToFirst();
-
-				// Upload all data from the database
-				while (!cursor.isAfterLast()) {
-
-					uploadDataFromCursor(cursor);
-
-					cursor.moveToNext();
-				}
-				cursor.close();
-				datasource.close();
+				uploadAllDataFromDatabase();
 			}
 		} else {
 			Log.w(TAG, "IntentService started with unrecognised action");
 		}
 
+	}
+
+	private void uploadAllDataFromDatabase() {
+		DataSource datasource = new DataSource(mContext);
+		datasource.open();
+		Cursor cursor = datasource.getAllColumns();
+		cursor.moveToFirst();
+
+		while (!cursor.isAfterLast()) {
+
+			uploadDataFromCursor(cursor);
+			cursor.moveToNext();
+		}
+		cursor.close();
+		datasource.close();
 	}
 
 	private void uploadDataFromCursor(Cursor cursor) {
@@ -248,7 +220,6 @@ public class Saver extends IntentService {
 		int size = commentCol - timeCol - 1;
 		int[] data = new int[size];
 
-		// Iterate over to get
 		for (int i = 0; i < size; i++) {
 			data[i] = cursor.getInt(timeCol + 1 + i);
 		}
@@ -262,30 +233,101 @@ public class Saver extends IntentService {
 		String comment = intent.getStringExtra(Keys.DATA_COMMENT);
 		int[] data = intent.getIntArrayExtra(Keys.DATA_LIST);
 
-		// Open database
-		DataSource source = new DataSource(this);
-		source.open();
-		// Save data
-		source.saveData(day, time, data, comment);
+		saveDataToDatabase(day, time, comment, data);
 
-		source.close();
-
-		// Request backup
-		backup();
-
-		boolean isConnected = isConnected();
-
-		if (isConnected) {
+		if (isConnected()) {
 			if (DEBUG) Log.d(TAG, "Connected to internet, sending data to server");
-
 			uploadData(day, time, data, comment);
-
 		} else {
-			// Not connected to internet
 			saveDataForLater(day, time, comment, data);
-
 			enableNetworkChangeReceiver();
 		}
+	}
+
+	private void saveDataToDatabase(int day, long time, String comment, int[] data) {
+		DataSource source = new DataSource(this);
+		source.open();
+		source.saveData(day, time, data, comment);
+		source.close();
+		backup();
+	}
+
+	/**
+	 * Upload data to server. Should check whether internet is available before trying to call this.
+	 */
+	private void uploadData(final int day, final long time, final int[] data, final String comment) {
+		MyRequestFactory requestFactory = Util.getRequestFactory(this, MyRequestFactory.class);
+		DataRequest request = requestFactory.dataRequest();
+
+		DataProxy proxy = request.create(DataProxy.class);
+		proxy.setDay(day);
+		proxy.setTime(time);
+		proxy.setComment(comment);
+
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		if (data != null) {
+			for (int i = 0; i < data.length; i++) {
+				list.add(data[i]);
+			}
+		}
+		proxy.setQuestionData(list);
+
+		request.save(proxy).fire(new Receiver<DataProxy>() {
+
+			@Override
+			public void onSuccess(DataProxy response) {
+				if (DEBUG) Log.d(TAG, "Data saved successfully");
+			}
+
+			@Override
+			public void onFailure(ServerFailure error) {
+				Log.e(TAG, "Data not saved");
+				Log.e(TAG, error.getMessage());
+
+				// TODO Only refresh cookie when error is an auth error
+				// TODO Only allow looping a certain number of times
+				// Try refreshing auth cookie
+				Intent intent = new Intent(mContext, AccountService.class);
+				intent.setAction(Keys.ACTION_REFRESH);
+				startService(intent);
+
+				// Save to upload later
+				saveDataForLater(day, time, comment, data);
+
+				// Register receiver to get callback from the AccountService
+				// when cookie refreshed
+				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+				manager.registerReceiver(new CookieReceiver(), new IntentFilter(Keys.ACTION_COMPLETE));
+
+			}
+
+		});
+	}
+
+	private void saveDataForLater(int day, long time, String comment, int[] data) {
+		SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
+		SharedPreferences.Editor edit = sp.edit();
+
+		int count = sp.getInt(NUM_DATA, 0) + 1;
+		// Increment counter for number of cached data sets
+		edit.putInt(NUM_DATA, count);
+
+		edit.putInt(Keys.DATA_DAY + count, day);
+		edit.putLong(Keys.DATA_TIME + count, time);
+		edit.putString(Keys.DATA_COMMENT + count, comment);
+
+		if (data != null) {
+			// Convert int array to string, to allow storage in shared_prefs
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < data.length; i++) {
+				sb.append(data[i]).append(",");
+			}
+			// Remove trailing comma
+			sb.deleteCharAt(sb.length() - 1);
+			edit.putString(Keys.DATA_LIST + count, sb.toString());
+		}
+
+		edit.commit();
 	}
 
 	private void saveConfig(Intent intent) {
@@ -369,8 +411,7 @@ public class Saver extends IntentService {
 		uploadData(day, time, data, comment);
 	}
 
-	private void uploadConfigFromPrefs(SharedPreferences sp) {
-		// get config from prefs and upload
+	private void uploadConfigFromPrefs() {
 		SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 		String patientName = prefs.getString(Keys.CONFIG_PATIENT_NAME, "");
 		String doctorName = prefs.getString(Keys.CONFIG_DOCTOR_NAME, "");
@@ -389,6 +430,7 @@ public class Saver extends IntentService {
 			quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
 		}
 		// remove flag in prefs
+		SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
 		sp.edit().putBoolean(BOOL_CONFIG, false).commit();
 
 		uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
@@ -464,93 +506,6 @@ public class Saver extends IntentService {
 		});
 	}
 
-	/**
-	 * Upload data to server.
-	 * 
-	 * Should check whether internet is available before trying to call this.
-	 * 
-	 * @param day
-	 * @param time
-	 * @param data
-	 * @param comment
-	 */
-	private void uploadData(final int day, final long time, final int[] data, final String comment) {
-		// Send the data file to server
-		MyRequestFactory requestFactory = Util.getRequestFactory(this, MyRequestFactory.class);
-		DataRequest request = requestFactory.dataRequest();
-
-		DataProxy proxy = request.create(DataProxy.class);
-		proxy.setDay(day);
-		proxy.setTime(time);
-		proxy.setComment(comment);
-
-		ArrayList<Integer> list = new ArrayList<Integer>();
-		if (data != null) {
-			for (int i = 0; i < data.length; i++) {
-				list.add(data[i]);
-			}
-		}
-		proxy.setQuestionData(list);
-
-		request.save(proxy).fire(new Receiver<DataProxy>() {
-
-			@Override
-			public void onSuccess(DataProxy response) {
-				if (DEBUG) Log.d(TAG, "Data saved successfully");
-			}
-
-			@Override
-			public void onFailure(ServerFailure error) {
-				// super.onFailure(error);
-				Log.e(TAG, "Data not saved");
-				Log.e(TAG, error.getMessage());
-
-				// TODO Only refresh cookie when error is an auth error
-				// TODO Only allow looping a certain number of times
-				// Try refreshing auth cookie
-				Intent intent = new Intent(mContext, AccountService.class);
-				intent.setAction(Keys.ACTION_REFRESH);
-				startService(intent);
-
-				// Save to upload later
-				saveDataForLater(day, time, comment, data);
-
-				// Register receiver to get callback from the AccountService
-				// when cookie refreshed
-				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new CookieReceiver(), new IntentFilter(Keys.ACTION_COMPLETE));
-
-			}
-
-		});
-	}
-
-	private void saveDataForLater(int day, long time, String comment, int[] data) {
-		SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
-		SharedPreferences.Editor edit = sp.edit();
-
-		int count = sp.getInt(NUM_DATA, 0) + 1;
-		// Increment counter for number of cached data sets
-		edit.putInt(NUM_DATA, count);
-
-		edit.putInt(Keys.DATA_DAY + count, day);
-		edit.putLong(Keys.DATA_TIME + count, time);
-		edit.putString(Keys.DATA_COMMENT + count, comment);
-
-		if (data != null) {
-			// Convert int array to string, to allow storage in shared_prefs
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < data.length; i++) {
-				sb.append(data[i]).append(",");
-			}
-			// Remove trailing comma
-			sb.deleteCharAt(sb.length() - 1);
-			edit.putString(Keys.DATA_LIST + count, sb.toString());
-		}
-
-		edit.commit();
-	}
-
 	private void enableNetworkChangeReceiver() {
 		PackageManager pm = getPackageManager();
 		ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
@@ -594,5 +549,29 @@ public class Saver extends IntentService {
 			manager.unregisterReceiver(this);
 		}
 
+	}
+
+	@Override
+	public void onConfigUploadSuccess(ConfigProxy conf) {
+		if (DEBUG) Log.d(TAG, "Data saved successfully");
+	}
+
+	@Override
+	public void onConfigUploadFailure(ServerFailure failure) {
+		Log.e(TAG, "Config not saved");
+		Log.e(TAG, failure.getMessage());
+
+		// TODO Only refresh cookie when error is an auth error
+		// TODO Only allow looping a certain number of times
+		// Try refreshing auth cookie
+		Intent intent = new Intent(mContext, AccountService.class);
+		intent.setAction(Keys.ACTION_REFRESH);
+		startService(intent);
+
+		// Save for later
+		getSharedPreferences(CACHE, MODE_PRIVATE).edit().putBoolean(BOOL_CONFIG, true).commit();
+
+		LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+		manager.registerReceiver(new CookieReceiver(), new IntentFilter(Keys.ACTION_COMPLETE));
 	}
 }
