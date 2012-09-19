@@ -51,7 +51,7 @@ public class ConfigData {
 		public void onConfigUploadFailure(ServerFailure failure);
 	}
 
-	public void save(SharedPreferences prefs) {
+	public void saveToPrefs(SharedPreferences prefs) {
 		// Save to file
 		SharedPreferences.Editor editor = prefs.edit();
 		editor.putString(Keys.CONFIG_PATIENT_NAME, patientName);
@@ -83,8 +83,6 @@ public class ConfigData {
 		MyRequestFactory factory = Util.getRequestFactory(context, MyRequestFactory.class);
 		ConfigRequest request = factory.configRequest();
 
-		Calendar cal = getEndDate();
-
 		// Build config
 		ConfigProxy conf = request.create(ConfigProxy.class);
 		conf.setDocEmail(doctorEmail);
@@ -98,7 +96,7 @@ public class ConfigData {
 		conf.setTreatmentB(treatmentB);
 		conf.setTreatmentNotes(treatmentNotes);
 		conf.setQuestionList(quesList);
-		conf.setEndDate(cal.getTimeInMillis());
+		conf.setEndDate(getEndDate());
 
 		request.update(conf).fire(new Receiver<ConfigProxy>() {
 
@@ -114,13 +112,18 @@ public class ConfigData {
 		});
 	}
 
-	private Calendar getEndDate() {
+	private Calendar getEndDateCalendar() {
 		String[] arr = startDate.split(":");
 		int[] date = new int[] { Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Integer.parseInt(arr[2]) };
 		Calendar cal = Calendar.getInstance();
 		cal.set(date[2], date[1], date[0], 23, 59);
 		cal.add(Calendar.DAY_OF_MONTH, (int) (2 * periodLength * numberPeriods));
 		return cal;
+	}
+
+	private long getEndDate() {
+		Calendar cal = getEndDateCalendar();
+		return cal.getTimeInMillis();
 	}
 
 	public static class Factory {

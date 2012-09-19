@@ -21,11 +21,6 @@
 package org.nof1trial.nof1.services;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
 
 import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.DataSource;
@@ -34,8 +29,8 @@ import org.nof1trial.nof1.NetworkChangeReceiver;
 import org.nof1trial.nof1.SQLite;
 import org.nof1trial.nof1.app.Util;
 import org.nof1trial.nof1.containers.ConfigData;
+import org.nof1trial.nof1.containers.ConfigData.Factory;
 import org.nof1trial.nof1.shared.ConfigProxy;
-import org.nof1trial.nof1.shared.ConfigRequest;
 import org.nof1trial.nof1.shared.DataProxy;
 import org.nof1trial.nof1.shared.DataRequest;
 import org.nof1trial.nof1.shared.MyRequestFactory;
@@ -74,7 +69,6 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 	private static final String NUM_DATA = "num_data_cache";
 	private static final String BOOL_CONFIG = "bool_config_cache";
 
-	/** Current context */
 	private final Context mContext = this;
 
 	public Saver() {
@@ -163,29 +157,9 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 		} else if (Keys.ACTION_UPLOAD_ALL.equals(intent.getAction())) {
 			if (DEBUG) Log.d(TAG, "Uploading all saved data");
 
-			// get config from prefs and upload
-			SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-			String patientName = prefs.getString(Keys.CONFIG_PATIENT_NAME, "");
-			String doctorName = prefs.getString(Keys.CONFIG_DOCTOR_NAME, "");
-			final String doctorEmail = prefs.getString(Keys.CONFIG_DOC, "");
-			String pharmEmail = prefs.getString(Keys.CONFIG_PHARM, "");
-			int numberPeriods = prefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0);
-			int periodLength = prefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
-			String startDate = prefs.getString(Keys.CONFIG_START, "");
-			String treatmentA = prefs.getString(Keys.CONFIG_TREATMENT_A, "");
-			String treatmentB = prefs.getString(Keys.CONFIG_TREATMENT_B, "");
-			String treatmentNotes = prefs.getString(Keys.CONFIG_TREATMENT_NOTES, "");
+			uploadConfigFromPrefs();
 
-			ArrayList<String> quesList = new ArrayList<String>();
-			SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
-			for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
-				quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
-			}
-
-			uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
-					treatmentNotes, quesList);
-
-			if (quesList.size() >= 1) {
+			if (isDatabaseInitialised()) {
 				uploadAllDataFromDatabase();
 			}
 		} else {
@@ -331,49 +305,15 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 	}
 
 	private void saveConfig(Intent intent) {
-		// get values from the intent
-		String patientName = intent.getStringExtra(Keys.CONFIG_PATIENT_NAME);
-		String doctorName = intent.getStringExtra(Keys.CONFIG_DOCTOR_NAME);
-		final String doctorEmail = intent.getStringExtra(Keys.CONFIG_DOC);
-		String pharmEmail = intent.getStringExtra(Keys.CONFIG_PHARM);
-		int numberPeriods = intent.getIntExtra(Keys.CONFIG_NUMBER_PERIODS, 0);
-		int periodLength = intent.getIntExtra(Keys.CONFIG_PERIOD_LENGTH, 0);
-		String startDate = intent.getStringExtra(Keys.CONFIG_START);
-		String treatmentA = intent.getStringExtra(Keys.CONFIG_TREATMENT_A);
-		String treatmentB = intent.getStringExtra(Keys.CONFIG_TREATMENT_B);
-		String treatmentNotes = intent.getStringExtra(Keys.CONFIG_TREATMENT_NOTES);
-		boolean formBuilt = intent.getBooleanExtra(Keys.CONFIG_BUILT, false);
-		ArrayList<String> quesList = intent.getStringArrayListExtra(Keys.CONFIG_QUESTION_LIST);
 
-		// Save to file
+		ConfigData.Factory factory = new Factory(this);
+		ConfigData config = factory.generateFromIntent(intent);
+
 		SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putString(Keys.CONFIG_PATIENT_NAME, patientName);
-		editor.putString(Keys.CONFIG_DOCTOR_NAME, doctorName);
-		editor.putString(Keys.CONFIG_DOC, doctorEmail);
-		editor.putInt(Keys.CONFIG_NUMBER_PERIODS, numberPeriods);
-		editor.putInt(Keys.CONFIG_PERIOD_LENGTH, periodLength);
-		editor.putBoolean(Keys.CONFIG_BUILT, formBuilt);
-		editor.putString(Keys.CONFIG_START, startDate);
-		editor.putString(Keys.CONFIG_PHARM, pharmEmail);
-
-		for (int i = 0; intent.hasExtra(Keys.CONFIG_TIME + i); i++) {
-			editor.putString(Keys.CONFIG_TIME + i, intent.getStringExtra(Keys.CONFIG_TIME + i));
-		}
-
-		editor.putString(Keys.CONFIG_TREATMENT_A, treatmentA);
-		editor.putString(Keys.CONFIG_TREATMENT_B, treatmentB);
-		editor.putString(Keys.CONFIG_TREATMENT_NOTES, treatmentNotes);
-
-		for (int i = 1; intent.hasExtra(Keys.CONFIG_DAY + i); i++) {
-			editor.putBoolean(Keys.CONFIG_DAY + i, intent.getBooleanExtra(Keys.CONFIG_DAY + i, false));
-		}
-		editor.commit();
-		backup();
+		config.saveToPrefs(prefs);
 
 		if (isConnected()) {
-			uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
-					treatmentNotes, quesList);
+			config.upload(mContext);
 
 		} else {
 			// No internet, so set flag to upload later
@@ -413,97 +353,16 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 
 	private void uploadConfigFromPrefs() {
 		SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-		String patientName = prefs.getString(Keys.CONFIG_PATIENT_NAME, "");
-		String doctorName = prefs.getString(Keys.CONFIG_DOCTOR_NAME, "");
-		final String doctorEmail = prefs.getString(Keys.CONFIG_DOC, "");
-		String pharmEmail = prefs.getString(Keys.CONFIG_PHARM, "");
-		int numberPeriods = prefs.getInt(Keys.CONFIG_NUMBER_PERIODS, 0);
-		int periodLength = prefs.getInt(Keys.CONFIG_PERIOD_LENGTH, 0);
-		String startDate = prefs.getString(Keys.CONFIG_START, "");
-		String treatmentA = prefs.getString(Keys.CONFIG_TREATMENT_A, "");
-		String treatmentB = prefs.getString(Keys.CONFIG_TREATMENT_B, "");
-		String treatmentNotes = prefs.getString(Keys.CONFIG_TREATMENT_NOTES, "");
-
-		ArrayList<String> quesList = new ArrayList<String>();
 		SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
-		for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
-			quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
-		}
+
+		ConfigData.Factory factory = new Factory(this);
+		ConfigData config = factory.generateFromPrefs(prefs, ques);
+
 		// remove flag in prefs
 		SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
 		sp.edit().putBoolean(BOOL_CONFIG, false).commit();
 
-		uploadConfig(doctorEmail, doctorName, patientName, pharmEmail, startDate, periodLength, numberPeriods, treatmentA, treatmentB,
-				treatmentNotes, quesList);
-	}
-
-	private void uploadConfig(final String doctorEmail, final String doctorName, final String patientName, final String pharmEmail,
-			final String startDate, final long periodLength, final long numberPeriods, final String treatmentA, final String treatmentB,
-			final String treatmentNotes, final List<String> quesList) {
-		// Get request factory
-		MyRequestFactory factory = Util.getRequestFactory(Saver.this, MyRequestFactory.class);
-		ConfigRequest request = factory.configRequest();
-
-		// Parse start date
-		String[] arr = startDate.split(":");
-		int[] date = new int[] { Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Integer.parseInt(arr[2]) };
-		Calendar cal = Calendar.getInstance();
-		cal.set(date[2], date[1], date[0], 23, 59);
-		cal.add(Calendar.DAY_OF_MONTH, (int) (2 * periodLength * numberPeriods));
-
-		// Build config
-		ConfigProxy conf = request.create(ConfigProxy.class);
-		conf.setDocEmail(doctorEmail);
-		conf.setDoctorName(doctorName);
-		conf.setPatientName(patientName);
-		conf.setPharmEmail(pharmEmail);
-		conf.setStartDate(startDate);
-		conf.setLengthPeriods(periodLength);
-		conf.setNumberPeriods(numberPeriods);
-		conf.setTreatmentA(treatmentA);
-		conf.setTreatmentB(treatmentB);
-		conf.setTreatmentNotes(treatmentNotes);
-		conf.setQuestionList(quesList);
-		conf.setEndDate(cal.getTimeInMillis());
-
-		// Update online
-		if (DEBUG) Log.d(TAG, "RequestFactory Config update sent");
-		request.update(conf).fire(new Receiver<ConfigProxy>() {
-
-			@Override
-			public void onSuccess(ConfigProxy response) {
-				if (DEBUG) Log.d(TAG, "Config request successful");
-			}
-
-			@Override
-			public void onConstraintViolation(Set<ConstraintViolation<?>> violations) {
-				for (ConstraintViolation<?> con : violations) {
-					Log.e(TAG, con.getMessage());
-					// TODO Ask user to check config info
-				}
-			}
-
-			@Override
-			public void onFailure(ServerFailure error) {
-				Log.e(TAG, "Config not saved");
-				Log.e(TAG, error.getMessage());
-
-				// TODO Only refresh cookie when error is an auth error
-				// TODO Only allow looping a certain number of times
-				// Try refreshing auth cookie
-				Intent intent = new Intent(mContext, AccountService.class);
-				intent.setAction(Keys.ACTION_REFRESH);
-				startService(intent);
-
-				// Save for later
-				getSharedPreferences(CACHE, MODE_PRIVATE).edit().putBoolean(BOOL_CONFIG, true).commit();
-
-				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new CookieReceiver(), new IntentFilter(Keys.ACTION_COMPLETE));
-
-			}
-
-		});
+		config.upload(mContext);
 	}
 
 	private void enableNetworkChangeReceiver() {
@@ -523,6 +382,12 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 		boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
 		return isConnected;
+	}
+
+	private boolean isDatabaseInitialised() {
+		SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
+		boolean result = sp.contains(Keys.QUES_NUMBER_QUESTIONS) && sp.getInt(Keys.QUES_NUMBER_QUESTIONS, 0) > 0;
+		return result;
 	}
 
 	@TargetApi(8)
