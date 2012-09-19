@@ -117,7 +117,7 @@ public class RequestEntryPoint implements EntryPoint {
 		headerPanel.add(simplePanel);
 
 		// User login label
-		lblLoggedIn = new Label("Finding user data...");
+		lblLoggedIn = new Label("Finding user info...");
 		vPanel.add(lblLoggedIn);
 
 		// User log out button
