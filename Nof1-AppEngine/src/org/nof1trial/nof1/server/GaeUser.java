@@ -52,9 +52,12 @@ public class GaeUser {
 		UserService userService = UserServiceFactory.getUserService();
 		User user = userService.getCurrentUser();
 
-		gaeUser.setEmail(user.getEmail());
-		gaeUser.setLogoutUrl(userService.createLogoutURL("/"));
-
+		if (user != null) {
+			gaeUser.setEmail(user.getEmail());
+			gaeUser.setLogoutUrl(userService.createLogoutURL("http://www.nof1trial.org"));
+		} else {
+			gaeUser.setLoginUrl(userService.createLoginURL("/"));
+		}
 		return gaeUser;
 	}
 
@@ -74,6 +77,8 @@ public class GaeUser {
 	private String email;
 
 	private String logoutUrl;
+
+	private String loginUrl;
 
 	public GaeUser() {
 	}
@@ -100,6 +105,14 @@ public class GaeUser {
 
 	public void setLogoutUrl(String logoutUrl) {
 		this.logoutUrl = logoutUrl;
+	}
+
+	public String getLoginUrl() {
+		return loginUrl;
+	}
+
+	public void setLoginUrl(String loginUrl) {
+		this.loginUrl = loginUrl;
 	}
 
 }

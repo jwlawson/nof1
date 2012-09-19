@@ -1,18 +1,23 @@
-/*
- * Copyright 2010 Google Inc.
+/*******************************************************************************
+ * Nof1 Trials helper, making life easier for clinicians and patients in N of 1 trials.
+ * Copyright (C) 2012 John Lawson
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  * 
- * http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- */
+ * You may obtain a copy of the GNU General Public License at  
+ * <http://www.gnu.org/licenses/>.
+ * 
+ * Contributors:
+ *     John Lawson - initial API and implementation
+ ******************************************************************************/
 package org.nof1trial.nof1.activities;
 
 import java.util.ArrayList;
@@ -52,14 +57,12 @@ import com.actionbarsherlock.view.MenuItem;
  */
 public class AccountsActivity extends SherlockActivity {
 
-	/** Tag for logging. */
 	private static final String TAG = "AccountsActivity";
 	private static final boolean DEBUG = BuildConfig.DEBUG;
 
 	/** The selected position in the ListView of accounts. */
 	private int mAccountSelectedPosition = 0;
 
-	/** The current context. */
 	private final Context mContext = this;
 
 	private Dialog mDialog;
@@ -99,14 +102,10 @@ public class AccountsActivity extends SherlockActivity {
 			// Home / up button
 			Intent upIntent = new Intent(this, HomeScreen.class);
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-				// This activity is not part of the application's task, so create a new task
-				// with a synthesised back stack.
 				TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
 				setResult(RESULT_CANCELED);
 				finish();
 			} else {
-				// This activity is part of the application's task, so simply
-				// navigate up to the hierarchical parent activity.
 				NavUtils.navigateUpTo(this, upIntent);
 				setResult(RESULT_CANCELED);
 				finish();
@@ -115,8 +114,6 @@ public class AccountsActivity extends SherlockActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-	// Manage UI Screens
 
 	/**
 	 * Sets up the 'connect' screen content.
@@ -135,9 +132,22 @@ public class AccountsActivity extends SherlockActivity {
 			finish();
 			return;
 		}
+
+		final Button exitButton = (Button) findViewById(R.id.exit);
+		exitButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				AccountsActivity.this.setResult(RESULT_CANCELED);
+				finish();
+			}
+		});
+
+		final Button connectButton = (Button) findViewById(R.id.connect);
+		connectButton.setEnabled(false);
+
 		if (accounts.size() == 0) {
 			// Show a dialog and invoke the "Add Account" activity if requested
-			AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+			final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 			builder.setMessage(R.string.needs_account);
 			builder.setPositiveButton(R.string.add_account, new DialogInterface.OnClickListener() {
 				@Override
@@ -148,7 +158,6 @@ public class AccountsActivity extends SherlockActivity {
 			builder.setNegativeButton(R.string.skip, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					// TODO Show some warning that the app needs an account?
 					AccountsActivity.this.setResult(RESULT_CANCELED);
 					finish();
 				}
@@ -164,11 +173,10 @@ public class AccountsActivity extends SherlockActivity {
 			listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 			listView.setItemChecked(mAccountSelectedPosition, true);
 
-			final Button connectButton = (Button) findViewById(R.id.connect);
+			connectButton.setEnabled(true);
 			connectButton.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					// Register in the background and terminate the activity
 					mAccountSelectedPosition = listView.getCheckedItemPosition();
 					TextView account = (TextView) listView.getChildAt(mAccountSelectedPosition);
 
@@ -180,15 +188,6 @@ public class AccountsActivity extends SherlockActivity {
 					if (DEBUG) Log.d(TAG, "Account service intent fired ");
 
 					AccountsActivity.this.setResult(RESULT_OK);
-					finish();
-				}
-			});
-
-			final Button exitButton = (Button) findViewById(R.id.exit);
-			exitButton.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					AccountsActivity.this.setResult(RESULT_CANCELED);
 					finish();
 				}
 			});
@@ -224,8 +223,6 @@ public class AccountsActivity extends SherlockActivity {
 			break;
 		}
 	}
-
-	// Utility Methods
 
 	/**
 	 * Returns a list of registered Google account names. If no Google accounts

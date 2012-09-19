@@ -86,32 +86,23 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	/** Instance of backup manager */
 	private BackupManager mBackupManager;
 
+	@TargetApi(8)
 	public FormBuilder() {
 		mQuestionList = new ArrayList<Question>();
-	}
 
-	/** Set the currently selected item. Also sets it in ListFragment */
-	private void setListSelected(int listSelected) {
-		mListSelected = listSelected;
-		if (mList != null) {
-			mList.setSelection(listSelected);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mBackupManager = new BackupManager(this);
 		}
-
 	}
 
-	@TargetApi(8)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		setContentView(R.layout.form_builder_list);
 		SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-		// Load layout. This will change depending on the screen size
-		setContentView(R.layout.form_builder_list);
-
-		// Find list fragment
 		mList = (FormBuilderList) getSupportFragmentManager().findFragmentById(R.id.form_builder_list_fragment);
 
 		if (!sp.contains(Keys.QUES_TEXT + 0)) {
@@ -153,9 +144,6 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 
 		mCommentFrag = (CheckFragment) getSupportFragmentManager().findFragmentById(R.id.form_builder_check_fragment);
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			mBackupManager = new BackupManager(this);
-		}
 	}
 
 	@Override
@@ -229,6 +217,15 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		outState.putInt(TAG + "listSelection", mListSelected);
 	}
 
+	/** Set the currently selected item. Also sets it in ListFragment */
+	private void setListSelected(int listSelected) {
+		mListSelected = listSelected;
+		if (mList != null) {
+			mList.setSelection(listSelected);
+		}
+
+	}
+
 	/** Show the selected question in some editable form */
 	private void edit(int selection) {
 		QuestionBuilderDialog q;
@@ -253,7 +250,6 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 		int numQues = sp.getInt(Keys.QUES_NUMBER_QUESTIONS, 0);
 
-		// Open SharedPrefences editor
 		SharedPreferences.Editor editor = sp.edit();
 
 		// Mark to remove all previous entries.
@@ -317,7 +313,6 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			}
 			return;
 		}
-		// Not my request.
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 

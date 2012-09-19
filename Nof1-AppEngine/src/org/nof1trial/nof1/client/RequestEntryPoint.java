@@ -43,8 +43,11 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.SimpleEventBus;
 import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 /**
+ * Page for showing patient data linked to the current user.
+ * 
  * @author John Lawson
  * 
  */
@@ -60,26 +63,6 @@ public class RequestEntryPoint implements EntryPoint {
 
 	private Button btnLogout;
 
-	/** Comparator that sorts data by the time it is collected */
-	private static final Comparator<DataProxy> DATAPROXY_COMPARATOR = new Comparator<DataProxy>() {
-
-		@Override
-		public int compare(DataProxy d0, DataProxy d1) {
-			int result = 0;
-			if (d0.getTime() == d1.getTime()) {
-				result = 0;
-			} else if (d0.getTime() > d1.getTime()) {
-				result = 1;
-			} else {
-				result = -1;
-			}
-			return result;
-		}
-	};
-
-	public RequestEntryPoint() {
-	}
-
 	@Override
 	public void onModuleLoad() {
 		final EventBus eventBus = new SimpleEventBus();
@@ -87,37 +70,18 @@ public class RequestEntryPoint implements EntryPoint {
 		mGwtRequestFactory = GWT.create(GwtRequestFactory.class);
 		mGwtRequestFactory.initialize(eventBus);
 
-		mGwtRequestFactory.userRequest().get().fire(new Receiver<GaeUserProxy>() {
-
-			@Override
-			public void onSuccess(final GaeUserProxy response) {
-				lblLoggedIn.setText("Logged in as: " + response.getEmail());
-
-				btnLogout.setEnabled(true);
-				btnLogout.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						Window.Location.assign(response.getLogoutUrl());
-					}
-				});
-			}
-		});
+		findUser();
 
 		mRequestFactory = GWT.create(MyRequestFactory.class);
 		mRequestFactory.initialize(eventBus);
 
-		// get configs associated with the current user
-		mRequestFactory.configRequest().findAllConfigs().fire(new Receiver<List<ConfigProxy>>() {
+		findConfigs();
 
-			@Override
-			public void onSuccess(List<ConfigProxy> confList) {
-				for (ConfigProxy conf : confList) {
-					addConfig(conf);
-				}
-			}
-		});
+		createUi();
 
+	}
+
+	private void createUi() {
 		vPanel = new FlowPanel();
 		vPanel.setStyleName("vPanel");
 
@@ -131,6 +95,13 @@ public class RequestEntryPoint implements EntryPoint {
 		// Nof1 logo header
 		Image imgHeader = new Image("images/Nof1-Icon.png");
 		imgHeader.setStyleName("gwt-Image-header");
+		imgHeader.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				Window.Location.assign("http://www.nof1trial.org");
+			}
+		});
 		headerPanel.add(imgHeader);
 
 		// Header text
@@ -144,14 +115,64 @@ public class RequestEntryPoint implements EntryPoint {
 		headerPanel.add(simplePanel);
 
 		// User login label
-		lblLoggedIn = new Label("Not logged in.");
+		lblLoggedIn = new Label("Finding user data...");
 		vPanel.add(lblLoggedIn);
 
 		// User log out button
 		btnLogout = new Button("Logout");
 		btnLogout.setEnabled(false);
+		btnLogout.setWidth("75px");
 		vPanel.add(btnLogout);
+	}
 
+	private void findUser() {
+		mGwtRequestFactory.userRequest().get().fire(new Receiver<GaeUserProxy>() {
+
+			@Override
+			public void onSuccess(final GaeUserProxy user) {
+
+				if (user.getEmail() != null && user.getEmail().length() != 0) {
+					lblLoggedIn.setText("Logged in as: " + user.getEmail());
+
+					btnLogout.setEnabled(true);
+					btnLogout.addClickHandler(new ClickHandler() {
+
+						@Override
+						public void onClick(ClickEvent event) {
+							Window.Location.assign(user.getLogoutUrl());
+						}
+					});
+				} else {
+					lblLoggedIn.setText("Not logged in");
+					btnLogout.setText("Login");
+					btnLogout.addClickHandler(new ClickHandler() {
+
+						@Override
+						public void onClick(ClickEvent event) {
+							Window.Location.assign(user.getLoginUrl());
+						}
+					});
+				}
+			}
+
+			@Override
+			public void onFailure(ServerFailure error) {
+				lblLoggedIn.setText("Error!");
+				super.onFailure(error);
+			}
+		});
+	}
+
+	private void findConfigs() {
+		mRequestFactory.configRequest().findAllConfigs().fire(new Receiver<List<ConfigProxy>>() {
+
+			@Override
+			public void onSuccess(List<ConfigProxy> confList) {
+				for (ConfigProxy conf : confList) {
+					addConfig(conf);
+				}
+			}
+		});
 	}
 
 	private void addConfig(final ConfigProxy conf) {
@@ -185,4 +206,21 @@ public class RequestEntryPoint implements EntryPoint {
 		});
 
 	}
+
+	/** Comparator that sorts data by the time it is collected */
+	private static final Comparator<DataProxy> DATAPROXY_COMPARATOR = new Comparator<DataProxy>() {
+
+		@Override
+		public int compare(DataProxy d0, DataProxy d1) {
+			int result = 0;
+			if (d0.getTime() == d1.getTime()) {
+				result = 0;
+			} else if (d0.getTime() > d1.getTime()) {
+				result = 1;
+			} else {
+				result = -1;
+			}
+			return result;
+		}
+	};
 }

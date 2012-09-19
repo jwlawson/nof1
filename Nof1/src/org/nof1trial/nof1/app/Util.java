@@ -48,54 +48,32 @@ public class Util {
 	private static final String TAG = "Util";
 	private static final boolean DEBUG = true;
 
-	// Shared constants
-
-	/**
-	 * Key for account name in shared preferences.
-	 */
+	/** Key for account name in shared preferences. */
 	public static final String ACCOUNT_NAME = "accountName";
 
-	/**
-	 * Key for auth cookie name in shared preferences.
-	 */
+	/** Key for auth cookie name in shared preferences. */
 	public static final String AUTH_COOKIE = "authCookie";
 
-	/**
-	 * The AppEngine app name, used to construct the production service URL
-	 * below.
-	 */
+	/** The AppEngine app name, used to construct the production service URL below. */
 	private static final String APP_NAME = "nof1trial";
 
-	/**
-	 * The URL of the production service.
-	 */
+	/** The URL of the production service. */
 	public static final String PROD_URL = "https://" + APP_NAME + ".appspot.com";
 
-	/**
-	 * URL suffix for the RequestFactory servlet.
-	 */
+	/** URL suffix for the RequestFactory servlet. */
 	public static final String RF_METHOD = "/gwtRequest";
 
-	/**
-	 * An intent name for receiving registration/unregistration status.
-	 */
+	/** An intent name for receiving registration/unregistration status. */
 	public static final String UPDATE_UI_INTENT = getPackageName() + ".UPDATE_UI";
 
-	// End shared constants
-
-	/**
-	 * Key for shared preferences.
-	 */
+	/** Key for shared preferences. */
 	private static final String SHARED_PREFS = Keys.CONFIG_NAME;
 
-	/**
-	 * Cache containing the base URL for a given context.
-	 */
+	/** Cache containing the base URL for a given context. */
 	private static final Map<Context, String> URL_MAP = new HashMap<Context, String>();
 
 	/**
-	 * Returns the (debug or production) URL associated with the registration
-	 * service.
+	 * Returns the (debug or production) URL associated with the registration service.
 	 */
 	public static String getBaseUrl(Context context) {
 		String url = URL_MAP.get(context);
@@ -157,7 +135,7 @@ public class Util {
 	/**
 	 * Returns a debug url, or null. To set the url, create a file {@code assets/debugging_prefs.properties} with a line
 	 * of the form
-	 * 'url=http:/<ip address>:<port>'. A numeric IP address may be required in
+	 * 'url=http://<ip address>:<port>'. A numeric IP address may be required in
 	 * situations where the device or emulator will not be able to resolve the
 	 * hostname for the dev mode server.
 	 */
@@ -182,7 +160,7 @@ public class Util {
 		} catch (FileNotFoundException e) {
 			// O.K., we will use the production server
 			return null;
-		} catch (Exception e) {
+		} catch (IOException e) {
 			Log.w(TAG, "Got exception " + e);
 			Log.w(TAG, Log.getStackTraceString(e));
 		} finally {

@@ -22,6 +22,7 @@ package org.nof1trial.nof1.server.cron;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Logger;
@@ -80,7 +81,7 @@ public class RemoveOld extends HttpServlet {
 
 			final Query query = em.createQuery("select x from Config x where x.endDate < :date");
 			final Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.YEAR, year);
+			cal.add(Calendar.YEAR, -year);
 			query.setParameter("date", cal.getTimeInMillis());
 			// Set max result just to keep data store transactions low each day
 			// Doesn't really matter whether data is deleted exactly on time or a bit late
@@ -100,28 +101,31 @@ public class RemoveOld extends HttpServlet {
 	}
 
 	/** Delete all data from the trial specified by the config entity */
+	@SuppressWarnings("unchecked")
 	private void deleteDateFromConfig(Config conf) {
 
 		final EntityManager dataEm = EMF.get().createEntityManager();
+		List<Data> dataList = new ArrayList<Data>();
+
 		try {
 			final Query dataQuery = dataEm
 					.createQuery("select x from Data x where x.time < :time and x.patientEmail = :patient and x.doctorEmail = :doctor");
 			dataQuery.setParameter("time", conf.getEndDate()).setParameter("patient", conf.getPatientEmail())
 					.setParameter("doctor", conf.getDocEmail());
 
-			@SuppressWarnings("unchecked")
-			final List<Data> dataList = dataQuery.getResultList();
+			dataList.addAll(dataQuery.getResultList());
 
 			// Force list to materialise
 			dataList.size();
 
 			log.warning("Deleting " + dataList.size() + " number of data");
-			for (Data data : dataList) {
-				dataEm.remove(data);
-			}
 		} finally {
 
 			dataEm.close();
+		}
+
+		for (Data data : dataList) {
+			data.remove();
 		}
 	}
 }

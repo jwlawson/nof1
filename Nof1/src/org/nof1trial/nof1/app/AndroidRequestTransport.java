@@ -49,10 +49,8 @@ public class AndroidRequestTransport implements RequestTransport {
 	/**
 	 * Constructs an AndroidRequestTransport instance.
 	 * 
-	 * @param uri
-	 *            the URI for the RequestFactory service
-	 * @param cookie
-	 *            the ACSID or SACSID cookie used for authentication
+	 * @param uri the URI for the RequestFactory service
+	 * @param cookie the ACSID or SACSID cookie used for authentication
 	 */
 	public AndroidRequestTransport(URI uri, String cookie) {
 		this.uri = uri;

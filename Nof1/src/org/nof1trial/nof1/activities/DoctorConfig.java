@@ -26,6 +26,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.containers.Question;
 import org.nof1trial.nof1.fragments.CheckArray;
 import org.nof1trial.nof1.fragments.StartDate;
 import org.nof1trial.nof1.fragments.TimeSetter;
@@ -136,6 +137,10 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.config_doctor);
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
+			mBackupManager = new BackupManager(this);
+		}
+
 		SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
 		mFormBuilt = sp.getBoolean(Keys.CONFIG_BUILT, false);
@@ -153,10 +158,9 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			mDocEmail.setText(email);
 			mDocEmail.setEnabled(false);
 		}
-		if (DEBUG) mDocEmail.setText("doc@jwlawson.co.uk");
 
 		mPharmEmail = (EditText) findViewById(R.id.config_doctor_details_edit_pharm_email);
-		if (DEBUG) mPharmEmail.setText("test@jwlawson.co.uk");
+		mPharmEmail.setText(sp.getString(Keys.CONFIG_PHARM, ""));
 
 		mPatientName = (EditText) findViewById(R.id.config_doctor_details_edit_name);
 		if (sp.contains(Keys.CONFIG_PATIENT_NAME)) {
@@ -227,10 +231,6 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		mDate = (StartDate) getSupportFragmentManager().findFragmentById(R.id.config_doctor_date_frag);
 		if (sp.contains(Keys.CONFIG_START)) mDate.setDate(sp.getString(Keys.CONFIG_START, ""));
 
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			mBackupManager = new BackupManager(this);
-		}
-
 		mTreatmentA = (EditText) findViewById(R.id.config_doctor_medicine_edit_treatmenta);
 		mTreatmentA.setText(sp.getString(Keys.CONFIG_TREATMENT_A, ""));
 
@@ -263,11 +263,8 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (DEBUG) Log.d(TAG, "Menu item selected: " + item.getTitle());
 		switch (item.getItemId()) {
 		case R.id.menu_doctor_config_done:
-			// Config done. Save data and email stuff away.
-
 			// Check that all config is actually done
 			String[] errors = checkFilledIn();
 			if (errors.length == 0) {
@@ -282,18 +279,11 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 				}
 			} else {
 				// Not all fields filled in
-				Resources res = getResources();
-				StringBuilder sb = new StringBuilder(res.getString(R.string.fill_in_prompt));
-				sb.append(" ").append(errors[0]);
-				for (int i = 1; i < errors.length; i++) {
-					sb.append(", ").append(errors[i]);
-				}
-				Toast.makeText(this, sb.toString(), Toast.LENGTH_LONG).show();
+				String errorText = getErrorMessage(errors);
+				Toast.makeText(this, errorText, Toast.LENGTH_LONG).show();
 			}
-
 			return true;
 		case R.id.menu_doctor_config_login:
-			// Change login details
 			changeLogin();
 			return true;
 
@@ -301,13 +291,12 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 			// up / home action bar button pressed
 			Intent upIntent = new Intent(this, UserPrefs.class);
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-				// This activity is not part of the application's task, so create a new task
-				// with a synthesized back stack.
-				TaskStackBuilder.create(this).addNextIntent(new Intent(this, HomeScreen.class)).addNextIntent(upIntent).startActivities();
+				TaskStackBuilder builder = TaskStackBuilder.create(this);
+				builder.addNextIntent(new Intent(this, HomeScreen.class));
+				builder.addNextIntent(upIntent);
+				builder.startActivities();
 				finish();
 			} else {
-				// This activity is part of the application's task, so simply
-				// navigate up to the hierarchical parent activity.
 				NavUtils.navigateUpTo(this, upIntent);
 			}
 			return true;
@@ -315,19 +304,27 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 		return super.onOptionsItemSelected(item);
 	}
 
+	private String getErrorMessage(String[] errors) {
+		StringBuilder sb = new StringBuilder(getText(R.string.fill_in_prompt));
+		sb.append(" ").append(errors[0]);
+		for (int i = 1; i < errors.length; i++) {
+			sb.append(", ").append(errors[i]);
+		}
+		String errorText = sb.toString();
+		return errorText;
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 
 		case REQUEST_FORM:
-			// FormBuilder result
 			if (resultCode == RESULT_OK) {
 				mFormBuilt = true;
 			}
 			return;
 
 		default:
-			// Not my request
 			super.onActivityResult(requestCode, resultCode, data);
 		}
 
@@ -336,8 +333,12 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	@Override
 	public void onBackPressed() {
 		// If config not finished, don't want to allow user to go back
-		if (mFormBuilt && checkFilledIn().length == 0) {
+		String[] errors = checkFilledIn();
+		if (mFormBuilt && errors.length == 0) {
+			save();
 			super.onBackPressed();
+		} else {
+			Toast.makeText(this, getErrorMessage(errors), Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -352,56 +353,46 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	private boolean save() {
 		boolean result = true;
 
-		Intent intent = new Intent(this, Saver.class);
-		intent.setAction(Keys.ACTION_SAVE_CONFIG);
-		intent.putExtra(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
-		intent.putExtra(Keys.CONFIG_DOCTOR_NAME, mDocName.getText().toString());
-		intent.putExtra(Keys.CONFIG_DOC, mDocEmail.getText().toString());
-		intent.putExtra(Keys.CONFIG_PHARM, mPharmEmail.getText().toString());
+		Intent saver = new Intent(this, Saver.class);
+		saver.setAction(Keys.ACTION_SAVE_CONFIG);
+		saver.putExtra(Keys.CONFIG_PATIENT_NAME, mPatientName.getText().toString());
+		saver.putExtra(Keys.CONFIG_DOCTOR_NAME, mDocName.getText().toString());
+		saver.putExtra(Keys.CONFIG_DOC, mDocEmail.getText().toString());
+		saver.putExtra(Keys.CONFIG_PHARM, mPharmEmail.getText().toString());
 
 		int number = 0;
 		int length = 0;
 
-		// Period number
-		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
-			try {
-				number = Integer.parseInt(mPeriodNumber.getText().toString());
-			} catch (NumberFormatException e) {
-				Toast.makeText(this, R.string.invalid_period_input, Toast.LENGTH_LONG).show();
-				result = false;
-			}
-		} else {
-			number = mIntPeriodNumber;
+		try {
+			number = getNumberPeriods();
+		} catch (NumberFormatException e) {
+			Toast.makeText(this, R.string.invalid_period_input, Toast.LENGTH_LONG).show();
+			result = false;
 		}
-		intent.putExtra(Keys.CONFIG_NUMBER_PERIODS, number);
+		saver.putExtra(Keys.CONFIG_NUMBER_PERIODS, number);
 
-		// Period length
-		if (mPeriodLength.getVisibility() == View.VISIBLE) {
-			try {
-				length = Integer.parseInt(mPeriodLength.getText().toString());
-			} catch (NumberFormatException e) {
-				Toast.makeText(this, R.string.invalid_length_input, Toast.LENGTH_LONG).show();
-				result = false;
-			}
-		} else {
-			length = mIntPeriodLength;
+		try {
+			length = getPeriodLength();
+		} catch (NumberFormatException e) {
+			Toast.makeText(this, R.string.invalid_length_input, Toast.LENGTH_LONG).show();
+			result = false;
 		}
-		intent.putExtra(Keys.CONFIG_PERIOD_LENGTH, length);
+		saver.putExtra(Keys.CONFIG_PERIOD_LENGTH, length);
 
-		intent.putExtra(Keys.CONFIG_BUILT, mFormBuilt);
+		saver.putExtra(Keys.CONFIG_BUILT, mFormBuilt);
 
 		// Start date
-		intent.putExtra(Keys.CONFIG_START, mDate.getDate());
+		saver.putExtra(Keys.CONFIG_START, mDate.getDate());
 
 		// Save times to remind to take medicine
 		String[] times = mTimeSetter.getTimes();
 		for (int i = 0; i < times.length; i++) {
-			intent.putExtra(Keys.CONFIG_TIME + i, times[i]);
+			saver.putExtra(Keys.CONFIG_TIME + i, times[i]);
 		}
 
-		intent.putExtra(Keys.CONFIG_TREATMENT_A, mTreatmentA.getText().toString());
-		intent.putExtra(Keys.CONFIG_TREATMENT_B, mTreatmentB.getText().toString());
-		intent.putExtra(Keys.CONFIG_TREATMENT_NOTES, mAnyNotes.getText().toString());
+		saver.putExtra(Keys.CONFIG_TREATMENT_A, mTreatmentA.getText().toString());
+		saver.putExtra(Keys.CONFIG_TREATMENT_B, mTreatmentB.getText().toString());
+		saver.putExtra(Keys.CONFIG_TREATMENT_NOTES, mAnyNotes.getText().toString());
 
 		// save checked boxes
 		int[] arr = mArray.getSelected();
@@ -413,21 +404,68 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 					break;
 				}
 			}
-			intent.putExtra(Keys.CONFIG_DAY + j, contains);
+			saver.putExtra(Keys.CONFIG_DAY + j, contains);
 		}
 
 		// Get question data
 		SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 		ArrayList<String> quesList = new ArrayList<String>();
 		for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
-			quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
+			String questionStr = ques.getString(Keys.QUES_TEXT + i, "") + getQuestionSuffix(ques, i);
+			quesList.add(questionStr);
 		}
-		intent.putStringArrayListExtra(Keys.CONFIG_QUESTION_LIST, quesList);
+		saver.putStringArrayListExtra(Keys.CONFIG_QUESTION_LIST, quesList);
 
 		// offload saving to background service
-		startService(intent);
+		startService(saver);
 
 		return result;
+	}
+
+	private int getNumberPeriods() throws NumberFormatException {
+		int number = 0;
+		if (mPeriodNumber.getVisibility() == View.VISIBLE) {
+			try {
+				number = Integer.parseInt(mPeriodNumber.getText().toString());
+			} catch (NumberFormatException e) {
+				throw new NumberFormatException(e.getMessage());
+			}
+		} else {
+			number = mIntPeriodNumber;
+		}
+		return number;
+	}
+
+	private int getPeriodLength() throws NumberFormatException {
+		int length;
+		if (mPeriodLength.getVisibility() == View.VISIBLE) {
+			try {
+				length = Integer.parseInt(mPeriodLength.getText().toString());
+			} catch (NumberFormatException e) {
+				throw new NumberFormatException(e.getMessage());
+			}
+		} else {
+			length = mIntPeriodLength;
+		}
+		return length;
+	}
+
+	private String getQuestionSuffix(SharedPreferences ques, int id) {
+		int type = ques.getInt(Keys.QUES_TYPE + id, 0);
+		String suffix = "";
+
+		switch (type) {
+		case Question.SCALE:
+			suffix = " [0 - 6]";
+			break;
+		case Question.CHECK:
+			suffix = " [0 - 1]";
+			break;
+		case Question.NUMBER:
+			break;
+		}
+		return suffix;
+
 	}
 
 	/** Helper to ask for backup, if supported */

@@ -34,4 +34,6 @@ public interface GaeUserProxy extends EntityProxy {
 
 	public String getLogoutUrl();
 
+	public String getLoginUrl();
+
 }

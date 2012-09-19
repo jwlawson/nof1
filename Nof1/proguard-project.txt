@@ -23,20 +23,34 @@
 ####################################################
 -keep class org.nof1trial.nof1.Backup { *; }
 
+# Remove debug logging
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+}
+
 ####################################################
 # RequestFactory
 ####################################################
--keep interface org.nof1trial.nof1.shared.** {*;}
+-keep interface org.nof1trial.nof1.shared.* {*;}
+-keep class org.nof1trial.nof1.shared.MyRequestFactoryDeobfuscatorBuilder {*;}
+-keep interface com.google.web.bindery.requestfactory.shared.BaseProxy {*;}
+-keep interface com.google.web.bindery.requestfactory.shared.EntityProxy {*;}
+
+-keepnames class com.google.web.bindery.requestfactory.shared.** {*;}
+
+-keep interface com.google.web.bindery.autobean.shared.** {*;}
+-keep interface com.google.web.bindery.requestfactory.shared.** {*;}
+
+-keepattributes Exceptions,InnerClasses,Signature,SourceFile,LineNumberTable,*Annotation*
 
 ####################################################
 # ActionBarSherlock
 ####################################################
--keep class android.support.v4.app.** { *; }
--keep interface android.support.v4.app.** { *; }
+-keepnames class android.support.v4.app.** { *; }
+-keepnames interface android.support.v4.app.** { *; }
 -keep class com.actionbarsherlock.** { *; }
 -keep interface com.actionbarsherlock.** { *; }
-
--keepattributes *Annotation*
 
 ####################################################
 # ACRA
@@ -48,14 +62,12 @@
 -keep class org.acra.ReportingInteractionMode {*;}
 
 # keep this otherwise it is removed by ProGuard
--keep public class org.acra.ErrorReporter
-{
+-keep public class org.acra.ErrorReporter{
 public void addCustomData(java.lang.String,java.lang.String);
 }
 
 # keep this otherwise it is removed by ProGuard
--keep public class org.acra.ErrorReporter
-{
+-keep public class org.acra.ErrorReporter{
 public org.acra.ErrorReporter$ReportsSenderWorker handleSilentException(java.lang.Throwable);
 }
 

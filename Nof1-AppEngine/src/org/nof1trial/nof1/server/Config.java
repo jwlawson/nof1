@@ -76,7 +76,6 @@ public class Config {
 			log.info("Found old config for user: " + getUserEmail());
 
 			Config old = list.get(0);
-
 			conf = conf.mergeWithExisting(old);
 
 		} else {
@@ -85,113 +84,13 @@ public class Config {
 				conf.patientEmail = getUserEmail();
 			}
 
-			// Generate schedule
-
-			// Get basic information
-			int number = conf.numberPeriods.intValue();
-			int length = conf.lengthPeriods.intValue();
-			// int perDay = mTimeSetter.getTimes().length;
-			String start = conf.startDate;
-
-			// Set up fields
-			Random rand = new Random();
-			StringBuilder sb1 = new StringBuilder();
-			StringBuilder dates = new StringBuilder();
-
-			// Set calendar instance to start date
-			Calendar cal = Calendar.getInstance();
-			String[] startArr = start.split(":");
-			int[] startInt = new int[] { Integer.parseInt(startArr[0]), Integer.parseInt(startArr[1]), Integer.parseInt(startArr[2]) };
-			cal.set(startInt[2], startInt[1], startInt[0]);
-
-			/*
-			 * For each pair of treatment periods, randomly assign A or B first
-			 * Record data in the string builders.
-			 * SB contains a short version either AB or BA
-			 * dates contains a list of which dates go with which medicine
-			 */
-			for (int i = 0; i < number; i++) {
-				if (rand.nextBoolean()) {
-					sb1.append("AB");
-					// Get start date
-					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append(" ").append(cal.get(Calendar.MONTH) + 1).append("/")
-							.append(cal.get(Calendar.YEAR)).append(" - ");
-					// Get end date
-					cal.add(Calendar.DAY_OF_MONTH, length - 1);
-					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
-							.append(cal.get(Calendar.YEAR)).append(": ");
-					dates.append(conf.treatmentA).append("\n");
-					// add a day for next start date
-					cal.add(Calendar.DAY_OF_MONTH, 1);
-
-					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
-							.append(cal.get(Calendar.YEAR)).append(" - ");
-					cal.add(Calendar.DAY_OF_MONTH, length - 1);
-					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
-							.append(cal.get(Calendar.YEAR)).append(": ");
-					dates.append(conf.treatmentB).append("\n");
-					cal.add(Calendar.DAY_OF_MONTH, 1);
-				} else {
-					sb1.append("BA");
-					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
-							.append(cal.get(Calendar.YEAR)).append(" - ");
-					cal.add(Calendar.DAY_OF_MONTH, length - 1);
-					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
-							.append(cal.get(Calendar.YEAR)).append(": ");
-					dates.append(conf.treatmentB).append("\n");
-					cal.add(Calendar.DAY_OF_MONTH, 1);
-
-					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
-							.append(cal.get(Calendar.YEAR)).append(" - ");
-					cal.add(Calendar.DAY_OF_MONTH, length - 1);
-					dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
-							.append(cal.get(Calendar.YEAR)).append(": ");
-					dates.append(conf.treatmentA).append("\n");
-					cal.add(Calendar.DAY_OF_MONTH, 1);
-				}
-				sb1.append("|");
-			}
-
-			conf.schedule = sb1.toString();
-			log.info("Config schedule set up: " + conf.schedule);
+			String dates = generateSchedule(conf);
 
 			// Pharmacist email
 
-			StringBuilder sb2 = new StringBuilder();
-			sb2.append("Thank you for agreeing to provide the treatments for an upcoming Nof1 trial. ");
-			sb2.append("The information supplied below will hopefully be sufficient for you to make up the treatment plan for the trial. ");
-			sb2.append("Should you have any questions, please contact the doctor administering the trial, do not reply to this email, as any reply will not be read. ");
-			sb2.append("Remember that the Nof1 trial should be done double blinded, so the treatment schedule below should not be disclosed with the clinician. ");
-			sb2.append("\n\nNof1 App team");
-			sb2.append("\n\n").append("Doctor Name: ").append(conf.doctorName);
-			sb2.append("\n").append("Doctor email: ").append(conf.doctorEmail);
-			sb2.append("\n").append("Patient Name: ").append(conf.patientName);
-			sb2.append("\n\n").append("Treatment A: ").append(conf.treatmentA);
-			sb2.append("\n").append("Treatment B: ").append(conf.treatmentB);
-			sb2.append("\n\n").append("Treatment notes: ").append(conf.treatmentNotes);
-			// sb.append("\n\n").append("Medicine taken ").append(5).append(" times a day");
-			sb2.append("\n\n");
-			sb2.append(dates);
-
-			String msgStr = sb2.toString();
-
-			try {
-				Message msg = new MimeMessage(session);
-				msg.setFrom(new InternetAddress("john@nof1trial.org", "Nof1 Admin"));
-				msg.addRecipient(Message.RecipientType.TO, new InternetAddress(conf.pharmEmail, ""));
-				msg.setSubject("Nof1 Trial Schedule");
-				msg.setText(msgStr);
-				Transport.send(msg);
-
-			} catch (AddressException e) {
-				log.warning("Email not sent, invalid address");
-			} catch (MessagingException e) {
-				log.warning("Email not sent, invalid message");
-			} catch (UnsupportedEncodingException e) {
-				log.warning("Email not sent, unsupported encoding");
-			}
-
-			log.info("Email sent to Pharmacist");
+			String msgStr = getPharmacistEmailBody(conf, dates);
+			sendEmail(session, msgStr, conf.pharmEmail, "");
+			log.info("Email sent to Pharmacist " + conf.pharmEmail);
 
 			// Save config to data store
 			conf.persist();
@@ -201,32 +100,17 @@ public class Config {
 
 		// Doctor Email
 
-		// Make email text
-		StringBuilder sb = new StringBuilder("Thanks for choosing to use the Nof1 Trial app.");
-		sb.append("\n").append("Patient name: ").append(conf.patientName);
-		sb.append("\n").append("Treatment A: ").append(conf.treatmentA);
-		sb.append("\n").append("Treatment B: ").append(conf.treatmentB);
-		sb.append("\n").append("Treatment notes: ").append(conf.treatmentNotes);
+		String msgBody = getDoctorEmailBody(conf);
+		sendEmail(session, msgBody, conf.doctorEmail, conf.doctorName);
 
-		// Medicine schedule
-		sb.append("\n\n").append("Start date:").append(conf.startDate);
+		return conf;
+	}
 
-		// Treatment length
-		sb.append("\n").append("Number of treatment periods: ").append(conf.numberPeriods);
-		sb.append("\n").append("Length of each treatment period: ").append(conf.lengthPeriods);
-
-		// Questions
-		sb.append("\n\n").append("Patient questions: ").append("\n");
-
-		for (String str : conf.questionList) {
-			sb.append(str).append("\n");
-		}
-		String msgBody = sb.toString();
-
+	private static void sendEmail(Session session, String msgBody, String toEmail, String toName) {
 		try {
 			Message msg = new MimeMessage(session);
 			msg.setFrom(new InternetAddress("john@nof1trial.org", "Nof1 Admin"));
-			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(conf.doctorEmail, conf.doctorName));
+			msg.addRecipient(Message.RecipientType.TO, new InternetAddress(toEmail, toName));
 			msg.setSubject("Your Nof1 account has been activated");
 			msg.setText(msgBody);
 			Transport.send(msg);
@@ -238,9 +122,124 @@ public class Config {
 		} catch (UnsupportedEncodingException e) {
 			log.warning("Email not sent, unsupported encoding");
 		}
-		log.info("Email sent to doctor");
+	}
 
-		return conf;
+	private static String getDoctorEmailBody(Config conf) {
+		final StringBuilder sb = new StringBuilder("Thanks for choosing to use the Nof1 Trial app.");
+		sb.append("\n").append("Patient name: ").append(conf.patientName);
+		sb.append("\n").append("Treatment A: ").append(conf.treatmentA);
+		sb.append("\n").append("Treatment B: ").append(conf.treatmentB);
+		sb.append("\n").append("Treatment notes: ").append(conf.treatmentNotes);
+
+		sb.append("\n\n").append("Start date:").append(conf.startDate);
+		sb.append("\n").append("Number of treatment periods: ").append(conf.numberPeriods);
+		sb.append("\n").append("Length of each treatment period: ").append(conf.lengthPeriods);
+
+		sb.append("\n\n").append("Patient questions: ").append("\n");
+
+		for (String str : conf.questionList) {
+			sb.append(str).append("\n");
+		}
+		String msgBody = sb.toString();
+		return msgBody;
+	}
+
+	private static String getPharmacistEmailBody(Config conf, String dates) {
+		final StringBuilder sb = new StringBuilder();
+		sb.append("Thank you for agreeing to provide the treatments for an upcoming Nof1 trial. ");
+		sb.append("The information supplied below will hopefully be sufficient for you to make up the treatment plan for the trial. ");
+		sb.append("Should you have any questions, please contact the doctor administering the trial, do not reply to this email, as any reply will not be read. ");
+		sb.append("Remember that the Nof1 trial should be done double blinded, so the treatment schedule below should not be disclosed with the clinician. ");
+		sb.append("\n\nNof1 App team");
+		sb.append("\n\n").append("Doctor Name: ").append(conf.doctorName);
+		sb.append("\n").append("Doctor email: ").append(conf.doctorEmail);
+		sb.append("\n").append("Patient Name: ").append(conf.patientName);
+		sb.append("\n\n").append("Treatment A: ").append(conf.treatmentA);
+		sb.append("\n").append("Treatment B: ").append(conf.treatmentB);
+		sb.append("\n\n").append("Treatment notes: ").append(conf.treatmentNotes);
+		// sb.append("\n\n").append("Medicine taken ").append(5).append(" times a day");
+		sb.append("\n\n");
+		sb.append(dates);
+
+		String msgStr = sb.toString();
+		return msgStr;
+	}
+
+	private static String generateSchedule(Config conf) {
+		// Generate schedule
+
+		// Get basic information
+		int number = conf.numberPeriods.intValue();
+		int length = conf.lengthPeriods.intValue();
+		String start = conf.startDate;
+
+		// Set up fields
+		Random rand = new Random();
+		StringBuilder sb1 = new StringBuilder();
+		StringBuilder dates = new StringBuilder();
+
+		// Set calendar instance to start date
+		Calendar cal = getCalendarFromDateString(start);
+
+		/*
+		 * For each pair of treatment periods, randomly assign A or B first
+		 * Record data in the string builders.
+		 * SB contains a short version either AB or BA
+		 * dates contains a list of which dates go with which medicine
+		 */
+		for (int i = 0; i < number; i++) {
+			if (rand.nextBoolean()) {
+				sb1.append("AB");
+				// Get start date
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append(" ").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(" - ");
+				// Get end date
+				cal.add(Calendar.DAY_OF_MONTH, length - 1);
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(": ");
+				dates.append(conf.treatmentA).append("\n");
+				// add a day for next start date
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(" - ");
+				cal.add(Calendar.DAY_OF_MONTH, length - 1);
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(": ");
+				dates.append(conf.treatmentB).append("\n");
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+			} else {
+				sb1.append("BA");
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(" - ");
+				cal.add(Calendar.DAY_OF_MONTH, length - 1);
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(": ");
+				dates.append(conf.treatmentB).append("\n");
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(" - ");
+				cal.add(Calendar.DAY_OF_MONTH, length - 1);
+				dates.append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(cal.get(Calendar.MONTH) + 1).append("/")
+						.append(cal.get(Calendar.YEAR)).append(": ");
+				dates.append(conf.treatmentA).append("\n");
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+			}
+			sb1.append("|");
+		}
+
+		conf.schedule = sb1.toString();
+		log.info("Config schedule set up: " + conf.schedule);
+		return dates.toString();
+	}
+
+	private static Calendar getCalendarFromDateString(String dateStr) {
+		Calendar cal = Calendar.getInstance();
+		String[] startArr = dateStr.split(":");
+		int[] startInt = new int[] { Integer.parseInt(startArr[0]), Integer.parseInt(startArr[1]), Integer.parseInt(startArr[2]) };
+		cal.set(startInt[2], startInt[1], startInt[0]);
+		return cal;
 	}
 
 	public static void delete(Config conf) {
@@ -406,19 +405,18 @@ public class Config {
 		try {
 			Config old = em.find(Config.class, existing.getId());
 
-			// TODO Only update fields which are not null
-			old.doctorEmail = doctorEmail;
-			old.doctorName = doctorName;
-			old.lengthPeriods = lengthPeriods;
-			old.numberPeriods = numberPeriods;
-			old.patientName = patientName;
-			old.pharmEmail = pharmEmail;
-			old.questionList = questionList;
-			old.startDate = startDate;
-			old.treatmentA = treatmentA;
-			old.treatmentB = treatmentB;
-			old.treatmentNotes = treatmentNotes;
-			old.endDate = endDate;
+			if (doctorEmail != null) old.doctorEmail = doctorEmail;
+			if (doctorName != null) old.doctorName = doctorName;
+			if (lengthPeriods != null) old.lengthPeriods = lengthPeriods;
+			if (numberPeriods != null) old.numberPeriods = numberPeriods;
+			if (patientName != null) old.patientName = patientName;
+			if (pharmEmail != null) old.pharmEmail = pharmEmail;
+			if (questionList != null) old.questionList = questionList;
+			if (startDate != null) old.startDate = startDate;
+			if (treatmentA != null) old.treatmentA = treatmentA;
+			if (treatmentB != null) old.treatmentB = treatmentB;
+			if (treatmentNotes != null) old.treatmentNotes = treatmentNotes;
+			if (endDate != null) old.endDate = endDate;
 
 			return old;
 		} finally {

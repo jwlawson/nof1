@@ -67,9 +67,6 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 	/** Manager that handles backing up data */
 	private BackupManager mBackupManager;
 
-	public DoctorLogin() {
-	}
-
 	@TargetApi(8)
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,24 +78,17 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 		}
 
 		if (sharedPrefs.getBoolean(Keys.CONFIG_FIRST, true)) {
-
-			// First time the app has been run.
 			firstLogin(sharedPrefs, null);
-
 		} else {
-
-			// Not the first time, so login already made
 			login(sharedPrefs, null);
-
 		}
 
 	}
 
 	private void firstLogin(final SharedPreferences sharedPrefs, String emailStr) {
 
-		// First time the app has been run. Set up doctor login.
-		AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, THEME));
-		View view = getInflater().inflate(R.layout.config_doctor_first_login, null, false);
+		final AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, THEME));
+		final View view = getInflater().inflate(R.layout.config_doctor_first_login, null, false);
 
 		final EditText email = (EditText) view.findViewById(R.id.config_doctor_first_edit_email);
 		email.setText(emailStr);
@@ -120,20 +110,7 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 
 					if (passStr.equals(pass2Str)) {
 
-						// generate unique ID
-						UUID uniqueId = UUID.randomUUID();
-						String uuidStr = uniqueId.toString();
-
-						// Hash and salt the email and password, then add to shared preferences.
-						// This will be what we check against at further logins.
-						SharedPreferences.Editor editor = sharedPrefs.edit();
-						editor.putString(Keys.CONFIG_UUID, uuidStr);
-						editor.putString(Keys.CONFIG_EMAIL, new String(Hex.encodeHex(DigestUtils.sha512(emailStr1 + uuidStr))));
-						editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr + uuidStr))));
-						editor.putBoolean(Keys.CONFIG_FIRST, false);
-						editor.commit();
-
-						backup();
+						saveLoginDetails(sharedPrefs, passStr, emailStr1);
 
 						launch(emailStr1);
 					} else {
@@ -238,5 +215,22 @@ public class DoctorLogin extends SherlockActivity implements DialogInterface.OnC
 		dialog.dismiss();
 		setResult(RESULT_CANCELED);
 		this.finish();
+	}
+
+	private void saveLoginDetails(final SharedPreferences sharedPrefs, String passStr, String emailStr1) {
+		// generate unique ID
+		UUID uniqueId = UUID.randomUUID();
+		String uuidStr = uniqueId.toString();
+
+		// Hash and salt the email and password, then add to shared preferences.
+		// This will be what we check against at further logins.
+		SharedPreferences.Editor editor = sharedPrefs.edit();
+		editor.putString(Keys.CONFIG_UUID, uuidStr);
+		editor.putString(Keys.CONFIG_EMAIL, new String(Hex.encodeHex(DigestUtils.sha512(emailStr1 + uuidStr))));
+		editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr + uuidStr))));
+		editor.putBoolean(Keys.CONFIG_FIRST, false);
+		editor.commit();
+
+		backup();
 	}
 }
