@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="src" path="shared"/>
-	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path=".apt_generated">
 		<attributes>
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-<<<<<<< HEAD
-=======
-	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-servlet-deps.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/hibernate-validator-4.3.0.Final.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/jboss-logging-3.1.0.CR2.jar"/>
->>>>>>> 7fdb544aad9a35775ecb606d17fe3839624b2ec1
-	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="shared"/>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER/v2"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-servlet-deps.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/hibernate-validator-4.3.0.Final.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/jboss-logging-3.1.0.CR2.jar"/>
