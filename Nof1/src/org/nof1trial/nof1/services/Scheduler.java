@@ -93,7 +93,8 @@ public class Scheduler extends IntentService {
 		} else if (intent.getBooleanExtra(Keys.INTENT_FIRST, false)) {
 			if (DEBUG) Log.d(TAG, "Scheduler run for the first time");
 
-			firstRun();
+			String startDate = intent.getStringExtra(Keys.CONFIG_START);
+			firstRun(startDate);
 
 		} else if (intent.hasExtra(Keys.INTENT_RESCHEDULE)) {
 			if (DEBUG) Log.d(TAG, "Rescheduling alarm");
@@ -113,18 +114,16 @@ public class Scheduler extends IntentService {
 	}
 
 	/** Set alarm for the start date of trial */
-	private void firstRun() {
-		SharedPreferences configPrefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+	private void firstRun(String startDate) {
 
 		SharedPreferences schedPrefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 		SharedPreferences.Editor schedEdit = schedPrefs.edit();
 
 		// Load start date as next time for notification
-		String start = configPrefs.getString(Keys.CONFIG_START, null);
-		if (start == null) {
+		if (startDate == null) {
 			Log.e(TAG, "Start date not initialised, config needs to be run");
 		} else {
-			schedEdit.putString(Keys.SCHED_NEXT_DATE, start);
+			schedEdit.putString(Keys.SCHED_NEXT_DATE, startDate);
 			schedEdit.putInt(Keys.SCHED_NEXT_DAY, 1);
 			schedEdit.putInt(Keys.SCHED_CUR_PERIOD, 1);
 
@@ -132,7 +131,7 @@ public class Scheduler extends IntentService {
 			backup();
 
 			// Set up first time run notification
-			setFirstAlarm(start);
+			setFirstAlarm(startDate);
 		}
 	}
 
@@ -209,7 +208,8 @@ public class Scheduler extends IntentService {
 		schedEdit.putInt(Keys.SCHED_NEXT_DAY, schedPrefs.getInt(Keys.SCHED_LAST_DAY, 1));
 		schedEdit.putInt(Keys.SCHED_CUR_PERIOD, schedPrefs.getInt(Keys.SCHED_LAST_PERIOD, 1));
 		schedEdit.putString(Keys.SCHED_NEXT_DATE, schedPrefs.getString(Keys.SCHED_LAST_DATE, null));
-		schedEdit.putInt(Keys.SCHED_NEXT_CUMULATIVE_DAY, schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 1));
+		schedEdit.putInt(Keys.SCHED_NEXT_CUMULATIVE_DAY,
+				schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 1));
 
 		schedEdit.commit();
 		backup();
@@ -314,7 +314,8 @@ public class Scheduler extends IntentService {
 				Intent intent = new Intent(this, AlarmReceiver.class);
 				intent.putExtra(Keys.INTENT_MEDICINE, true);
 
-				// Make sure each medicine notification gets a different request id
+				// Make sure each medicine notification gets a different request
+				// id
 				setAlarm(intent, alarmCal);
 				if (DEBUG) Log.d(TAG, "Scheduling a repeating medicine alarm at " + time);
 			}
@@ -343,7 +344,8 @@ public class Scheduler extends IntentService {
 
 	/** Set an alarm to fire off specified intent at time stored in calendar */
 	private void setAlarm(Intent intent, Calendar cal) {
-		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES, intent,
+				PendingIntent.FLAG_CANCEL_CURRENT);
 
 		mAlarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
 	}
@@ -352,8 +354,10 @@ public class Scheduler extends IntentService {
 	 * Set an alarm at specified date and time.
 	 * 
 	 * @param intent
-	 * @param dateStr DD:MM:YYYY
-	 * @param timeStr HH:MM
+	 * @param dateStr
+	 *            DD:MM:YYYY
+	 * @param timeStr
+	 *            HH:MM
 	 */
 	private void setAlarm(Intent intent, String dateStr, String timeStr) {
 
@@ -364,7 +368,8 @@ public class Scheduler extends IntentService {
 
 	private Calendar getCalendarFromString(String date) {
 		String[] lastArr = date.split(":");
-		int[] lastInt = new int[] { Integer.parseInt(lastArr[0]), Integer.parseInt(lastArr[1]), Integer.parseInt(lastArr[2]) };
+		int[] lastInt = new int[] { Integer.parseInt(lastArr[0]), Integer.parseInt(lastArr[1]),
+				Integer.parseInt(lastArr[2]) };
 		Calendar cal = Calendar.getInstance();
 		cal.set(lastInt[2], lastInt[1], lastInt[0]);
 		return cal;
@@ -374,7 +379,8 @@ public class Scheduler extends IntentService {
 		String[] dateArr = dateStr.split(":");
 		String[] timeArr = timeStr.split(":");
 
-		int[] dateInt = new int[] { Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]), Integer.parseInt(dateArr[2]) };
+		int[] dateInt = new int[] { Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]),
+				Integer.parseInt(dateArr[2]) };
 		int[] timeInt = new int[] { Integer.parseInt(timeArr[0]), Integer.parseInt(timeArr[1]) };
 
 		Calendar cal = Calendar.getInstance();
