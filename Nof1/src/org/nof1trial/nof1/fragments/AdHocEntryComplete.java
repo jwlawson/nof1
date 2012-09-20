@@ -107,8 +107,7 @@ public class AdHocEntryComplete extends SherlockDialogFragment {
 					// Run scheduler to cancel todays alarm
 					btnCancel.setEnabled(false);
 					Intent intent = new Intent(getActivity(), Scheduler.class);
-					intent.putExtra(Keys.INTENT_BOOT, false);
-					intent.putExtra(Keys.INTENT_ALARM, true);
+					intent.setAction(Keys.ACTION_CANCEL_ALARM);
 					getActivity().startService(intent);
 				}
 			});

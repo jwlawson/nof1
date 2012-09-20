@@ -119,6 +119,18 @@ public class Keys {
 	/** Intent key for whether the questionnaire is loaded from scheduled alert */
 	public static final String INTENT_SCHEDULED = "org.nof1trial.nof1.scheduled";
 
+	public static final String ACTION_CANCEL_ALARM = "org.nof1trial.nof1.CANCEL_ALARM";
+
+	public static final String ACTION_SET_FIRST_ALARM = "org.nof1trial.nof1.SET_FIRST_ALARM";
+
+	public static final String ACTION_GOT_FIRST_ALARM = "org.nf1trial.nof1.GOT_FIRST_ALARM";
+
+	public static final String ACTION_SET_NEXT_ALARM = "org.nof1trial.nof1.SET_NEXT_ALARM";
+
+	public static final String ACTION_SET_MEDICINE_ALARM = "org.nof1trial.nof1.SET_MEDICINE_ALARM";
+
+	public static final String ACTION_RESCHEDULE_ALARM = "org.nof1trial.nof1.RESCHEDULE_ALARM";
+
 	/** Intent action for save config */
 	public static final String ACTION_SAVE_CONFIG = "org.nof1trial.nof1.SAVE_CONFIG";
 
@@ -271,5 +283,7 @@ public class Keys {
 
 	/** Shared preference key for whether the trial is finished */
 	public static final String SCHED_FINISHED = "finished";
+
+	public static final String SCHED_START = "schedule_start";
 
 }

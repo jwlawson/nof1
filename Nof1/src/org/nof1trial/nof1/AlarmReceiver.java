@@ -54,9 +54,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
 			if (DEBUG) Log.d(TAG, "Boot_complete broadcast caught");
 
-			Intent scheduler = new Intent(context, Scheduler.class);
-			scheduler.putExtra(Keys.INTENT_BOOT, true);
-			context.startService(scheduler);
+			sendActionToScheduler(context, Intent.ACTION_BOOT_COMPLETED);
 
 			Intent saver = new Intent(context, Saver.class);
 			saver.setAction(Intent.ACTION_BOOT_COMPLETED);
@@ -67,32 +65,26 @@ public class AlarmReceiver extends BroadcastReceiver {
 
 			showRepeatNotification(context);
 
-			// Pass to scheduler
-			Intent i = new Intent(context, Scheduler.class);
-			i.putExtra(Keys.INTENT_BOOT, false);
-			i.putExtra(Keys.INTENT_ALARM, true);
-			context.startService(i);
+			sendActionToScheduler(context, Keys.ACTION_SET_NEXT_ALARM);
 
 		} else if (intent.getBooleanExtra(Keys.INTENT_FIRST, false)) {
 			if (DEBUG) Log.d(TAG, "First time run alarm caught");
 
 			showFirstNotification(context);
 
-			// Pass to scheduler
-			Intent i = new Intent(context, Scheduler.class);
-			i.putExtra(Keys.INTENT_BOOT, false);
-			i.putExtra(Keys.INTENT_ALARM, true); // Really do want to use
-													// INTENT_ALARM, not
-													// INTENT_FIRST
-			i.putExtra(Keys.INTENT_FIRST, true); // Both tells scheduler to set
-													// up medicine alarms
-			context.startService(i);
+			sendActionToScheduler(context, Keys.ACTION_GOT_FIRST_ALARM);
 
 		} else if (intent.getBooleanExtra(Keys.INTENT_MEDICINE, false)) {
 			if (DEBUG) Log.d(TAG, "Medicine alarm caught");
 
 			showMedicineNotification(context);
 		}
+	}
+
+	private void sendActionToScheduler(Context context, String action) {
+		Intent setupSched = new Intent(context, Scheduler.class);
+		setupSched.setAction(action);
+		context.startService(setupSched);
 	}
 
 	/** Set notification reminding patient to input data */
@@ -102,22 +94,19 @@ public class AlarmReceiver extends BroadcastReceiver {
 		intent.putExtra(Keys.INTENT_SCHEDULED, true);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-		setNotification(context, intent, R.string.noti_repeat_title, R.string.noti_repeat_text,
-				0x101);
+		setNotification(context, intent, R.string.noti_repeat_title, R.string.noti_repeat_text, 0x101);
 	}
 
 	/** Set the first notification at start of trial */
 	private void showFirstNotification(Context context) {
 
-		setNotification(context, new Intent(), R.string.noti_first_title, R.string.noti_first_text,
-				0x102);
+		setNotification(context, new Intent(), R.string.noti_first_title, R.string.noti_first_text, 0x102);
 
 	}
 
 	private void showMedicineNotification(Context context) {
 
-		setNotification(context, new Intent(), R.string.noti_medicine_title,
-				R.string.noti_medicine_text, 0x103);
+		setNotification(context, new Intent(), R.string.noti_medicine_title, R.string.noti_medicine_text, 0x103);
 	}
 
 	/**
@@ -151,20 +140,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 	 */
 	private void setNotification(Context context, Intent intent, String title, String text, int id) {
 
-		SharedPreferences sp = context.getSharedPreferences(Keys.DEFAULT_PREFS,
-				Context.MODE_PRIVATE);
+		SharedPreferences sp = context.getSharedPreferences(Keys.DEFAULT_PREFS, Context.MODE_PRIVATE);
 
-		PendingIntent pi = PendingIntent.getActivity(context, 0, intent,
-				PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pi = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-		builder.setContentIntent(pi)
-				.setContentTitle(title)
-				.setContentText(text)
-				.setAutoCancel(true)
-				.setSmallIcon(R.drawable.ic_noti)
-				.setLargeIcon(
-						BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_noti));
+		builder.setContentIntent(pi).setContentTitle(title).setContentText(text).setAutoCancel(true).setSmallIcon(R.drawable.ic_noti)
+				.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_noti));
 
 		int style = 0;
 
@@ -187,8 +169,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
 		Notification noti = builder.build();
 
-		((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(id,
-				noti);
+		((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(id, noti);
 
 	}
 }

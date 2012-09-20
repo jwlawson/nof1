@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.nof1trial.nof1.activities;
 
-import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.services.Scheduler;
 
@@ -99,7 +98,7 @@ public class UserPrefs extends SherlockPreferenceActivity {
 
 		// Tell Scheduler to redo alarms, as time could have changed
 		Intent intent = new Intent(this, Scheduler.class);
-		intent.putExtra(Keys.INTENT_BOOT, true);
+		intent.setAction(Intent.ACTION_BOOT_COMPLETED);
 		startService(intent);
 		super.onPause();
 	}

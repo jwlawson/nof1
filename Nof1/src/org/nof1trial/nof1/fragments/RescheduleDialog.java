@@ -41,30 +41,30 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
  * 
  */
 public class RescheduleDialog extends SherlockDialogFragment {
-	
+
 	private static final String TAG = "RescheduleDialog";
 	private static final boolean DEBUG = false;
-	
+
 	private static final String ARGS_SPINNER = TAG + "Spinner";
-	
+
 	private Spinner mSpinner;
-	
+
 	private OnRescheduleListener mListener;
-	
+
 	public RescheduleDialog() {
 	}
-	
+
 	public interface OnRescheduleListener {
-		
+
 		public void onReschedule(boolean rescheduled);
 	}
-	
+
 	public static RescheduleDialog newInstance() {
 		RescheduleDialog frag = new RescheduleDialog();
-		
+
 		return frag;
 	}
-	
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -74,18 +74,18 @@ public class RescheduleDialog extends SherlockDialogFragment {
 			throw new ClassCastException(activity.getClass().getName() + " must implement OnRescheduleListener");
 		}
 	}
-	
+
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		
+
 		View view = getActivity().getLayoutInflater().inflate(R.layout.dialog_reminder_entry, null, false);
-		
+
 		mSpinner = (Spinner) view.findViewById(R.id.reminder_dialog_spinner);
 		if (savedInstanceState != null) {
 			mSpinner.setSelection(savedInstanceState.getInt(ARGS_SPINNER));
 		}
-		
+
 		builder.setView(view);
 		builder.setTitle(R.string.schedule_reminder);
 		builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -112,9 +112,10 @@ public class RescheduleDialog extends SherlockDialogFragment {
 					break;
 				}
 				Intent intent = new Intent(getActivity(), Scheduler.class);
+				intent.setAction(Keys.ACTION_RESCHEDULE_ALARM);
 				intent.putExtra(Keys.INTENT_RESCHEDULE, mins);
 				getActivity().startService(intent);
-				
+
 				mListener.onReschedule(true);
 			}
 		});
@@ -125,11 +126,11 @@ public class RescheduleDialog extends SherlockDialogFragment {
 				dialog.dismiss();
 			}
 		});
-		
+
 		return builder.create();
-		
+
 	}
-	
+
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);

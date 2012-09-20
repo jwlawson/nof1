@@ -368,7 +368,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements AdapterVie
 	/** Run the scheduler for the first time */
 	private void runScheduler() {
 		Intent intent = new Intent(this, Scheduler.class);
-		intent.putExtra(Keys.INTENT_FIRST, true);
+		intent.setAction(Keys.ACTION_SET_FIRST_ALARM);
 		intent.putExtra(Keys.CONFIG_START, mDate.getDate());
 		startService(intent);
 	}
