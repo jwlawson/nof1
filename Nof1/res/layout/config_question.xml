@@ -52,7 +52,7 @@
             android:layout_below="@+id/config_question_text"
             android:ems="10"
             android:inputType="textCapSentences" />
-
+
         <TextView
             android:id="@+id/config_question_text_input"
             android:layout_width="wrap_content"
@@ -60,6 +60,7 @@
             android:layout_alignLeft="@+id/config_question_edit_text"
             android:layout_below="@+id/config_question_edit_text"
             android:layout_marginTop="@dimen/padding_large"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/config_input_type"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -71,7 +72,7 @@
             android:layout_alignRight="@+id/config_question_edit_text"
             android:layout_below="@+id/config_question_text_input"
             android:entries="@array/config_input_type_array" />
-
+
         <TextView
             android:id="@+id/config_question_text_type_explain"
             android:layout_width="wrap_content"
@@ -80,10 +81,10 @@
             android:layout_alignRight="@+id/config_question_edit_text"
             android:layout_below="@+id/config_question_spinner_type"
             android:layout_marginTop="@dimen/padding_medium"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/config_question_type_explain"
             android:textAppearance="?android:attr/textAppearanceSmall" />
-
-
+
         <RelativeLayout
             android:id="@+id/config_question_minmax_layout"
             android:layout_width="wrap_content"
@@ -91,45 +92,54 @@
             android:layout_alignLeft="@+id/config_question_text_type_explain"
             android:layout_alignRight="@+id/config_question_text_type_explain"
             android:layout_below="@+id/config_question_text_type_explain"
-            android:visibility="gone" >
-
+            android:visibility="visible" >
+
             <TextView
                 android:id="@+id/config_question_text_min"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
                 android:layout_marginTop="@dimen/padding_medium"
+                android:paddingLeft="@dimen/padding_text_lineup"
                 android:text="@string/config_min_hint"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <EditText
                 android:id="@+id/config_question_edit_min"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/config_question_text_min"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/config_question_text_min"
                 android:ems="10"
                 android:inputType="textCapSentences" />
-
+
             <TextView
                 android:id="@+id/config_question_text_max"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/config_question_edit_min"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
                 android:layout_below="@+id/config_question_edit_min"
                 android:layout_marginTop="@dimen/padding_large"
+                android:paddingLeft="@dimen/padding_text_lineup"
                 android:text="@string/config_max_hint"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
             <EditText
                 android:id="@+id/config_question_edit_max"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/config_question_text_max"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/config_question_text_max"
                 android:ems="10"
                 android:inputType="textCapSentences" />
+
         </RelativeLayout>
 
 
