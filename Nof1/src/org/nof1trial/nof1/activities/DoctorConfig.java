@@ -71,8 +71,7 @@ import com.actionbarsherlock.view.MenuItem;
  * @author John Lawson
  * 
  */
-public class DoctorConfig extends SherlockFragmentActivity implements
-		AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener,
+public class DoctorConfig extends SherlockFragmentActivity implements AdapterView.OnItemSelectedListener, TextView.OnEditorActionListener,
 		View.OnFocusChangeListener {
 
 	private static final String TAG = "DoctorConfig";
@@ -140,6 +139,8 @@ public class DoctorConfig extends SherlockFragmentActivity implements
 
 	/** EditText containing doctors name */
 	private EditText mDocName;
+
+	private Button mUpdateChecksButton;
 
 	@TargetApi(8)
 	@Override
@@ -228,6 +229,14 @@ public class DoctorConfig extends SherlockFragmentActivity implements
 			spinNumber.setSelection(spinNumber.getCount() - 1);
 			mPeriodNumber.setText("" + saved1);
 		}
+		mUpdateChecksButton = (Button) findViewById(R.id.config_timescale_button);
+		mUpdateChecksButton.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				mPeriodLength.clearFocus();
+			}
+		});
 
 		mTimescaleLayout = (RelativeLayout) findViewById(R.id.config_timescale_layout);
 
@@ -240,11 +249,9 @@ public class DoctorConfig extends SherlockFragmentActivity implements
 			}
 		});
 
-		mArray = (CheckArray) getSupportFragmentManager().findFragmentById(
-				R.id.config_timescale_check_array);
+		mArray = (CheckArray) getSupportFragmentManager().findFragmentById(R.id.config_timescale_check_array);
 
-		mDate = (StartDate) getSupportFragmentManager().findFragmentById(
-				R.id.config_doctor_date_frag);
+		mDate = (StartDate) getSupportFragmentManager().findFragmentById(R.id.config_doctor_date_frag);
 		if (sp.contains(Keys.CONFIG_START)) mDate.setDate(sp.getString(Keys.CONFIG_START, ""));
 
 		mTreatmentA = (EditText) findViewById(R.id.config_doctor_medicine_edit_treatmenta);
@@ -256,8 +263,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements
 		mAnyNotes = (EditText) findViewById(R.id.config_doctor_medicine_edit_notes);
 		mAnyNotes.setText(sp.getString(Keys.CONFIG_TREATMENT_NOTES, ""));
 
-		mTimeSetter = (TimeSetter) getSupportFragmentManager().findFragmentById(
-				R.id.config_doctor_time_frag);
+		mTimeSetter = (TimeSetter) getSupportFragmentManager().findFragmentById(R.id.config_doctor_time_frag);
 		if (savedInstanceState == null) {
 			// Load fragments into timesetter
 			int num = 0;
@@ -429,8 +435,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements
 		SharedPreferences ques = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 		ArrayList<String> quesList = new ArrayList<String>();
 		for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
-			String questionStr = ques.getString(Keys.QUES_TEXT + i, "")
-					+ getQuestionSuffix(ques, i);
+			String questionStr = ques.getString(Keys.QUES_TEXT + i, "") + getQuestionSuffix(ques, i);
 			quesList.add(questionStr);
 		}
 		saver.putStringArrayListExtra(Keys.CONFIG_QUESTION_LIST, quesList);
@@ -501,60 +506,49 @@ public class DoctorConfig extends SherlockFragmentActivity implements
 
 		final SharedPreferences sharedPrefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this,
-				R.style.dialog_theme));
+		AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.dialog_theme));
 
 		View view = getInflater().inflate(R.layout.config_change_login, null, false);
 
-		final EditText email = (EditText) view
-				.findViewById(R.id.config_change_login_edit_cur_email);
+		final EditText email = (EditText) view.findViewById(R.id.config_change_login_edit_cur_email);
 		email.setText(mDocEmail.getText().toString());
 
-		final EditText pass = (EditText) view
-				.findViewById(R.id.config_change_login_edit_cur_password);
+		final EditText pass = (EditText) view.findViewById(R.id.config_change_login_edit_cur_password);
 
-		final EditText newPass = (EditText) view
-				.findViewById(R.id.config_change_login_edit_new_password);
-		final EditText newPass2 = (EditText) view
-				.findViewById(R.id.config_change_login_edit_new_pass2);
+		final EditText newPass = (EditText) view.findViewById(R.id.config_change_login_edit_new_password);
+		final EditText newPass2 = (EditText) view.findViewById(R.id.config_change_login_edit_new_pass2);
 
-		builder.setView(view).setTitle(R.string.change_login_details)
-				.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+		builder.setView(view).setTitle(R.string.change_login_details).setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						String emailHash = new String(Hex.encodeHex(DigestUtils.sha512(email
-								.getText().toString())));
-						String passHash = new String(Hex.encodeHex(DigestUtils.sha512(pass
-								.getText().toString())));
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				String emailHash = new String(Hex.encodeHex(DigestUtils.sha512(email.getText().toString())));
+				String passHash = new String(Hex.encodeHex(DigestUtils.sha512(pass.getText().toString())));
 
-						if (emailHash.equals(sharedPrefs.getString(Keys.CONFIG_EMAIL, null))
-								&& passHash.equals(sharedPrefs.getString(Keys.CONFIG_PASS, null))) {
-							// Login correct
+				if (emailHash.equals(sharedPrefs.getString(Keys.CONFIG_EMAIL, null))
+						&& passHash.equals(sharedPrefs.getString(Keys.CONFIG_PASS, null))) {
+					// Login correct
 
-							String passStr = newPass.getText().toString();
-							SharedPreferences.Editor editor = sharedPrefs.edit();
+					String passStr = newPass.getText().toString();
+					SharedPreferences.Editor editor = sharedPrefs.edit();
 
-							if (passStr != "" && passStr != null
-									&& passStr.equals(newPass2.getText().toString())) {
-								// Change password
+					if (passStr != "" && passStr != null && passStr.equals(newPass2.getText().toString())) {
+						// Change password
 
-								editor.putString(Keys.CONFIG_PASS,
-										new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
+						editor.putString(Keys.CONFIG_PASS, new String(Hex.encodeHex(DigestUtils.sha512(passStr))));
 
-							}
-							// Save changes
-							editor.commit();
-							// Request backup
-							backup();
-						} else {
-							// Incorrect login
-							Toast.makeText(getApplicationContext(), R.string.incorrect_login,
-									Toast.LENGTH_SHORT).show();
-							changeLogin();
-						}
 					}
-				});
+					// Save changes
+					editor.commit();
+					// Request backup
+					backup();
+				} else {
+					// Incorrect login
+					Toast.makeText(getApplicationContext(), R.string.incorrect_login, Toast.LENGTH_SHORT).show();
+					changeLogin();
+				}
+			}
+		});
 		builder.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -590,8 +584,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements
 			// to make text white.
 			// ApplicationContext for some reason doesn't have the light theme
 			// applied, so will do nicely.
-			inflater = (LayoutInflater) getApplicationContext().getSystemService(
-					Context.LAYOUT_INFLATER_SERVICE);
+			inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		} else {
 			// Newer devices use shiny holo light dialogs. Easy.
 			inflater = this.getLayoutInflater();
@@ -674,6 +667,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements
 			// arr[length-1] is "other" ie no number selected
 			if (item.equalsIgnoreCase(arr[arr.length - 1])) {
 				mPeriodLength.setVisibility(View.VISIBLE);
+				mUpdateChecksButton.setVisibility(View.VISIBLE);
 				mIntPeriodLength = -1;
 				String text = mPeriodLength.getText().toString();
 				if (text.length() != 0) {
@@ -683,6 +677,7 @@ public class DoctorConfig extends SherlockFragmentActivity implements
 
 			} else {
 				mPeriodLength.setVisibility(View.GONE);
+				mUpdateChecksButton.setVisibility(View.GONE);
 				mIntPeriodLength = Integer.parseInt(item);
 				mArray.setNumber(mIntPeriodLength);
 				num = mIntPeriodLength;

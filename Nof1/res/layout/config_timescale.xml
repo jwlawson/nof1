@@ -17,14 +17,14 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/config_timescale_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+
     <TextView
         android:id="@+id/config_timescale_text_period"
         android:layout_width="wrap_content"
@@ -38,7 +38,7 @@
         android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/treatment_period"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_period_explain"
         android:layout_width="wrap_content"
@@ -49,36 +49,49 @@
         android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_treatment_period_explain"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
     <EditText
         android:id="@+id/config_timescale_edit_period"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/config_timescale_text_period_explain"
-        android:layout_alignRight="@+id/config_timescale_text_period_explain"
         android:layout_below="@+id/config_timescale_spinner_length"
+        android:layout_toLeftOf="@+id/config_timescale_button"
         android:ems="10"
         android:inputType="number"
         android:visibility="gone" >
+
     </EditText>
+
+    <Button
+        android:id="@+id/config_timescale_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/config_timescale_edit_period"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/padding_large"
+        android:text="@string/ok"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/config_timescale_text_number_periods"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/config_timescale_edit_period"
+        android:layout_alignRight="@+id/config_timescale_text_period"
         android:layout_below="@+id/config_timescale_edit_period"
         android:layout_marginTop="@dimen/padding_large"
         android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_no_treatment_periods"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_number_periods_explain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/config_timescale_text_number_periods"
-        android:layout_alignRight="@+id/config_timescale_edit_period"
+        android:layout_alignRight="@+id/config_timescale_text_period"
         android:layout_below="@+id/config_timescale_text_number_periods"
         android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_no_treatment_periods_explain"
@@ -89,30 +102,30 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/config_timescale_text_number_periods_explain"
-        android:layout_alignRight="@+id/config_timescale_text_number_periods_explain"
+        android:layout_alignRight="@+id/config_timescale_text_period"
         android:layout_below="@+id/config_timescale_spinner_periods"
         android:ems="10"
         android:inputType="number"
         android:visibility="gone" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_days_record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/config_timescale_edit_number_periods"
-        android:layout_alignRight="@+id/config_timescale_edit_number_periods"
+        android:layout_alignRight="@+id/config_timescale_text_period"
         android:layout_below="@+id/config_timescale_edit_number_periods"
         android:layout_marginTop="@dimen/padding_large"
         android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_days_record"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_days_record_explain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/config_timescale_text_days_record"
-        android:layout_alignRight="@+id/config_timescale_text_days_record"
+        android:layout_alignRight="@+id/config_timescale_text_period"
         android:layout_below="@+id/config_timescale_text_days_record"
         android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_days_record_explain"
@@ -123,10 +136,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/config_timescale_text_number_periods_explain"
-        android:layout_alignRight="@+id/config_timescale_edit_number_periods"
+        android:layout_alignRight="@+id/config_timescale_text_period"
         android:layout_below="@+id/config_timescale_text_number_periods_explain"
         android:entries="@array/treatment_period_arr" />
-
 
     <Spinner
         android:id="@+id/config_timescale_spinner_length"
@@ -138,12 +150,12 @@
         android:entries="@array/treatment_period_arr" />
 
     <fragment
-        android:name="org.nof1trial.nof1.fragments.CheckArray"
         android:id="@+id/config_timescale_check_array"
+        android:name="org.nof1trial.nof1.fragments.CheckArray"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/config_timescale_text_days_record_explain"
-        android:layout_alignRight="@+id/config_timescale_text_days_record_explain"
+        android:layout_alignRight="@+id/config_timescale_text_period"
         android:layout_below="@+id/config_timescale_text_days_record_explain"
         android:label="@string/config_timescale_check_prefix"
         tools:layout="@layout/check_array" />
