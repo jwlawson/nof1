@@ -42,46 +42,46 @@ import com.actionbarsherlock.app.SherlockFragment;
  * 
  */
 public class TimeHolder extends SherlockFragment {
-	
+
 	private static final String ARGS_TIME = "time";
-	
+
 	private String mTime;
 	private TextView mTextView;
-	
+
 	public static TimeHolder newInstance(String time) {
 		TimeHolder frag = new TimeHolder();
-		
+
 		Bundle args = new Bundle();
 		args.putString(ARGS_TIME, time);
-		
+
 		frag.setArguments(args);
-		
+
 		return frag;
 	}
-	
+
 	public String getTime() {
 		return mTime;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		if (getArguments() != null) {
 			mTime = getArguments().getString(ARGS_TIME);
 		} else {
 			mTime = "12:00";
 		}
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		
+
 		View view = inflater.inflate(R.layout.config_doctor_medicine_timer, container, false);
-		
+
 		mTextView = (TextView) view.findViewById(R.id.config_doctor_medicine_timer_text);
 		mTextView.setText(mTime);
-		
+
 		Button edit = (Button) view.findViewById(R.id.config_doctor_medicine_timer_edit);
 		edit.setOnClickListener(new OnClickListener() {
 			@Override
@@ -89,27 +89,27 @@ public class TimeHolder extends SherlockFragment {
 				showDialog();
 			}
 		});
-		
+
 		return view;
 	}
-	
+
 	private void showDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-		
+		final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
 		final TimePicker picker = new TimePicker(getActivity());
 		picker.setCurrentHour(getHour());
 		picker.setCurrentMinute(getMin());
 		builder.setView(picker);
-		
+
 		builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				int hour = picker.getCurrentHour();
 				int min = picker.getCurrentMinute();
-				
-				mTime = hour + ":" + (min < 10 ? "0" + min : min);
+
+				mTime = getPaddedString(hour) + ":" + getPaddedString(min);
 				mTextView.setText(mTime);
-				
+
 				dialog.dismiss();
 			}
 		});
@@ -121,15 +121,25 @@ public class TimeHolder extends SherlockFragment {
 		});
 		builder.create().show();
 	}
-	
+
+	private String getPaddedString(int integer) {
+		String result;
+		if (integer < 10) {
+			result = "0" + String.valueOf(integer);
+		} else {
+			result = String.valueOf(integer);
+		}
+		return result;
+	}
+
 	private int getHour() {
 		String[] arr = mTime.split(":");
 		return Integer.parseInt(arr[0]);
 	}
-	
+
 	private int getMin() {
 		String[] arr = mTime.split(":");
 		return Integer.parseInt(arr[1]);
 	}
-	
+
 }

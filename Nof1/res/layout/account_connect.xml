@@ -7,17 +7,16 @@
         android:id="@+id/connect_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="10dip"
-        android:text="This app requests permission to connect to the cloud. To do this a Google account muct be used to authorise the connection."
-        android:textSize="16dip" />
+        android:padding="@dimen/padding_medium"
+        android:text="@string/account_connect_explain" />
 
     <TextView
         android:id="@+id/select_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/connect_text"
-        android:layout_margin="5dip"
-        android:text="Select the account you wish to authorise" />
+        android:paddingLeft="@dimen/padding_medium"
+        android:text="@string/select_account" />
 
     <View
         android:id="@+id/divider"
@@ -49,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:layout_weight="1"
-            android:text="Connect" />
+            android:text="@string/connect" />
 
         <Button
             android:id="@+id/exit"

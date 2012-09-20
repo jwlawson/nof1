@@ -27,7 +27,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-
+
         <TextView
             android:id="@+id/config_doctor_login_text_email"
             android:layout_width="wrap_content"
@@ -38,6 +38,7 @@
             android:layout_marginLeft="@dimen/padding_large"
             android:layout_marginRight="@dimen/padding_large"
             android:layout_marginTop="@dimen/padding_large"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/email"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -53,7 +54,7 @@
 
             <requestFocus />
         </EditText>
-
+
         <TextView
             android:id="@+id/config_doctor_login_text_pass"
             android:layout_width="wrap_content"
@@ -61,6 +62,7 @@
             android:layout_alignLeft="@+id/config_doctor_login_edit_email"
             android:layout_below="@+id/config_doctor_login_edit_email"
             android:layout_marginTop="@dimen/padding_large"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/password"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 

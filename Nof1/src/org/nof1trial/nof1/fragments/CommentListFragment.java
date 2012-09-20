@@ -126,7 +126,7 @@ public class CommentListFragment extends FragList {
 			int timeCol = mCursor.getColumnIndex(SQLite.COLUMN_TIME);
 
 			int calDay = 1;
-			DateFormat format = DateFormat.getDateInstance();
+			DateFormat format = DateFormat.getDateTimeInstance();
 
 			// load data from cursor
 			while (!mCursor.isAfterLast()) {

@@ -55,7 +55,7 @@ public class TimePreference extends DialogPreference {
 	}
 
 	public TimePreference(Context context) {
-		this(context, null, 0);
+		this(context, null);
 	}
 
 	// This is what gets called by XML inflation, defStyle is not 0
@@ -70,12 +70,7 @@ public class TimePreference extends DialogPreference {
 	}
 
 	public TimePreference(Context ctxt, AttributeSet attrs, int defStyle) {
-		super(ctxt, attrs, defStyle);
-
-		setPositiveButtonText("Set");
-		setNegativeButtonText("Cancel");
-
-		if (DEBUG) Log.d(TAG, "TimePref created");
+		this(ctxt, attrs);
 	}
 
 	@Override
@@ -103,14 +98,31 @@ public class TimePreference extends DialogPreference {
 			mLastHour = mPicker.getCurrentHour();
 			mLastMinute = mPicker.getCurrentMinute();
 
-			String time = String.valueOf(mLastHour) + ":" + String.valueOf(mLastMinute);
+			String time = getTimeString();
 
 			if (callChangeListener(time)) {
 				// Save preference
 				persistString(time);
 			}
 			if (DEBUG) Log.d(TAG, "TimePref closed. Time set: " + time);
-		} else if (DEBUG) Log.d(TAG, "TimePref closed. Time not set");
+		} else {
+			if (DEBUG) Log.d(TAG, "TimePref closed. Time not set");
+		}
+	}
+
+	private String getTimeString() {
+		return getPaddedString(mLastHour) + ":" + getPaddedString(mLastMinute);
+	}
+
+	private String getPaddedString(int integer) {
+		String result;
+		if (integer < 10) {
+			result = "0" + String.valueOf(integer);
+
+		} else {
+			result = String.valueOf(integer);
+		}
+		return result;
 	}
 
 	@Override

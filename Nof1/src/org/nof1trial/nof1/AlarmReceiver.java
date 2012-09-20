@@ -21,6 +21,8 @@
 package org.nof1trial.nof1;
 
 import org.nof1trial.nof1.activities.Questionnaire;
+import org.nof1trial.nof1.services.Saver;
+import org.nof1trial.nof1.services.Scheduler;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -40,9 +42,9 @@ import android.util.Log;
  * @author John Lawson
  * 
  */
-public class Receiver extends BroadcastReceiver {
+public class AlarmReceiver extends BroadcastReceiver {
 
-	private static final String TAG = "Receiver";
+	private static final String TAG = "AlarmReceiver";
 	private static final boolean DEBUG = false;
 
 	@Override
@@ -52,9 +54,9 @@ public class Receiver extends BroadcastReceiver {
 		if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
 			if (DEBUG) Log.d(TAG, "Boot_complete broadcast caught");
 
-			Intent i = new Intent(context, Scheduler.class);
-			i.putExtra(Keys.INTENT_BOOT, true);
-			context.startService(i);
+			Intent scheduler = new Intent(context, Scheduler.class);
+			scheduler.putExtra(Keys.INTENT_BOOT, true);
+			context.startService(scheduler);
 
 			Intent saver = new Intent(context, Saver.class);
 			saver.setAction(Intent.ACTION_BOOT_COMPLETED);
@@ -63,8 +65,7 @@ public class Receiver extends BroadcastReceiver {
 		} else if (intent.getBooleanExtra(Keys.INTENT_ALARM, false)) {
 			if (DEBUG) Log.d(TAG, "AlarmManager alarm caught");
 
-			// Show notification
-			setRepeatNotification(context);
+			showRepeatNotification(context);
 
 			// Pass to scheduler
 			Intent i = new Intent(context, Scheduler.class);
@@ -75,8 +76,7 @@ public class Receiver extends BroadcastReceiver {
 		} else if (intent.getBooleanExtra(Keys.INTENT_FIRST, false)) {
 			if (DEBUG) Log.d(TAG, "First time run alarm caught");
 
-			// Show first run notification
-			setFirstNotification(context);
+			showFirstNotification(context);
 
 			// Pass to scheduler
 			Intent i = new Intent(context, Scheduler.class);
@@ -88,32 +88,45 @@ public class Receiver extends BroadcastReceiver {
 		} else if (intent.getBooleanExtra(Keys.INTENT_MEDICINE, false)) {
 			if (DEBUG) Log.d(TAG, "Medicine alarm caught");
 
-			// Show medicine reminder notification
-			setMedicineNotification(context);
+			showMedicineNotification(context);
 		}
 	}
 
 	/** Set notification reminding patient to input data */
-	private void setRepeatNotification(Context context) {
+	private void showRepeatNotification(Context context) {
 		Intent intent = new Intent(context, Questionnaire.class);
 		intent.putExtra(Keys.INTENT_PREVIEW, false);
 		intent.putExtra(Keys.INTENT_SCHEDULED, true);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-		setNotification(context, intent, R.string.noti_repeat_title, R.string.noti_repeat_text);
+		setNotification(context, intent, R.string.noti_repeat_title, R.string.noti_repeat_text, 0x101);
 	}
 
 	/** Set the first notification at start of trial */
-	private void setFirstNotification(Context context) {
-		// TODO What should first notification do?
+	private void showFirstNotification(Context context) {
 
-		setNotification(context, new Intent(), R.string.noti_first_title, R.string.noti_first_text);
+		setNotification(context, new Intent(), R.string.noti_first_title, R.string.noti_first_text, 0x102);
 
 	}
 
-	private void setMedicineNotification(Context context) {
+	private void showMedicineNotification(Context context) {
 
-		setNotification(context, new Intent(), R.string.noti_medicine_title, R.string.noti_medicine_text);
+		setNotification(context, new Intent(), R.string.noti_medicine_title, R.string.noti_medicine_text, 0x103);
+	}
+
+	/**
+	 * Make and post a notification with specified params
+	 * 
+	 * @param context
+	 * @param intent Intent to fire on notification click
+	 * @param title Resource with title of notification
+	 * @param text Resource with text in notification
+	 */
+	private void setNotification(Context context, Intent intent, int title, int text, int id) {
+		Resources res = context.getResources();
+		String titleStr = res.getString(title);
+		String textStr = res.getString(text);
+		setNotification(context, intent, titleStr, textStr, id);
 	}
 
 	/**
@@ -124,7 +137,7 @@ public class Receiver extends BroadcastReceiver {
 	 * @param title Title of notification
 	 * @param text Text in notification
 	 */
-	private void setNotification(Context context, Intent intent, String title, String text) {
+	private void setNotification(Context context, Intent intent, String title, String text, int id) {
 
 		SharedPreferences sp = context.getSharedPreferences(Keys.DEFAULT_PREFS, Context.MODE_PRIVATE);
 
@@ -139,43 +152,23 @@ public class Receiver extends BroadcastReceiver {
 		if (sp.getBoolean(Keys.DEFAULT_LOUD, false)) {
 			// Notification makes noise
 			style ^= Notification.DEFAULT_SOUND;
-			if (DEBUG) Log.d(TAG, "Loud Notification");
 		}
 
 		if (sp.getBoolean(Keys.DEFAULT_FLASH, false)) {
 			// Notification to flash
 			style ^= Notification.DEFAULT_LIGHTS;
-			if (DEBUG) Log.d(TAG, "Flashy Notification");
 		}
 
 		if (sp.getBoolean(Keys.DEFAULT_VIBE, false)) {
 			// Notification to vibrate
 			style ^= Notification.DEFAULT_VIBRATE;
-			if (DEBUG) Log.d(TAG, "Vibrating Notification");
 		}
 
 		builder.setDefaults(style);
 
 		Notification noti = builder.build();
 
-		((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(0x100, noti);
+		((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(id, noti);
 
-		if (DEBUG) Log.d(TAG, "Notification posted");
-
-	}
-
-	/**
-	 * Make and post a notification with specified params
-	 * 
-	 * @param context
-	 * @param intent Intent to fire on notification click
-	 * @param title Resource with title of notification
-	 * @param text Resource with text in notification
-	 */
-	private void setNotification(Context context, Intent intent, int title, int text) {
-		Resources res = context.getResources();
-		String titleStr = res.getString(title);
-		String textStr = res.getString(text);
-		setNotification(context, intent, titleStr, textStr);
 	}
 }

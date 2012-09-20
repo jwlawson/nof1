@@ -24,7 +24,7 @@
     android:id="@+id/config_timescale_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-
+
     <TextView
         android:id="@+id/config_timescale_text_period"
         android:layout_width="wrap_content"
@@ -35,9 +35,10 @@
         android:layout_marginLeft="@dimen/padding_large"
         android:layout_marginRight="@dimen/padding_large"
         android:layout_marginTop="@dimen/padding_large"
+        android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/treatment_period"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_period_explain"
         android:layout_width="wrap_content"
@@ -45,6 +46,7 @@
         android:layout_alignLeft="@+id/config_timescale_text_period"
         android:layout_alignRight="@+id/config_timescale_text_period"
         android:layout_below="@+id/config_timescale_text_period"
+        android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_treatment_period_explain"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -59,7 +61,7 @@
         android:inputType="number"
         android:visibility="gone" >
     </EditText>
-
+
     <TextView
         android:id="@+id/config_timescale_text_number_periods"
         android:layout_width="wrap_content"
@@ -67,9 +69,10 @@
         android:layout_alignLeft="@+id/config_timescale_edit_period"
         android:layout_below="@+id/config_timescale_edit_period"
         android:layout_marginTop="@dimen/padding_large"
+        android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_no_treatment_periods"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_number_periods_explain"
         android:layout_width="wrap_content"
@@ -77,6 +80,7 @@
         android:layout_alignLeft="@+id/config_timescale_text_number_periods"
         android:layout_alignRight="@+id/config_timescale_edit_period"
         android:layout_below="@+id/config_timescale_text_number_periods"
+        android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_no_treatment_periods_explain"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
@@ -90,7 +94,7 @@
         android:ems="10"
         android:inputType="number"
         android:visibility="gone" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_days_record"
         android:layout_width="wrap_content"
@@ -99,9 +103,10 @@
         android:layout_alignRight="@+id/config_timescale_edit_number_periods"
         android:layout_below="@+id/config_timescale_edit_number_periods"
         android:layout_marginTop="@dimen/padding_large"
+        android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_days_record"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_days_record_explain"
         android:layout_width="wrap_content"
@@ -109,9 +114,9 @@
         android:layout_alignLeft="@+id/config_timescale_text_days_record"
         android:layout_alignRight="@+id/config_timescale_text_days_record"
         android:layout_below="@+id/config_timescale_text_days_record"
+        android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_days_record_explain"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
 
     <Spinner
         android:id="@+id/config_timescale_spinner_periods"

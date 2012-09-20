@@ -20,33 +20,31 @@
  ******************************************************************************/
 package org.nof1trial.nof1.activities;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Date;
 
 import org.apache.http.protocol.HTTP;
-import org.nof1trial.nof1.DataSource;
-import org.nof1trial.nof1.FinishedService;
+import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.services.FinishedService;
+import org.nof1trial.nof1.services.Saver;
 
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Resources;
-import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -60,7 +58,8 @@ import com.actionbarsherlock.view.MenuItem;
 import com.actionbarsherlock.view.Window;
 
 /**
- * The main home screen that users see when they open the app. On first run will also set up the task stack to allow
+ * The main home screen that users see when they open the app. On first run will
+ * also set up the task stack to allow
  * doctors to input data, then patients
  * preferences, then back to this screen.
  * 
@@ -70,9 +69,14 @@ import com.actionbarsherlock.view.Window;
 public class HomeScreen extends SherlockActivity {
 
 	private static final String TAG = "HomeScreen";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = BuildConfig.DEBUG;
 
-	private File mFile;
+	private static final int ACCOUNT_REQUEST = 101;
+
+	/** Current context */
+	private final Context mContext = this;
+
+	private Button btnEmail;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,124 +86,41 @@ public class HomeScreen extends SherlockActivity {
 		getSupportActionBar().setHomeButtonEnabled(false);
 		setSupportProgressBarIndeterminateVisibility(false);
 
-		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+		SharedPreferences accPrefs = Util.getSharedPreferences(mContext);
 
-		if (!sp.contains(Keys.DEFAULT_FIRST)) {
-			if (DEBUG) Log.d(TAG, "App launched for the first time");
+		if (accPrefs.getString(Util.ACCOUNT_NAME, null) == null) {
+			// No account set up for app yet
+			if (DEBUG) Log.d(TAG, "No account found. Loading account activity");
 
-			TaskStackBuilder builder = TaskStackBuilder.create(this);
-
-			builder.addNextIntent(new Intent(this, HomeScreen.class));
-			builder.addNextIntent(new Intent(this, UserPrefs.class));
-			builder.addNextIntent(new Intent(this, DoctorLogin.class));
-
-			builder.startActivities();
+			Intent account = new Intent(mContext, AccountsActivity.class);
+			startActivityForResult(account, ACCOUNT_REQUEST);
 
 		} else {
-			// Not the first time app is run
-
-			setContentView(R.layout.home_layout);
-
-			Button btnData = (Button) findViewById(R.id.home_btn_data);
-			btnData.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					// Launch questionnaire
-					Intent intent = new Intent(HomeScreen.this, Questionnaire.class);
-					startActivity(intent);
-				}
-			});
-
-			SharedPreferences quesPrefs = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
-
-			Button btnGraphs = (Button) findViewById(R.id.home_btn_graph);
-
-			if (quesPrefs.contains(Keys.QUES_TEXT + 0)) {
-				// Enable viewing graphs, as questionnaire built
-
-				btnGraphs.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// Launch graph activity
-						Intent intent = new Intent(HomeScreen.this, GraphChooser.class);
-						startActivity(intent);
-					}
-				});
-			} else {
-				// Questionnaire not made, so don't want to create empty database
-				btnGraphs.setEnabled(false);
-			}
-
-			Button btnComment = (Button) findViewById(R.id.home_btn_comment);
-
-			btnComment.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(HomeScreen.this, CommentList.class);
-					startActivity(intent);
-				}
-			});
-
-			Button btnNewNote = (Button) findViewById(R.id.home_btn_add_note);
-
-			btnNewNote.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Intent intent = new Intent(HomeScreen.this, AddNote.class);
-					startActivity(intent);
-				}
-			});
-
-			SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
-			if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
-				// Trial finished.
-
-				// Disable data input button
-				btnData.setEnabled(false);
-
-				// Show email csv button
-				final Button btnEmail = (Button) findViewById(R.id.home_btn_email);
-				btnEmail.setVisibility(View.VISIBLE);
-
-				btnEmail.setOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-
-						File file = findCSV();
-
-						if (file == null) {
-							// File not found
-							btnEmail.setEnabled(false);
-							new Loader().execute();
-
-						} else {
-							Uri uri = Uri.fromFile(file);
-							Resources res = getResources();
-							SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
-
-							try {
-								Intent intent = new Intent(Intent.ACTION_SEND);
-								intent.setType(HTTP.PLAIN_TEXT_TYPE);
-								intent.putExtra(Intent.EXTRA_EMAIL, "");
-								intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
-								intent.putExtra(Intent.EXTRA_TEXT,
-										res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
-								intent.putExtra(Intent.EXTRA_STREAM, uri);
-								startActivity(intent);
-							} catch (ActivityNotFoundException e) {
-								// No suitable email activity found
-								Toast.makeText(HomeScreen.this, R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
-							}
-						}
-
-					}
-				});
-				// Reload relative layout to ensure button is shown
-				((RelativeLayout) btnEmail.getParent()).requestLayout();
-			}
-
+			createRedirectOrUi();
 		}
 
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+		switch (requestCode) {
+		case ACCOUNT_REQUEST:
+			if (DEBUG) Log.d(TAG, "Account request finished");
+			switch (resultCode) {
+			case RESULT_OK:
+				// New account set up
+				createRedirectOrUi();
+				break;
+			case RESULT_CANCELED:
+				// No account set up
+				finish();
+				break;
+			}
+			return;
+		}
+
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
@@ -230,6 +151,30 @@ public class HomeScreen extends SherlockActivity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void sendEmail(File file) {
+		Uri uri = Uri.fromFile(file);
+		Resources res = getResources();
+		SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+		try {
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType(HTTP.PLAIN_TEXT_TYPE);
+			intent.putExtra(Intent.EXTRA_EMAIL, "");
+			intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
+			intent.putExtra(Intent.EXTRA_TEXT, res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+			intent.putExtra(Intent.EXTRA_STREAM, uri);
+			startActivity(intent);
+		} catch (ActivityNotFoundException e) {
+			// No suitable email activity found
+			Toast.makeText(HomeScreen.this, R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
+		}
+
+		if (btnEmail != null) {
+			btnEmail.setEnabled(true);
+			btnEmail.setText(R.string.email_csv);
+		}
 	}
 
 	private File findCSV() {
@@ -273,160 +218,216 @@ public class HomeScreen extends SherlockActivity {
 		return null;
 	}
 
-	@SuppressLint("WorldReadableFiles")
-	@TargetApi(8)
-	private boolean createCVS(Cursor cursor) {
-		/*
-		 * We want to write the schedule file to external storage, as that way we know the email app will be able to
-		 * find it.
-		 * However if it cannot, use internal storage and a world readable file. This may or may not work depending on
-		 * the email client used.
-		 */
-		// Check state of external storage
-		boolean storageWriteable = false;
-		boolean storageInternal = false;
-		String state = Environment.getExternalStorageState();
+	private void findUpdates(SharedPreferences prefs) {
 
-		if (Environment.MEDIA_MOUNTED.equals(state)) {
-			// We can read and write the media
-			storageWriteable = true;
-		} else {
-			// Something else is wrong. It may be one of many other states, but all we need
-			// to know is we can neither read nor write
-			storageWriteable = false;
-		}
-		File dir = null;
+		// If no password hash, then the app has not been run before, so don't
+		// need to update
+		if (prefs.contains(Keys.CONFIG_PASS)) {
 
-		if (storageWriteable && Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
-			// Eclair has no support for getExternalCacheDir()
-			// Save file to /Android/data/org.nof1trial.nof1/cache/
-			File temp = Environment.getExternalStorageDirectory();
+			int lastVersion = prefs.getInt(Keys.DEFAULT_VERSION, 0);
 
-			dir = new File(temp.getAbsoluteFile() + "/Android/data/org.nof1trial.nof1/files");
-
-		} else if (storageWriteable) {
-
-			dir = getExternalFilesDir(null);
-
-		} else {
-			// Toast.makeText(this, "No external storage found. Using internal storage which may not work.",
-			// Toast.LENGTH_LONG).show();
-			storageInternal = true;
-			dir = getFilesDir();
-		}
-		mFile = new File(dir, FinishedService.CVS_FILE);
-
-		if (storageInternal) {
 			try {
-				// File should be world readable so that GMail (or whatever the user uses) can read it
-				FileOutputStream fos = openFileOutput(FinishedService.CVS_FILE, MODE_WORLD_READABLE);
-				fos.write(getCVSString(cursor).getBytes());
-				fos.close();
+				PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
 
-			} catch (IOException e) {
-				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
-				return false;
-			}
+				int currentVersion = info.versionCode;
 
-		} else {
-			try {
-				// Write file to external storage
-				BufferedWriter writer = new BufferedWriter(new FileWriter(mFile));
-				writer.write(getCVSString(cursor));
-				writer.close();
+				if (lastVersion < currentVersion) {
+					// Have update to do
+					boolean done = handleUpdates(lastVersion, currentVersion);
 
-			} catch (IOException e) {
-				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
-				return false;
-			}
-		}
-		return true;
-
-	}
-
-	private String getCVSString(Cursor cursor) {
-		StringBuilder sb = new StringBuilder();
-
-		cursor.moveToFirst();
-		String[] headers = cursor.getColumnNames();
-		int size = headers.length;
-
-		// Add column headers
-		for (int i = 0; i < size; i++) {
-			sb.append(headers[i]).append(", ");
-		}
-		sb.append("\n");
-
-		DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
-
-		// Add data
-		while (!cursor.isAfterLast()) {
-			for (int i = 0; i < size; i++) {
-				if (i == 2) {
-					// Want to convert time to readable format
-					sb.append(df.format(new Date(cursor.getLong(i)))).append(", ");
-
-				} else {
-					sb.append(cursor.getString(i)).append(", ");
+					if (done) prefs.edit().putInt(Keys.DEFAULT_VERSION, currentVersion);
 				}
-			}
-			sb.append("\n");
 
-			cursor.moveToNext();
+			} catch (NameNotFoundException e) {
+				// I would hope that this package exists, seeing as it's what's
+				// running this code
+			}
+		}
+	}
+
+	private boolean handleUpdates(int lastVersion, int currentVersion) {
+
+		boolean result = true;
+
+		if (lastVersion <= 5) {
+			// v1 of app. Need to update database and upload config data to
+			// server
+			SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+			SharedPreferences.Editor edit = prefs.edit();
+			// Increment db version to force update
+			edit.putInt(Keys.CONFIG_DB_VERSION, prefs.getInt(Keys.CONFIG_DB_VERSION, 1) + 1);
+			edit.commit();
+
+			Intent saveConfig = new Intent(mContext, Saver.class);
+			saveConfig.setAction(Keys.ACTION_UPLOAD_ALL);
+			startService(saveConfig);
 		}
 
-		return sb.toString();
+		return result;
 
 	}
 
-	private class Loader extends AsyncTask<Void, Void, Void> {
+	private void createRedirectOrUi() {
 
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			setSupportProgressBarIndeterminateVisibility(true);
+		SharedPreferences sp = getSharedPreferences(Keys.DEFAULT_PREFS, MODE_PRIVATE);
+
+		// Want account set up before configuring updates
+		findUpdates(sp);
+
+		if (!sp.contains(Keys.DEFAULT_FIRST)) {
+			if (DEBUG) Log.d(TAG, "App launched for the first time");
+
+			redirectToLogin();
+
+		} else {
+			// Not the first time app is run
+			createUi();
 		}
+	}
 
-		@Override
-		protected Void doInBackground(Void... params) {
-			DataSource data = new DataSource(HomeScreen.this);
-			data.open();
+	private void redirectToLogin() {
+		TaskStackBuilder builder = TaskStackBuilder.create(this);
 
-			Cursor cursor = data.getAllColumns();
+		builder.addNextIntent(new Intent(this, HomeScreen.class));
+		builder.addNextIntent(new Intent(this, UserPrefs.class));
+		builder.addNextIntent(new Intent(this, DoctorLogin.class));
 
-			createCVS(cursor);
+		builder.startActivities();
+	}
 
-			cursor.close();
-			data.close();
+	private void createUi() {
+		setContentView(R.layout.home_layout);
+		SharedPreferences quesPrefs = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 
-			return null;
-		}
+		Button btnData = (Button) findViewById(R.id.home_btn_data);
+		btnData.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				// Launch questionnaire
+				Intent intent = new Intent(HomeScreen.this, Questionnaire.class);
+				startActivity(intent);
+			}
+		});
 
-		@Override
-		protected void onPostExecute(Void result) {
-			super.onPostExecute(result);
-			setSupportProgressBarIndeterminateVisibility(false);
+		Button btnGraphs = (Button) findViewById(R.id.home_btn_graph);
 
-			// Send file
-			if (mFile != null) {
-				Uri uri = Uri.fromFile(mFile);
-				Resources res = getResources();
-				SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+		if (quesPrefs.contains(Keys.QUES_TEXT + 0)) {
+			// Enable viewing graphs, as questionnaire built
 
-				try {
-					Intent intent = new Intent(Intent.ACTION_SEND);
-					intent.setType(HTTP.PLAIN_TEXT_TYPE);
-					intent.putExtra(Intent.EXTRA_EMAIL, "");
-					intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
-					intent.putExtra(Intent.EXTRA_TEXT, res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
-					intent.putExtra(Intent.EXTRA_STREAM, uri);
+			btnGraphs.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// Launch graph activity
+					Intent intent = new Intent(HomeScreen.this, GraphChooser.class);
 					startActivity(intent);
-				} catch (ActivityNotFoundException e) {
-					// No suitable email activity found
-					Toast.makeText(HomeScreen.this, R.string.no_email_app_found, Toast.LENGTH_SHORT).show();
 				}
-			}
-			((Button) findViewById(R.id.home_btn_email)).setEnabled(true);
+			});
+		} else {
+			// Questionnaire not made, so don't want to create empty
+			// database
+			btnGraphs.setEnabled(false);
 		}
+
+		Button btnComment = (Button) findViewById(R.id.home_btn_comment);
+		btnComment.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(HomeScreen.this, CommentList.class);
+				startActivity(intent);
+			}
+		});
+
+		Button btnNewNote = (Button) findViewById(R.id.home_btn_add_note);
+		btnNewNote.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(HomeScreen.this, AddNote.class);
+				startActivity(intent);
+			}
+		});
+
+		SharedPreferences schedprefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
+		if (schedprefs.getBoolean(Keys.SCHED_FINISHED, false)) {
+			// Trial finished.
+
+			// Disable data input button
+			btnData.setEnabled(false);
+
+			// Show email csv button
+			btnEmail = (Button) findViewById(R.id.home_btn_email);
+			btnEmail.setVisibility(View.VISIBLE);
+
+			btnEmail.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+
+					File file = findCSV();
+
+					btnEmail.setEnabled(false);
+
+					if (file == null) {
+						// File not found
+
+						btnEmail.setText(R.string.creating_file);
+
+						Intent maker = new Intent(mContext, FinishedService.class);
+						maker.setAction(Keys.ACTION_MAKE_FILE);
+						startService(maker);
+
+						LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+						manager.registerReceiver(new FileReceiver(), new IntentFilter());
+
+					} else {
+
+						btnEmail.setText(R.string.sending_email);
+						sendEmail(file);
+
+					}
+
+				}
+			});
+
+			Button btnSchedule = (Button) findViewById(R.id.home_btn_schedule);
+			btnSchedule.setVisibility(View.VISIBLE);
+			btnSchedule.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// Start schedule viewer activity
+					Intent schedule = new Intent(mContext, ScheduleViewer.class);
+					startActivity(schedule);
+				}
+			});
+
+			// Reload relative layout to ensure button is shown
+			((RelativeLayout) btnEmail.getParent()).requestLayout();
+		}
+	}
+
+	private class FileReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (Keys.ACTION_MAKE_FILE.equals(intent.getAction())) {
+				// File made successfully
+
+				// Only want to send email if user still on home screen,
+				// otherwise it would be a bit jarring
+				if (HomeScreen.this != null) {
+					File file = findCSV();
+					if (file != null) {
+						sendEmail(file);
+					}
+				}
+
+				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
+				manager.unregisterReceiver(this);
+
+			} else if (Keys.ACTION_ERROR.equals(intent.getAction())) {
+				// Some error
+
+			}
+		}
+
 	}
 }

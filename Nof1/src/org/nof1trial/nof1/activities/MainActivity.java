@@ -23,10 +23,10 @@ package org.nof1trial.nof1.activities;
 import java.util.Random;
 
 import org.nof1trial.nof1.DataSource;
-import org.nof1trial.nof1.FinishedService;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.Scheduler;
+import org.nof1trial.nof1.services.FinishedService;
+import org.nof1trial.nof1.services.Scheduler;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -162,7 +162,8 @@ public class MainActivity extends SherlockActivity {
 
 			@Override
 			public void onClick(View v) {
-				throw new RuntimeException();
+				Intent i = new Intent(getBaseContext(), AccountsActivity.class);
+				startActivity(i);
 			}
 		});
 
@@ -172,7 +173,18 @@ public class MainActivity extends SherlockActivity {
 			@Override
 			public void onClick(View v) {
 				Intent i = new Intent(getBaseContext(), FinishedService.class);
+				i.setAction(Keys.ACTION_MAKE_FILE);
 				startService(i);
+			}
+		});
+
+		Button btnSchedule = (Button) findViewById(R.id.main_btn_schedule);
+		btnSchedule.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(getBaseContext(), ScheduleViewer.class);
+				startActivity(intent);
 			}
 		});
 

@@ -67,7 +67,7 @@ public class DataTable extends FlexTable {
 			row++;
 		}
 		// Make the table header look nicer
-		this.getRowFormatter().addStyleName(0, "tableHeader");
+		this.getRowFormatter().addStyleName(0, "table-Header");
 
 		DateTimeFormat df = DateTimeFormat.getFormat(DateTimeFormat.PredefinedFormat.DATE_TIME_MEDIUM);
 
@@ -89,6 +89,26 @@ public class DataTable extends FlexTable {
 			this.setText(i, getCellCount(0) - 1, proxy.getComment());
 
 			i++;
+		}
+
+		applyStyles();
+	}
+
+	private void applyStyles() {
+		RowFormatter rf = getRowFormatter();
+		CellFormatter cf = getCellFormatter();
+
+		for (int row = 0; row < getRowCount(); ++row) {
+			for (int col = 1; col < getCellCount(row); col++) {
+				cf.addStyleName(row, col, "table-Cell");
+			}
+			if (row == 0) continue;
+			if ((row % 2) != 0) {
+				rf.addStyleName(row, "table-OddRow");
+			} else {
+				rf.addStyleName(row, "table-EvenRow");
+			}
+
 		}
 	}
 

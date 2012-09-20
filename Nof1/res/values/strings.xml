@@ -73,15 +73,14 @@
     </string-array>
 
     <string name="done">Done</string>
-    <string name="login_details">Login details</string>
+    <string name="login_details">Change password</string>
     <string name="preview">Preview</string>
     <string name="questionnaire_preview_explain">This is a preview of the questionnaire the patient will have to fill in. Please check any details, spelling etc and if you are happy press Save, otherwise Cancel will take you back to the previous screen.</string>
     <string name="save">Save</string>
     <string name="current_email">Current email</string>
-    <string name="new_email">New email</string>
     <string name="current_password">Current password</string>
     <string name="new_password">New password</string>
-    <string name="login_change_explain">Input your current login details and either a new email or new password you would like to use.</string>
+    <string name="login_change_explain">Input your current login details and the new password you would like to use.</string>
     <string name="change_login_details">Change login details</string>
     <string name="new_login_details">Set up new login details</string>
     <string name="passwords_not_equal">Passwords do not match</string>
@@ -123,11 +122,10 @@
     <string name="loud_on">Notification will play sound</string>
     <string name="loud_off">Notification will not play sound</string>
     <string name="notifications">Notifications</string>
-    <string name="noti_first_title">N-of-1 Trials</string>
+    <string name="noti_first_title">Nof1 Trials</string>
     <string name="noti_first_text">Your trial is due to start today</string>
-    <string name="noti_repeat_title">N-of-1 Trials</string>
+    <string name="noti_repeat_title">Nof1 Trials</string>
     <string name="noti_repeat_text">Please fill in this questionnaire</string>
-    <string name="config_not_run">Start date has not been set up. Please run the config tool.</string>
     <string name="medicine_explain">Please enter details about the treatments used in the trial. Include any information the pharmacist may need to make the prescription.</string>
     <string name="treatment_a">Treatment A</string>
     <string name="treatment_b">Treatment B</string>
@@ -139,10 +137,10 @@
     <string name="remove_last">Remove last</string>
     <string name="questionnaire_not_made">You must create the questionnaire first</string>
     <string name="fill_in_prompt">Ensure you have filled in: </string>
-    <string name="noti_medicine_title">N-of-1 Trails</string>
+    <string name="noti_medicine_title">Nof1 Trials</string>
     <string name="noti_medicine_text">It is time to take your medicine</string>
-    <string name="about_nof1">N-of-1 trials app</string>
-    <string name="about_details">Copyright 2012 John Lawson\n\n An application to help those working in the healthcare industry to design and implement N-of-1 trials.\n\n See our webpage at http://www.nof1trial.org.\n\n Developed by John Lawson under the supervision of Jeremy Wyatt at the Institute of Digital Health, Warwick University.\n\n The app is licensed under the GNU GPLv3, a copy of which is available at http://www.gnu.org/licenses/gpl.html. \n \n Source code for the app is available at https://github.com/jwlawson/nof1.\n\n This app uses ActionBarSherlock, ACRA crash reporting and some functionality from the Apache Commons Codec, available under the Apache v2 license found at http://www.apache.org/licenses/LICENSE-2.0.html.</string>
+    <string name="about_nof1">Nof1 trials app</string>
+    <string name="about_details">"Copyright 2012 John Lawson\n\nAn application to help those working in the healthcare industry to design and implement N-of-1 trials. Developed by John Lawson under the supervision of Jeremy Wyatt at the Institute of Digital Healthcare, Warwick University.\n\nSee our webpage at http://www.nof1trial.org.\n\nThe app is licensed under the GNU GPLv3, a copy of which is available at http://www.gnu.org/licenses/gpl.html.\n\nSource code for the app is available at https://github.com/jwlawson/nof1.\n\nThis app uses ActionBarSherlock, ACRA crash reporting and some functionality from the Apache Commons Codec, available under the Apache v2 license found at http://www.apache.org/licenses/LICENSE-2.0.html. "</string>
     <string name="enter_data">Enter data</string>
     <string name="view_graphs">View graphs</string>
     <string name="about">About</string>
@@ -152,26 +150,12 @@
     <string name="doctors_name">Doctor\'s name</string>
     <string name="thanks">Thanks</string>
     <string name="you_are_now">"You have now completed day "</string>
+    <string name="ad_hoc_you_are_now">"You have entered data for day "</string>
     <string name="out_of">" out of "</string>
     <string name="what_now">What would you like to do now?</string>
     <string name="go_home">Go to main screen</string>
     <string name="exit">Exit</string>
-    <string name="find_attached">Please find attached a treatment schedule for an N-of-1 trial.</string>
-    <string name="doc_name">"Doctors name: "</string>
-    <string name="treatment_notes">"Treatment notes: "</string>
-    <string name="pharm_email_subject">"N-of-1 Trials treatment schedule"</string>
-    <string name="doc_email_subject">"N-of-1 Trials patient configuration"</string>
-    <string name="days_to_record">"Days in period to record data: "</string>
-    <string name="length_periods">"Length of treatment periods: "</string>
-    <string name="number_periods">"Number of pairs of treatment periods: "</string>
-    <string name="trials_start">"Trial start date: "</string>
-    <string name="medicine_schedule">"Daily medicine schedule: "</string>
-    <string name="thanks_for_using">"Thanks for using the N-of-1 app"</string>
-    <string name="about_to_send_emails">"About to send emails containing config info"</string>
     <string name="problem_saving_file">"Problem saving file"</string>
-    <string name="medicine_taken">"Medicine taken "</string>
-    <string name="times_a_day">" times a day."</string>
-    <string name="questions">"Questions: "</string>
     <string name="incorrect_login">"Incorrect login details"</string>
     <string name="answer_all">"Please answer all the questions"</string>
     <string name="title_comment_detail">Note</string>
@@ -179,35 +163,32 @@
     <string name="view_comments">View notes</string>
     <string name="add_new_note">Add a new note:</string>
     <string name="add_note">Add new note</string>
-    <string name="crash_toast_text">"Oops, something seems to be wrong. Please send a crash report so this bug can be squashed.\n\nInclude information about what you were doing and which screen you were on."</string>
     <string name="last_questionnaire">This was the last questionnaire you have to complete.</string>
     <string name="cancel_todays_alarm">You are scheduled to fill in this questionnaire later today. Would you like to cancel today\'s alarm?</string>
     <string name="email_csv">Email data file</string>
     <string name="no_email_app_found">"No email app found."</string>
-    <string name="trial_data">"N-of-1 Trial data"</string>
-    <string name="results_attached">"Find attached the data from the N-of-1 trial for "</string>
+    <string name="trial_data">"Nof1 Trial data"</string>
+    <string name="results_attached">"Find attached the data from the Nof1 trial for "</string>
     <string name="include_samples">Include sample questions?</string>
     <string name="add_sample">Add sample questions</string>
-
-    <!-- Dialog button [CHAR LIMIT=NONE] -->
     <string name="add_account">Add account…</string>
-
-    <!-- Dialog title text [CHAR LIMIT=NONE] -->
     <string name="attention">Attention</string>
-
-    <!-- Informational text for "Connected" screen with placeholder for account name [CHAR LIMIT=NONE] -->
-    <string name="disconnect_text">This device is currently connected to the cloud as %1$s.  To disconnect, press the button below.</string>
-
-    <!-- Button text [CHAR LIMIT=NONE] -->
-    <string name="exit">Close</string>
-    
-        <!-- Dialog button text [CHAR LIMIT=NONE] -->
+    <string name="disconnect_text">This device is currently connected to the cloud as %1$s.</string>
     <string name="skip">Skip</string>
-
-    <!-- Dialog message text [CHAR LIMIT=NONE] -->
-    <string name="needs_account">To register this app, you must first create an account.</string>
-
+    <string name="needs_account">To register this app, you must first create a Google account.</string>
     <string name="account_title">Connect to the cloud</string>
-
     <string name="accounts">Accounts</string>
+    <string name="nof1_account_setup">Nof1 Account Setup</string>
+    <string name="retrieve_account">Retrieving account information</string>
+    <string name="schedule_into">The treatment schedule is only available once the trial is over. It shows which treatment was undertaken in each treatment period.</string>
+    <string name="error_downloading_schedule">Error downloading schedule, please check network connection.\n\nIf the problem persists contact the pharmacist delivering the trial for the schedule.</string>
+    <string name="downloading_schedule">Trying to download schedule now…</string>
+    <string name="schedule">Schedule</string>
+    <string name="creating_file">Creating csv file…</string>
+    <string name="sending_email">Preparing to send email…</string>
+    <string name="account_connect_explain">The app will upload data to Google app engine, so that your doctor can view your progress through the trial. To do this please choose an account to store the data under.\n\nYou will be able to view the data when logged in on our website nof1trial.org.</string>
+    <string name="select_account">Select the account you wish to authorise:</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="connected_to_our_servers">Connected to our servers</string>
 </resources>

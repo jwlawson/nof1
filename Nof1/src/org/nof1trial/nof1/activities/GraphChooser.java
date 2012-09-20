@@ -45,58 +45,57 @@ import com.actionbarsherlock.view.Window;
  * 
  */
 public class GraphChooser extends SherlockFragmentActivity implements GraphList.OnListItemSelectedListener {
-	
+
 	private static final String TAG = "Graph Chooser";
 	private static final boolean DEBUG = false;
-	
+
 	private boolean mDual;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.graph_chooser);
-		
+
 		setSupportProgressBarIndeterminateVisibility(false);
-		
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		FrameLayout frame = (FrameLayout) findViewById(R.id.graph_chooser_view);
-		
+
 		if (frame != null) {
-			
+
 			mDual = true;
-			
+
 			if (savedInstanceState == null) {
 				GraphViewer viewer = GraphViewer.newInstance(0);
 				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 				ft.replace(R.id.graph_chooser_view, viewer, "viewer");
 				ft.commit();
-				
+
 				GraphList list = (GraphList) getSupportFragmentManager().findFragmentById(R.id.graph_chooser_list);
 				list.setSelection(0);
 			}
-			
+
 			if (DEBUG) Log.d(TAG, "Created in dual pane mode");
-			
+
 		} else {
 			mDual = false;
 			if (DEBUG) Log.d(TAG, "Created in single pane mode");
 		}
 	}
-	
+
 	@Override
 	public void onListItemSelected(ListView l, View v, int position, long id) {
 		if (DEBUG) Log.d(TAG, "Item clicked: " + position);
-		
+
 		if (mDual) {
 			// load graph into framelayout
-			
+
 			GraphViewer viewer = (GraphViewer) getSupportFragmentManager().findFragmentByTag("viewer");
 			if (viewer.getQuestionId() != position) {
 				// Make new viewer for selected question
 				viewer = GraphViewer.newInstance(position);
-				
+
 				FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 				ft.replace(R.id.graph_chooser_view, viewer, "viewer");
 				ft.commit();
@@ -110,7 +109,7 @@ public class GraphChooser extends SherlockFragmentActivity implements GraphList.
 			startActivity(intent);
 		}
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

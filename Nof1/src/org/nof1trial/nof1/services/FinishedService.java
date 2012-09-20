@@ -18,7 +18,7 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1;
+package org.nof1trial.nof1.services;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,6 +29,11 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.nof1trial.nof1.BuildConfig;
+import org.nof1trial.nof1.DataSource;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.NetworkChangeReceiver;
+import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.app.Util;
 import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.ConfigRequest;
@@ -49,6 +54,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -58,6 +64,12 @@ import com.google.web.bindery.requestfactory.shared.ServerFailure;
 /**
  * Service to save a copy of the results as a .csv file
  * 
+ * Actions:
+ * org.nof1trial.nof1.TRIAL_COMPLETE
+ * android.net.conn.CONNECTIVITY_CHANGE
+ * org.nof1trial.nof1.DOWNLOAD_SCHEDULE
+ * org.nof1trial.nof1.MAKE_FILE
+ * 
  * @author John Lawson
  * 
  */
@@ -66,6 +78,9 @@ public class FinishedService extends IntentService {
 	private static final String TAG = "FinishedService";
 	private static final boolean DEBUG = BuildConfig.DEBUG;
 	public static final String CVS_FILE = "results.csv";
+
+	/** Current context */
+	private final Context mContext = this;
 
 	public FinishedService() {
 		this("FinishedService");
@@ -85,9 +100,11 @@ public class FinishedService extends IntentService {
 	@TargetApi(8)
 	private boolean createCVS(Cursor cursor) {
 		/*
-		 * We want to write the schedule file to external storage, as that way we know the email app will be able to
+		 * We want to write the schedule file to external storage, as that way
+		 * we know the email app will be able to
 		 * find it.
-		 * However if it cannot, use internal storage and a world readable file. This may or may not work depending on
+		 * However if it cannot, use internal storage and a world readable file.
+		 * This may or may not work depending on
 		 * the email client used.
 		 */
 		// Check state of external storage
@@ -99,7 +116,8 @@ public class FinishedService extends IntentService {
 			// We can read and write the media
 			storageWriteable = true;
 		} else {
-			// Something else is wrong. It may be one of many other states, but all we need
+			// Something else is wrong. It may be one of many other states, but
+			// all we need
 			// to know is we can neither read nor write
 			storageWriteable = false;
 		}
@@ -117,7 +135,8 @@ public class FinishedService extends IntentService {
 			dir = getExternalFilesDir(null);
 
 		} else {
-			// Toast.makeText(this, "No external storage found. Using internal storage which may not work.",
+			// Toast.makeText(this,
+			// "No external storage found. Using internal storage which may not work.",
 			// Toast.LENGTH_LONG).show();
 			storageInternal = true;
 			dir = getFilesDir();
@@ -127,7 +146,8 @@ public class FinishedService extends IntentService {
 
 		if (storageInternal) {
 			try {
-				// File should be world readable so that GMail (or whatever the user uses) can read it
+				// File should be world readable so that GMail (or whatever the
+				// user uses) can read it
 				FileOutputStream fos = openFileOutput(CVS_FILE, MODE_WORLD_READABLE);
 				fos.write(getCVSString(cursor).getBytes());
 				fos.close();
@@ -190,7 +210,8 @@ public class FinishedService extends IntentService {
 	}
 
 	/**
-	 * Try to download the config file for this patient from server. Saves schedule to the supplied shared prefs.
+	 * Try to download the config file for this patient from server. Saves
+	 * schedule to the supplied shared prefs.
 	 * 
 	 * Internet connection should be checked before running this.
 	 * 
@@ -200,7 +221,7 @@ public class FinishedService extends IntentService {
 		if (DEBUG) Log.d(TAG, "Trying to download schedule");
 
 		// Download config file and save schedule data to prefs
-		MyRequestFactory factory = (MyRequestFactory) Util.getRequestFactory(FinishedService.this, MyRequestFactory.class);
+		MyRequestFactory factory = Util.getRequestFactory(FinishedService.this, MyRequestFactory.class);
 		ConfigRequest request = factory.configRequest();
 
 		request.findAllConfigs().fire(new Receiver<List<ConfigProxy>>() {
@@ -211,7 +232,8 @@ public class FinishedService extends IntentService {
 					Log.e(TAG, "No config file found on server. Please contact the pharmacist for treatment schedule.");
 
 				} else {
-					// get most recent config. Generally I would only expect a patient to have one.
+					// get most recent config. Generally I would only expect a
+					// patient to have one.
 					ConfigProxy conf = list.get(list.size() - 1);
 					// Save schedule to prefs
 					sp.edit().putString(Keys.CONFIG_SCHEDULE, conf.getSchedule()).commit();
@@ -222,7 +244,6 @@ public class FinishedService extends IntentService {
 
 			@Override
 			public void onFailure(ServerFailure error) {
-				super.onFailure(error);
 				// TODO retry download
 			}
 
@@ -252,13 +273,15 @@ public class FinishedService extends IntentService {
 				Intent receiver = new Intent(FinishedService.this, Receiver.class);
 				receiver.putExtra(Keys.INTENT_MEDICINE, true);
 
-				// Make sure each medicine notification gets a different request id
+				// Make sure each medicine notification gets a different request
+				// id
 				PendingIntent pi = PendingIntent.getBroadcast(FinishedService.this, 1 + i, receiver, PendingIntent.FLAG_CANCEL_CURRENT);
 
 				alarmManager.cancel(pi);
 			}
 
-			// If no internet, set flag to download and register broadcast receiver
+			// If no internet, set flag to download and register broadcast
+			// receiver
 			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 
 			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -298,7 +321,102 @@ public class FinishedService extends IntentService {
 			} else {
 				if (DEBUG) Log.e(TAG, "Got Connectivity changed, but not connected");
 			}
+
+		} else if (Keys.ACTION_DOWNLOAD_SCHEDULE.equals(intent.getAction())) {
+
+			// If no internet, set flag to download and register broadcast
+			// receiver
+			ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+			boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
+
+			if (isConnected) {
+
+				SharedPreferences prefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
+				if (prefs.getBoolean(Keys.SCHED_FINISHED, false)) {
+
+					if (DEBUG) Log.d(TAG, "Trying to download schedule");
+
+					final SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+
+					// Download config file and save schedule data to prefs
+					MyRequestFactory factory = Util.getRequestFactory(FinishedService.this, MyRequestFactory.class);
+					ConfigRequest request = factory.configRequest();
+
+					request.findAllConfigs().fire(new Receiver<List<ConfigProxy>>() {
+
+						@Override
+						public void onSuccess(List<ConfigProxy> list) {
+							if (list.size() == 0) {
+								Log.e(TAG, "No config file found on server. Please contact the pharmacist for treatment schedule.");
+
+							} else {
+								// get most recent config. Generally I would
+								// only expect a patient to have one.
+								ConfigProxy conf = list.get(list.size() - 1);
+								// Save schedule to prefs
+								sp.edit().putString(Keys.CONFIG_SCHEDULE, conf.getSchedule()).commit();
+								if (DEBUG) Log.d(TAG, "Saved schedule: " + conf.getSchedule());
+
+								// Send local broadcast to say the download is
+								// complete
+								Intent broadcast = new Intent(Keys.ACTION_DOWNLOAD_SCHEDULE);
+								LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+								manager.sendBroadcast(broadcast);
+
+							}
+
+						}
+
+						@Override
+						public void onFailure(ServerFailure error) {
+							super.onFailure(error);
+							// Broadcast error
+							Intent broadcast = new Intent(Keys.ACTION_ERROR);
+							LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+							manager.sendBroadcast(broadcast);
+						}
+
+					});
+				}
+
+			} else {
+				if (DEBUG) Log.d(TAG, "Not connected to internet, starting network change listener");
+				// enable network change broadcast receiver
+				PackageManager pm = getPackageManager();
+				ComponentName comp = new ComponentName(this, NetworkChangeReceiver.class);
+				pm.setComponentEnabledSetting(comp, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+			}
+
+		} else if (Keys.ACTION_MAKE_FILE.equals(intent.getAction())) {
+			// Make the csv file
+			DataSource data = new DataSource(FinishedService.this);
+			data.open();
+
+			Cursor cursor = data.getAllColumns();
+
+			boolean done = createCVS(cursor);
+
+			cursor.close();
+			data.close();
+
+			if (done) {
+
+				// Send local broadcast to say the download is complete
+				Intent broadcast = new Intent(Keys.ACTION_MAKE_FILE);
+				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+				manager.sendBroadcast(broadcast);
+
+			} else {
+				// Send local broadcast to say the download is complete
+				Intent broadcast = new Intent(Keys.ACTION_ERROR);
+				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+				manager.sendBroadcast(broadcast);
+			}
+
+		} else {
+			Log.w(TAG, "Intent Service started with unrecognisd action");
 		}
 	}
-
 }

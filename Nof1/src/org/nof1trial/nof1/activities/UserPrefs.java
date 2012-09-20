@@ -22,13 +22,15 @@ package org.nof1trial.nof1.activities;
 
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.Scheduler;
+import org.nof1trial.nof1.services.Scheduler;
 
 import android.annotation.TargetApi;
 import android.app.backup.BackupManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -48,6 +50,8 @@ public class UserPrefs extends SherlockPreferenceActivity {
 	private static final String TAG = "User Prefs";
 	private static final boolean DEBUG = false;
 
+	private final Context mContext = this;
+
 	public UserPrefs() {
 	}
 
@@ -57,6 +61,8 @@ public class UserPrefs extends SherlockPreferenceActivity {
 		super.onCreate(savedInstanceState);
 
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+		PreferenceManager.setDefaultValues(mContext, R.xml.user_preferences, false);
 
 		// Load the preferences from an XML resource
 		addPreferencesFromResource(R.xml.user_preferences);
@@ -72,13 +78,9 @@ public class UserPrefs extends SherlockPreferenceActivity {
 		case android.R.id.home:
 			Intent upIntent = new Intent(this, HomeScreen.class);
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-				// This activity is not part of the application's task, so create a new task
-				// with a synthesized back stack.
 				TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
 				finish();
 			} else {
-				// This activity is part of the application's task, so simply
-				// navigate up to the hierarchical parent activity.
 				NavUtils.navigateUpTo(this, upIntent);
 			}
 			return true;
@@ -88,9 +90,7 @@ public class UserPrefs extends SherlockPreferenceActivity {
 
 	@TargetApi(8)
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-
+	protected void onPause() {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
 			BackupManager bm = new BackupManager(this);
 			bm.dataChanged();
@@ -101,5 +101,6 @@ public class UserPrefs extends SherlockPreferenceActivity {
 		Intent intent = new Intent(this, Scheduler.class);
 		intent.putExtra(Keys.INTENT_BOOT, true);
 		startService(intent);
+		super.onPause();
 	}
 }

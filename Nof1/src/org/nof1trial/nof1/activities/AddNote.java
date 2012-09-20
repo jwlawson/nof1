@@ -24,7 +24,7 @@ import java.util.Calendar;
 
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.Saver;
+import org.nof1trial.nof1.services.Saver;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -84,14 +84,9 @@ public class AddNote extends SherlockActivity {
 			// up / home action bar button pressed
 			Intent upIntent = new Intent(this, HomeScreen.class);
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-				// This activity is not part of the application's task, so
-				// create a new task
-				// with a synthesized back stack.
 				TaskStackBuilder.create(this).addNextIntent(upIntent).startActivities();
 				finish();
 			} else {
-				// This activity is part of the application's task, so simply
-				// navigate up to the hierarchical parent activity.
 				NavUtils.navigateUpTo(this, upIntent);
 			}
 			return true;
@@ -121,7 +116,6 @@ public class AddNote extends SherlockActivity {
 			for (int i = 0; i < values.length; i++) {
 				empty = empty && values[i].length() == 0;
 			}
-			// Don't save blank note
 			if (empty) {
 				if (DEBUG) Log.d(TAG, "Not saving empty note");
 				return null;
@@ -155,7 +149,6 @@ public class AddNote extends SherlockActivity {
 				// Offload saving to saver intent service
 				startService(saver);
 
-				// mData.saveComment(day1, time, values[i]);
 			}
 			return null;
 		}

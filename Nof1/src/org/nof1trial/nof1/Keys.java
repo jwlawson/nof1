@@ -21,7 +21,8 @@
 package org.nof1trial.nof1;
 
 /**
- * Container class holding various keys for loading SharedPreferences or extras from Bundles, Intents etc
+ * Container class holding various keys for loading SharedPreferences or extras
+ * from Bundles, Intents etc
  * 
  * @author John Lawson
  * 
@@ -52,19 +53,34 @@ public class Keys {
 	/** Shared preference key for whether to flash lights on notification */
 	public static final String DEFAULT_FLASH = "prefs_flash";
 
+	/** Shared preference key for last version of the app to run */
+	public static final String DEFAULT_VERSION = "version";
+
 	/** Name of shared preferences holding the questions */
 	public static final String QUES_NAME = "questions";
 
-	/** Shared preference key with question text. Append with required question number. */
+	/**
+	 * Shared preference key with question text. Append with required question
+	 * number.
+	 */
 	public static final String QUES_TEXT = "questionText";
 
-	/** Shared preference key with question type. Append with required question number. */
+	/**
+	 * Shared preference key with question type. Append with required question
+	 * number.
+	 */
 	public static final String QUES_TYPE = "inputType";
 
-	/** Shared preference key with minimum hint. Append with required question number. */
+	/**
+	 * Shared preference key with minimum hint. Append with required question
+	 * number.
+	 */
 	public static final String QUES_MIN = "questionMin";
 
-	/** Shared preference key with maximum hint. Append with required question number. */
+	/**
+	 * Shared preference key with maximum hint. Append with required question
+	 * number.
+	 */
 	public static final String QUES_MAX = "questionMax";
 
 	/** Shared preferences key for the number of questions in questionnaire */
@@ -72,6 +88,9 @@ public class Keys {
 
 	/** Shared preference key for comment bool. True = show comment */
 	public static final String COMMENT = "comment";
+
+	/** Intent key for account string */
+	public static final String INTENT_ACCOUNT = "org.nof1trial.nof1.account";
 
 	/** Intent key for preview mode */
 	public static final String INTENT_PREVIEW = "org.nof1trial.nof1.preview";
@@ -106,8 +125,26 @@ public class Keys {
 	/** Intent action for save data */
 	public static final String ACTION_SAVE_DATA = "org.nof1trial.nof1.SAVE_DATA";
 
+	/** Intent action for uploading all previously saved data */
+	public static final String ACTION_UPLOAD_ALL = "org.nof1trial.nof1.UPLOAD_ALL";
+
 	/** Intent action for trial completed */
 	public static final String ACTION_COMPLETE = "org.nof1trial.nof1.TRIAL_COMPLETE";
+
+	/** Intent action for registering account */
+	public static final String ACTION_REGISTER = "org.nof1trial.nof1.REGISTER_ACCOUNT";
+
+	/** Intent action for refreshing account cookie */
+	public static final String ACTION_REFRESH = "org.nof1trial.nof1.REFRESH_CREDENTIALS";
+
+	/** Intent action for downloading schedule once trial is finished */
+	public static final String ACTION_DOWNLOAD_SCHEDULE = "org.nof1trial.nof1.DOWNLOAD_SCHEDULE";
+
+	/** Intent action for an error */
+	public static final String ACTION_ERROR = "org.nof1trial.nof1.ERROR";
+
+	/** Intent action for making a new file */
+	public static final String ACTION_MAKE_FILE = "org.nof1trial.nof1.MAKE_FILE";
 
 	/** SharedPrefernces holding config data */
 	public static final String CONFIG_NAME = "config";
@@ -127,7 +164,10 @@ public class Keys {
 	/** Shared preference key for pharm email */
 	public static final String CONFIG_PHARM = "pharm";
 
-	/** Shared preference key for whether this is the first time doctor has logged in */
+	/**
+	 * Shared preference key for whether this is the first time doctor has
+	 * logged in
+	 */
 	public static final String CONFIG_FIRST = "first_run";
 
 	/** Shared preferences key for hashed password */
@@ -142,10 +182,16 @@ public class Keys {
 	/** Shared preferences key for number of days per treatment period */
 	public static final String CONFIG_PERIOD_LENGTH = "period_length";
 
-	/** Shared preferences key for number of *pairs of* treatment periods in trial */
+	/**
+	 * Shared preferences key for number of *pairs of* treatment periods in
+	 * trial
+	 */
 	public static final String CONFIG_NUMBER_PERIODS = "number_periods";
 
-	/** Shared preferences key prefix for whether to fill in questionnaire on this day */
+	/**
+	 * Shared preferences key prefix for whether to fill in questionnaire on
+	 * this day
+	 */
 	public static final String CONFIG_DAY = "day";
 
 	/** Shared preference key for start date */
@@ -166,10 +212,16 @@ public class Keys {
 	/** Shared preference key for database version */
 	public static final String CONFIG_DB_VERSION = "db_version";
 
-	/** Shared preference key for list of questions. Retrieve with getStringArrayList */
+	/**
+	 * Shared preference key for list of questions. Retrieve with
+	 * getStringArrayList
+	 */
 	public static final String CONFIG_QUESTION_LIST = "question_list";
 
-	/** Shared preference key for schedule data. Should be something like AB|BA|BA|AB| */
+	/**
+	 * Shared preference key for schedule data. Should be something like
+	 * AB|BA|BA|AB|
+	 */
 	public static final String CONFIG_SCHEDULE = "schedule";
 
 	/** Intent extra for day data was saved */
@@ -190,7 +242,10 @@ public class Keys {
 	/** Shared preferences key for next date to set notification */
 	public static final String SCHED_NEXT_DATE = "next_date";
 
-	/** Shared preference key for the number of days into treatment period the next notification is */
+	/**
+	 * Shared preference key for the number of days into treatment period the
+	 * next notification is
+	 */
 	public static final String SCHED_NEXT_DAY = "next_day";
 
 	/** Shared preference key for the current treatment period in, starts at 1 */
@@ -208,7 +263,10 @@ public class Keys {
 	/** Shared preference key for the cumulative number of days into the trial */
 	public static final String SCHED_CUMULATIVE_DAY = "cum_day";
 
-	/** Shared preference key for the next cumulative number of days into the trial */
+	/**
+	 * Shared preference key for the next cumulative number of days into the
+	 * trial
+	 */
 	public static final String SCHED_NEXT_CUMULATIVE_DAY = "next_cum_day";
 
 	/** Shared preference key for whether the trial is finished */

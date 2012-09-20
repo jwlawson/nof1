@@ -80,6 +80,10 @@ public interface ConfigProxy extends EntityProxy {
 
 	public void setQuestionList(List<String> questionList);
 
+	public Long getEndDate();
+
+	public void setEndDate(Long endDate);
+
 	public String getSchedule();
 
 	public Long getId();

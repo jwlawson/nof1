@@ -27,8 +27,7 @@
     android:orientation="vertical"
     android:padding="@dimen/padding_large"
     tools:context=".activities.AddNote" >
-
-
+
     <TextView
         android:id="@+id/add_note_text"
         android:layout_width="wrap_content"
@@ -36,9 +35,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/add_new_note"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
 
     <EditText
         android:id="@+id/add_note_edit"

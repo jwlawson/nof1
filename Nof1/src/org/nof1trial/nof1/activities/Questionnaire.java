@@ -26,7 +26,6 @@ import java.util.InputMismatchException;
 
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.Saver;
 import org.nof1trial.nof1.containers.Question;
 import org.nof1trial.nof1.fragments.AdHocEntryComplete;
 import org.nof1trial.nof1.fragments.CheckFragment;
@@ -36,6 +35,7 @@ import org.nof1trial.nof1.fragments.QuesComplete;
 import org.nof1trial.nof1.fragments.QuestionFragment;
 import org.nof1trial.nof1.fragments.RadioFragment;
 import org.nof1trial.nof1.fragments.RescheduleDialog;
+import org.nof1trial.nof1.services.Saver;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -99,9 +99,9 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			new QuestionLoader().execute();
 		}
 
-		Intent i = getIntent();
-		mPreview = i.getBooleanExtra(Keys.INTENT_PREVIEW, false);
-		mScheduled = i.getBooleanExtra(Keys.INTENT_SCHEDULED, false);
+		Intent startedIntent = getIntent();
+		mPreview = startedIntent.getBooleanExtra(Keys.INTENT_PREVIEW, false);
+		mScheduled = startedIntent.getBooleanExtra(Keys.INTENT_SCHEDULED, false);
 
 		if (!mScheduled) {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -150,8 +150,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			// Scheduled data input
 			// Save data to database
 
-			Calendar calNow = Calendar.getInstance();
-			long time = calNow.getTimeInMillis();
+			long time = System.currentTimeMillis();
 
 			// Disable buttons to show we are doing something
 			((Button) findViewById(R.id.data_input_button_ok)).setEnabled(false);
@@ -351,9 +350,8 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 					q = CheckFragment.newInstance(sp.getString(Keys.QUES_TEXT + i, null), false);
 					break;
 				default:
-					// Should never happen
-					q = null;
-					Log.e(TAG, "Something horrid has happened: Unknown question type");
+					Log.e(TAG, "Unknown question type. Ignoring.");
+					continue;
 				}
 				mQuestionList.add(q);
 

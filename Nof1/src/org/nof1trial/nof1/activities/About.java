@@ -42,44 +42,45 @@ import com.actionbarsherlock.view.MenuItem;
  * 
  */
 public class About extends SherlockActivity {
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.about_layout);
-		
+
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		
+
 		TextView details = (TextView) findViewById(R.id.about_details);
+		details.setLinkTextColor(0xff33b5e5);
 		Linkify.addLinks(details, Linkify.ALL);
-		
+
 		Linkify.TransformFilter emptyFilter = new Linkify.TransformFilter() {
 			@Override
 			public String transformUrl(Matcher match, String url) {
 				return "";
 			}
 		};
-		
+
 		Linkify.MatchFilter emptyMatch = new Linkify.MatchFilter() {
 			@Override
 			public boolean acceptMatch(CharSequence s, int start, int end) {
 				return true;
 			}
 		};
-		
+
 		Pattern ABSMatcher = Pattern.compile("ActionBarSherlock");
 		String urlABS = "http://actionbarsherlock.com/";
 		Linkify.addLinks(details, ABSMatcher, urlABS, null, emptyFilter);
-		
+
 		Pattern apacheMatcher = Pattern.compile("Apache Commons Codec");
 		String urlApache = "http://commons.apache.org/codec/index.html";
 		Linkify.addLinks(details, apacheMatcher, urlApache, emptyMatch, emptyFilter);
-		
+
 		Pattern acraMatcher = Pattern.compile("ACRA crash reporting");
 		String urlAcra = "http://code.google.com/p/acra";
 		Linkify.addLinks(details, acraMatcher, urlAcra, emptyMatch, emptyFilter);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -99,5 +100,5 @@ public class About extends SherlockActivity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 }

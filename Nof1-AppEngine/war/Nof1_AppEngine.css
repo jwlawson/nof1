@@ -1,41 +1,201 @@
-/** Add css rules here for your application. */
-
-
-/** Example rules used by the template application (remove for your app) */
-h1 {
-  font-size: 2em;
-  font-weight: bold;
-  color: #777777;
-  margin: 40px 0px 70px;
-  text-align: center;
+html,body {
+	padding: 0px;
+	margin: 0px;
+	width: 99%;
+	height: 99%;
+	background: #eaeaea;
 }
 
-.sendButton {
-  display: block;
-  font-size: 16pt;
+pre {
+	font-family: "courier new", courier;
+	font-size: small;
 }
 
-/** Most GWT widgets already have a style name defined */
-.gwt-DialogBox {
-  width: 400px;
+body {
+	color: black;
+	border: 0px;
+	padding: 0px;
+	background: #eaeaea !important;
+	direction: ltr;
 }
 
-.dialogVPanel {
-  margin: 5px;
+body {
+	font-family: arial, helvetica, verdana, sans-serif;
+	font-size: small;
+	overflow-x: hidden;
 }
 
-.serverResponseLabelError {
-  color: red;
+/** Button styles */
+.gwt-Button {
+  margin: 0;
+  padding: 5px 7px;
+  text-decoration: none;
+  cursor: pointer;
+  cursor: hand;
+  font-size:small;
+  background: url("images/hborder.png") repeat-x 0px -2077px;
+  border:1px solid #bbb;
+  border-bottom: 1px solid #a0a0a0;
+  border-radius: 3px;
+ -moz-border-radius: 3px;
+}
+.gwt-Button:active {
+  border: 1px inset #ccc;
+}
+.gwt-Button:hover {
+  border-color: #939393;
+}
+.gwt-Button[disabled] {
+  cursor: default;
+  color: #888;
+}
+.gwt-Button[disabled]:hover {
+  border: 1px outset #ccc;
 }
 
-/** Set ids using widget.getElement().setId("idOfElement") */
-#closeButton {
-  margin: 15px 6px 6px;
+
+
+/** Main flowPanel style */
+.vPanel {
+	width: 90%;
+	background: #eaeaea;
+	margin-right: auto;
+	margin-left: auto;
 }
 
-/* stock list header row */
-.tableHeader {
-  background-color: #2062B8;
-  color: #FFFFFF;
-  font-style: italic;
-} 
+/** Header panel style */
+.headerPanel {
+	width: 100%;
+}
+
+.gwt-Image-header {
+	width: 128px;
+	height: 128px;
+	float: left;
+}
+
+.gwt-Label-header {
+	float: left;
+	margin-top: 36px;
+	font-size: 48px;
+	font-style: normal;
+	font-family: sans-serif;
+	font-weight: bolder;
+}
+
+.spacer {
+	clear: both;
+}
+
+/**
+ * Table styling
+ */
+.table-Header {
+	background-color: #33b5e5;
+}
+
+.table-OddRow {
+	background-color: #ffffff;
+}
+
+.table-EvenRow {
+	background-color: #eeeeee;
+}
+
+.table-Cell {
+	border-width: 0px 0px 0px 1px;
+	border-style: solid;
+	border-color: black;
+	padding: 5px;
+}
+
+/** Decorator panel styling */
+.gwt-DecoratorPanel {
+	width: 100%;
+	margin: 1em 0em 1em 0em;
+}
+
+.gwt-DecoratorPanel .topCenter {
+	border-top: 1px solid #bbb;
+	line-height: 0px;
+}
+
+.gwt-DecoratorPanel .bottomCenter {
+	border-bottom: 1px solid #bbb;
+	line-height: 0px;
+}
+
+.gwt-DecoratorPanel .topCenterInner,.gwt-DecoratorPanel .bottomCenterInner
+	{
+	height: 1px;
+	line-height: 0px;
+	font-size: 1px;
+}
+
+.gwt-DecoratorPanel .middleLeft {
+	border-left: 1px solid #bbb;
+}
+
+.gwt-DecoratorPanel .middleRight {
+	border-right: 1px solid #bbb;
+}
+
+.gwt-DecoratorPanel .middleLeftInner,.gwt-DecoratorPanel .middleRightInner
+	{
+	width: 1px;
+	line-height: 1px;
+}
+
+.gwt-DecoratorPanel .topLeftInner,.gwt-DecoratorPanel .topRightInner,.gwt-DecoratorPanel .bottomLeftInner,.gwt-DecoratorPanel .bottomRightInner
+	{
+	width: 5px;
+	height: 5px;
+	zoom: 1;
+	font-size: 1px;
+	overflow: hidden;
+}
+
+.gwt-DecoratorPanel .topLeft {
+	line-height: 0px;
+	background: url(images/circles.png) no-repeat 0px -6px;
+	-background: url(images/circles_ie6.png) no-repeat 0px -6px;
+}
+
+.gwt-DecoratorPanel .topRight {
+	line-height: 0px;
+	background: url(images/circles.png) no-repeat -5px -6px;
+	-background: url(images/circles_ie6.png) no-repeat -5px -6px;
+}
+
+.gwt-DecoratorPanel .bottomLeft {
+	line-height: 0px;
+	background: url(images/circles.png) no-repeat 0px -11px;
+	-background: url(images/circles_ie6.png) no-repeat 0px -11px;
+}
+
+.gwt-DecoratorPanel .bottomRight {
+	line-height: 0px;
+	background: url(images/circles.png) no-repeat -5px -11px;
+	-background: url(images/circles_ie6.png) no-repeat -5px -11px;
+}
+
+* html .gwt-DecoratorPanel .topLeftInner,* html .gwt-DecoratorPanel .topRightInner,* html .gwt-DecoratorPanel .bottomLeftInner,* html .gwt-DecoratorPanel .bottomRightInner
+	{
+	width: 5px;
+	height: 5px;
+	overflow: hidden;
+}
+.gwt-Image-loader {
+	position: absolute;
+	top: 50%;
+	text-align: centre;
+	display: inline;
+}
+.loading-frame {
+	margin: auto;
+	width: 128px;
+}
+.gwt-Label-loading {
+	position: absolute;
+	top: 40%;
+}

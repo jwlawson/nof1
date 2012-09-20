@@ -47,7 +47,7 @@ public class DataSource {
 	/** Array of all columns */
 	private String[] mColumns;
 
-	static final int[] sDataLock = new int[0];
+	public static final int[] sDataLock = new int[0];
 
 	public DataSource(Context context) {
 		mHelper = new SQLite(context);
@@ -96,7 +96,7 @@ public class DataSource {
 	 */
 	public long saveData(int day, long time, int[] data) {
 
-		ContentValues values = new ContentValues();
+		final ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_DAY, day);
 		values.put(SQLite.COLUMN_TIME, time);
 		if (data != null) {
@@ -104,7 +104,7 @@ public class DataSource {
 				values.put(SQLite.COLUMN_QUESTION + i, data[i]);
 			}
 		}
-		long insertId = -1;
+		long insertId;
 		synchronized (sDataLock) {
 			insertId = mDatabase.insert(SQLite.TABLE_INFO, null, values);
 		}
@@ -124,7 +124,7 @@ public class DataSource {
 	public long saveData(int day, long time, int[] data, String comment) {
 		long insertId = saveData(day, time, data);
 
-		ContentValues values = new ContentValues();
+		final ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_COMMENT, comment);
 
 		synchronized (sDataLock) {
@@ -141,12 +141,12 @@ public class DataSource {
 	 * @return The row id saved
 	 */
 	public long saveComment(int day, long time, String comment) {
-		ContentValues values = new ContentValues();
+		final ContentValues values = new ContentValues();
 		values.put(SQLite.COLUMN_DAY, day);
 		values.put(SQLite.COLUMN_TIME, time);
 		values.put(SQLite.COLUMN_COMMENT, comment);
 
-		long insertId = -1;
+		long insertId;
 		synchronized (sDataLock) {
 			insertId = mDatabase.insert(SQLite.TABLE_INFO, null, values);
 		}

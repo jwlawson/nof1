@@ -17,12 +17,23 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/menu_home_settings" android:title="@string/settings" android:icon="@drawable/ic_action_settings"></item>
-    <item android:id="@+id/menu_home_about" android:title="@string/about"></item>
-    <item android:id="@+id/menu_home_accounts" android:showAsAction="never|withText" android:title="@string/accounts"></item>
-    
+
+    <item
+        android:id="@+id/menu_home_settings"
+        android:icon="@drawable/ic_action_settings"
+        android:title="@string/settings">
+    </item>
+    <item
+        android:id="@+id/menu_home_accounts"
+        android:showAsAction="never|withText"
+        android:title="@string/accounts">
+    </item>
+    <item
+        android:id="@+id/menu_home_about"
+        android:title="@string/about">
+    </item>
 
 </menu>

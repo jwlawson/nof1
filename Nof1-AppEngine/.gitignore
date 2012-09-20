@@ -1,3 +1,4 @@
 /gwt-unitCache
 /shared
-/.apt-generated
+/.apt_generated
+/.gwt

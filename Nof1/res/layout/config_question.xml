@@ -31,7 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" >
-
+
         <TextView
             android:id="@+id/config_question_text"
             android:layout_width="wrap_content"
@@ -39,6 +39,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:paddingLeft="@dimen/padding_text_lineup"
             android:text="@string/config_question_text"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
