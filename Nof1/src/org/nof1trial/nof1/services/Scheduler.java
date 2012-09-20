@@ -119,7 +119,6 @@ public class Scheduler extends IntentService {
 		SharedPreferences schedPrefs = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE);
 		SharedPreferences.Editor schedEdit = schedPrefs.edit();
 
-		// Load start date as next time for notification
 		if (startDate == null) {
 			Log.e(TAG, "Start date not initialised, config needs to be run");
 		} else {
@@ -130,7 +129,6 @@ public class Scheduler extends IntentService {
 			schedEdit.commit();
 			backup();
 
-			// Set up first time run notification
 			setFirstAlarm(startDate);
 		}
 	}
@@ -285,12 +283,14 @@ public class Scheduler extends IntentService {
 		}
 
 		Calendar startCal = getCalendarFromString(startStr);
-		startCal.set(Calendar.HOUR, 0);
+		startCal.set(Calendar.HOUR_OF_DAY, 0);
 		startCal.set(Calendar.MINUTE, 0);
+		if (DEBUG) Log.d(TAG, "Start date:" + getDateStringFromCalendar(startCal));
 
 		if (now.before(startCal)) {
 			now.setTimeInMillis(startCal.getTimeInMillis());
 		}
+		if (DEBUG) Log.d(TAG, "Now date : " + getDateStringFromCalendar(now));
 
 		for (int i = 0; sp.contains(Keys.CONFIG_TIME + i); i++) {
 
@@ -314,10 +314,14 @@ public class Scheduler extends IntentService {
 				Intent intent = new Intent(this, AlarmReceiver.class);
 				intent.putExtra(Keys.INTENT_MEDICINE, true);
 
-				// Make sure each medicine notification gets a different request
-				// id
-				setAlarm(intent, alarmCal);
-				if (DEBUG) Log.d(TAG, "Scheduling a repeating medicine alarm at " + time);
+				PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES + i,
+						intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmCal.getTimeInMillis(),
+						AlarmManager.INTERVAL_DAY, pi);
+				if (DEBUG)
+					Log.d(TAG, "Scheduling a repeating medicine alarm at " + time + " "
+							+ getDateStringFromCalendar(alarmCal));
 			}
 		}
 	}
@@ -338,6 +342,7 @@ public class Scheduler extends IntentService {
 		}
 		// Only set alarm if the trial has not finished
 		if (!sp.getBoolean(Keys.SCHED_FINISHED, false)) {
+			if (DEBUG) Log.d(TAG, "Scheduling alarm:" + timeStr + " " + dateStr);
 			setAlarm(intent, dateStr, timeStr);
 		}
 	}
