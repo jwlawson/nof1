@@ -147,6 +147,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 		NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 		builder.setContentIntent(pi).setContentTitle(title).setContentText(text).setAutoCancel(true).setSmallIcon(R.drawable.ic_noti)
 				.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_noti));
+		builder.setTicker(text);
 
 		int style = 0;
 
