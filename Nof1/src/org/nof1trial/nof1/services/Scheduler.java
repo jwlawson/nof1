@@ -399,6 +399,7 @@ public class Scheduler extends IntentService {
 	private void setAlarm(Intent intent, String dateStr, String timeStr) {
 
 		Calendar cal = getCalendarFromString(dateStr, timeStr);
+		cal.set(Calendar.SECOND, 0);
 		if (DEBUG) Log.d(TAG, "Setting alarm for: " + getDateStringFromCalendar(cal));
 
 		setAlarm(intent, cal);
