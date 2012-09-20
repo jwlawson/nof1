@@ -80,6 +80,10 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 	/** True if the questionnaire is shown after a scheduled alert */
 	private boolean mScheduled;
 
+	private Button btnOk;
+
+	private Button btnCan;
+
 	public Questionnaire() {
 	}
 
@@ -107,7 +111,8 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 
-		Button btnOk = (Button) findViewById(R.id.data_input_button_ok);
+		btnOk = (Button) findViewById(R.id.data_input_button_ok);
+		btnOk.setEnabled(false);
 		btnOk.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -115,7 +120,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			}
 		});
 
-		Button btnCan = (Button) findViewById(R.id.data_input_button_cancel);
+		btnCan = (Button) findViewById(R.id.data_input_button_cancel);
 		btnCan.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -139,22 +144,18 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 		}
 	}
 
+	// TODO needs refactoring
 	private void save() {
 		if (mPreview) {
-			// Save the questionnaire and return to DoctorConfig
-			// Well, questions are already saved to SharedPreferenced, so just
+			// Well, questions are already saved to SharedPreferences, so just
 			// return
 			setResult(RESULT_DONE);
 			finish();
 		} else if (mScheduled) {
 			// Scheduled data input
-			// Save data to database
-
 			long time = System.currentTimeMillis();
-
-			// Disable buttons to show we are doing something
-			((Button) findViewById(R.id.data_input_button_ok)).setEnabled(false);
-			((Button) findViewById(R.id.data_input_button_cancel)).setEnabled(false);
+			btnOk.setEnabled(false);
+			btnCan.setEnabled(false);
 
 			// Get day of trial we are in
 			final int day = getSharedPreferences(Keys.SCHED_NAME, MODE_PRIVATE).getInt(Keys.SCHED_CUMULATIVE_DAY, 1);
@@ -163,7 +164,6 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			boolean problem = false;
 			final int[] data = new int[mQuestionList.size()];
 			for (int i = 0; i < mQuestionList.size(); i++) {
-				// Basic input check
 				try {
 					data[i] = mQuestionList.get(i).getResult();
 					mQuestionList.get(i).getView().setBackgroundColor(0x00000000);
@@ -174,8 +174,8 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			}
 			if (problem) {
 				Toast.makeText(this, R.string.answer_all, Toast.LENGTH_SHORT).show();
-				((Button) findViewById(R.id.data_input_button_ok)).setEnabled(true);
-				((Button) findViewById(R.id.data_input_button_cancel)).setEnabled(true);
+				btnOk.setEnabled(true);
+				btnCan.setEnabled(true);
 				return;
 			}
 			if (mComment != null) {
@@ -214,8 +214,8 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			final int day = day1;
 
 			// Disable buttons to show we are doing something
-			((Button) findViewById(R.id.data_input_button_ok)).setEnabled(false);
-			((Button) findViewById(R.id.data_input_button_cancel)).setEnabled(false);
+			btnOk.setEnabled(false);
+			btnCan.setEnabled(false);
 
 			// Get question responses
 			boolean problem = false;
@@ -232,6 +232,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			}
 			if (problem) {
 				Toast.makeText(this, R.string.answer_all, Toast.LENGTH_SHORT).show();
+				btnOk.setEnabled(true);
 				return;
 			}
 			if (mComment != null) {
@@ -243,19 +244,6 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 				// Save without comment
 				saveData(day, time, data, null);
 			}
-		}
-	}
-
-	private void dataSaved() {
-		if (mScheduled) {
-
-			QuesComplete frag = QuesComplete.newInstance();
-			frag.show(getSupportFragmentManager(), "complete");
-
-		} else {
-
-			AdHocEntryComplete frag = AdHocEntryComplete.newInstance();
-			frag.show(getSupportFragmentManager(), "complete");
 		}
 	}
 
@@ -280,15 +268,26 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 
 		Intent saver = new Intent(this, Saver.class);
 		saver.setAction(Keys.ACTION_SAVE_DATA);
-
 		saver.putExtra(Keys.DATA_DAY, day);
 		saver.putExtra(Keys.DATA_TIME, time);
 		saver.putExtra(Keys.DATA_COMMENT, comment);
 		saver.putExtra(Keys.DATA_LIST, data);
-
 		startService(saver);
 
 		dataSaved();
+	}
+
+	private void dataSaved() {
+		if (mScheduled) {
+
+			QuesComplete frag = QuesComplete.newInstance();
+			frag.show(getSupportFragmentManager(), "complete");
+
+		} else {
+
+			AdHocEntryComplete frag = AdHocEntryComplete.newInstance();
+			frag.show(getSupportFragmentManager(), "complete");
+		}
 	}
 
 	@Override
@@ -387,6 +386,7 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 			super.onPostExecute(result);
 			if (DEBUG) Log.d(TAG, "AsyncTask QuestionLoader finished");
 			setSupportProgressBarIndeterminateVisibility(false);
+			btnOk.setEnabled(true);
 		}
 
 	}
