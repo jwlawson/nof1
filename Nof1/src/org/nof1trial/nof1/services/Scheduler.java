@@ -218,7 +218,7 @@ public class Scheduler extends IntentService {
 			throw new RuntimeException("Invalid config settings");
 		}
 		int period = schedPrefs.getInt(Keys.SCHED_CUR_PERIOD, 1);
-		if (nextDay < lastDay) {
+		if (nextDay <= lastDay) {
 			// Moving into next treatment period
 			if (period + 1 > 2 * configPrefs.getInt(Keys.CONFIG_NUMBER_PERIODS, Integer.MAX_VALUE)) {
 				// Finished trial
@@ -351,7 +351,7 @@ public class Scheduler extends IntentService {
 				Intent intent = new Intent(this, AlarmReceiver.class);
 				intent.putExtra(Keys.INTENT_MEDICINE, true);
 
-				PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES + i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+				PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, 100 + i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
 				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmCal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
 				if (DEBUG) Log.d(TAG, "Scheduling a repeating medicine alarm at " + time + " " + getDateStringFromCalendar(alarmCal));
@@ -400,7 +400,8 @@ public class Scheduler extends IntentService {
 
 		Calendar cal = getCalendarFromString(dateStr, timeStr);
 		cal.set(Calendar.SECOND, 0);
-		if (DEBUG) Log.d(TAG, "Setting alarm for: " + getDateStringFromCalendar(cal));
+		if (DEBUG)
+			Log.d(TAG, "Setting alarm for: " + getDateStringFromCalendar(cal) + " time: " + cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE));
 
 		setAlarm(intent, cal);
 	}
