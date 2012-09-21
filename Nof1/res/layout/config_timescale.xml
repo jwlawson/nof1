@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/config_timescale_edit_number_periods"
         android:layout_marginLeft="@dimen/padding_large"
         android:layout_marginRight="@dimen/padding_large"
         android:layout_marginTop="@dimen/padding_large"
@@ -73,14 +73,13 @@
         android:layout_marginRight="@dimen/padding_large"
         android:text="@string/ok"
         android:visibility="gone" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_number_periods"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/config_timescale_edit_period"
         android:layout_alignRight="@+id/config_timescale_text_period"
-        android:layout_below="@+id/config_timescale_edit_period"
         android:layout_marginTop="@dimen/padding_large"
         android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_no_treatment_periods"
@@ -107,14 +106,14 @@
         android:ems="10"
         android:inputType="number"
         android:visibility="gone" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_days_record"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/config_timescale_edit_number_periods"
         android:layout_alignRight="@+id/config_timescale_text_period"
-        android:layout_below="@+id/config_timescale_edit_number_periods"
+        android:layout_below="@+id/config_timescale_edit_period"
         android:layout_marginTop="@dimen/padding_large"
         android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_days_record"
