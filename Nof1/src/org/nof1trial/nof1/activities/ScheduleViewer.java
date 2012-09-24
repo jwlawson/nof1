@@ -56,6 +56,8 @@ public class ScheduleViewer extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.schedule_layout);
 
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 		SharedPreferences prefs = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
 		// Only want to show schedule if the trial is finished
@@ -77,7 +79,9 @@ public class ScheduleViewer extends SherlockActivity {
 
 				// Register listener for response
 				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-				manager.registerReceiver(new ScheduleReceiver(), new IntentFilter());
+				IntentFilter filter = new IntentFilter(Keys.ACTION_DOWNLOAD_SCHEDULE);
+				filter.addAction(Keys.ACTION_ERROR);
+				manager.registerReceiver(new ScheduleReceiver(), filter);
 
 			}
 
