@@ -162,6 +162,7 @@ public class Scheduler extends IntentService {
 			if (DEBUG) Log.d(TAG, "Scheduling first time notification at " + startDate + " " + time);
 
 			Calendar start = getCalendarFromString(startDate, time);
+			start.set(Calendar.SECOND, 0);
 			Calendar yesterday = Calendar.getInstance();
 			yesterday.add(Calendar.DATE, -1);
 
