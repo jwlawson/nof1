@@ -98,9 +98,20 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 
 		mQuestionList = new ArrayList<QuestionFragment>();
 
+		btnOk = (Button) findViewById(R.id.data_input_button_ok);
+		btnOk.setEnabled(false);
+		btnOk.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				save();
+			}
+		});
+
 		if (savedInstanceState == null) {
 			// Need to load fragments
 			new QuestionLoader().execute();
+		} else {
+			btnOk.setEnabled(true);
 		}
 
 		Intent startedIntent = getIntent();
@@ -110,15 +121,6 @@ public class Questionnaire extends SherlockFragmentActivity implements Reschedul
 		if (!mScheduled) {
 			getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		}
-
-		btnOk = (Button) findViewById(R.id.data_input_button_ok);
-		btnOk.setEnabled(false);
-		btnOk.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				save();
-			}
-		});
 
 		btnCan = (Button) findViewById(R.id.data_input_button_cancel);
 		btnCan.setOnClickListener(new OnClickListener() {
