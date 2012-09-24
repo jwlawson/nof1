@@ -163,10 +163,7 @@ public class HomeScreen extends SherlockActivity {
 			intent.setType(HTTP.PLAIN_TEXT_TYPE);
 			intent.putExtra(Intent.EXTRA_EMAIL, "");
 			intent.putExtra(Intent.EXTRA_SUBJECT, res.getText(R.string.trial_data));
-			intent.putExtra(
-					Intent.EXTRA_TEXT,
-					res.getText(R.string.results_attached)
-							+ sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
+			intent.putExtra(Intent.EXTRA_TEXT, res.getText(R.string.results_attached) + sp.getString(Keys.CONFIG_PATIENT_NAME, ""));
 			intent.putExtra(Intent.EXTRA_STREAM, uri);
 			startActivity(intent);
 		} catch (ActivityNotFoundException e) {
@@ -186,8 +183,7 @@ public class HomeScreen extends SherlockActivity {
 		File dir;
 		File file;
 
-		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)
-				|| Environment.MEDIA_MOUNTED.equals(state)) {
+		if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) || Environment.MEDIA_MOUNTED.equals(state)) {
 			// External storage readable
 			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
 				// Eclair has no support for getExternalCacheDir()
@@ -379,7 +375,9 @@ public class HomeScreen extends SherlockActivity {
 						startService(maker);
 
 						LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-						manager.registerReceiver(new FileReceiver(), new IntentFilter());
+						IntentFilter filter = new IntentFilter(Keys.ACTION_MAKE_FILE);
+						filter.addAction(Keys.ACTION_ERROR);
+						manager.registerReceiver(new FileReceiver(), filter);
 
 					} else {
 
