@@ -17,7 +17,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -49,7 +49,7 @@
         android:paddingLeft="@dimen/padding_text_lineup"
         android:text="@string/config_treatment_period_explain"
         android:textAppearance="?android:attr/textAppearanceSmall" />
-
+
     <EditText
         android:id="@+id/config_timescale_edit_period"
         android:layout_width="wrap_content"
@@ -59,10 +59,8 @@
         android:layout_toLeftOf="@+id/config_timescale_button"
         android:ems="10"
         android:inputType="number"
-        android:visibility="gone" >
+        android:visibility="gone" />
 
-    </EditText>
-
     <Button
         android:id="@+id/config_timescale_button"
         style="?android:attr/buttonStyleSmall"
@@ -73,7 +71,7 @@
         android:layout_marginRight="@dimen/padding_large"
         android:text="@string/ok"
         android:visibility="gone" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_number_periods"
         android:layout_width="wrap_content"
@@ -106,7 +104,7 @@
         android:ems="10"
         android:inputType="number"
         android:visibility="gone" />
-
+
     <TextView
         android:id="@+id/config_timescale_text_days_record"
         android:layout_width="wrap_content"
