@@ -21,8 +21,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.nof1trial.nof1"
-    android:versionCode="6"
-    android:versionName="2.0" >
+    android:versionCode="7"
+    android:versionName="2.0.1" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -173,15 +173,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="org.nof1trial.nof1.activities.HomeScreen" />
-        </activity>
-        <activity
-            android:name=".activities.MainActivity"
-            android:label="Debug Nof1" >
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
         </activity>
 
         <service
