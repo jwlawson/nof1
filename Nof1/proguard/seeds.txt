@@ -7402,8 +7402,6 @@ org.nof1trial.nof1.activities.GraphDisplay
 org.nof1trial.nof1.activities.GraphDisplay: GraphDisplay()
 org.nof1trial.nof1.activities.HomeScreen
 org.nof1trial.nof1.activities.HomeScreen: HomeScreen()
-org.nof1trial.nof1.activities.MainActivity
-org.nof1trial.nof1.activities.MainActivity: MainActivity()
 org.nof1trial.nof1.activities.Questionnaire
 org.nof1trial.nof1.activities.Questionnaire: Questionnaire()
 org.nof1trial.nof1.activities.ScheduleViewer

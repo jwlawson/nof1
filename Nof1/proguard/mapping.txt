@@ -7486,52 +7486,6 @@ org.nof1trial.nof1.activities.HomeScreen$6 -> org.nof1trial.nof1.activities.v:
 org.nof1trial.nof1.activities.HomeScreen$FileReceiver -> org.nof1trial.nof1.activities.HomeScreen$a:
     org.nof1trial.nof1.activities.HomeScreen this$0 -> a
     412:431:void onReceive(android.content.Context,android.content.Intent) -> onReceive
-org.nof1trial.nof1.activities.MainActivity -> org.nof1trial.nof1.activities.MainActivity:
-    44:191:void onCreate(android.os.Bundle) -> onCreate
-    194:212:void populateDatabase() -> a
-    193:193:void access$0(org.nof1trial.nof1.activities.MainActivity) -> a
-org.nof1trial.nof1.activities.MainActivity$1 -> org.nof1trial.nof1.activities.w:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    55:58:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$10 -> org.nof1trial.nof1.activities.x:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    146:147:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$11 -> org.nof1trial.nof1.activities.y:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    155:157:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$12 -> org.nof1trial.nof1.activities.z:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    165:167:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$13 -> org.nof1trial.nof1.activities.aa:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    175:178:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$14 -> org.nof1trial.nof1.activities.ab:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    186:188:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$2 -> org.nof1trial.nof1.activities.ac:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    66:68:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$3 -> org.nof1trial.nof1.activities.ad:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    76:78:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$4 -> org.nof1trial.nof1.activities.ae:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    86:88:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$5 -> org.nof1trial.nof1.activities.af:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    96:98:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$6 -> org.nof1trial.nof1.activities.ag:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    106:108:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$7 -> org.nof1trial.nof1.activities.ah:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    116:118:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$8 -> org.nof1trial.nof1.activities.ai:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    126:128:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$9 -> org.nof1trial.nof1.activities.aj:
-    org.nof1trial.nof1.activities.MainActivity this$0 -> a
-    136:138:void onClick(android.view.View) -> onClick
 org.nof1trial.nof1.activities.Questionnaire -> org.nof1trial.nof1.activities.Questionnaire:
     java.util.ArrayList mQuestionList -> a
     org.nof1trial.nof1.fragments.CommentFragment mComment -> b
@@ -7554,10 +7508,10 @@ org.nof1trial.nof1.activities.Questionnaire -> org.nof1trial.nof1.activities.Que
     83:83:android.widget.Button access$3(org.nof1trial.nof1.activities.Questionnaire) -> c
     150:150:void access$4(org.nof1trial.nof1.activities.Questionnaire) -> d
     252:252:void access$5(org.nof1trial.nof1.activities.Questionnaire) -> e
-org.nof1trial.nof1.activities.Questionnaire$1 -> org.nof1trial.nof1.activities.ak:
+org.nof1trial.nof1.activities.Questionnaire$1 -> org.nof1trial.nof1.activities.w:
     org.nof1trial.nof1.activities.Questionnaire this$0 -> a
     106:107:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.Questionnaire$2 -> org.nof1trial.nof1.activities.al:
+org.nof1trial.nof1.activities.Questionnaire$2 -> org.nof1trial.nof1.activities.x:
     org.nof1trial.nof1.activities.Questionnaire this$0 -> a
     129:130:void onClick(android.view.View) -> onClick
 org.nof1trial.nof1.activities.Questionnaire$QuestionLoader -> org.nof1trial.nof1.activities.Questionnaire$a:
