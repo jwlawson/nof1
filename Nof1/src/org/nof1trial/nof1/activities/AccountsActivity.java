@@ -23,7 +23,6 @@ package org.nof1trial.nof1.activities;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.app.Util;
@@ -58,7 +57,7 @@ import com.actionbarsherlock.view.MenuItem;
 public class AccountsActivity extends SherlockActivity {
 
 	private static final String TAG = "AccountsActivity";
-	private static final boolean DEBUG = BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	/** The selected position in the ListView of accounts. */
 	private int mAccountSelectedPosition = 0;

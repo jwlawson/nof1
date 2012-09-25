@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.nof1trial.nof1;
 
+import org.nof1trial.nof1.services.FinishedService;
+import org.nof1trial.nof1.services.Saver;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,9 +30,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-
-import org.nof1trial.nof1.services.FinishedService;
-import org.nof1trial.nof1.services.Saver;
 
 /**
  * Broadcast receiver that is disabled by default. Will be enabled if there is
@@ -42,7 +42,7 @@ import org.nof1trial.nof1.services.Saver;
 public class NetworkChangeReceiver extends BroadcastReceiver {
 
 	private static final String TAG = "NetworkChangeReceiver";
-	private static final boolean DEBUG = BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	public NetworkChangeReceiver() {
 	}
@@ -55,17 +55,14 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 		if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
 			if (DEBUG) Log.d(TAG, "Network connection changed");
 
-			ConnectivityManager cm = (ConnectivityManager) context
-					.getSystemService(Context.CONNECTIVITY_SERVICE);
+			ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
 			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-			boolean isConnected = (activeNetwork == null ? false : activeNetwork
-					.isConnectedOrConnecting());
+			boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnectedOrConnecting());
 			if (DEBUG) Log.d(TAG, "Internet connected: " + isConnected);
 
 			if (isConnected) {
-				SharedPreferences sp = context.getSharedPreferences(Keys.CONFIG_NAME,
-						Context.MODE_PRIVATE);
+				SharedPreferences sp = context.getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
 
 				// Pass connectivity change to saver
 				Intent saver = new Intent(context, Saver.class);

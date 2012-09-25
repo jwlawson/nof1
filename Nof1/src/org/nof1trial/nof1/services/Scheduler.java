@@ -23,7 +23,6 @@ package org.nof1trial.nof1.services;
 import java.util.Calendar;
 
 import org.nof1trial.nof1.AlarmReceiver;
-import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.preferences.TimePreference;
 
@@ -56,7 +55,7 @@ import android.util.Log;
 public class Scheduler extends IntentService {
 
 	private static final String TAG = "Scheduler";
-	private static final boolean DEBUG = BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private static final int REQUEST_QUES = 0;
 

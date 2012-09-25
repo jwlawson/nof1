@@ -29,7 +29,6 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.DataSource;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.NetworkChangeReceiver;
@@ -76,7 +75,7 @@ import com.google.web.bindery.requestfactory.shared.ServerFailure;
 public class FinishedService extends IntentService {
 
 	private static final String TAG = "FinishedService";
-	private static final boolean DEBUG = BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 	public static final String CVS_FILE = "results.csv";
 
 	/** Current context */
