@@ -20,18 +20,19 @@
  ******************************************************************************/
 package org.nof1trial.nof1.shared;
 
-import com.google.web.bindery.requestfactory.shared.RequestFactory;
+import com.google.web.bindery.requestfactory.shared.Request;
+import com.google.web.bindery.requestfactory.shared.RequestContext;
+import com.google.web.bindery.requestfactory.shared.ServiceName;
 
 /**
  * @author John Lawson
  * 
  */
-public interface MyRequestFactory extends RequestFactory {
+@ServiceName("org.nof1trial.nof1.server.PassReset")
+public interface PassResetRequest extends RequestContext {
 
-	ConfigRequest configRequest();
+	public Request<PassResetProxy> findPassReset(Long id);
 
-	DataRequest dataRequest();
-
-	PassResetRequest passResetRequest();
+	public Request<PassResetProxy> reset(PassResetProxy pass);
 
 }

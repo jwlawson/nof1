@@ -191,4 +191,9 @@
     <string name="connect">Connect</string>
     <string name="disconnect">Disconnect</string>
     <string name="connected_to_our_servers">Connected to our servers</string>
+    <string name="reset_password">"Resetting password"</string>
+    <string name="reset_complete">"Password reset. Please check your emails."</string>
+    <string name="enter_email">"Please enter the correct email address."</string>
+    <string name="reset_error">"Error resetting password.\nNothing has been changed."</string>
+    <string name="reset_password_btn">Reset password</string>
 </resources>

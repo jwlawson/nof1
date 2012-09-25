@@ -20,18 +20,22 @@
  ******************************************************************************/
 package org.nof1trial.nof1.shared;
 
-import com.google.web.bindery.requestfactory.shared.RequestFactory;
+import com.google.web.bindery.requestfactory.shared.EntityProxy;
+import com.google.web.bindery.requestfactory.shared.ProxyForName;
 
 /**
  * @author John Lawson
  * 
  */
-public interface MyRequestFactory extends RequestFactory {
+@ProxyForName("org.nof1trial.nof1.server.PassReset")
+public interface PassResetProxy extends EntityProxy {
 
-	ConfigRequest configRequest();
+	public String getPass();
 
-	DataRequest dataRequest();
+	public void setPass(String pass);
 
-	PassResetRequest passResetRequest();
+	public String getDocEmail();
+
+	public void setDocEmail(String docEmail);
 
 }

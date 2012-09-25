@@ -17,7 +17,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/config_doctor_login_scroll"
@@ -27,7 +27,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-
+
         <TextView
             android:id="@+id/config_doctor_login_text_email"
             android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
 
             <requestFocus />
         </EditText>
-
+
         <TextView
             android:id="@+id/config_doctor_login_text_pass"
             android:layout_width="wrap_content"
@@ -75,6 +75,21 @@
             android:layout_below="@+id/config_doctor_login_text_pass"
             android:ems="10"
             android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/config_doctor_login_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_alignRight="@+id/config_doctor_login_edit_pass"
+            android:layout_below="@+id/config_doctor_login_edit_pass"
+            android:layout_marginBottom="@dimen/padding_medium"
+            android:clickable="true"
+            android:paddingBottom="@dimen/padding_medium"
+            android:text="@string/reset_password_btn"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#33b5e5" />
+
     </RelativeLayout>
 
 </ScrollView>
