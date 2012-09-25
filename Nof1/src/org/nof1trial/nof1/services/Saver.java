@@ -22,7 +22,6 @@ package org.nof1trial.nof1.services;
 
 import java.util.ArrayList;
 
-import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.DataSource;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.NetworkChangeReceiver;
@@ -62,7 +61,7 @@ import com.google.web.bindery.requestfactory.shared.ServerFailure;
 public class Saver extends IntentService implements ConfigData.OnConfigRequestListener {
 
 	private static final String TAG = "Saver";
-	private static final boolean DEBUG = BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	/** Shared Preferences file for storing cached data to be sent to server */
 	private static final String CACHE = "config";

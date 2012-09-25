@@ -23,7 +23,6 @@ package org.nof1trial.nof1.activities;
 import java.io.File;
 
 import org.apache.http.protocol.HTTP;
-import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.app.Util;
@@ -69,7 +68,7 @@ import com.actionbarsherlock.view.Window;
 public class HomeScreen extends SherlockActivity {
 
 	private static final String TAG = "HomeScreen";
-	private static final boolean DEBUG = BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	private static final int ACCOUNT_REQUEST = 101;
 

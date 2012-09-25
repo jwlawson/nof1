@@ -33,7 +33,6 @@ import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
-import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.activities.AccountsActivity;
 import org.nof1trial.nof1.app.Util;
@@ -67,7 +66,7 @@ import android.util.Log;
 public class AccountService extends IntentService {
 
 	private static final String TAG = "AccountService";
-	private static final boolean DEBUG = BuildConfig.DEBUG;
+	private static final boolean DEBUG = false;
 
 	/** Cookie name for authorisation. */
 	private static final String AUTH_COOKIE_NAME = "SACSID";
