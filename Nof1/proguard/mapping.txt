@@ -1468,6 +1468,7 @@ com.actionbarsherlock.R$id -> com.actionbarsherlock.R$id:
     int config_doctor_linlayout -> config_doctor_linlayout
     int config_doctor_login_edit_email -> config_doctor_login_edit_email
     int config_doctor_login_edit_pass -> config_doctor_login_edit_pass
+    int config_doctor_login_reset -> config_doctor_login_reset
     int config_doctor_login_scroll -> config_doctor_login_scroll
     int config_doctor_login_text_email -> config_doctor_login_text_email
     int config_doctor_login_text_pass -> config_doctor_login_text_pass
@@ -1738,6 +1739,7 @@ com.actionbarsherlock.R$string -> com.actionbarsherlock.R$string:
     int email -> email
     int email_csv -> email_csv
     int enter_data -> enter_data
+    int enter_email -> enter_email
     int enter_login_details -> enter_login_details
     int error_downloading_schedule -> error_downloading_schedule
     int exit -> exit
@@ -1796,6 +1798,10 @@ com.actionbarsherlock.R$string -> com.actionbarsherlock.R$string:
     int remove_last -> remove_last
     int repeat_password -> repeat_password
     int reschedule -> reschedule
+    int reset_complete -> reset_complete
+    int reset_error -> reset_error
+    int reset_password -> reset_password
+    int reset_password_btn -> reset_password_btn
     int results_attached -> results_attached
     int retrieve_account -> retrieve_account
     int save -> save
@@ -6962,6 +6968,11 @@ org.apache.commons.codec.digest.DigestUtils -> org.a.a.a.b.a:
     143:143:java.security.MessageDigest getSha512Digest() -> a
     465:465:byte[] sha512(byte[]) -> a
     497:497:byte[] sha512(java.lang.String) -> b
+org.apache.commons.lang3.RandomStringUtils -> org.a.a.b.a:
+    java.util.Random RANDOM -> a
+    225:280:java.lang.String random(int,int,int,boolean,boolean,char[],java.util.Random) -> a
+    297:300:java.lang.String random(int,java.lang.String) -> a
+    316:319:java.lang.String random(int,char[]) -> a
 org.json.JSONArray -> org.b.a:
     java.util.ArrayList myArrayList -> a
     198:202:java.lang.Object get(int) -> a
@@ -7041,7 +7052,7 @@ org.nof1trial.nof1.DataSource -> org.nof1trial.nof1.a:
     194:194:android.database.Cursor getAllColumns() -> c
     204:204:android.database.Cursor getQuestion(int) -> a
 org.nof1trial.nof1.NetworkChangeReceiver -> org.nof1trial.nof1.NetworkChangeReceiver:
-    53:84:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+    55:81:void onReceive(android.content.Context,android.content.Intent) -> onReceive
 org.nof1trial.nof1.R -> org.nof1trial.nof1.b:
 org.nof1trial.nof1.R$styleable -> org.nof1trial.nof1.b$a:
     int[] CheckArrayArguments -> CheckArrayArguments
@@ -7199,29 +7210,29 @@ org.nof1trial.nof1.activities.AccountsActivity -> org.nof1trial.nof1.activities.
     int mAccountSelectedPosition -> a
     android.content.Context mContext -> b
     android.app.Dialog mDialog -> c
-    72:85:void onCreate(android.os.Bundle) -> onCreate
-    89:95:void onDestroy() -> onDestroy
-    100:115:boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> onOptionsItemSelected
-    122:195:void setConnectScreenContent() -> a
-    201:210:void setDisconnectScreenContent() -> b
-    216:225:void setScreenContent(int) -> a
-    232:240:java.util.List getGoogleAccounts() -> c
-    64:64:void access$0(org.nof1trial.nof1.activities.AccountsActivity,int) -> a
-    64:64:int access$1(org.nof1trial.nof1.activities.AccountsActivity) -> a
-    66:66:android.content.Context access$2(org.nof1trial.nof1.activities.AccountsActivity) -> b
+    71:84:void onCreate(android.os.Bundle) -> onCreate
+    88:94:void onDestroy() -> onDestroy
+    99:114:boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> onOptionsItemSelected
+    121:194:void setConnectScreenContent() -> a
+    200:209:void setDisconnectScreenContent() -> b
+    215:224:void setScreenContent(int) -> a
+    231:239:java.util.List getGoogleAccounts() -> c
+    63:63:void access$0(org.nof1trial.nof1.activities.AccountsActivity,int) -> a
+    63:63:int access$1(org.nof1trial.nof1.activities.AccountsActivity) -> a
+    65:65:android.content.Context access$2(org.nof1trial.nof1.activities.AccountsActivity) -> b
 org.nof1trial.nof1.activities.AccountsActivity$1 -> org.nof1trial.nof1.activities.c:
     org.nof1trial.nof1.activities.AccountsActivity this$0 -> a
-    140:142:void onClick(android.view.View) -> onClick
+    139:141:void onClick(android.view.View) -> onClick
 org.nof1trial.nof1.activities.AccountsActivity$2 -> org.nof1trial.nof1.activities.d:
     org.nof1trial.nof1.activities.AccountsActivity this$0 -> a
-    155:156:void onClick(android.content.DialogInterface,int) -> onClick
+    154:155:void onClick(android.content.DialogInterface,int) -> onClick
 org.nof1trial.nof1.activities.AccountsActivity$3 -> org.nof1trial.nof1.activities.e:
     org.nof1trial.nof1.activities.AccountsActivity this$0 -> a
-    161:163:void onClick(android.content.DialogInterface,int) -> onClick
+    160:162:void onClick(android.content.DialogInterface,int) -> onClick
 org.nof1trial.nof1.activities.AccountsActivity$4 -> org.nof1trial.nof1.activities.f:
     org.nof1trial.nof1.activities.AccountsActivity this$0 -> a
     android.widget.ListView val$listView -> b
-    180:192:void onClick(android.view.View) -> onClick
+    179:191:void onClick(android.view.View) -> onClick
 org.nof1trial.nof1.activities.AddNote -> org.nof1trial.nof1.activities.AddNote:
     android.widget.EditText mNote -> a
     61:70:void onCreate(android.os.Bundle) -> onCreate
@@ -7316,34 +7327,83 @@ org.nof1trial.nof1.activities.DoctorConfig$4 -> org.nof1trial.nof1.activities.j:
     org.nof1trial.nof1.activities.DoctorConfig this$0 -> a
     556:557:void onClick(android.content.DialogInterface,int) -> onClick
 org.nof1trial.nof1.activities.DoctorLogin -> org.nof1trial.nof1.activities.DoctorLogin:
-    android.app.Dialog mDialog -> a
-    android.app.backup.BackupManager mBackupManager -> b
-    73:86:void onCreate(android.os.Bundle) -> onCreate
-    90:131:void firstLogin(android.content.SharedPreferences,java.lang.String) -> a
-    135:170:void login(android.content.SharedPreferences,java.lang.String) -> b
-    174:178:void launch(java.lang.String) -> a
-    182:185:void backup() -> a
-    190:198:android.view.LayoutInflater getInflater() -> b
-    204:209:void onDestroy() -> onDestroy
-    215:218:void onCancel(android.content.DialogInterface) -> onCancel
-    222:235:void saveLoginDetails(android.content.SharedPreferences,java.lang.String,java.lang.String) -> a
-    220:220:void access$0(org.nof1trial.nof1.activities.DoctorLogin,android.content.SharedPreferences,java.lang.String,java.lang.String) -> a
-    172:172:void access$1(org.nof1trial.nof1.activities.DoctorLogin,java.lang.String) -> a
-    88:88:void access$2(org.nof1trial.nof1.activities.DoctorLogin,android.content.SharedPreferences,java.lang.String) -> a
-    133:133:void access$3(org.nof1trial.nof1.activities.DoctorLogin,android.content.SharedPreferences,java.lang.String) -> b
+    android.content.Context mContext -> a
+    android.app.Dialog mDialog -> b
+    android.app.Dialog mSecondDialog -> c
+    android.app.backup.BackupManager mBackupManager -> d
+    android.content.SharedPreferences sharedPrefs -> e
+    java.lang.String passHash -> f
+    java.lang.String emailHash -> g
+    java.lang.String uuidStr -> h
+    94:111:void onCreate(android.os.Bundle) -> onCreate
+    115:156:void firstLogin(java.lang.String) -> a
+    160:202:void login(java.lang.String) -> b
+    205:205:java.lang.String hash(java.lang.String,java.lang.String) -> a
+    209:212:boolean loginCorrect(java.lang.String,java.lang.String) -> b
+    216:216:boolean loginHashCorrect(java.lang.String,java.lang.String) -> c
+    220:220:boolean passHashCorrect(java.lang.String) -> c
+    224:224:boolean emailHashCorrect(java.lang.String) -> d
+    229:233:void launchConfig(java.lang.String) -> e
+    237:240:void backup() -> a
+    245:253:android.view.LayoutInflater getInflater() -> b
+    259:267:void onDestroy() -> onDestroy
+    273:276:void onCancel(android.content.DialogInterface) -> onCancel
+    280:293:void saveLoginDetails(java.lang.String,java.lang.String) -> d
+    296:315:void resetPassword(java.lang.String) -> f
+    377:392:void setDialogDoneWithMessage(android.app.ProgressDialog,int) -> a
+    396:403:void onSharedPreferenceChanged(android.content.SharedPreferences,java.lang.String) -> onSharedPreferenceChanged
+    75:75:android.content.Context access$0(org.nof1trial.nof1.activities.DoctorLogin) -> a
+    278:278:void access$1(org.nof1trial.nof1.activities.DoctorLogin,java.lang.String,java.lang.String) -> a
+    376:376:void access$2(org.nof1trial.nof1.activities.DoctorLogin,android.app.ProgressDialog,int) -> a
+    227:227:void access$3(org.nof1trial.nof1.activities.DoctorLogin,java.lang.String) -> a
+    113:113:void access$4(org.nof1trial.nof1.activities.DoctorLogin,java.lang.String) -> b
+    89:89:java.lang.String access$5(org.nof1trial.nof1.activities.DoctorLogin) -> b
+    204:204:java.lang.String access$6(org.nof1trial.nof1.activities.DoctorLogin,java.lang.String,java.lang.String) -> b
+    223:223:boolean access$7(org.nof1trial.nof1.activities.DoctorLogin,java.lang.String) -> c
+    295:295:void access$8(org.nof1trial.nof1.activities.DoctorLogin,java.lang.String) -> d
+    208:208:boolean access$9(org.nof1trial.nof1.activities.DoctorLogin,java.lang.String,java.lang.String) -> c
+    158:158:void access$10(org.nof1trial.nof1.activities.DoctorLogin,java.lang.String) -> e
 org.nof1trial.nof1.activities.DoctorLogin$1 -> org.nof1trial.nof1.activities.k:
     org.nof1trial.nof1.activities.DoctorLogin this$0 -> a
     android.widget.EditText val$pass -> b
     android.widget.EditText val$pass2 -> c
     android.widget.EditText val$email -> d
-    android.content.SharedPreferences val$sharedPrefs -> e
-    103:126:void onClick(android.content.DialogInterface,int) -> onClick
+    128:151:void onClick(android.content.DialogInterface,int) -> onClick
 org.nof1trial.nof1.activities.DoctorLogin$2 -> org.nof1trial.nof1.activities.l:
     org.nof1trial.nof1.activities.DoctorLogin this$0 -> a
-    android.content.SharedPreferences val$sharedPrefs -> b
-    android.widget.EditText val$email -> c
-    android.widget.EditText val$pass -> d
-    148:165:void onClick(android.content.DialogInterface,int) -> onClick
+    android.widget.EditText val$email -> b
+    174:180:void onClick(android.view.View) -> onClick
+org.nof1trial.nof1.activities.DoctorLogin$3 -> org.nof1trial.nof1.activities.m:
+    org.nof1trial.nof1.activities.DoctorLogin this$0 -> a
+    android.widget.EditText val$email -> b
+    android.widget.EditText val$pass -> c
+    188:197:void onClick(android.content.DialogInterface,int) -> onClick
+org.nof1trial.nof1.activities.DoctorLogin$4 -> org.nof1trial.nof1.activities.n:
+    org.nof1trial.nof1.activities.DoctorLogin this$0 -> a
+    386:387:void onClick(android.content.DialogInterface,int) -> onClick
+org.nof1trial.nof1.activities.DoctorLogin$ResetTask -> org.nof1trial.nof1.activities.DoctorLogin$a:
+    java.lang.String email -> b
+    java.lang.String pass -> c
+    android.app.ProgressDialog dialog -> d
+    org.nof1trial.nof1.activities.DoctorLogin this$0 -> a
+    324:325:void setEmail(java.lang.String) -> a
+    328:329:void setPass(java.lang.String) -> b
+    332:333:void setDialog(android.app.ProgressDialog) -> a
+    337:361:java.lang.Void doInBackground(java.lang.Void[]) -> a
+    365:372:void setDialogDoneWithMessageOnUiThread(int) -> a
+    1:1:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
+    364:364:void access$1(org.nof1trial.nof1.activities.DoctorLogin$ResetTask,int) -> a
+    321:321:android.app.ProgressDialog access$2(org.nof1trial.nof1.activities.DoctorLogin$ResetTask) -> a
+    317:317:org.nof1trial.nof1.activities.DoctorLogin access$4(org.nof1trial.nof1.activities.DoctorLogin$ResetTask) -> b
+org.nof1trial.nof1.activities.DoctorLogin$ResetTask$1 -> org.nof1trial.nof1.activities.o:
+    org.nof1trial.nof1.activities.DoctorLogin$ResetTask this$1 -> a
+    349:353:void onSuccess(org.nof1trial.nof1.shared.PassResetProxy) -> a
+    357:358:void onFailure(com.google.web.bindery.requestfactory.shared.ServerFailure) -> onFailure
+    1:1:void onSuccess(java.lang.Object) -> onSuccess
+org.nof1trial.nof1.activities.DoctorLogin$ResetTask$2 -> org.nof1trial.nof1.activities.p:
+    org.nof1trial.nof1.activities.DoctorLogin$ResetTask this$1 -> a
+    int val$stringRes -> b
+    369:370:void run() -> run
 org.nof1trial.nof1.activities.FormBuilder -> org.nof1trial.nof1.activities.FormBuilder:
     org.nof1trial.nof1.fragments.FormBuilderList mList -> a
     boolean mInActionMode -> b
@@ -7390,86 +7450,86 @@ org.nof1trial.nof1.activities.GraphDisplay -> org.nof1trial.nof1.activities.Grap
 org.nof1trial.nof1.activities.HomeScreen -> org.nof1trial.nof1.activities.HomeScreen:
     android.content.Context mContext -> a
     android.widget.Button btnEmail -> b
-    83:102:void onCreate(android.os.Bundle) -> onCreate
-    107:124:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
-    128:129:boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu) -> onCreateOptionsMenu
-    134:153:boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> onOptionsItemSelected
-    157:178:void sendEmail(java.io.File) -> a
-    181:218:java.io.File findCSV() -> a
-    225:246:void findUpdates(android.content.SharedPreferences) -> a
-    250:266:boolean handleUpdates(int,int) -> a
-    272:286:void createRedirectOrUi() -> b
-    289:296:void redirectToLogin() -> c
-    299:407:void createUi() -> d
-    180:180:java.io.File access$0(org.nof1trial.nof1.activities.HomeScreen) -> a
-    156:156:void access$1(org.nof1trial.nof1.activities.HomeScreen,java.io.File) -> a
-    79:79:android.widget.Button access$2(org.nof1trial.nof1.activities.HomeScreen) -> b
-    77:77:android.content.Context access$3(org.nof1trial.nof1.activities.HomeScreen) -> c
-org.nof1trial.nof1.activities.HomeScreen$1 -> org.nof1trial.nof1.activities.m:
+    82:101:void onCreate(android.os.Bundle) -> onCreate
+    106:123:void onActivityResult(int,int,android.content.Intent) -> onActivityResult
+    127:128:boolean onCreateOptionsMenu(com.actionbarsherlock.view.Menu) -> onCreateOptionsMenu
+    135:152:boolean onOptionsItemSelected(com.actionbarsherlock.view.MenuItem) -> onOptionsItemSelected
+    156:177:void sendEmail(java.io.File) -> a
+    180:217:java.io.File findCSV() -> a
+    224:245:void findUpdates(android.content.SharedPreferences) -> a
+    249:265:boolean handleUpdates(int,int) -> a
+    271:285:void createRedirectOrUi() -> b
+    288:295:void redirectToLogin() -> c
+    298:406:void createUi() -> d
+    179:179:java.io.File access$0(org.nof1trial.nof1.activities.HomeScreen) -> a
+    155:155:void access$1(org.nof1trial.nof1.activities.HomeScreen,java.io.File) -> a
+    78:78:android.widget.Button access$2(org.nof1trial.nof1.activities.HomeScreen) -> b
+    76:76:android.content.Context access$3(org.nof1trial.nof1.activities.HomeScreen) -> c
+org.nof1trial.nof1.activities.HomeScreen$1 -> org.nof1trial.nof1.activities.q:
     org.nof1trial.nof1.activities.HomeScreen this$0 -> a
-    307:309:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.HomeScreen$2 -> org.nof1trial.nof1.activities.n:
+    306:308:void onClick(android.view.View) -> onClick
+org.nof1trial.nof1.activities.HomeScreen$2 -> org.nof1trial.nof1.activities.r:
     org.nof1trial.nof1.activities.HomeScreen this$0 -> a
-    321:323:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.HomeScreen$3 -> org.nof1trial.nof1.activities.o:
+    320:322:void onClick(android.view.View) -> onClick
+org.nof1trial.nof1.activities.HomeScreen$3 -> org.nof1trial.nof1.activities.s:
     org.nof1trial.nof1.activities.HomeScreen this$0 -> a
-    335:337:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.HomeScreen$4 -> org.nof1trial.nof1.activities.p:
+    334:336:void onClick(android.view.View) -> onClick
+org.nof1trial.nof1.activities.HomeScreen$4 -> org.nof1trial.nof1.activities.t:
     org.nof1trial.nof1.activities.HomeScreen this$0 -> a
-    344:346:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.HomeScreen$5 -> org.nof1trial.nof1.activities.q:
+    343:345:void onClick(android.view.View) -> onClick
+org.nof1trial.nof1.activities.HomeScreen$5 -> org.nof1trial.nof1.activities.u:
     org.nof1trial.nof1.activities.HomeScreen this$0 -> a
-    364:389:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.HomeScreen$6 -> org.nof1trial.nof1.activities.r:
+    363:388:void onClick(android.view.View) -> onClick
+org.nof1trial.nof1.activities.HomeScreen$6 -> org.nof1trial.nof1.activities.v:
     org.nof1trial.nof1.activities.HomeScreen this$0 -> a
-    399:401:void onClick(android.view.View) -> onClick
+    398:400:void onClick(android.view.View) -> onClick
 org.nof1trial.nof1.activities.HomeScreen$FileReceiver -> org.nof1trial.nof1.activities.HomeScreen$a:
     org.nof1trial.nof1.activities.HomeScreen this$0 -> a
-    413:432:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+    412:431:void onReceive(android.content.Context,android.content.Intent) -> onReceive
 org.nof1trial.nof1.activities.MainActivity -> org.nof1trial.nof1.activities.MainActivity:
     44:191:void onCreate(android.os.Bundle) -> onCreate
     194:212:void populateDatabase() -> a
     193:193:void access$0(org.nof1trial.nof1.activities.MainActivity) -> a
-org.nof1trial.nof1.activities.MainActivity$1 -> org.nof1trial.nof1.activities.s:
+org.nof1trial.nof1.activities.MainActivity$1 -> org.nof1trial.nof1.activities.w:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     55:58:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$10 -> org.nof1trial.nof1.activities.t:
+org.nof1trial.nof1.activities.MainActivity$10 -> org.nof1trial.nof1.activities.x:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     146:147:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$11 -> org.nof1trial.nof1.activities.u:
+org.nof1trial.nof1.activities.MainActivity$11 -> org.nof1trial.nof1.activities.y:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     155:157:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$12 -> org.nof1trial.nof1.activities.v:
+org.nof1trial.nof1.activities.MainActivity$12 -> org.nof1trial.nof1.activities.z:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     165:167:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$13 -> org.nof1trial.nof1.activities.w:
+org.nof1trial.nof1.activities.MainActivity$13 -> org.nof1trial.nof1.activities.aa:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     175:178:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$14 -> org.nof1trial.nof1.activities.x:
+org.nof1trial.nof1.activities.MainActivity$14 -> org.nof1trial.nof1.activities.ab:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     186:188:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$2 -> org.nof1trial.nof1.activities.y:
+org.nof1trial.nof1.activities.MainActivity$2 -> org.nof1trial.nof1.activities.ac:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     66:68:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$3 -> org.nof1trial.nof1.activities.z:
+org.nof1trial.nof1.activities.MainActivity$3 -> org.nof1trial.nof1.activities.ad:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     76:78:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$4 -> org.nof1trial.nof1.activities.aa:
+org.nof1trial.nof1.activities.MainActivity$4 -> org.nof1trial.nof1.activities.ae:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     86:88:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$5 -> org.nof1trial.nof1.activities.ab:
+org.nof1trial.nof1.activities.MainActivity$5 -> org.nof1trial.nof1.activities.af:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     96:98:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$6 -> org.nof1trial.nof1.activities.ac:
+org.nof1trial.nof1.activities.MainActivity$6 -> org.nof1trial.nof1.activities.ag:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     106:108:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$7 -> org.nof1trial.nof1.activities.ad:
+org.nof1trial.nof1.activities.MainActivity$7 -> org.nof1trial.nof1.activities.ah:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     116:118:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$8 -> org.nof1trial.nof1.activities.ae:
+org.nof1trial.nof1.activities.MainActivity$8 -> org.nof1trial.nof1.activities.ai:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     126:128:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.MainActivity$9 -> org.nof1trial.nof1.activities.af:
+org.nof1trial.nof1.activities.MainActivity$9 -> org.nof1trial.nof1.activities.aj:
     org.nof1trial.nof1.activities.MainActivity this$0 -> a
     136:138:void onClick(android.view.View) -> onClick
 org.nof1trial.nof1.activities.Questionnaire -> org.nof1trial.nof1.activities.Questionnaire:
@@ -7494,10 +7554,10 @@ org.nof1trial.nof1.activities.Questionnaire -> org.nof1trial.nof1.activities.Que
     83:83:android.widget.Button access$3(org.nof1trial.nof1.activities.Questionnaire) -> c
     150:150:void access$4(org.nof1trial.nof1.activities.Questionnaire) -> d
     252:252:void access$5(org.nof1trial.nof1.activities.Questionnaire) -> e
-org.nof1trial.nof1.activities.Questionnaire$1 -> org.nof1trial.nof1.activities.ag:
+org.nof1trial.nof1.activities.Questionnaire$1 -> org.nof1trial.nof1.activities.ak:
     org.nof1trial.nof1.activities.Questionnaire this$0 -> a
     106:107:void onClick(android.view.View) -> onClick
-org.nof1trial.nof1.activities.Questionnaire$2 -> org.nof1trial.nof1.activities.ah:
+org.nof1trial.nof1.activities.Questionnaire$2 -> org.nof1trial.nof1.activities.al:
     org.nof1trial.nof1.activities.Questionnaire this$0 -> a
     129:130:void onClick(android.view.View) -> onClick
 org.nof1trial.nof1.activities.Questionnaire$QuestionLoader -> org.nof1trial.nof1.activities.Questionnaire$a:
@@ -7879,115 +7939,115 @@ org.nof1trial.nof1.preferences.TimePreference -> org.nof1trial.nof1.preferences.
     135:151:void onSetInitialValue(boolean,java.lang.Object) -> onSetInitialValue
 org.nof1trial.nof1.services.AccountService -> org.nof1trial.nof1.services.AccountService:
     android.content.Context mContext -> a
-    87:90:void onCreate() -> onCreate
-    94:96:void onDestroy() -> onDestroy
-    101:119:void onHandleIntent(android.content.Intent) -> onHandleIntent
-    129:182:void register(java.lang.String) -> a
-    192:278:void refreshAuthCookie() -> a
-    288:315:java.lang.String getAuthCookie(java.lang.String) -> b
-    285:285:java.lang.String access$0(org.nof1trial.nof1.services.AccountService,java.lang.String) -> a
-    75:75:android.content.Context access$1(org.nof1trial.nof1.services.AccountService) -> a
+    86:89:void onCreate() -> onCreate
+    93:95:void onDestroy() -> onDestroy
+    102:118:void onHandleIntent(android.content.Intent) -> onHandleIntent
+    128:181:void register(java.lang.String) -> a
+    191:277:void refreshAuthCookie() -> a
+    287:314:java.lang.String getAuthCookie(java.lang.String) -> b
+    284:284:java.lang.String access$0(org.nof1trial.nof1.services.AccountService,java.lang.String) -> a
+    74:74:android.content.Context access$1(org.nof1trial.nof1.services.AccountService) -> a
 org.nof1trial.nof1.services.AccountService$1 -> org.nof1trial.nof1.services.a:
     org.nof1trial.nof1.services.AccountService this$0 -> a
-    161:176:void run(android.accounts.AccountManagerFuture) -> run
+    160:175:void run(android.accounts.AccountManagerFuture) -> run
 org.nof1trial.nof1.services.AccountService$2 -> org.nof1trial.nof1.services.b:
     org.nof1trial.nof1.services.AccountService this$0 -> a
     android.accounts.AccountManager val$mgr -> b
     android.accounts.Account val$acct -> c
     org.nof1trial.nof1.activities.AccountsActivity val$act -> d
-    232:272:void run(android.accounts.AccountManagerFuture) -> run
-    228:228:org.nof1trial.nof1.services.AccountService access$0(org.nof1trial.nof1.services.AccountService$2) -> a
+    231:271:void run(android.accounts.AccountManagerFuture) -> run
+    227:227:org.nof1trial.nof1.services.AccountService access$0(org.nof1trial.nof1.services.AccountService$2) -> a
 org.nof1trial.nof1.services.AccountService$2$1 -> org.nof1trial.nof1.services.c:
     org.nof1trial.nof1.services.AccountService$2 this$1 -> a
-    244:259:void run(android.accounts.AccountManagerFuture) -> run
+    243:258:void run(android.accounts.AccountManagerFuture) -> run
 org.nof1trial.nof1.services.AccountService$CookieSaver -> org.nof1trial.nof1.services.AccountService$a:
     org.nof1trial.nof1.services.AccountService this$0 -> a
-    329:329:java.lang.String doInBackground(java.lang.String[]) -> a
-    336:346:void onPostExecute(java.lang.String) -> a
+    328:328:java.lang.String doInBackground(java.lang.String[]) -> a
+    335:345:void onPostExecute(java.lang.String) -> a
     1:1:void onPostExecute(java.lang.Object) -> onPostExecute
     1:1:java.lang.Object doInBackground(java.lang.Object[]) -> doInBackground
 org.nof1trial.nof1.services.FinishedService -> org.nof1trial.nof1.services.FinishedService:
     android.content.Context mContext -> a
-    95:96:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
-    111:173:boolean createCVS(android.database.Cursor) -> a
-    178:208:java.lang.String getCVSString(android.database.Cursor) -> b
-    221:251:void downloadSchedule(android.content.SharedPreferences) -> a
-    256:421:void onHandleIntent(android.content.Intent) -> onHandleIntent
-    83:83:android.content.Context access$0(org.nof1trial.nof1.services.FinishedService) -> a
+    95:95:int onStartCommand(android.content.Intent,int,int) -> onStartCommand
+    110:172:boolean createCVS(android.database.Cursor) -> a
+    177:207:java.lang.String getCVSString(android.database.Cursor) -> b
+    223:250:void downloadSchedule(android.content.SharedPreferences) -> a
+    255:420:void onHandleIntent(android.content.Intent) -> onHandleIntent
+    82:82:android.content.Context access$0(org.nof1trial.nof1.services.FinishedService) -> a
 org.nof1trial.nof1.services.FinishedService$1 -> org.nof1trial.nof1.services.d:
     org.nof1trial.nof1.services.FinishedService this$0 -> a
     android.content.SharedPreferences val$sp -> b
-    231:243:void onSuccess(java.util.List) -> a
-    248:248:void onFailure(com.google.web.bindery.requestfactory.shared.ServerFailure) -> onFailure
+    230:242:void onSuccess(java.util.List) -> a
+    247:247:void onFailure(com.google.web.bindery.requestfactory.shared.ServerFailure) -> onFailure
     1:1:void onSuccess(java.lang.Object) -> onSuccess
 org.nof1trial.nof1.services.FinishedService$2 -> org.nof1trial.nof1.services.e:
     org.nof1trial.nof1.services.FinishedService this$0 -> a
     android.content.SharedPreferences val$sp -> b
-    351:370:void onSuccess(java.util.List) -> a
-    374:379:void onFailure(com.google.web.bindery.requestfactory.shared.ServerFailure) -> onFailure
+    350:369:void onSuccess(java.util.List) -> a
+    373:378:void onFailure(com.google.web.bindery.requestfactory.shared.ServerFailure) -> onFailure
     1:1:void onSuccess(java.lang.Object) -> onSuccess
 org.nof1trial.nof1.services.Saver -> org.nof1trial.nof1.services.Saver:
     android.content.Context mContext -> a
-    80:82:void onCreate() -> onCreate
-    86:88:void onDestroy() -> onDestroy
-    93:153:void onHandleIntent(android.content.Intent) -> onHandleIntent
-    156:168:void uploadAllDataFromDatabase() -> a
-    171:186:void uploadDataFromCursor(android.database.Cursor) -> a
-    189:203:void saveData(android.content.Intent) -> a
-    206:211:void saveDataToDatabase(int,long,java.lang.String,int[]) -> a
-    217:263:void uploadData(int,long,int[],java.lang.String) -> a
-    266:289:void saveDataForLater(int,long,java.lang.String,int[]) -> b
-    293:308:void saveConfig(android.content.Intent) -> b
-    311:314:void uploadAllCachedData(android.content.SharedPreferences) -> a
-    317:334:void uploadCachedDataAt(int,android.content.SharedPreferences) -> a
-    338:347:void clearDataCache(int,android.content.SharedPreferences) -> b
-    350:361:void uploadConfigFromPrefs() -> b
-    364:367:void enableNetworkChangeReceiver() -> c
-    370:373:void disableNetworkChangeReceiver() -> d
-    376:379:boolean isConnected() -> e
-    383:385:boolean isDatabaseInitialised() -> f
-    390:394:void backup() -> g
-    416:417:void onConfigUploadSuccess(org.nof1trial.nof1.shared.ConfigProxy) -> a
-    421:436:void onConfigUploadFailure(com.google.web.bindery.requestfactory.shared.ServerFailure) -> a
-    72:72:android.content.Context access$0(org.nof1trial.nof1.services.Saver) -> a
-    265:265:void access$1(org.nof1trial.nof1.services.Saver,int,long,java.lang.String,int[]) -> a
+    80:81:void onCreate() -> onCreate
+    86:87:void onDestroy() -> onDestroy
+    94:152:void onHandleIntent(android.content.Intent) -> onHandleIntent
+    155:167:void uploadAllDataFromDatabase() -> a
+    170:185:void uploadDataFromCursor(android.database.Cursor) -> a
+    188:202:void saveData(android.content.Intent) -> a
+    205:210:void saveDataToDatabase(int,long,java.lang.String,int[]) -> a
+    216:262:void uploadData(int,long,int[],java.lang.String) -> a
+    265:288:void saveDataForLater(int,long,java.lang.String,int[]) -> b
+    292:307:void saveConfig(android.content.Intent) -> b
+    310:313:void uploadAllCachedData(android.content.SharedPreferences) -> a
+    316:333:void uploadCachedDataAt(int,android.content.SharedPreferences) -> a
+    337:346:void clearDataCache(int,android.content.SharedPreferences) -> b
+    349:360:void uploadConfigFromPrefs() -> b
+    363:366:void enableNetworkChangeReceiver() -> c
+    369:372:void disableNetworkChangeReceiver() -> d
+    375:378:boolean isConnected() -> e
+    382:384:boolean isDatabaseInitialised() -> f
+    389:393:void backup() -> g
+    416:416:void onConfigUploadSuccess(org.nof1trial.nof1.shared.ConfigProxy) -> a
+    420:435:void onConfigUploadFailure(com.google.web.bindery.requestfactory.shared.ServerFailure) -> a
+    71:71:android.content.Context access$0(org.nof1trial.nof1.services.Saver) -> a
+    264:264:void access$1(org.nof1trial.nof1.services.Saver,int,long,java.lang.String,int[]) -> a
 org.nof1trial.nof1.services.Saver$1 -> org.nof1trial.nof1.services.f:
     org.nof1trial.nof1.services.Saver this$0 -> a
     int val$day -> b
     long val$time -> c
     java.lang.String val$comment -> d
     int[] val$data -> e
-    237:238:void onSuccess(org.nof1trial.nof1.shared.DataProxy) -> a
-    242:260:void onFailure(com.google.web.bindery.requestfactory.shared.ServerFailure) -> onFailure
+    237:237:void onSuccess(org.nof1trial.nof1.shared.DataProxy) -> a
+    241:259:void onFailure(com.google.web.bindery.requestfactory.shared.ServerFailure) -> onFailure
     1:1:void onSuccess(java.lang.Object) -> onSuccess
 org.nof1trial.nof1.services.Saver$CookieReceiver -> org.nof1trial.nof1.services.Saver$a:
     org.nof1trial.nof1.services.Saver this$0 -> a
-    400:410:void onReceive(android.content.Context,android.content.Intent) -> onReceive
+    402:409:void onReceive(android.content.Context,android.content.Intent) -> onReceive
 org.nof1trial.nof1.services.Scheduler -> org.nof1trial.nof1.services.Scheduler:
     android.app.AlarmManager mAlarmManager -> a
     android.app.backup.BackupManager mBackupManager -> b
-    74:81:void onCreate() -> onCreate
-    86:116:void onHandleIntent(android.content.Intent) -> onHandleIntent
-    119:125:void bootSetup() -> a
-    128:129:boolean isFirstAlarm() -> b
-    135:141:void firstRun(java.lang.String) -> a
-    144:148:void saveStartDate(java.lang.String) -> b
-    151:152:java.lang.String getStartDate() -> c
-    157:178:void setFirstAlarm(java.lang.String) -> c
-    182:194:void setStartDateIntoSchedulePrefs() -> d
-    197:256:void setNextAlarm() -> e
-    260:281:void reschedule(int) -> a
-    285:302:java.lang.String getEarliestMedicineTime() -> f
-    306:310:void setRepeatAlarm() -> g
-    313:361:void setMedicineAlarm() -> h
-    367:382:void setAlarmFromPrefs(android.content.Intent) -> a
-    386:389:void setAlarm(android.content.Intent,java.util.Calendar) -> a
-    402:408:void setAlarm(android.content.Intent,java.lang.String,java.lang.String) -> a
-    411:415:java.util.Calendar getCalendarFromString(java.lang.String) -> d
-    419:427:java.util.Calendar getCalendarFromString(java.lang.String,java.lang.String) -> a
-    431:437:java.lang.String getDateStringFromCalendar(java.util.Calendar) -> a
-    442:445:void backup() -> i
-    449:449:android.os.IBinder onBind(android.content.Intent) -> onBind
+    73:80:void onCreate() -> onCreate
+    85:115:void onHandleIntent(android.content.Intent) -> onHandleIntent
+    118:124:void bootSetup() -> a
+    127:128:boolean isFirstAlarm() -> b
+    134:140:void firstRun(java.lang.String) -> a
+    143:147:void saveStartDate(java.lang.String) -> b
+    150:151:java.lang.String getStartDate() -> c
+    156:177:void setFirstAlarm(java.lang.String) -> c
+    181:193:void setStartDateIntoSchedulePrefs() -> d
+    196:255:void setNextAlarm() -> e
+    259:280:void reschedule(int) -> a
+    284:301:java.lang.String getEarliestMedicineTime() -> f
+    305:309:void setRepeatAlarm() -> g
+    312:360:void setMedicineAlarm() -> h
+    366:381:void setAlarmFromPrefs(android.content.Intent) -> a
+    385:388:void setAlarm(android.content.Intent,java.util.Calendar) -> a
+    401:407:void setAlarm(android.content.Intent,java.lang.String,java.lang.String) -> a
+    410:414:java.util.Calendar getCalendarFromString(java.lang.String) -> d
+    418:426:java.util.Calendar getCalendarFromString(java.lang.String,java.lang.String) -> a
+    430:436:java.lang.String getDateStringFromCalendar(java.util.Calendar) -> a
+    441:444:void backup() -> i
+    448:448:android.os.IBinder onBind(android.content.Intent) -> onBind
 org.nof1trial.nof1.shared.ConfigProxy -> org.nof1trial.nof1.shared.ConfigProxy:
     java.lang.String getPatientEmail() -> getPatientEmail
     void setPatientEmail(java.lang.String) -> setPatientEmail
@@ -8042,7 +8102,16 @@ org.nof1trial.nof1.shared.DataRequest -> org.nof1trial.nof1.shared.DataRequest:
 org.nof1trial.nof1.shared.MyRequestFactory -> org.nof1trial.nof1.shared.MyRequestFactory:
     org.nof1trial.nof1.shared.ConfigRequest configRequest() -> configRequest
     org.nof1trial.nof1.shared.DataRequest dataRequest() -> dataRequest
+    org.nof1trial.nof1.shared.PassResetRequest passResetRequest() -> passResetRequest
 org.nof1trial.nof1.shared.MyRequestFactoryDeobfuscatorBuilder -> org.nof1trial.nof1.shared.MyRequestFactoryDeobfuscatorBuilder:
+org.nof1trial.nof1.shared.PassResetProxy -> org.nof1trial.nof1.shared.PassResetProxy:
+    java.lang.String getPass() -> getPass
+    void setPass(java.lang.String) -> setPass
+    java.lang.String getDocEmail() -> getDocEmail
+    void setDocEmail(java.lang.String) -> setDocEmail
+org.nof1trial.nof1.shared.PassResetRequest -> org.nof1trial.nof1.shared.PassResetRequest:
+    com.google.web.bindery.requestfactory.shared.Request findPassReset(java.lang.Long) -> findPassReset
+    com.google.web.bindery.requestfactory.shared.Request reset(org.nof1trial.nof1.shared.PassResetProxy) -> reset
 org.nof1trial.nof1.views.GraphView -> org.nof1trial.nof1.c.a:
     java.util.ArrayList mVecList -> a
     java.util.ArrayList mXAxisList -> b

@@ -1546,6 +1546,7 @@ com.actionbarsherlock.R$id: int config_doctor_first_text_pass2
 com.actionbarsherlock.R$id: int config_doctor_linlayout
 com.actionbarsherlock.R$id: int config_doctor_login_edit_email
 com.actionbarsherlock.R$id: int config_doctor_login_edit_pass
+com.actionbarsherlock.R$id: int config_doctor_login_reset
 com.actionbarsherlock.R$id: int config_doctor_login_scroll
 com.actionbarsherlock.R$id: int config_doctor_login_text_email
 com.actionbarsherlock.R$id: int config_doctor_login_text_pass
@@ -1820,6 +1821,7 @@ com.actionbarsherlock.R$string: int edit
 com.actionbarsherlock.R$string: int email
 com.actionbarsherlock.R$string: int email_csv
 com.actionbarsherlock.R$string: int enter_data
+com.actionbarsherlock.R$string: int enter_email
 com.actionbarsherlock.R$string: int enter_login_details
 com.actionbarsherlock.R$string: int error_downloading_schedule
 com.actionbarsherlock.R$string: int exit
@@ -1878,6 +1880,10 @@ com.actionbarsherlock.R$string: int receiver_permission
 com.actionbarsherlock.R$string: int remove_last
 com.actionbarsherlock.R$string: int repeat_password
 com.actionbarsherlock.R$string: int reschedule
+com.actionbarsherlock.R$string: int reset_complete
+com.actionbarsherlock.R$string: int reset_error
+com.actionbarsherlock.R$string: int reset_password
+com.actionbarsherlock.R$string: int reset_password_btn
 com.actionbarsherlock.R$string: int results_attached
 com.actionbarsherlock.R$string: int retrieve_account
 com.actionbarsherlock.R$string: int save
@@ -6457,6 +6463,12 @@ org.apache.commons.codec.language.bm.NameType: org.apache.commons.codec.language
 org.apache.commons.codec.language.bm.NameType: org.apache.commons.codec.language.bm.NameType valueOf(java.lang.String)
 org.apache.commons.codec.language.bm.RuleType: org.apache.commons.codec.language.bm.RuleType[] values()
 org.apache.commons.codec.language.bm.RuleType: org.apache.commons.codec.language.bm.RuleType valueOf(java.lang.String)
+org.apache.commons.lang3.JavaVersion: org.apache.commons.lang3.JavaVersion[] values()
+org.apache.commons.lang3.JavaVersion: org.apache.commons.lang3.JavaVersion valueOf(java.lang.String)
+org.apache.commons.lang3.Range$ComparableComparator: org.apache.commons.lang3.Range$ComparableComparator[] values()
+org.apache.commons.lang3.Range$ComparableComparator: org.apache.commons.lang3.Range$ComparableComparator valueOf(java.lang.String)
+org.apache.commons.lang3.text.translate.NumericEntityUnescaper$OPTION: org.apache.commons.lang3.text.translate.NumericEntityUnescaper$OPTION[] values()
+org.apache.commons.lang3.text.translate.NumericEntityUnescaper$OPTION: org.apache.commons.lang3.text.translate.NumericEntityUnescaper$OPTION valueOf(java.lang.String)
 org.nof1trial.nof1.AlarmReceiver
 org.nof1trial.nof1.AlarmReceiver: AlarmReceiver()
 org.nof1trial.nof1.App
@@ -6787,6 +6799,7 @@ org.nof1trial.nof1.R$id: int config_doctor_first_text_pass2
 org.nof1trial.nof1.R$id: int config_doctor_linlayout
 org.nof1trial.nof1.R$id: int config_doctor_login_edit_email
 org.nof1trial.nof1.R$id: int config_doctor_login_edit_pass
+org.nof1trial.nof1.R$id: int config_doctor_login_reset
 org.nof1trial.nof1.R$id: int config_doctor_login_scroll
 org.nof1trial.nof1.R$id: int config_doctor_login_text_email
 org.nof1trial.nof1.R$id: int config_doctor_login_text_pass
@@ -7053,6 +7066,7 @@ org.nof1trial.nof1.R$string: int edit
 org.nof1trial.nof1.R$string: int email
 org.nof1trial.nof1.R$string: int email_csv
 org.nof1trial.nof1.R$string: int enter_data
+org.nof1trial.nof1.R$string: int enter_email
 org.nof1trial.nof1.R$string: int enter_login_details
 org.nof1trial.nof1.R$string: int error_downloading_schedule
 org.nof1trial.nof1.R$string: int exit
@@ -7111,6 +7125,10 @@ org.nof1trial.nof1.R$string: int receiver_permission
 org.nof1trial.nof1.R$string: int remove_last
 org.nof1trial.nof1.R$string: int repeat_password
 org.nof1trial.nof1.R$string: int reschedule
+org.nof1trial.nof1.R$string: int reset_complete
+org.nof1trial.nof1.R$string: int reset_error
+org.nof1trial.nof1.R$string: int reset_password
+org.nof1trial.nof1.R$string: int reset_password_btn
 org.nof1trial.nof1.R$string: int results_attached
 org.nof1trial.nof1.R$string: int retrieve_account
 org.nof1trial.nof1.R$string: int save
@@ -7476,8 +7494,17 @@ org.nof1trial.nof1.shared.DataRequest: com.google.web.bindery.requestfactory.sha
 org.nof1trial.nof1.shared.MyRequestFactory
 org.nof1trial.nof1.shared.MyRequestFactory: org.nof1trial.nof1.shared.ConfigRequest configRequest()
 org.nof1trial.nof1.shared.MyRequestFactory: org.nof1trial.nof1.shared.DataRequest dataRequest()
+org.nof1trial.nof1.shared.MyRequestFactory: org.nof1trial.nof1.shared.PassResetRequest passResetRequest()
 org.nof1trial.nof1.shared.MyRequestFactoryDeobfuscatorBuilder
 org.nof1trial.nof1.shared.MyRequestFactoryDeobfuscatorBuilder: MyRequestFactoryDeobfuscatorBuilder()
+org.nof1trial.nof1.shared.PassResetProxy
+org.nof1trial.nof1.shared.PassResetProxy: java.lang.String getPass()
+org.nof1trial.nof1.shared.PassResetProxy: void setPass(java.lang.String)
+org.nof1trial.nof1.shared.PassResetProxy: java.lang.String getDocEmail()
+org.nof1trial.nof1.shared.PassResetProxy: void setDocEmail(java.lang.String)
+org.nof1trial.nof1.shared.PassResetRequest
+org.nof1trial.nof1.shared.PassResetRequest: com.google.web.bindery.requestfactory.shared.Request findPassReset(java.lang.Long)
+org.nof1trial.nof1.shared.PassResetRequest: com.google.web.bindery.requestfactory.shared.Request reset(org.nof1trial.nof1.shared.PassResetProxy)
 org.nof1trial.nof1.views.GraphView: void setVecList(java.util.ArrayList)
 org.nof1trial.nof1.views.GraphView: void setCursor(android.database.Cursor)
 org.nof1trial.nof1.views.GraphView: void setMaxX(int)
