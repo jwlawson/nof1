@@ -22,6 +22,16 @@
 		<url-pattern>/gwtRequest</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+	    <servlet-name>uploadUrlService</servlet-name>
+	    <servlet-class>org.nof1trial.nof1.server.services.UploadServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>uploadUrlService</servlet-name>
+	    <url-pattern>/upload/uploadService</url-pattern>
+	</servlet-mapping>
+	
 	<!-- System servlet -->
 	<servlet>
 		<servlet-name>SystemServiceServlet</servlet-name>

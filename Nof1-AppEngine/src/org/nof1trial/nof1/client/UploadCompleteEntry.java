@@ -18,24 +18,19 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1.server.services;
+package org.nof1trial.nof1.client;
 
-import com.google.appengine.api.blobstore.BlobstoreService;
-import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
-import org.nof1trial.nof1.client.services.UserUploadService;
+import com.google.gwt.core.client.EntryPoint;
 
 /**
- * @author John Lawson
+ * @author John
  * 
  */
-@SuppressWarnings("serial")
-public class UploadServiceImpl extends RemoteServiceServlet implements UserUploadService {
+public class UploadCompleteEntry implements EntryPoint {
 
 	@Override
-	public String getBlobstoreUploadUrl() {
-		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-		return blobstoreService.createUploadUrl("/uploadcomplete.html");
+	public void onModuleLoad() {
+
 	}
+
 }

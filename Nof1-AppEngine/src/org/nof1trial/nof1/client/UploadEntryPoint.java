@@ -30,6 +30,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -98,6 +99,15 @@ public class UploadEntryPoint implements EntryPoint {
 		simplePanel.setStyleName("spacer");
 		headerPanel.add(simplePanel);
 
+		HTML htmlNewHtml = new HTML(
+				"<p>Choose a questionnaire file to upload.</p>\r\n\r\n"
+						+ "<p>\r\nThis should be a spreadsheet file (.xls, .xlsx or .csv) which contains 4 columns:\r\n"
+						+ "</br>\t-question\r\n"
+						+ "</br>\t-question type (0 = scale, 1 = number, 2 = checkbox)\r\n"
+						+ "</br>\t-min hint (scale type only)\r\n"
+						+ "</br>\t-max hint (scale type only)\r\n</p>", true);
+		vPanel.add(htmlNewHtml);
+
 		uploadForm = new FormPanel();
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
@@ -109,6 +119,7 @@ public class UploadEntryPoint implements EntryPoint {
 		fileUpload.setName("file");
 
 		btnSubmit = new Button("Loading...");
+		btnSubmit.setEnabled(false);
 		vPanel.add(btnSubmit);
 
 		getUploadUrl();
@@ -119,10 +130,12 @@ public class UploadEntryPoint implements EntryPoint {
 
 			@Override
 			public void onFailure(Throwable caught) {
+				btnSubmit.setText("Error");
 			}
 
 			@Override
 			public void onSuccess(String result) {
+				uploadForm.setAction(result);
 				btnSubmit.setText("Submit");
 				btnSubmit.addClickHandler(new ClickHandler() {
 
@@ -132,6 +145,7 @@ public class UploadEntryPoint implements EntryPoint {
 					}
 
 				});
+				btnSubmit.setEnabled(true);
 			}
 
 		});

@@ -25,6 +25,13 @@ body {
 	overflow-x: hidden;
 }
 
+.gwt-Label {
+}
+
+.gwt-FileUpload {
+}
+
+
 /** Button styles */
 .gwt-Button {
   margin: 0;

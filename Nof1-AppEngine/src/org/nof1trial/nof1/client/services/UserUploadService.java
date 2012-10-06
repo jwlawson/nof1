@@ -24,10 +24,10 @@ import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
- * @author John
+ * @author John Lawson
  * 
  */
-@RemoteServiceRelativePath("images")
+@RemoteServiceRelativePath("uploadService")
 public interface UserUploadService extends RemoteService {
 
 	public String getBlobstoreUploadUrl();
