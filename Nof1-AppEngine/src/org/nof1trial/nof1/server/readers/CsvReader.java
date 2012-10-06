@@ -18,18 +18,50 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1.client;
+package org.nof1trial.nof1.server.readers;
 
-import com.google.gwt.core.client.EntryPoint;
+import java.io.InputStream;
 
 /**
  * @author John
  * 
  */
-public class UploadCompleteEntry implements EntryPoint {
+public class CsvReader extends Reader {
 
 	@Override
-	public void onModuleLoad() {
+	public String getQuestion() {
+		return null;
+	}
+
+	@Override
+	public String getMin() {
+		return null;
+	}
+
+	@Override
+	public String getMax() {
+		return null;
+	}
+
+	@Override
+	public int getType() {
+		return 0;
+	}
+
+	@Override
+	public boolean hasNext() {
+		return false;
+	}
+
+	@Override
+	public void moveToNext() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setInputStream(InputStream stream) {
+		// TODO Auto-generated method stub
 
 	}
 

@@ -56,6 +56,11 @@ public class Questionnaire {
 		}
 	}
 
+	public static Questionnaire save(Questionnaire ques) {
+		ques.persist();
+		return ques;
+	}
+
 	public static final EntityManager entityManager() {
 		return EMF.get().createEntityManager();
 	}
@@ -73,7 +78,7 @@ public class Questionnaire {
 	public void remove() {
 		EntityManager em = entityManager();
 		try {
-			Data attached = em.find(Data.class, this.id);
+			Questionnaire attached = em.find(Questionnaire.class, this.id);
 			em.remove(attached);
 		} finally {
 			em.close();
@@ -96,6 +101,8 @@ public class Questionnaire {
 	private List<String> minList;
 
 	private List<String> maxList;
+
+	private Long expiry;
 
 	public List<String> getQuestionList() {
 		return questionList;
@@ -127,6 +134,14 @@ public class Questionnaire {
 
 	public void setMaxList(List<String> maxList) {
 		this.maxList = maxList;
+	}
+
+	public Long getExpiry() {
+		return expiry;
+	}
+
+	public void setExpiry(Long expiry) {
+		this.expiry = expiry;
 	}
 
 	public Long getId() {

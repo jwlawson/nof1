@@ -33,4 +33,6 @@ public interface QuestionnaireRequest extends RequestContext {
 
 	public Request<QuestionnaireProxy> findQuestionnaire(Long id);
 
+	public Request<QuestionnaireProxy> save(QuestionnaireProxy proxy);
+
 }

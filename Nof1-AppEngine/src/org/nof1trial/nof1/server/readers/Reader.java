@@ -18,42 +18,28 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1.shared;
+package org.nof1trial.nof1.server.readers;
 
-import com.google.web.bindery.requestfactory.shared.EntityProxy;
-import com.google.web.bindery.requestfactory.shared.ProxyForName;
-
-import java.util.List;
+import java.io.InputStream;
 
 /**
- * @author John Lawson
+ * @author John
  * 
  */
-@ProxyForName("org.nof1trial.nof1.server.Questionnaire")
-public interface QuestionnaireProxy extends EntityProxy {
+public abstract class Reader {
 
-	public List<String> getQuestionList();
+	public abstract void setInputStream(InputStream stream);
 
-	public void setQuestionList(List<String> questionList);
+	public abstract String getQuestion();
 
-	public List<Integer> getTypeList();
+	public abstract String getMin();
 
-	public void setTypeList(List<Integer> typeList);
+	public abstract String getMax();
 
-	public List<String> getMinList();
+	public abstract int getType();
 
-	public void setMinList(List<String> minList);
+	public abstract boolean hasNext();
 
-	public List<String> getMaxList();
-
-	public void setMaxList(List<String> maxList);
-
-	public Long getExpiry();
-
-	public void setExpiry(Long expiry);
-
-	public Long getId();
-
-	public Integer getVersion();
+	public abstract void moveToNext();
 
 }

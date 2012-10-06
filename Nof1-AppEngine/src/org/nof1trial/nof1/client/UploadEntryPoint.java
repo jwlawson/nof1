@@ -30,6 +30,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -53,7 +55,8 @@ public class UploadEntryPoint implements EntryPoint {
 	private FlowPanel vPanel;
 	private Button btnSubmit;
 	private FormPanel uploadForm;
-	UserUploadServiceAsync uploadService = GWT.create(UserUploadService.class);
+	private FileUpload fileUpload;
+	private final UserUploadServiceAsync uploadService = GWT.create(UserUploadService.class);
 
 	@Override
 	public void onModuleLoad() {
@@ -102,21 +105,32 @@ public class UploadEntryPoint implements EntryPoint {
 		HTML htmlNewHtml = new HTML(
 				"<p>Choose a questionnaire file to upload.</p>\r\n\r\n"
 						+ "<p>\r\nThis should be a spreadsheet file (.xls, .xlsx or .csv) which contains 4 columns:\r\n"
-						+ "</br>\t-question\r\n"
-						+ "</br>\t-question type (0 = scale, 1 = number, 2 = checkbox)\r\n"
-						+ "</br>\t-min hint (scale type only)\r\n"
-						+ "</br>\t-max hint (scale type only)\r\n</p>", true);
+						+ "</br>\t- question\r\n"
+						+ "</br>\t- question type (0 = scale, 1 = number, 2 = checkbox)\r\n"
+						+ "</br>\t- min hint (scale type only)\r\n"
+						+ "</br>\t- max hint (scale type only)\r\n</p>", true);
 		vPanel.add(htmlNewHtml);
 
 		uploadForm = new FormPanel();
 		uploadForm.setEncoding(FormPanel.ENCODING_MULTIPART);
 		uploadForm.setMethod(FormPanel.METHOD_POST);
+
 		vPanel.add(uploadForm);
 
-		FileUpload fileUpload = new FileUpload();
+		fileUpload = new FileUpload();
 		uploadForm.setWidget(fileUpload);
 		fileUpload.setSize("100%", "100%");
 		fileUpload.setName("file");
+
+		uploadForm.addSubmitCompleteHandler(new SubmitCompleteHandler() {
+
+			@Override
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+				String file = fileUpload.getFilename();
+				Window.Location.assign("https://nof1trial.appspot.com/uploadcomplete.html?file="
+						+ file);
+			}
+		});
 
 		btnSubmit = new Button("Loading...");
 		btnSubmit.setEnabled(false);
@@ -141,7 +155,9 @@ public class UploadEntryPoint implements EntryPoint {
 
 					@Override
 					public void onClick(ClickEvent event) {
-						uploadForm.submit();
+						if (isFileValid()) {
+							uploadForm.submit();
+						}
 					}
 
 				});
@@ -149,5 +165,11 @@ public class UploadEntryPoint implements EntryPoint {
 			}
 
 		});
+	}
+
+	private boolean isFileValid() {
+		return fileUpload.getFilename().endsWith(".csv")
+				|| fileUpload.getFilename().endsWith(".xls")
+				|| fileUpload.getFilename().endsWith(".xlsx");
 	}
 }
