@@ -20,20 +20,14 @@
  ******************************************************************************/
 package org.nof1trial.nof1.shared;
 
-import com.google.web.bindery.requestfactory.shared.RequestFactory;
+import com.google.web.bindery.requestfactory.shared.EntityProxy;
+import com.google.web.bindery.requestfactory.shared.ProxyForName;
 
 /**
  * @author John Lawson
  * 
  */
-public interface MyRequestFactory extends RequestFactory {
-
-	ConfigRequest configRequest();
-
-	DataRequest dataRequest();
-
-	PassResetRequest passResetRequest();
-
-	QuestionnaireRequest questionnaireRequest();
+@ProxyForName("org.nof1trial.nof1.server.Questionnaire")
+public interface QuestionnaireProxy extends EntityProxy {
 
 }

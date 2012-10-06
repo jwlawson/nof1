@@ -20,20 +20,17 @@
  ******************************************************************************/
 package org.nof1trial.nof1.shared;
 
-import com.google.web.bindery.requestfactory.shared.RequestFactory;
+import com.google.web.bindery.requestfactory.shared.Request;
+import com.google.web.bindery.requestfactory.shared.RequestContext;
+import com.google.web.bindery.requestfactory.shared.ServiceName;
 
 /**
  * @author John Lawson
  * 
  */
-public interface MyRequestFactory extends RequestFactory {
+@ServiceName("org.nof1trial.nof1.server.Questionnaire")
+public interface QuestionnaireRequest extends RequestContext {
 
-	ConfigRequest configRequest();
-
-	DataRequest dataRequest();
-
-	PassResetRequest passResetRequest();
-
-	QuestionnaireRequest questionnaireRequest();
+	public Request<QuestionnaireProxy> findQuestionnaire(Long id);
 
 }
