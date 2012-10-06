@@ -30,8 +30,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
-import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -121,16 +119,6 @@ public class UploadEntryPoint implements EntryPoint {
 		uploadForm.setWidget(fileUpload);
 		fileUpload.setSize("100%", "100%");
 		fileUpload.setName("file");
-
-		uploadForm.addSubmitCompleteHandler(new SubmitCompleteHandler() {
-
-			@Override
-			public void onSubmitComplete(SubmitCompleteEvent event) {
-				String file = fileUpload.getFilename();
-				Window.Location.assign("https://nof1trial.appspot.com/uploadcomplete.html?file="
-						+ file);
-			}
-		});
 
 		btnSubmit = new Button("Loading...");
 		btnSubmit.setEnabled(false);

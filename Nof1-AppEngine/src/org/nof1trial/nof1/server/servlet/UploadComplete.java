@@ -53,9 +53,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author John
+ * @author John Lawson
  * 
  */
+@SuppressWarnings("serial")
 public class UploadComplete extends HttpServlet {
 
 	private final BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();

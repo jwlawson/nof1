@@ -32,6 +32,16 @@
 	    <url-pattern>/upload/uploadService</url-pattern>
 	</servlet-mapping>
 	
+	<servlet>
+	    <servlet-name>uploadComplete</servlet-name>
+	    <servlet-class>org.nof1trial.nof1.server.servlet.UploadComplete</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+	    <servlet-name>uploadComplete</servlet-name>
+		<url-pattern>/uploadcomplete</url-pattern>
+   	</servlet-mapping>
+	
 	<!-- System servlet -->
 	<servlet>
 		<servlet-name>SystemServiceServlet</servlet-name>
@@ -85,6 +95,18 @@
 	<security-constraint>
         <web-resource-collection>
             <url-pattern>/favicon.ico</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+    
+	<security-constraint>
+        <web-resource-collection>
+            <url-pattern>/upload.html</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+    
+	<security-constraint>
+        <web-resource-collection>
+            <url-pattern>/uploadcomplete</url-pattern>
         </web-resource-collection>
     </security-constraint>
 

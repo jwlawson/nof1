@@ -36,6 +36,6 @@ public class UploadServiceImpl extends RemoteServiceServlet implements UserUploa
 	@Override
 	public String getBlobstoreUploadUrl() {
 		BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
-		return blobstoreService.createUploadUrl("/uploadcomplete.html");
+		return blobstoreService.createUploadUrl("/uploadcomplete");
 	}
 }
