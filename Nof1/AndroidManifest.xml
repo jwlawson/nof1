@@ -17,7 +17,7 @@
   <http://www.gnu.org/licenses/>.
   
   Contributors:
-      John Lawson - initial API and implementation
+      John Lawson - initial API and implementation
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.nof1trial.nof1"
@@ -215,6 +215,14 @@
         <service
             android:name=".services.Scheduler"
             android:exported="false" >
+        </service>
+        <service
+            android:name=".services.Downloader"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="org.nof1trial.nof1.DOWNLOAD_QUES" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
         </service>
 
         <receiver

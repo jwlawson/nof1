@@ -23,17 +23,19 @@ package org.nof1trial.nof1.activities;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.app.backup.BackupManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -45,20 +47,15 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.app.Util;
 import org.nof1trial.nof1.containers.Question;
 import org.nof1trial.nof1.fragments.CheckFragment;
 import org.nof1trial.nof1.fragments.FormBuilderList;
 import org.nof1trial.nof1.fragments.QuestionBuilderDialog;
 import org.nof1trial.nof1.fragments.SampleQuestionDialog;
-import org.nof1trial.nof1.shared.MyRequestFactory;
-import org.nof1trial.nof1.shared.QuestionnaireProxy;
-import org.nof1trial.nof1.shared.QuestionnaireRequest;
+import org.nof1trial.nof1.services.Downloader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +98,8 @@ public class FormBuilder extends SherlockFragmentActivity implements
 	private BackupManager mBackupManager;
 
 	private final Context mContext = this;
+
+	private ProgressDialog dialog;
 
 	@TargetApi(8)
 	public FormBuilder() {
@@ -439,7 +438,13 @@ public class FormBuilder extends SherlockFragmentActivity implements
 	@Override
 	public void downloadQuestions(int id) {
 		if (isConnected()) {
-			new QuestionnaireDownload().execute(id);
+
+			showProgressDialog();
+
+			launchDownloaderService(id);
+
+			registerCallbackReceiver();
+
 		} else {
 			Toast.makeText(mContext, R.string.download_not_connected, Toast.LENGTH_SHORT).show();
 		}
@@ -452,68 +457,57 @@ public class FormBuilder extends SherlockFragmentActivity implements
 		return isConnected;
 	}
 
-	private class QuestionnaireDownload extends AsyncTask<Integer, Void, Void> {
+	private void showProgressDialog() {
+		dialog = new ProgressDialog(mContext);
+		dialog.setIndeterminate(true);
+		dialog.setCancelable(false);
+		dialog.setMessage(getText(R.string.download_progress));
+		dialog.show();
+	}
 
-		private ProgressDialog dialog;
+	private void launchDownloaderService(int id) {
+		Intent downloader = new Intent(mContext, Downloader.class);
+		downloader.setAction(Keys.ACTION_DOWNLOAD_QUES);
+		downloader.putExtra(Keys.INTENT_ID, id);
+		startService(downloader);
+	}
 
+	private void registerCallbackReceiver() {
+		LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+		manager.registerReceiver(new QuesReceiver(),
+				new IntentFilter(Keys.ACTION_DOWNLOAD_COMPLETE));
+	}
+
+	private class QuesReceiver extends BroadcastReceiver {
+
+		@SuppressWarnings("rawtypes")
 		@Override
-		protected void onPreExecute() {
-			dialog = new ProgressDialog(mContext);
-			dialog.setIndeterminate(true);
-			dialog.setCancelable(false);
-			dialog.setMessage(getText(R.string.download_progress));
-			dialog.show();
+		public void onReceive(Context context, Intent intent) {
+			if (Keys.ACTION_DOWNLOAD_COMPLETE.equals(intent.getAction())) {
+				List<String> questions = intent.getStringArrayListExtra(Keys.INTENT_QUESTIONS);
+				List<String> mins = intent.getStringArrayListExtra(Keys.INTENT_MINS);
+				List<String> maxs = intent.getStringArrayListExtra(Keys.INTENT_MAXS);
+				List<Integer> types = intent.getIntegerArrayListExtra(Keys.INTENT_TYPES);
 
-		}
-
-		@Override
-		protected Void doInBackground(Integer... params) {
-			MyRequestFactory factory = Util.getRequestFactory(mContext, MyRequestFactory.class);
-			QuestionnaireRequest request = factory.questionnaireRequest();
-
-			request.findQuestionnaire((long) params[0]).fire(new Receiver<QuestionnaireProxy>() {
-
-				@SuppressWarnings("rawtypes")
-				@Override
-				public void onSuccess(QuestionnaireProxy response) {
-					List<String> questions = response.getQuestionList();
-					List<String> mins = response.getMinList();
-					List<String> maxs = response.getMaxList();
-					List<Integer> types = response.getTypeList();
-
-					for (int i = 0; i < questions.size(); i++) {
-						Question q = new Question(types.get(i), questions.get(i));
-						if (types.get(i) == Question.SCALE) {
-							q.setMinMax(mins.get(i), maxs.get(i));
-						}
+				for (int i = 0; i < questions.size(); i++) {
+					Question q = new Question(types.get(i), questions.get(i));
+					if (types.get(i) == Question.SCALE) {
+						q.setMinMax(mins.get(i), maxs.get(i));
+					}
+					if (mQuestionList != null) {
 						mQuestionList.add(q);
 					}
+				}
+				if (mList != null) {
 					((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
-
-					closeDialog();
 				}
-
-				@Override
-				public void onFailure(ServerFailure error) {
-					closeDialog();
-					Toast.makeText(getBaseContext(), R.string.download_error, Toast.LENGTH_SHORT)
-							.show();
+				if (dialog != null) {
+					dialog.dismiss();
 				}
+			}
 
-				private void closeDialog() {
-
-					runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							if (dialog != null) {
-								dialog.dismiss();
-							}
-						}
-					});
-				}
-
-			});
-			return null;
+			LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
+			manager.unregisterReceiver(this);
 		}
 
 	}

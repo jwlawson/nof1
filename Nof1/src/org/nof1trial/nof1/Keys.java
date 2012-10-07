@@ -119,6 +119,14 @@ public class Keys {
 	/** Intent key for whether the questionnaire is loaded from scheduled alert */
 	public static final String INTENT_SCHEDULED = "org.nof1trial.nof1.scheduled";
 
+	public static final String INTENT_QUESTIONS = "org.nof1trial.nof1.questions";
+
+	public static final String INTENT_TYPES = "org.nof1trial.nof1.types";
+
+	public static final String INTENT_MINS = "org.nof1trial.nof1.mins";
+
+	public static final String INTENT_MAXS = "org.nof1trial.nof1.maxs";
+
 	public static final String ACTION_CANCEL_ALARM = "org.nof1trial.nof1.CANCEL_ALARM";
 
 	public static final String ACTION_SET_FIRST_ALARM = "org.nof1trial.nof1.SET_FIRST_ALARM";
@@ -130,6 +138,10 @@ public class Keys {
 	public static final String ACTION_SET_MEDICINE_ALARM = "org.nof1trial.nof1.SET_MEDICINE_ALARM";
 
 	public static final String ACTION_RESCHEDULE_ALARM = "org.nof1trial.nof1.RESCHEDULE_ALARM";
+
+	public static final String ACTION_DOWNLOAD_QUES = "org.nof1trial.nof1.DOWNLOAD_QUES";
+
+	public static final String ACTION_DOWNLOAD_COMPLETE = "org.nof1trial.nof1.DOWNLOAD_COMPLETE";
 
 	/** Intent action for save config */
 	public static final String ACTION_SAVE_CONFIG = "org.nof1trial.nof1.SAVE_CONFIG";
