@@ -23,29 +23,23 @@ package org.nof1trial.nof1.server.servlet;
 import com.google.appengine.api.blobstore.BlobInfo;
 import com.google.appengine.api.blobstore.BlobInfoFactory;
 import com.google.appengine.api.blobstore.BlobKey;
+import com.google.appengine.api.blobstore.BlobstoreFailureException;
 import com.google.appengine.api.blobstore.BlobstoreInputStream;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
-import com.google.gwt.core.client.GWT;
-import com.google.web.bindery.event.shared.EventBus;
-import com.google.web.bindery.event.shared.SimpleEventBus;
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
-import com.ibm.icu.util.Calendar;
 
+import org.nof1trial.nof1.server.Questionnaire;
 import org.nof1trial.nof1.server.readers.CsvReader;
 import org.nof1trial.nof1.server.readers.Reader;
 import org.nof1trial.nof1.server.readers.XlsReader;
 import org.nof1trial.nof1.server.readers.XlsxReader;
-import org.nof1trial.nof1.shared.MyRequestFactory;
-import org.nof1trial.nof1.shared.QuestionnaireProxy;
-import org.nof1trial.nof1.shared.QuestionnaireRequest;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -58,30 +52,29 @@ import javax.servlet.http.HttpServletResponse;
  */
 @SuppressWarnings("serial")
 public class UploadComplete extends HttpServlet {
+	private static final Logger log = Logger.getLogger(UploadComplete.class.getName());
 
 	private final BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
-	private MyRequestFactory mRequestFactory;
-
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
-			IOException {
-
-		final PrintWriter writer = resp.getWriter();
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+			throws ServletException, IOException {
+		log.info("Starting post method");
 
 		Map<String, List<BlobKey>> keys = blobstoreService.getUploads(req);
 
 		List<BlobKey> list = keys.get("file");
+		keys.clear();
+
 		if (list.size() < 1) {
-			writer.append("<p>Problem finding the file.</p><p>Please try uploading again.</p>");
+			log.info("Blobkey not found");
+			resp.sendRedirect("/uploadcomplete?id=Error");
 			return;
 		}
-
 		final BlobKey key = list.get(list.size() - 1);
 
 		String filename = getFilename(key);
-
-		writer.append("<p>Parsing uploaded file ").append(filename).append("</p>");
+		log.info("got blobkey and filename " + filename);
 
 		Reader fileReader;
 		if (filename.endsWith(".xls")) {
@@ -91,7 +84,7 @@ public class UploadComplete extends HttpServlet {
 		} else if (filename.endsWith(".csv")) {
 			fileReader = new CsvReader();
 		} else {
-			writer.append("<p>File in incorrect format</p>");
+			resp.sendRedirect("/uploadComplete?id=Error");
 			blobstoreService.delete(key);
 			return;
 		}
@@ -104,22 +97,14 @@ public class UploadComplete extends HttpServlet {
 		ArrayList<String> mins = new ArrayList<String>();
 		ArrayList<String> maxs = new ArrayList<String>();
 
-		writer.append("<table border=\"1\">").append("<tr>");
-		writer.append("<th>Question</th>");
-		writer.append("<th>Type</th>");
-		writer.append("<th>Min</th>");
-		writer.append("<th>Max</th></tr>");
-
 		while (fileReader.hasNext()) {
-			writer.append("<tr>");
+			fileReader.moveToNext();
 
 			String question = fileReader.getQuestion();
 			questions.add(question);
-			writer.append("<td>").append(question).append("</td>");
 
 			int type = fileReader.getType();
 			types.add(type);
-			writer.append("<td>").append(String.valueOf(type)).append("</td>");
 
 			String min = "";
 			String max = "";
@@ -129,49 +114,51 @@ public class UploadComplete extends HttpServlet {
 			}
 			mins.add(min);
 			maxs.add(max);
-			writer.append("<td>").append(min).append("</td>");
-			writer.append("<td>").append(max).append("</td>");
-
-			writer.append("</tr>");
 		}
-		writer.append("</table>");
+		fileReader.closeStream();
+
+		try {
+			blobstoreService.delete(key);
+		} catch (BlobstoreFailureException e) {
+			log.info("Got blobstore error, waiting 1sec");
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) {
+			}
+			try {
+				stream.close();
+			} catch (IOException ignored) {
+			}
+			blobstoreService.delete(key);
+		}
 
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, 60);
 		long expiry = cal.getTimeInMillis();
-		writer.append("<p>This Questionnaire will be kept for 60 days.</p>");
 
-		final EventBus eventBus = new SimpleEventBus();
-		mRequestFactory = GWT.create(MyRequestFactory.class);
-		mRequestFactory.initialize(eventBus);
+		Questionnaire ques = new Questionnaire();
 
-		QuestionnaireRequest request = mRequestFactory.questionnaireRequest();
-		QuestionnaireProxy proxy = request.create(QuestionnaireProxy.class);
+		ques.setQuestionList(questions);
+		ques.setTypeList(types);
+		ques.setMinList(mins);
+		ques.setMaxList(maxs);
+		ques.setExpiry(expiry);
 
-		proxy.setQuestionList(questions);
-		proxy.setTypeList(types);
-		proxy.setMinList(mins);
-		proxy.setMaxList(maxs);
-		proxy.setExpiry(expiry);
+		ques = ques.persist();
 
-		request.save(proxy).fire(new Receiver<QuestionnaireProxy>() {
+		log.info("Ques saved with id: " + ques.getId());
+		resp.sendRedirect("/uploadcomplete?id=" + ques.getId());
+	}
 
-			@Override
-			public void onSuccess(QuestionnaireProxy response) {
-				writer.append("<p>Questionnaire saved successfully with identifier ");
-				writer.append(String.valueOf(response.getId()));
-				writer.append("</p>");
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+			IOException {
+		log.info("Get method started");
 
-				blobstoreService.delete(key);
-			}
-
-			@Override
-			public void onFailure(ServerFailure error) {
-				writer.append("<p>Problem saving questionnaire, try again later.</p>");
-
-				blobstoreService.delete(key);
-			}
-		});
+		String id = req.getParameter("id");
+		log.info("Getting id: " + id);
+		resp.setHeader("Content-Type", "text/html");
+		resp.getWriter().println(id);
 
 	}
 

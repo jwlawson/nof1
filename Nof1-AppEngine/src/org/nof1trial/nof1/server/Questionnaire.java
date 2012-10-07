@@ -65,11 +65,12 @@ public class Questionnaire {
 		return EMF.get().createEntityManager();
 	}
 
-	public void persist() {
+	public Questionnaire persist() {
 		EntityManager em = entityManager();
 		try {
 			em.persist(this);
 			log.log(Level.INFO, "Saving data file: " + toString());
+			return this;
 		} finally {
 			em.close();
 		}

@@ -30,6 +30,8 @@ public abstract class Reader {
 
 	public abstract void setInputStream(InputStream stream);
 
+	public abstract void closeStream();
+
 	public abstract String getQuestion();
 
 	public abstract String getMin();

@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.nof1trial.nof1.server.readers;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -35,6 +36,7 @@ import java.util.Iterator;
  */
 public class XlsReader extends Reader {
 
+	private InputStream stream;
 	private HSSFWorkbook workbook;
 	private HSSFSheet sheet;
 	private HSSFRow row;
@@ -43,6 +45,7 @@ public class XlsReader extends Reader {
 
 	@Override
 	public void setInputStream(InputStream stream) {
+		this.stream = stream;
 		try {
 			workbook = new HSSFWorkbook(stream);
 		} catch (IOException e) {
@@ -59,22 +62,95 @@ public class XlsReader extends Reader {
 
 	@Override
 	public String getQuestion() {
-		return row.getCell(0).getStringCellValue();
+		HSSFCell cell = row.getCell(0);
+		if (cell == null) {
+			return "";
+		}
+		String result;
+
+		switch (cell.getCellType()) {
+		case HSSFCell.CELL_TYPE_NUMERIC:
+			result = String.valueOf(cell.getNumericCellValue());
+			break;
+		case HSSFCell.CELL_TYPE_STRING:
+			result = cell.getStringCellValue();
+			break;
+		case HSSFCell.CELL_TYPE_BLANK:
+		default:
+			result = "";
+			break;
+		}
+		return result;
 	}
 
 	@Override
 	public String getMin() {
-		return row.getCell(2).getStringCellValue();
+		HSSFCell cell = row.getCell(2);
+		String result;
+		if (cell == null) {
+			return "";
+		}
+
+		switch (cell.getCellType()) {
+		case HSSFCell.CELL_TYPE_NUMERIC:
+			result = String.valueOf(cell.getNumericCellValue());
+			break;
+		case HSSFCell.CELL_TYPE_STRING:
+			result = cell.getStringCellValue();
+			break;
+		case HSSFCell.CELL_TYPE_BLANK:
+		default:
+			result = "";
+			break;
+		}
+		return result;
 	}
 
 	@Override
 	public String getMax() {
-		return row.getCell(3).getStringCellValue();
+		HSSFCell cell = row.getCell(3);
+		if (cell == null) {
+			return "";
+		}
+
+		String result;
+
+		switch (cell.getCellType()) {
+		case HSSFCell.CELL_TYPE_NUMERIC:
+			result = String.valueOf(cell.getNumericCellValue());
+			break;
+		case HSSFCell.CELL_TYPE_STRING:
+			result = cell.getStringCellValue();
+			break;
+		case HSSFCell.CELL_TYPE_BLANK:
+		default:
+			result = "";
+			break;
+		}
+		return result;
 	}
 
 	@Override
 	public int getType() {
-		return (int) row.getCell(1).getNumericCellValue();
+		HSSFCell cell = row.getCell(1);
+		if (cell == null) {
+			return 0;
+		}
+		int result;
+
+		switch (cell.getCellType()) {
+		case HSSFCell.CELL_TYPE_NUMERIC:
+			result = (int) cell.getNumericCellValue();
+			break;
+		case HSSFCell.CELL_TYPE_STRING:
+			result = Integer.parseInt(cell.getStringCellValue());
+			break;
+		case HSSFCell.CELL_TYPE_BLANK:
+		default:
+			result = 0;
+			break;
+		}
+		return result;
 	}
 
 	@Override
@@ -85,6 +161,15 @@ public class XlsReader extends Reader {
 	@Override
 	public void moveToNext() {
 		row = (HSSFRow) rowIter.next();
+	}
+
+	@Override
+	public void closeStream() {
+		try {
+			stream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

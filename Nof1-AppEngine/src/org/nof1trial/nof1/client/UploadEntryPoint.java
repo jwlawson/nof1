@@ -30,6 +30,8 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.FormPanel;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteEvent;
+import com.google.gwt.user.client.ui.FormPanel.SubmitCompleteHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
@@ -124,7 +126,38 @@ public class UploadEntryPoint implements EntryPoint {
 		btnSubmit.setEnabled(false);
 		vPanel.add(btnSubmit);
 
+		final HTML html = new HTML("", true);
+		vPanel.add(html);
+
+		uploadForm.addSubmitCompleteHandler(new SubmitCompleteHandler() {
+
+			@Override
+			public void onSubmitComplete(SubmitCompleteEvent event) {
+				String result = event.getResults().trim();
+				if (isNumber(result)) {
+					html.setHTML("<p>Saved with identifier: "
+							+ result
+							+ ".</p> <p>This can be used to download the questionnaire through the android app.</p>"
+							+ "<p>The questionnaire will be available for the next 60 days.</p>");
+				} else {
+					html.setHTML("<p>Error saving the file. Please try again.</p><p>" + result
+							+ "</p>");
+				}
+				getUploadUrl();
+			}
+		});
+
 		getUploadUrl();
+	}
+
+	private boolean isNumber(String str) {
+		try {
+			@SuppressWarnings("unused")
+			int dummy = Integer.parseInt(str);
+			return true;
+		} catch (NumberFormatException ignored) {
+			return false;
+		}
 	}
 
 	private void getUploadUrl() {
@@ -144,7 +177,11 @@ public class UploadEntryPoint implements EntryPoint {
 					@Override
 					public void onClick(ClickEvent event) {
 						if (isFileValid()) {
+							btnSubmit.setText("Uploading...");
+							btnSubmit.setEnabled(false);
 							uploadForm.submit();
+						} else {
+							Window.alert("File needs to be .xls, .xlsx or .csv");
 						}
 					}
 

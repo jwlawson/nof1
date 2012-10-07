@@ -100,6 +100,18 @@
     
 	<security-constraint>
         <web-resource-collection>
+            <url-pattern>/images/*</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+    
+	<security-constraint>
+        <web-resource-collection>
+            <url-pattern>/upload/*</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
+    
+	<security-constraint>
+        <web-resource-collection>
             <url-pattern>/upload.html</url-pattern>
         </web-resource-collection>
     </security-constraint>
@@ -110,4 +122,9 @@
         </web-resource-collection>
     </security-constraint>
 
+	<security-constraint>
+        <web-resource-collection>
+            <url-pattern>/Nof1_AppEngine.css</url-pattern>
+        </web-resource-collection>
+    </security-constraint>
 </web-app>

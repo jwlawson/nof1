@@ -65,4 +65,10 @@ public class CsvReader extends Reader {
 
 	}
 
+	@Override
+	public void closeStream() {
+		// TODO Auto-generated method stub
+
+	}
+
 }
