@@ -20,10 +20,6 @@
  ******************************************************************************/
 package org.nof1trial.nof1.fragments;
 
-import java.util.ArrayList;
-
-import org.nof1trial.nof1.R;
-
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
@@ -34,10 +30,16 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockDialogFragment;
+
+import org.nof1trial.nof1.R;
+
+import java.util.ArrayList;
 
 /**
  * @author John Lawson
@@ -46,6 +48,7 @@ import com.actionbarsherlock.app.SherlockDialogFragment;
 public class SampleQuestionDialog extends SherlockDialogFragment implements OnClickListener {
 
 	private ArrayList<CheckBox> mList;
+	private EditText mIdEdit;
 
 	private OnSamplesCheckedListener mListener;
 
@@ -58,6 +61,8 @@ public class SampleQuestionDialog extends SherlockDialogFragment implements OnCl
 
 	public interface OnSamplesCheckedListener {
 		public abstract void onSampleChecked(boolean[] checked);
+
+		public abstract void downloadQuestions(int id);
 	}
 
 	@Override
@@ -74,7 +79,8 @@ public class SampleQuestionDialog extends SherlockDialogFragment implements OnCl
 		try {
 			mListener = (OnSamplesCheckedListener) activity;
 		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.getClass().getName() + " must implement OnSamplesCheckedListener");
+			throw new ClassCastException(activity.getClass().getName()
+					+ " must implement OnSamplesCheckedListener");
 		}
 	}
 
@@ -85,12 +91,14 @@ public class SampleQuestionDialog extends SherlockDialogFragment implements OnCl
 
 		String[] questions = getResources().getStringArray(R.array.sample_ques_brief);
 
-		RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.sample_questions_text).getParent();
+		RelativeLayout layout = (RelativeLayout) view.findViewById(R.id.sample_questions_text)
+				.getParent();
 
 		int id = R.id.sample_questions_text;
 
 		for (int i = 0; i < questions.length; i++) {
-			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+			RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+					LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 			params.addRule(RelativeLayout.BELOW, id);
 
 			CheckBox chk = new CheckBox(getActivity());
@@ -111,6 +119,8 @@ public class SampleQuestionDialog extends SherlockDialogFragment implements OnCl
 
 		layout.requestLayout();
 
+		mIdEdit = (EditText) view.findViewById(R.id.sample_questions_edit_down);
+
 		Button btnOk = (Button) view.findViewById(R.id.sample_questions_btn_ok);
 		btnOk.setOnClickListener(this);
 
@@ -126,6 +136,16 @@ public class SampleQuestionDialog extends SherlockDialogFragment implements OnCl
 		}
 
 		mListener.onSampleChecked(result);
+
+		String idStr = mIdEdit.getText().toString();
+		if (idStr.length() > 0) {
+			try {
+				int id = Integer.parseInt(idStr);
+				mListener.downloadQuestions(id);
+			} catch (NumberFormatException e) {
+				Toast.makeText(getActivity(), R.string.invalid_id, Toast.LENGTH_SHORT).show();
+			}
+		}
 		dismiss();
 	}
 

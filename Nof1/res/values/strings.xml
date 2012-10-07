@@ -196,4 +196,10 @@
     <string name="enter_email">"Please enter the correct email address."</string>
     <string name="reset_error">"Error resetting password.\nNothing has been changed."</string>
     <string name="reset_password_btn">Reset password</string>
+    <string name="download_questionnaire">Download questionnaire:</string>
+    <string name="id">ID</string>
+    <string name="download_not_connected">Cannot download questionnaire, as not connected to internet.</string>
+    <string name="download_progress">Downloading questionnaire…</string>
+    <string name="download_error">Error downloading questionnaire.</string>
+    <string name="invalid_id">Invalid id entered</string>
 </resources>

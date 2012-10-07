@@ -20,20 +20,15 @@
  ******************************************************************************/
 package org.nof1trial.nof1.activities;
 
-import java.util.ArrayList;
-
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.R;
-import org.nof1trial.nof1.containers.Question;
-import org.nof1trial.nof1.fragments.CheckFragment;
-import org.nof1trial.nof1.fragments.FormBuilderList;
-import org.nof1trial.nof1.fragments.QuestionBuilderDialog;
-import org.nof1trial.nof1.fragments.SampleQuestionDialog;
-
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.app.backup.BackupManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -44,18 +39,37 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.ActionMode;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
+
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.R;
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.containers.Question;
+import org.nof1trial.nof1.fragments.CheckFragment;
+import org.nof1trial.nof1.fragments.FormBuilderList;
+import org.nof1trial.nof1.fragments.QuestionBuilderDialog;
+import org.nof1trial.nof1.fragments.SampleQuestionDialog;
+import org.nof1trial.nof1.shared.MyRequestFactory;
+import org.nof1trial.nof1.shared.QuestionnaireProxy;
+import org.nof1trial.nof1.shared.QuestionnaireRequest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author John Lawson
  * 
  */
-public class FormBuilder extends SherlockFragmentActivity implements FormBuilderList.OnListItemSelectedListener,
-		QuestionBuilderDialog.OnQuestionEditedListener, SampleQuestionDialog.OnSamplesCheckedListener {
+public class FormBuilder extends SherlockFragmentActivity implements
+		FormBuilderList.OnListItemSelectedListener, QuestionBuilderDialog.OnQuestionEditedListener,
+		SampleQuestionDialog.OnSamplesCheckedListener {
 
 	private static final String TAG = "FormBuilder";
 	private static final boolean DEBUG = false;
@@ -75,7 +89,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	private int mListSelected = -1;
 
 	/** List of questions passed on to ListFragment */
-	private ArrayList<Question> mQuestionList;
+	private final ArrayList<Question> mQuestionList;
 
 	/** Currently selected or last instanced QuestionBuilder */
 	private QuestionBuilderDialog mQuestionBuilder;
@@ -86,12 +100,14 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	/** Instance of backup manager */
 	private BackupManager mBackupManager;
 
+	private final Context mContext = this;
+
 	@TargetApi(8)
 	public FormBuilder() {
 		mQuestionList = new ArrayList<Question>();
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-			mBackupManager = new BackupManager(this);
+			mBackupManager = new BackupManager(mContext);
 		}
 	}
 
@@ -103,7 +119,8 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		setContentView(R.layout.form_builder_list);
 		SharedPreferences sp = getSharedPreferences(Keys.QUES_NAME, MODE_PRIVATE);
 
-		mList = (FormBuilderList) getSupportFragmentManager().findFragmentById(R.id.form_builder_list_fragment);
+		mList = (FormBuilderList) getSupportFragmentManager().findFragmentById(
+				R.id.form_builder_list_fragment);
 
 		if (!sp.contains(Keys.QUES_TEXT + 0)) {
 			// No saved questions
@@ -142,7 +159,8 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			edit(0);
 		}
 
-		mCommentFrag = (CheckFragment) getSupportFragmentManager().findFragmentById(R.id.form_builder_check_fragment);
+		mCommentFrag = (CheckFragment) getSupportFragmentManager().findFragmentById(
+				R.id.form_builder_check_fragment);
 
 	}
 
@@ -162,7 +180,8 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			finish();
 			return true;
 		case R.id.menu_form_builder_add:
-			// Add new question to bottom of the list and load new QuestionBuilder
+			// Add new question to bottom of the list and load new
+			// QuestionBuilder
 			Question q = new Question(Question.SCALE, "");
 			mQuestionList.add(q);
 			((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
@@ -172,7 +191,7 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		case R.id.menu_form_builder_preview:
 			// Build and preview a questionnaire
 			saveToFile();
-			Intent i = new Intent(this, Questionnaire.class);
+			Intent i = new Intent(mContext, Questionnaire.class);
 			i.putExtra(Keys.INTENT_PREVIEW, true);
 			startActivityForResult(i, REQUEST_PREVIEW);
 			return true;
@@ -183,11 +202,14 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			return true;
 		case android.R.id.home:
 			if (DEBUG) Log.d(TAG, "Home button pressed");
-			Intent upIntent = new Intent(this, DoctorConfig.class);
+			Intent upIntent = new Intent(mContext, DoctorConfig.class);
 			if (NavUtils.shouldUpRecreateTask(this, upIntent)) {
-				// This activity is not part of the application's task, so create a new task
+				// This activity is not part of the application's task, so
+				// create a new task
 				// with a synthesized back stack.
-				TaskStackBuilder.create(this).addNextIntent(new Intent(this, HomeScreen.class)).addNextIntent(new Intent(this, UserPrefs.class))
+				TaskStackBuilder.create(mContext)
+						.addNextIntent(new Intent(mContext, HomeScreen.class))
+						.addNextIntent(new Intent(mContext, UserPrefs.class))
 						.addNextIntent(upIntent).startActivities();
 				finish();
 			} else {
@@ -231,13 +253,15 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		QuestionBuilderDialog q;
 		if (mDualPane) {
 
-			q = QuestionBuilderDialog.newInstance(QuestionBuilderDialog.VIEW, mQuestionList.get(selection));
+			q = QuestionBuilderDialog.newInstance(QuestionBuilderDialog.VIEW,
+					mQuestionList.get(selection));
 			FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 			ft.replace(R.id.form_builder_details_frame, q, "view");
 			ft.commit();
 
 		} else {
-			q = QuestionBuilderDialog.newInstance(QuestionBuilderDialog.DIALOG, mQuestionList.get(selection));
+			q = QuestionBuilderDialog.newInstance(QuestionBuilderDialog.DIALOG,
+					mQuestionList.get(selection));
 
 			// Shows fragment as dialog
 			q.show(getSupportFragmentManager(), "dialog");
@@ -258,9 +282,11 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 		// For each question, load into editor
 		for (int i = 0; i < mQuestionList.size(); i++) {
 			Question q = mQuestionList.get(i);
-			editor.putString(Keys.QUES_TEXT + i, q.getQuestionStr()).putInt(Keys.QUES_TYPE + i, q.getInputType());
+			editor.putString(Keys.QUES_TEXT + i, q.getQuestionStr()).putInt(Keys.QUES_TYPE + i,
+					q.getInputType());
 			if (q.getInputType() == Question.SCALE) {
-				editor.putString(Keys.QUES_MIN + i, q.getMin()).putString(Keys.QUES_MAX + i, q.getMax());
+				editor.putString(Keys.QUES_MIN + i, q.getMin()).putString(Keys.QUES_MAX + i,
+						q.getMax());
 			}
 			if (DEBUG) Log.d(TAG, q.getQuestionStr() + ": " + q.getInputType());
 		}
@@ -293,7 +319,8 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 
 	@Override
 	protected void onDestroy() {
-		// Save when activity is destroyed. Ensures the list is kept on config changes.
+		// Save when activity is destroyed. Ensures the list is kept on config
+		// changes.
 		saveToFile();
 		super.onDestroy();
 	}
@@ -325,7 +352,8 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 	}
 
 	/**
-	 * ActionMode class to show when a list item is selected. Provides more options specific for that item.
+	 * ActionMode class to show when a list item is selected. Provides more
+	 * options specific for that item.
 	 */
 	private class ListActionMode implements ActionMode.Callback {
 
@@ -406,6 +434,88 @@ public class FormBuilder extends SherlockFragmentActivity implements FormBuilder
 			}
 		}
 		((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
+	}
+
+	@Override
+	public void downloadQuestions(int id) {
+		if (isConnected()) {
+			new QuestionnaireDownload().execute(id);
+		} else {
+			Toast.makeText(mContext, R.string.download_not_connected, Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	private boolean isConnected() {
+		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
+		return isConnected;
+	}
+
+	private class QuestionnaireDownload extends AsyncTask<Integer, Void, Void> {
+
+		private ProgressDialog dialog;
+
+		@Override
+		protected void onPreExecute() {
+			dialog = new ProgressDialog(mContext);
+			dialog.setIndeterminate(true);
+			dialog.setCancelable(false);
+			dialog.setMessage(getText(R.string.download_progress));
+			dialog.show();
+
+		}
+
+		@Override
+		protected Void doInBackground(Integer... params) {
+			MyRequestFactory factory = Util.getRequestFactory(mContext, MyRequestFactory.class);
+			QuestionnaireRequest request = factory.questionnaireRequest();
+
+			request.findQuestionnaire((long) params[0]).fire(new Receiver<QuestionnaireProxy>() {
+
+				@SuppressWarnings("rawtypes")
+				@Override
+				public void onSuccess(QuestionnaireProxy response) {
+					List<String> questions = response.getQuestionList();
+					List<String> mins = response.getMinList();
+					List<String> maxs = response.getMaxList();
+					List<Integer> types = response.getTypeList();
+
+					for (int i = 0; i < questions.size(); i++) {
+						Question q = new Question(types.get(i), questions.get(i));
+						if (types.get(i) == Question.SCALE) {
+							q.setMinMax(mins.get(i), maxs.get(i));
+						}
+						mQuestionList.add(q);
+					}
+					((ArrayAdapter) mList.getListAdapter()).notifyDataSetChanged();
+
+					closeDialog();
+				}
+
+				@Override
+				public void onFailure(ServerFailure error) {
+					closeDialog();
+					Toast.makeText(getBaseContext(), R.string.download_error, Toast.LENGTH_SHORT)
+							.show();
+				}
+
+				private void closeDialog() {
+
+					runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							if (dialog != null) {
+								dialog.dismiss();
+							}
+						}
+					});
+				}
+
+			});
+			return null;
+		}
+
 	}
 
 }
