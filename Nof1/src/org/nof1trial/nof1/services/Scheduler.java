@@ -20,13 +20,6 @@
  ******************************************************************************/
 package org.nof1trial.nof1.services;
 
-import java.util.Calendar;
-
-import org.nof1trial.nof1.AlarmReceiver;
-import org.nof1trial.nof1.BuildConfig;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.preferences.TimePreference;
-
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.IntentService;
@@ -37,6 +30,13 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+
+import org.nof1trial.nof1.AlarmReceiver;
+import org.nof1trial.nof1.BuildConfig;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.preferences.TimePreference;
+
+import java.util.Calendar;
 
 /**
  * <pre>
@@ -59,6 +59,7 @@ public class Scheduler extends IntentService {
 	private static final boolean DEBUG = BuildConfig.DEBUG;
 
 	private static final int REQUEST_QUES = 0;
+	public static final int MED_REQUEST_BASE = 100;
 
 	private AlarmManager mAlarmManager;
 
@@ -159,7 +160,8 @@ public class Scheduler extends IntentService {
 			intent.putExtra(Keys.INTENT_FIRST, true);
 
 			String time = getEarliestMedicineTime();
-			if (DEBUG) Log.d(TAG, "Scheduling first time notification at " + startDate + " " + time);
+			if (DEBUG)
+				Log.d(TAG, "Scheduling first time notification at " + startDate + " " + time);
 
 			Calendar start = getCalendarFromString(startDate, time);
 			start.set(Calendar.SECOND, 0);
@@ -264,7 +266,8 @@ public class Scheduler extends IntentService {
 		schedEdit.putInt(Keys.SCHED_NEXT_DAY, schedPrefs.getInt(Keys.SCHED_LAST_DAY, 1));
 		schedEdit.putInt(Keys.SCHED_CUR_PERIOD, schedPrefs.getInt(Keys.SCHED_LAST_PERIOD, 1));
 		schedEdit.putString(Keys.SCHED_NEXT_DATE, schedPrefs.getString(Keys.SCHED_LAST_DATE, null));
-		schedEdit.putInt(Keys.SCHED_NEXT_CUMULATIVE_DAY, schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 1));
+		schedEdit.putInt(Keys.SCHED_NEXT_CUMULATIVE_DAY,
+				schedPrefs.getInt(Keys.SCHED_CUMULATIVE_DAY, 1));
 
 		schedEdit.commit();
 		backup();
@@ -352,10 +355,14 @@ public class Scheduler extends IntentService {
 				Intent intent = new Intent(this, AlarmReceiver.class);
 				intent.putExtra(Keys.INTENT_MEDICINE, true);
 
-				PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, 100 + i, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+				PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, MED_REQUEST_BASE + i,
+						intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmCal.getTimeInMillis(), AlarmManager.INTERVAL_DAY, pi);
-				if (DEBUG) Log.d(TAG, "Scheduling a repeating medicine alarm at " + time + " " + getDateStringFromCalendar(alarmCal));
+				mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, alarmCal.getTimeInMillis(),
+						AlarmManager.INTERVAL_DAY, pi);
+				if (DEBUG)
+					Log.d(TAG, "Scheduling a repeating medicine alarm at " + time + " "
+							+ getDateStringFromCalendar(alarmCal));
 			}
 		}
 	}
@@ -383,7 +390,8 @@ public class Scheduler extends IntentService {
 
 	/** Set an alarm to fire off specified intent at time stored in calendar */
 	private void setAlarm(Intent intent, Calendar cal) {
-		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+		PendingIntent pi = PendingIntent.getBroadcast(Scheduler.this, REQUEST_QUES, intent,
+				PendingIntent.FLAG_CANCEL_CURRENT);
 
 		mAlarmManager.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
 	}
@@ -402,14 +410,17 @@ public class Scheduler extends IntentService {
 		Calendar cal = getCalendarFromString(dateStr, timeStr);
 		cal.set(Calendar.SECOND, 0);
 		if (DEBUG)
-			Log.d(TAG, "Setting alarm for: " + getDateStringFromCalendar(cal) + " time: " + cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE));
+			Log.d(TAG,
+					"Setting alarm for: " + getDateStringFromCalendar(cal) + " time: "
+							+ cal.get(Calendar.HOUR_OF_DAY) + cal.get(Calendar.MINUTE));
 
 		setAlarm(intent, cal);
 	}
 
 	private Calendar getCalendarFromString(String date) {
 		String[] lastArr = date.split(":");
-		int[] lastInt = new int[] { Integer.parseInt(lastArr[0]), Integer.parseInt(lastArr[1]), Integer.parseInt(lastArr[2]) };
+		int[] lastInt = new int[] { Integer.parseInt(lastArr[0]), Integer.parseInt(lastArr[1]),
+				Integer.parseInt(lastArr[2]) };
 		Calendar cal = Calendar.getInstance();
 		cal.set(lastInt[2], lastInt[1], lastInt[0]);
 		return cal;
@@ -419,7 +430,8 @@ public class Scheduler extends IntentService {
 		String[] dateArr = dateStr.split(":");
 		String[] timeArr = timeStr.split(":");
 
-		int[] dateInt = new int[] { Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]), Integer.parseInt(dateArr[2]) };
+		int[] dateInt = new int[] { Integer.parseInt(dateArr[0]), Integer.parseInt(dateArr[1]),
+				Integer.parseInt(dateArr[2]) };
 		int[] timeInt = new int[] { Integer.parseInt(timeArr[0]), Integer.parseInt(timeArr[1]) };
 
 		Calendar cal = Calendar.getInstance();
