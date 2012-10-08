@@ -122,8 +122,7 @@ public class ScheduleViewer extends SherlockActivity {
 				}
 
 				// Unregister receiver
-				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
-				manager.unregisterReceiver(this);
+				unregisterReceiver(context);
 
 			} else if (Keys.ACTION_ERROR.equals(intent.getAction())) {
 				// Some problem getting schedule
@@ -131,11 +130,14 @@ public class ScheduleViewer extends SherlockActivity {
 					mText.setText(R.string.error_downloading_schedule);
 				}
 
-				// Unregister receiver
-				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
-				manager.unregisterReceiver(this);
+				unregisterReceiver(context);
 			}
 
+		}
+
+		private void unregisterReceiver(Context context) {
+			LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
+			manager.unregisterReceiver(this);
 		}
 
 	}

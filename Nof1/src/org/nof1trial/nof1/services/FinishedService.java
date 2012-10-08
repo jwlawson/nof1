@@ -25,9 +25,11 @@ import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -37,7 +39,6 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
@@ -46,7 +47,6 @@ import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.DataSource;
 import org.nof1trial.nof1.Keys;
 import org.nof1trial.nof1.NetworkChangeReceiver;
-import org.nof1trial.nof1.R;
 import org.nof1trial.nof1.app.Util;
 import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.ConfigRequest;
@@ -62,9 +62,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Service to save a copy of the results as a .csv file
+ * Service to save a copy of the results as a .csv file.
  * 
  * Actions:
+ * 
+ * <pre>
  * org.nof1trial.nof1.TRIAL_COMPLETE
  * android.net.conn.CONNECTIVITY_CHANGE
  * org.nof1trial.nof1.DOWNLOAD_SCHEDULE
@@ -86,31 +88,22 @@ public class FinishedService extends IntentService {
 	}
 
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (DEBUG) Log.d(TAG, "New finished service started");
-		return super.onStartCommand(intent, flags, startId);
-	}
-
-	@Override
 	protected void onHandleIntent(Intent intent) {
 
 		if (Keys.ACTION_COMPLETE.equals(intent.getAction())) {
 
 			makeCsv();
 
-			// Cancel medicine alarms
-			final SharedPreferences sp = cancelMedicineAlarms();
+			final SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
-			// If no internet, set flag to download and register broadcast
-			// receiver
+			cancelMedicineAlarms(sp);
+
 			if (isConnected()) {
-
 				downloadSchedule(sp);
 
 			} else {
 				if (DEBUG)
 					Log.d(TAG, "Not connected to internet, starting network change listener");
-				// enable network change broadcast receiver
 				enableNetworkChangeReceiver();
 			}
 
@@ -120,7 +113,6 @@ public class FinishedService extends IntentService {
 				SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
 
 				if (!sp.contains(Keys.CONFIG_SCHEDULE)) {
-					// Try to download
 					downloadSchedule(sp);
 				}
 
@@ -142,44 +134,7 @@ public class FinishedService extends IntentService {
 					final SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME,
 							MODE_PRIVATE);
 
-					// Download config file and save schedule data to prefs
-					MyRequestFactory factory = Util.getRequestFactory(FinishedService.this,
-							MyRequestFactory.class);
-					ConfigRequest request = factory.configRequest();
-
-					request.findAllConfigs().fire(new Receiver<List<ConfigProxy>>() {
-
-						@Override
-						public void onSuccess(List<ConfigProxy> list) {
-							if (list.size() == 0) {
-								Log.e(TAG,
-										"No config file found on server. Please contact the pharmacist for treatment schedule.");
-
-							} else {
-								// get most recent config. Generally I would
-								// only expect a patient to have one.
-								ConfigProxy conf = list.get(list.size() - 1);
-								// Save schedule to prefs
-								sp.edit().putString(Keys.CONFIG_SCHEDULE, conf.getSchedule())
-										.commit();
-								if (DEBUG) Log.d(TAG, "Saved schedule: " + conf.getSchedule());
-
-								// Send local broadcast to say the download is
-								// complete
-								sendLocalBroadcast(Keys.ACTION_DOWNLOAD_SCHEDULE);
-
-							}
-
-						}
-
-						@Override
-						public void onFailure(ServerFailure error) {
-							super.onFailure(error);
-							// Broadcast error
-							sendLocalBroadcast(Keys.ACTION_ERROR);
-						}
-
-					});
+					downloadSchedule(sp);
 				}
 
 			} else {
@@ -193,7 +148,6 @@ public class FinishedService extends IntentService {
 			boolean done = makeCsv();
 
 			if (done) {
-
 				sendLocalBroadcast(Keys.ACTION_MAKE_FILE);
 
 			} else {
@@ -201,7 +155,7 @@ public class FinishedService extends IntentService {
 			}
 
 		} else {
-			Log.w(TAG, "Intent Service started with unrecognisd action");
+			if (DEBUG) Log.w(TAG, "Intent Service started with unrecognised action");
 		}
 	}
 
@@ -232,8 +186,7 @@ public class FinishedService extends IntentService {
 		return isConnected;
 	}
 
-	private SharedPreferences cancelMedicineAlarms() {
-		final SharedPreferences sp = getSharedPreferences(Keys.CONFIG_NAME, MODE_PRIVATE);
+	private void cancelMedicineAlarms(SharedPreferences sp) {
 		AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 		for (int i = 0; sp.contains(Keys.CONFIG_TIME + i); i++) {
 
@@ -247,7 +200,6 @@ public class FinishedService extends IntentService {
 
 			alarmManager.cancel(pi);
 		}
-		return sp;
 	}
 
 	private boolean makeCsv() {
@@ -277,13 +229,10 @@ public class FinishedService extends IntentService {
 	private boolean createCVS(Cursor cursor) {
 		/*
 		 * We want to write the schedule file to external storage, as that way
-		 * we know the email app will be able to
-		 * find it.
+		 * we know the email app will be able to find it.
 		 * However if it cannot, use internal storage and a world readable file.
-		 * This may or may not work depending on
-		 * the email client used.
+		 * This may or may not work depending on the email client used.
 		 */
-		// Check state of external storage
 		boolean storageWriteable = false;
 		boolean storageInternal = false;
 		String state = Environment.getExternalStorageState();
@@ -293,14 +242,13 @@ public class FinishedService extends IntentService {
 			storageWriteable = true;
 		} else {
 			// Something else is wrong. It may be one of many other states, but
-			// all we need
-			// to know is we can neither read nor write
+			// all we need to know is we can neither read nor write
 			storageWriteable = false;
 		}
 		File dir = null;
 
 		if (storageWriteable && Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
-			// Eclair has no support for getExternalCacheDir()
+			// Eclair has no support for getExternalFilesDir()
 			// Save file to /Android/data/org.nof1trial.nof1/cache/
 			File temp = Environment.getExternalStorageDirectory();
 
@@ -311,9 +259,6 @@ public class FinishedService extends IntentService {
 			dir = getExternalFilesDir(null);
 
 		} else {
-			// Toast.makeText(this,
-			// "No external storage found. Using internal storage which may not work.",
-			// Toast.LENGTH_LONG).show();
 			storageInternal = true;
 			dir = getFilesDir();
 		}
@@ -329,7 +274,6 @@ public class FinishedService extends IntentService {
 				fos.close();
 
 			} catch (IOException e) {
-				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
 				return false;
 			}
 
@@ -341,7 +285,6 @@ public class FinishedService extends IntentService {
 				writer.close();
 
 			} catch (IOException e) {
-				Toast.makeText(this, R.string.problem_saving_file, Toast.LENGTH_SHORT).show();
 				return false;
 			}
 		}
@@ -408,6 +351,7 @@ public class FinishedService extends IntentService {
 				if (list.size() == 0) {
 					Log.e(TAG,
 							"No config file found on server. Please contact the pharmacist for treatment schedule.");
+					sendLocalBroadcast(Keys.ACTION_ERROR);
 
 				} else {
 					// get most recent config. Generally I would only expect a
@@ -416,15 +360,49 @@ public class FinishedService extends IntentService {
 					// Save schedule to prefs
 					sp.edit().putString(Keys.CONFIG_SCHEDULE, conf.getSchedule()).commit();
 					if (DEBUG) Log.d(TAG, "Saved schedule: " + conf.getSchedule());
+
+					sendLocalBroadcast(Keys.ACTION_DOWNLOAD_SCHEDULE);
 				}
 
 			}
 
 			@Override
 			public void onFailure(ServerFailure error) {
-				// TODO retry download
+				Log.e(TAG, "Schedule not saved");
+				Log.e(TAG, error.getMessage());
+
+				if ("auth error".equalsIgnoreCase(error.getMessage())) {
+					// Try refreshing auth cookie
+					Intent intent = new Intent(mContext, AccountService.class);
+					intent.setAction(Keys.ACTION_REFRESH);
+					startService(intent);
+
+					LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+					manager.registerReceiver(new CookieReceiver(), new IntentFilter(
+							Keys.ACTION_COMPLETE));
+				} else {
+					sendLocalBroadcast(Keys.ACTION_ERROR);
+				}
 			}
 
 		});
+	}
+
+	private class CookieReceiver extends BroadcastReceiver {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (DEBUG) Log.d(TAG, "Received broadcast");
+
+			// Pass connectivity change to saver
+			Intent downloader = new Intent(context, FinishedService.class);
+			downloader.setAction(Keys.ACTION_DOWNLOAD_SCHEDULE);
+			context.startService(downloader);
+			if (DEBUG) Log.d(TAG, "FinishedService started from CookieReceiver");
+
+			LocalBroadcastManager manager = LocalBroadcastManager.getInstance(context);
+			manager.unregisterReceiver(this);
+		}
+
 	}
 }
