@@ -170,7 +170,7 @@
     <string name="trial_data">"Nof1 Trial data"</string>
     <string name="results_attached">"Find attached the data from the Nof1 trial for "</string>
     <string name="include_samples">Include sample questions?</string>
-    <string name="add_sample">Add sample questions</string>
+    <string name="add_sample">Include…</string>
     <string name="add_account">Add account…</string>
     <string name="attention">Attention</string>
     <string name="disconnect_text">This device is currently connected to the cloud as %1$s.</string>
