@@ -26,7 +26,7 @@ import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.DataProxy;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,6 +45,7 @@ public class PatientData {
 
 	private final ConfigProxy mConfig;
 
+	@SuppressWarnings("deprecation")
 	public PatientData(ConfigProxy config, List<DataProxy> data) {
 
 		if (config == null) {
@@ -88,10 +89,12 @@ public class PatientData {
 			DateTimeFormat df = DateTimeFormat
 					.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
 
-			Calendar cal = Calendar.getInstance();
-			cal.set(startInt[2], startInt[1], startInt[0]);
+			Date now = new Date();
+			now.setYear(startInt[2]);
+			now.setMonth(startInt[1]);
+			now.setDate(startInt[0]);
 
-			mConfigData.add(df.format(cal.getTime()));
+			mConfigData.add(df.format(now));
 		}
 		if (config.getLengthPeriods() != null) {
 			mConfigHeaders.add("Treatment period length");
