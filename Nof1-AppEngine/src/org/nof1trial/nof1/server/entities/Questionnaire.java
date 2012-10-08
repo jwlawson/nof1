@@ -32,6 +32,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Query;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Version;
 
@@ -53,6 +54,23 @@ public class Questionnaire {
 		try {
 			Questionnaire result = em.find(Questionnaire.class, id);
 			return result;
+		} finally {
+			em.close();
+		}
+	}
+
+	public static List<Questionnaire> findExpired(Long date) {
+		EntityManager em = entityManager();
+
+		try {
+			Query query = em.createQuery("select x from Questionnaire x where x.expiry < :date");
+			query.setParameter("date", date);
+
+			@SuppressWarnings("unchecked")
+			List<Questionnaire> list = query.getResultList();
+			list.size();
+
+			return list;
 		} finally {
 			em.close();
 		}
