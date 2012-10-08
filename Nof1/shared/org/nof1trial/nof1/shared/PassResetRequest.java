@@ -28,7 +28,7 @@ import com.google.web.bindery.requestfactory.shared.ServiceName;
  * @author John Lawson
  * 
  */
-@ServiceName("org.nof1trial.nof1.server.PassReset")
+@ServiceName("org.nof1trial.nof1.server.entities.PassReset")
 public interface PassResetRequest extends RequestContext {
 
 	public Request<PassResetProxy> findPassReset(Long id);

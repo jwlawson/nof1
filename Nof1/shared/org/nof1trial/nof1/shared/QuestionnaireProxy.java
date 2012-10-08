@@ -29,7 +29,7 @@ import java.util.List;
  * @author John Lawson
  * 
  */
-@ProxyForName("org.nof1trial.nof1.server.Questionnaire")
+@ProxyForName("org.nof1trial.nof1.server.entities.Questionnaire")
 public interface QuestionnaireProxy extends EntityProxy {
 
 	public List<String> getQuestionList();

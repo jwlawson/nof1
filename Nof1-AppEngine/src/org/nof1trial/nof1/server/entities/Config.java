@@ -18,7 +18,7 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1.server;
+package org.nof1trial.nof1.server.entities;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -48,6 +48,8 @@ import javax.persistence.Version;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+
+import org.nof1trial.nof1.server.EMF;
 
 /**
  * Config class. Holds data about a patient's app configuration. When the config is updated the server will send out

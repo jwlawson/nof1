@@ -27,7 +27,7 @@ import com.google.web.bindery.requestfactory.shared.ProxyForName;
  * @author John Lawson
  * 
  */
-@ProxyForName("org.nof1trial.nof1.server.PassReset")
+@ProxyForName("org.nof1trial.nof1.server.entities.PassReset")
 public interface PassResetProxy extends EntityProxy {
 
 	public String getPass();

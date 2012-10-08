@@ -20,16 +20,16 @@
  ******************************************************************************/
 package org.nof1trial.nof1.shared;
 
-import java.util.List;
-
 import com.google.web.bindery.requestfactory.shared.EntityProxy;
 import com.google.web.bindery.requestfactory.shared.ProxyForName;
+
+import java.util.List;
 
 /**
  * @author John Lawson
  * 
  */
-@ProxyForName(value = "org.nof1trial.nof1.server.Config")
+@ProxyForName(value = "org.nof1trial.nof1.server.entities.Config")
 public interface ConfigProxy extends EntityProxy {
 
 	public String getPatientEmail();

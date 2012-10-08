@@ -20,17 +20,17 @@
  ******************************************************************************/
 package org.nof1trial.nof1.shared;
 
-import java.util.List;
-
 import com.google.web.bindery.requestfactory.shared.Request;
 import com.google.web.bindery.requestfactory.shared.RequestContext;
 import com.google.web.bindery.requestfactory.shared.ServiceName;
+
+import java.util.List;
 
 /**
  * @author John Lawson
  * 
  */
-@ServiceName("org.nof1trial.nof1.server.Data")
+@ServiceName("org.nof1trial.nof1.server.entities.Data")
 public interface DataRequest extends RequestContext {
 
 	public Request<DataProxy> save(DataProxy data);

@@ -28,7 +28,7 @@ import com.google.web.bindery.requestfactory.shared.ServiceName;
  * @author John Lawson
  * 
  */
-@ServiceName("org.nof1trial.nof1.server.Questionnaire")
+@ServiceName("org.nof1trial.nof1.server.entities.Questionnaire")
 public interface QuestionnaireRequest extends RequestContext {
 
 	public Request<QuestionnaireProxy> findQuestionnaire(Long id);

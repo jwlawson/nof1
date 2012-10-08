@@ -18,7 +18,8 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1.server;
+package org.nof1trial.nof1.server.entities;
+
 
 import java.io.UnsupportedEncodingException;
 import java.util.Properties;

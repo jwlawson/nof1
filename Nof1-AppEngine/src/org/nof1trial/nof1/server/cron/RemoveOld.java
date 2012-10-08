@@ -20,6 +20,10 @@
  ******************************************************************************/
 package org.nof1trial.nof1.server.cron;
 
+import org.nof1trial.nof1.server.EMF;
+import org.nof1trial.nof1.server.entities.Config;
+import org.nof1trial.nof1.server.entities.Data;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -34,10 +38,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.nof1trial.nof1.server.Config;
-import org.nof1trial.nof1.server.Data;
-import org.nof1trial.nof1.server.EMF;
-
 /**
  * @author John Lawson
  * 
@@ -48,19 +48,21 @@ public class RemoveOld extends HttpServlet {
 
 	private static final Logger log = Logger.getLogger(RemoveOld.class.getName());
 
+	private PrintWriter writer;
+
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException,
+			IOException {
 
-		final PrintWriter writer = resp.getWriter();
+		writer = resp.getWriter();
 
-		writer.println("Searching datastore for trials older than 2 years");
-		log.info("Searching datastore for trials older than 2 years");
+		output("Searching datastore for trials older than 2 years");
 
 		final List<Config> list = getOldConfigs(2);
 
 		for (Config conf : list) {
-			writer.println("Deleting data for patient: " + conf.getPatientEmail() + " and doctor: " + conf.getDocEmail());
-			log.warning("Deleting data for patient: " + conf.getPatientEmail() + " and doctor: " + conf.getDocEmail());
+			output("Deleting data for patient: " + conf.getPatientEmail() + " and doctor: "
+					+ conf.getDocEmail());
 
 			deleteDateFromConfig(conf);
 
@@ -68,12 +70,19 @@ public class RemoveOld extends HttpServlet {
 
 		}
 
-		writer.println("Cron finished");
-		log.info("Cron finished");
+		output("Cron finished");
 
 	}
 
-	/** Get a list of all config entities whose trial ended some number of years ago */
+	private void output(String msg) {
+		writer.println(msg);
+		log.info(msg);
+	}
+
+	/**
+	 * Get a list of all config entities whose trial ended some number of years
+	 * ago
+	 */
 	private List<Config> getOldConfigs(int year) {
 		final EntityManager em = EMF.get().createEntityManager();
 
@@ -84,7 +93,8 @@ public class RemoveOld extends HttpServlet {
 			cal.add(Calendar.YEAR, -year);
 			query.setParameter("date", cal.getTimeInMillis());
 			// Set max result just to keep data store transactions low each day
-			// Doesn't really matter whether data is deleted exactly on time or a bit late
+			// Doesn't really matter whether data is deleted exactly on time or
+			// a bit late
 			query.setMaxResults(10);
 
 			@SuppressWarnings("unchecked")
@@ -110,7 +120,8 @@ public class RemoveOld extends HttpServlet {
 		try {
 			final Query dataQuery = dataEm
 					.createQuery("select x from Data x where x.time < :time and x.patientEmail = :patient and x.doctorEmail = :doctor");
-			dataQuery.setParameter("time", conf.getEndDate()).setParameter("patient", conf.getPatientEmail())
+			dataQuery.setParameter("time", conf.getEndDate())
+					.setParameter("patient", conf.getPatientEmail())
 					.setParameter("doctor", conf.getDocEmail());
 
 			dataList.addAll(dataQuery.getResultList());

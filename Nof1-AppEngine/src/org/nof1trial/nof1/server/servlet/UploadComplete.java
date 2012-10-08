@@ -28,7 +28,7 @@ import com.google.appengine.api.blobstore.BlobstoreInputStream;
 import com.google.appengine.api.blobstore.BlobstoreService;
 import com.google.appengine.api.blobstore.BlobstoreServiceFactory;
 
-import org.nof1trial.nof1.server.Questionnaire;
+import org.nof1trial.nof1.server.entities.Questionnaire;
 import org.nof1trial.nof1.server.readers.CsvReader;
 import org.nof1trial.nof1.server.readers.Reader;
 import org.nof1trial.nof1.server.readers.XlsReader;

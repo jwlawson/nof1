@@ -18,7 +18,7 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1.server;
+package org.nof1trial.nof1.server.entities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +37,8 @@ import javax.persistence.Version;
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
 import com.google.appengine.api.users.UserServiceFactory;
+
+import org.nof1trial.nof1.server.EMF;
 
 /**
  * @author lawson_j

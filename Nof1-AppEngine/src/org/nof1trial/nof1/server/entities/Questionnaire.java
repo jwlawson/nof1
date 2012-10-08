@@ -18,7 +18,9 @@
  * Contributors:
  *     John Lawson - initial API and implementation
  ******************************************************************************/
-package org.nof1trial.nof1.server;
+package org.nof1trial.nof1.server.entities;
+
+import org.nof1trial.nof1.server.EMF;
 
 import java.util.List;
 import java.util.logging.Level;

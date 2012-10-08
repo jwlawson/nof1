@@ -20,16 +20,16 @@
  ******************************************************************************/
 package org.nof1trial.nof1.shared;
 
-import java.util.List;
-
 import com.google.web.bindery.requestfactory.shared.EntityProxy;
 import com.google.web.bindery.requestfactory.shared.ProxyForName;
+
+import java.util.List;
 
 /**
  * @author John Lawson
  * 
  */
-@ProxyForName("org.nof1trial.nof1.server.Data")
+@ProxyForName("org.nof1trial.nof1.server.entities.Data")
 public interface DataProxy extends EntityProxy {
 
 	public List<Integer> getQuestionData();
