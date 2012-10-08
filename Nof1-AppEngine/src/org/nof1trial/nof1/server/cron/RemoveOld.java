@@ -23,6 +23,7 @@ package org.nof1trial.nof1.server.cron;
 import org.nof1trial.nof1.server.EMF;
 import org.nof1trial.nof1.server.entities.Config;
 import org.nof1trial.nof1.server.entities.Data;
+import org.nof1trial.nof1.server.entities.Questionnaire;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -68,6 +69,17 @@ public class RemoveOld extends HttpServlet {
 
 			Config.delete(conf);
 
+		}
+
+		output("Searching for expired questionnaires");
+
+		Calendar now = Calendar.getInstance();
+		List<Questionnaire> expired = Questionnaire.findExpired(now.getTimeInMillis());
+
+		for (Questionnaire ques : expired) {
+			output("Deleting questionnaire id " + ques.getId());
+
+			ques.remove();
 		}
 
 		output("Cron finished");
