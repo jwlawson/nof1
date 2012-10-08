@@ -104,11 +104,12 @@ public class UploadEntryPoint implements EntryPoint {
 
 		HTML htmlNewHtml = new HTML(
 				"<p>Choose a questionnaire file to upload.</p>\r\n\r\n"
-						+ "<p>\r\nThis should be a spreadsheet file (.xls, .xlsx or .csv) which contains 4 columns:\r\n"
+						+ "<p>\r\nThis should be a spreadsheet file (.xls or .xlsx) which contains 4 columns:\r\n"
 						+ "</br>\t- question\r\n"
 						+ "</br>\t- question type (0 = scale, 1 = number, 2 = checkbox)\r\n"
 						+ "</br>\t- min hint (scale type only)\r\n"
-						+ "</br>\t- max hint (scale type only)\r\n</p>", true);
+						+ "</br>\t- max hint (scale type only)\r\n</p>"
+						+ "<p>The first row is assumed to be headers, so ignored.</p>", true);
 		vPanel.add(htmlNewHtml);
 
 		uploadForm = new FormPanel();
@@ -133,6 +134,7 @@ public class UploadEntryPoint implements EntryPoint {
 
 			@Override
 			public void onSubmitComplete(SubmitCompleteEvent event) {
+				// trim needed to remove trailing /n/r
 				String result = event.getResults().trim();
 				if (isNumber(result)) {
 					html.setHTML("<p>Saved with identifier: "
@@ -181,7 +183,7 @@ public class UploadEntryPoint implements EntryPoint {
 							btnSubmit.setEnabled(false);
 							uploadForm.submit();
 						} else {
-							Window.alert("File needs to be .xls, .xlsx or .csv");
+							Window.alert("File needs to be .xls or .xlsx");
 						}
 					}
 
@@ -193,8 +195,7 @@ public class UploadEntryPoint implements EntryPoint {
 	}
 
 	private boolean isFileValid() {
-		return fileUpload.getFilename().endsWith(".csv")
-				|| fileUpload.getFilename().endsWith(".xls")
+		return fileUpload.getFilename().endsWith(".xls")
 				|| fileUpload.getFilename().endsWith(".xlsx");
 	}
 }
