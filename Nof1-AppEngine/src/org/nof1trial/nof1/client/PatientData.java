@@ -20,11 +20,14 @@
  ******************************************************************************/
 package org.nof1trial.nof1.client;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.DataProxy;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 /**
  * @author John Lawson
@@ -36,11 +39,11 @@ public class PatientData {
 
 	private List<DataProxy> mData;
 
-	private List<String> mConfigHeaders = new ArrayList<String>();
+	private final List<String> mConfigHeaders = new ArrayList<String>();
 
-	private List<String> mConfigData = new ArrayList<String>();
+	private final List<String> mConfigData = new ArrayList<String>();
 
-	private ConfigProxy mConfig;
+	private final ConfigProxy mConfig;
 
 	public PatientData(ConfigProxy config, List<DataProxy> data) {
 
@@ -78,7 +81,17 @@ public class PatientData {
 		}
 		if (config.getStartDate() != null) {
 			mConfigHeaders.add("Start date");
-			mConfigData.add(config.getStartDate());
+			String start = config.getStartDate();
+			String[] startArr = start.split(":");
+			int[] startInt = new int[] { Integer.parseInt(startArr[0]),
+					Integer.parseInt(startArr[1]), Integer.parseInt(startArr[2]) };
+			DateTimeFormat df = DateTimeFormat
+					.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
+
+			Calendar cal = Calendar.getInstance();
+			cal.set(startInt[2], startInt[1], startInt[0]);
+
+			mConfigData.add(df.format(cal.getTime()));
 		}
 		if (config.getLengthPeriods() != null) {
 			mConfigHeaders.add("Treatment period length");
