@@ -28,7 +28,7 @@ import com.google.web.bindery.requestfactory.shared.ServiceName;
  * @author John Lawson
  * 
  */
-@ServiceName("org.nof1trial.nof1.server.GaeUser")
+@ServiceName("org.nof1trial.nof1.server.entities.GaeUser")
 public interface GaeUserRequest extends RequestContext {
 
 	public Request<GaeUserProxy> get();

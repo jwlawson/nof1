@@ -27,7 +27,7 @@ import com.google.web.bindery.requestfactory.shared.ProxyForName;
  * @author John Lawson
  * 
  */
-@ProxyForName("org.nof1trial.nof1.server.GaeUser")
+@ProxyForName("org.nof1trial.nof1.server.entities.GaeUser")
 public interface GaeUserProxy extends EntityProxy {
 
 	public String getEmail();
