@@ -22,6 +22,7 @@ package org.nof1trial.nof1.services;
 
 import java.util.List;
 
+import org.acra.ACRA;
 import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.DataSource;
 import org.nof1trial.nof1.Keys;
@@ -29,9 +30,8 @@ import org.nof1trial.nof1.NetworkChangeReceiver;
 import org.nof1trial.nof1.containers.ConfigData;
 import org.nof1trial.nof1.containers.ConfigData.Factory;
 import org.nof1trial.nof1.containers.Data;
-import org.nof1trial.nof1.containers.Data.OnDataRequestListener;
+import org.nof1trial.nof1.containers.DataUploadQueue;
 import org.nof1trial.nof1.shared.ConfigProxy;
-import org.nof1trial.nof1.shared.DataProxy;
 
 import android.annotation.TargetApi;
 import android.app.IntentService;
@@ -57,7 +57,7 @@ import com.google.web.bindery.requestfactory.shared.ServerFailure;
  * 
  */
 public class Saver extends IntentService implements ConfigData.OnConfigRequestListener,
-		OnDataRequestListener {
+		DataUploadQueue.OnDataUploadedListener {
 
 	private static final String TAG = "Saver";
 	private static final boolean DEBUG = BuildConfig.DEBUG;
@@ -93,7 +93,7 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 				SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
 
 				if (sp.getInt(NUM_DATA, 0) > 0) {
-					uploadAllCachedData(sp);
+					uploadAllCachedData();
 				}
 				if (sp.getBoolean(BOOL_CONFIG, false)) {
 					uploadConfigFromPrefs();
@@ -111,7 +111,7 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 				SharedPreferences sp = getSharedPreferences(CACHE, MODE_PRIVATE);
 				if (sp.getInt(NUM_DATA, 0) > 0) {
 					if (DEBUG) Log.d(TAG, "Have data to upload");
-					uploadAllCachedData(sp);
+					uploadAllCachedData();
 					uploadedData = true;
 				}
 				if (sp.getBoolean(BOOL_CONFIG, false)) {
@@ -139,6 +139,10 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 	}
 
 	private void uploadAllDataFromDatabase() {
+		DataUploadQueue queue = new DataUploadQueue(this);
+
+		Data.Factory factory = new Data.Factory(queue, mContext);
+
 		DataSource datasource = new DataSource(mContext);
 		datasource.open();
 		Cursor cursor = datasource.getAllColumns();
@@ -146,22 +150,20 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 
 		while (!cursor.isAfterLast()) {
 
-			uploadDataFromCursor(cursor);
+			Data data = factory.generateFromCursor(cursor);
+			queue.addData(data);
 			cursor.moveToNext();
 		}
 		cursor.close();
 		datasource.close();
-	}
 
-	private void uploadDataFromCursor(Cursor cursor) {
-
-		Data.Factory factory = new Data.Factory(this, mContext);
-		Data data = factory.generateFromCursor(cursor);
-		data.upload();
+		queue.start();
 	}
 
 	private void saveData(Intent intent) {
-		Data.Factory factory = new Data.Factory(this, mContext);
+		DataUploadQueue queue = new DataUploadQueue(this);
+
+		Data.Factory factory = new Data.Factory(queue, mContext);
 		Data data = factory.generateFromIntent(intent);
 
 		data.save();
@@ -169,7 +171,8 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 
 		if (isConnected()) {
 			if (DEBUG) Log.d(TAG, "Connected to internet, sending data to server");
-			data.upload();
+			queue.addData(data);
+			queue.start();
 		} else {
 			data.cache();
 			enableNetworkChangeReceiver();
@@ -195,13 +198,16 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 		}
 	}
 
-	private void uploadAllCachedData(SharedPreferences cachePrefs) {
-		Data.Factory factory = new Data.Factory(this, mContext);
+	private void uploadAllCachedData() {
+		DataUploadQueue queue = new DataUploadQueue(this);
+		Data.Factory factory = new Data.Factory(queue, mContext);
 		List<Data> dataList = factory.generateCachedDataList();
 
 		for (Data data : dataList) {
-			data.upload();
+			queue.addData(data);
 		}
+		Data.clearDataCache(mContext);
+		queue.start();
 	}
 
 	private void uploadConfigFromPrefs() {
@@ -234,8 +240,7 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 	private boolean isConnected() {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-		boolean isConnected = (activeNetwork == null ? false : activeNetwork.isConnected());
-		return isConnected;
+		return (activeNetwork == null ? false : activeNetwork.isConnected());
 	}
 
 	private boolean isDatabaseInitialised() {
@@ -279,44 +284,44 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 	@Override
 	public void onConfigUploadFailure(ServerFailure failure) {
 		Log.e(TAG, "Config not saved");
-		Log.e(TAG, failure.getMessage());
 
-		// TODO Only refresh cookie when error is an auth error
-		// TODO Only allow looping a certain number of times
-		// Try refreshing auth cookie
-		Intent intent = new Intent(mContext, AccountService.class);
-		intent.setAction(Keys.ACTION_REFRESH);
-		startService(intent);
+		if ("Auth failure".equals(failure.getMessage())) {
+			ACRA.getErrorReporter().handleSilentException(new Throwable(failure.getMessage()));
+		}
+
+		refreshAuthCookie();
 
 		// Save for later
 		getSharedPreferences(CACHE, MODE_PRIVATE).edit().putBoolean(BOOL_CONFIG, true).commit();
 
+		registerCookieReceiver();
+	}
+
+	@Override
+	public void onDataUploaded(List<Data> successList, List<Data> failedList) {
+
+		if (!failedList.isEmpty()) {
+			// TODO Only refresh cookie when error is an auth error
+			// TODO Only allow looping a certain number of times
+			refreshAuthCookie();
+
+			for (Data data : failedList) {
+				data.cache();
+			}
+
+			registerCookieReceiver();
+
+		}
+	}
+
+	private void registerCookieReceiver() {
 		LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
 		manager.registerReceiver(new CookieReceiver(), new IntentFilter(Keys.ACTION_COMPLETE));
 	}
 
-	@Override
-	public void onDataUploadSuccess(Data data, DataProxy dataProxy) {
-		if (DEBUG) Log.d(TAG, "Data saved successfully");
-	}
-
-	@Override
-	public void onDataUploadFailure(Data data, ServerFailure error) {
-		Log.e(TAG, "Data not saved");
-		Log.e(TAG, error.getMessage());
-
-		// TODO Only refresh cookie when error is an auth error
-		// TODO Only allow looping a certain number of times
-		// Try refreshing auth cookie
+	private void refreshAuthCookie() {
 		Intent intent = new Intent(mContext, AccountService.class);
 		intent.setAction(Keys.ACTION_REFRESH);
 		startService(intent);
-
-		data.cache();
-
-		// Register receiver to get callback from the AccountService
-		// when cookie refreshed
-		LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-		manager.registerReceiver(new CookieReceiver(), new IntentFilter(Keys.ACTION_COMPLETE));
 	}
 }
