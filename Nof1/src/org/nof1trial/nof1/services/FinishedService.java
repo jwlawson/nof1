@@ -20,6 +20,25 @@
  ******************************************************************************/
 package org.nof1trial.nof1.services;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.acra.ACRA;
+import org.nof1trial.nof1.BuildConfig;
+import org.nof1trial.nof1.DataSource;
+import org.nof1trial.nof1.Keys;
+import org.nof1trial.nof1.NetworkChangeReceiver;
+import org.nof1trial.nof1.app.Util;
+import org.nof1trial.nof1.shared.ConfigProxy;
+import org.nof1trial.nof1.shared.ConfigRequest;
+import org.nof1trial.nof1.shared.MyRequestFactory;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
@@ -42,24 +61,6 @@ import android.util.Log;
 
 import com.google.web.bindery.requestfactory.shared.Receiver;
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
-
-import org.nof1trial.nof1.BuildConfig;
-import org.nof1trial.nof1.DataSource;
-import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.NetworkChangeReceiver;
-import org.nof1trial.nof1.app.Util;
-import org.nof1trial.nof1.shared.ConfigProxy;
-import org.nof1trial.nof1.shared.ConfigRequest;
-import org.nof1trial.nof1.shared.MyRequestFactory;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.DateFormat;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Service to save a copy of the results as a .csv file.
@@ -371,18 +372,27 @@ public class FinishedService extends IntentService {
 				Log.e(TAG, "Schedule not saved");
 				Log.e(TAG, error.getMessage());
 
-				if ("auth error".equalsIgnoreCase(error.getMessage())) {
-					// Try refreshing auth cookie
-					Intent intent = new Intent(mContext, AccountService.class);
-					intent.setAction(Keys.ACTION_REFRESH);
-					startService(intent);
+				if ("Auth failure".equalsIgnoreCase(error.getMessage())) {
 
-					LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-					manager.registerReceiver(new CookieReceiver(), new IntentFilter(
-							Keys.ACTION_COMPLETE));
+					refreshAuthCookie();
+					registerCookieReceiver();
 				} else {
+					ACRA.getErrorReporter()
+							.handleSilentException(new Throwable(error.getMessage()));
 					sendLocalBroadcast(Keys.ACTION_ERROR);
 				}
+			}
+
+			private void refreshAuthCookie() {
+				Intent intent = new Intent(mContext, AccountService.class);
+				intent.setAction(Keys.ACTION_REFRESH);
+				startService(intent);
+			}
+
+			private void registerCookieReceiver() {
+				LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+				manager.registerReceiver(new CookieReceiver(), new IntentFilter(
+						Keys.ACTION_COMPLETE));
 			}
 
 		});
