@@ -20,6 +20,10 @@
  ******************************************************************************/
 package org.nof1trial.nof1;
 
+import org.nof1trial.nof1.services.FinishedService;
+import org.nof1trial.nof1.services.Saver;
+
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,9 +31,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-
-import org.nof1trial.nof1.services.FinishedService;
-import org.nof1trial.nof1.services.Saver;
 
 /**
  * Broadcast receiver that is disabled by default. Will be enabled if there is
@@ -44,9 +45,6 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 	private static final String TAG = "NetworkChangeReceiver";
 	private static final boolean DEBUG = BuildConfig.DEBUG;
 
-	public NetworkChangeReceiver() {
-	}
-
 	@Override
 	public void onReceive(Context context, Intent intent) {
 
@@ -55,32 +53,39 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
 		if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
 			if (DEBUG) Log.d(TAG, "Network connection changed");
 
-			ConnectivityManager cm = (ConnectivityManager) context
-					.getSystemService(Context.CONNECTIVITY_SERVICE);
+			boolean isConnected = isConnected(context);
 
-			NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-			boolean isConnected = (activeNetwork == null ? false : activeNetwork
-					.isConnectedOrConnecting());
 			if (DEBUG) Log.d(TAG, "Internet connected: " + isConnected);
 
 			if (isConnected) {
-				SharedPreferences sp = context.getSharedPreferences(Keys.CONFIG_NAME,
-						Context.MODE_PRIVATE);
 
-				// Pass connectivity change to saver
-				Intent saver = new Intent(context, Saver.class);
-				saver.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
-				context.startService(saver);
+				startService(context, Saver.class);
 				if (DEBUG) Log.d(TAG, "Saver started");
 
-				// Check whether should wake up finished service
-				if (sp.getBoolean(Keys.SCHED_FINISHED, false) && !sp.contains(Keys.CONFIG_SCHEDULE)) {
-					Intent finished = new Intent(context, FinishedService.class);
-					finished.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
-					context.startService(finished);
+				if (needToDownloadSchedule(context)) {
+					startService(context, FinishedService.class);
 				}
 			}
 		}
+	}
+
+	private <T extends Service> void startService(Context context, Class<T> serviceClass) {
+		Intent saver = new Intent(context, serviceClass);
+		saver.setAction(ConnectivityManager.CONNECTIVITY_ACTION);
+		context.startService(saver);
+	}
+
+	private boolean needToDownloadSchedule(Context context) {
+		SharedPreferences sp = context.getSharedPreferences(Keys.CONFIG_NAME, Context.MODE_PRIVATE);
+		return sp.getBoolean(Keys.SCHED_FINISHED, false) && !sp.contains(Keys.CONFIG_SCHEDULE);
+	}
+
+	private boolean isConnected(Context context) {
+		ConnectivityManager cm = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+		return (activeNetwork == null ? false : activeNetwork.isConnectedOrConnecting());
 	}
 
 }
