@@ -20,13 +20,8 @@
  ******************************************************************************/
 package org.nof1trial.nof1.containers;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-
-import com.google.web.bindery.requestfactory.shared.Receiver;
-import com.google.web.bindery.requestfactory.shared.ServerFailure;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.nof1trial.nof1.DataSource;
 import org.nof1trial.nof1.Keys;
@@ -36,8 +31,13 @@ import org.nof1trial.nof1.shared.DataProxy;
 import org.nof1trial.nof1.shared.DataRequest;
 import org.nof1trial.nof1.shared.MyRequestFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+
+import com.google.web.bindery.requestfactory.shared.Receiver;
+import com.google.web.bindery.requestfactory.shared.ServerFailure;
 
 /**
  * @author John Lawson
@@ -127,7 +127,7 @@ public class Data {
 		source.close();
 	}
 
-	public void cache(int id) {
+	public void cache() {
 
 		SharedPreferences sp = context.getSharedPreferences(CACHE, Context.MODE_PRIVATE);
 		SharedPreferences.Editor edit = sp.edit();
@@ -154,7 +154,7 @@ public class Data {
 		edit.commit();
 	}
 
-	public class Factory {
+	public static class Factory {
 
 		private final OnDataRequestListener listener;
 
