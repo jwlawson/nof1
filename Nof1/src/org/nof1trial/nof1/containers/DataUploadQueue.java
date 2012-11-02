@@ -23,6 +23,7 @@ package org.nof1trial.nof1.containers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.acra.ACRA;
 import org.nof1trial.nof1.shared.DataProxy;
 
 import com.google.web.bindery.requestfactory.shared.ServerFailure;
@@ -82,19 +83,22 @@ public class DataUploadQueue implements Data.OnDataRequestListener {
 		mResponseCount++;
 		mSuccessList.add(data);
 
-		if (isFinished()) {
-			sendResultToListener();
-		}
-	}
-
-	private void sendResultToListener() {
-		listener.onDataUploaded(mSuccessList, mFailedList);
+		sendResultIfFinished();
 	}
 
 	public void onDataUploadFailure(Data data, ServerFailure error) {
+
+		if ("Auth Failure".equals(error.getMessage())) {
+			ACRA.getErrorReporter().handleSilentException(new Throwable(error.getMessage()));
+		}
+
 		mResponseCount++;
 		mFailedList.add(data);
 
+		sendResultIfFinished();
+	}
+
+	private void sendResultIfFinished() {
 		if (isFinished()) {
 			mBusy = false;
 			sendResultToListener();
@@ -103,5 +107,9 @@ public class DataUploadQueue implements Data.OnDataRequestListener {
 
 	private boolean isFinished() {
 		return mResponseCount >= mDataCount;
+	}
+
+	private void sendResultToListener() {
+		listener.onDataUploaded(mSuccessList, mFailedList);
 	}
 }
