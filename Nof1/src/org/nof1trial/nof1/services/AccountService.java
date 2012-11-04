@@ -45,7 +45,6 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 import org.nof1trial.nof1.BuildConfig;
 import org.nof1trial.nof1.Keys;
-import org.nof1trial.nof1.activities.AccountsActivity;
 import org.nof1trial.nof1.app.Util;
 
 import java.io.IOException;
@@ -75,11 +74,7 @@ public class AccountService extends IntentService {
 	private final Context mContext = this;
 
 	public AccountService() {
-		this("AccountService");
-	}
-
-	public AccountService(String name) {
-		super(name);
+		super("AccountService");
 	}
 
 	@Override
@@ -133,55 +128,65 @@ public class AccountService extends IntentService {
 		editor.commit();
 
 		if (Util.isDebug(mContext)) {
-			// Use a fake cookie for the dev mode app engine server
-			// The cookie has the form email:isAdmin:userId
-			// We set the userId to be the same as the account name
-			String authCookie = "dev_appserver_login=" + accountName + ":false:" + accountName;
-			prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
+			saveDebugCookie(accountName, prefs);
 		}
 
 		// Obtain an auth token and register
 		AccountManager mgr = AccountManager.get(mContext);
 		Account[] accts = mgr.getAccountsByType("com.google");
-		for (Account acct : accts) {
-			if (acct.name.equals(accountName)) {
+		for (Account account : accts) {
+			if (account.name.equals(accountName)) {
 				if (Util.isDebug(mContext)) {
-					// Use a fake cookie for the dev mode app engine server
-					// The cookie has the form email:isAdmin:userId
-					// We set the userId to be the same as the account name
-					String authCookie = "dev_appserver_login=" + accountName + ":false:"
-							+ accountName;
-					prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
+					saveDebugCookie(accountName, prefs);
 				} else {
 					// Get the auth token from the AccountManager and convert
 					// it into a cookie for the appengine server
-					mgr.getAuthToken(acct, "ah", null, new AccountsActivity(),
-							new AccountManagerCallback<Bundle>() {
-								@Override
-								public void run(AccountManagerFuture<Bundle> future) {
-									try {
-										Bundle authTokenBundle = future.getResult();
-										String authToken = authTokenBundle.get(
-												AccountManager.KEY_AUTHTOKEN).toString();
-
-										new CookieSaver().execute(authToken);
-
-									} catch (AuthenticatorException e) {
-										Log.w(TAG, "Got AuthenticatorException " + e);
-										Log.w(TAG, Log.getStackTraceString(e));
-									} catch (IOException e) {
-										Log.w(TAG, "Got IOException " + Log.getStackTraceString(e));
-										Log.w(TAG, Log.getStackTraceString(e));
-									} catch (OperationCanceledException e) {
-										Log.w(TAG, "Got OperationCanceledException " + e);
-										Log.w(TAG, Log.getStackTraceString(e));
-									}
-								}
-							}, null);
+					saveAuthCookie(mgr, account);
 				}
 				break;
 			}
 		}
+	}
+
+	private void saveDebugCookie(final String accountName, final SharedPreferences prefs) {
+		// Use a fake cookie for the dev mode app engine server
+		// The cookie has the form email:isAdmin:userId
+		// We set the userId to be the same as the account name
+		String authCookie = "dev_appserver_login=" + accountName + ":false:" + accountName;
+		prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
+	}
+
+	@SuppressWarnings("deprecation")
+	private void saveAuthCookie(AccountManager mgr, Account acct) {
+		mgr.getAuthToken(acct, "ah", true, new AccountManagerCallback<Bundle>() {
+
+			@Override
+			public void run(AccountManagerFuture<Bundle> future) {
+				try {
+					Bundle authTokenBundle = future.getResult();
+
+					if (authTokenBundle.containsKey(AccountManager.KEY_INTENT)) {
+						Intent intent = (Intent) authTokenBundle.get(AccountManager.KEY_INTENT);
+						startActivity(intent);
+					} else {
+						String authToken = authTokenBundle.get(AccountManager.KEY_AUTHTOKEN)
+								.toString();
+
+						new CookieSaver().execute(authToken);
+					}
+				} catch (AuthenticatorException e) {
+					Log.w(TAG, "Got AuthenticatorException " + e);
+					Log.w(TAG, Log.getStackTraceString(e));
+				} catch (IOException e) {
+					Log.w(TAG, "Got IOException " + Log.getStackTraceString(e));
+					Log.w(TAG, Log.getStackTraceString(e));
+				} catch (OperationCanceledException e) {
+					Log.w(TAG, "Got OperationCanceledException " + e);
+					Log.w(TAG, Log.getStackTraceString(e));
+				}
+			}
+		}, null);
+
 	}
 
 	/**
@@ -200,15 +205,8 @@ public class AccountService extends IntentService {
 		editor.commit();
 
 		if (Util.isDebug(mContext)) {
-			// Use a fake cookie for the dev mode app engine server
-			// The cookie has the form email:isAdmin:userId
-			// We set the userId to be the same as the account name
-			String authCookie = "dev_appserver_login=" + accountName + ":false:" + accountName;
-			prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
-			// Broadcast the change to receiver
-			Intent broadcast = new Intent(Keys.ACTION_COMPLETE);
-			LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-			manager.sendBroadcast(broadcast);
+			saveDebugCookie(accountName, prefs);
+			sendLocalBroadcast(Keys.ACTION_COMPLETE);
 		}
 
 		// Obtain an auth token and register
@@ -217,79 +215,63 @@ public class AccountService extends IntentService {
 		for (final Account acct : accts) {
 			if (acct.name.equals(accountName)) {
 				if (Util.isDebug(mContext)) {
-					// Use a fake cookie for the dev mode app engine server
-					// The cookie has the form email:isAdmin:userId
-					// We set the userId to be the same as the account name
-					String authCookie = "dev_appserver_login=" + accountName + ":false:"
-							+ accountName;
-					prefs.edit().putString(Util.AUTH_COOKIE, authCookie).commit();
+					saveDebugCookie(accountName, prefs);
 				} else {
-					// Get the auth token from the AccountManager and convert
-					// it into a cookie for the appengine server
-
-					// This bit is a bit of a hack, as need to ask
-					// AccountManager for the old authToken, then invalidate
-					// it before requesting a new authToken.
-					// Unfortunately this leads to nested callbacks.
-					final AccountsActivity act = new AccountsActivity();
-					// 'ah' signifies app engine auth, rather than 'android' etc
-					mgr.getAuthToken(acct, "ah", null, act, new AccountManagerCallback<Bundle>() {
-						@Override
-						public void run(AccountManagerFuture<Bundle> future) {
-							try {
-								Bundle authTokenBundle = future.getResult();
-								String authToken = authTokenBundle
-										.get(AccountManager.KEY_AUTHTOKEN).toString();
-
-								// Invalidate auth token, so next time Account
-								// Manager requests a new one
-								mgr.invalidateAuthToken("com.google", authToken);
-
-								// Request new one
-								mgr.getAuthToken(acct, "ah", null, act,
-										new AccountManagerCallback<Bundle>() {
-											@Override
-											public void run(AccountManagerFuture<Bundle> future) {
-												try {
-													Bundle authTokenBundle = future.getResult();
-													String authToken = authTokenBundle.get(
-															AccountManager.KEY_AUTHTOKEN)
-															.toString();
-
-													new CookieSaver().execute(authToken);
-
-												} catch (AuthenticatorException e) {
-													Log.w(TAG, "Got AuthenticatorException " + e);
-													Log.w(TAG, Log.getStackTraceString(e));
-												} catch (IOException e) {
-													Log.w(TAG,
-															"Got IOException "
-																	+ Log.getStackTraceString(e));
-													Log.w(TAG, Log.getStackTraceString(e));
-												} catch (OperationCanceledException e) {
-													Log.w(TAG, "Got OperationCanceledException "
-															+ e);
-													Log.w(TAG, Log.getStackTraceString(e));
-												}
-											}
-										}, null);
-
-							} catch (AuthenticatorException e) {
-								Log.w(TAG, "Got AuthenticatorException " + e);
-								Log.w(TAG, Log.getStackTraceString(e));
-							} catch (IOException e) {
-								Log.w(TAG, "Got IOException " + Log.getStackTraceString(e));
-								Log.w(TAG, Log.getStackTraceString(e));
-							} catch (OperationCanceledException e) {
-								Log.w(TAG, "Got OperationCanceledException " + e);
-								Log.w(TAG, Log.getStackTraceString(e));
-							}
-						}
-					}, null);
+					forceNewAuthCookie(mgr, acct);
 				}
 				break;
 			}
 		}
+	}
+
+	private void sendLocalBroadcast(String action) {
+		Intent broadcast = new Intent(action);
+		LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
+		manager.sendBroadcast(broadcast);
+	}
+
+	@SuppressWarnings("deprecation")
+	private void forceNewAuthCookie(final AccountManager mgr, final Account acct) {
+
+		// This bit is a bit of a hack, as need to ask
+		// AccountManager for the old authToken, then invalidate
+		// it before requesting a new authToken.
+		// Unfortunately this leads to nested callbacks.
+		// 'ah' signifies app engine auth, rather than 'android' etc
+
+		mgr.getAuthToken(acct, "ah", true, new AccountManagerCallback<Bundle>() {
+			@Override
+			public void run(AccountManagerFuture<Bundle> future) {
+				try {
+
+					Bundle authTokenBundle = future.getResult();
+
+					if (authTokenBundle.containsKey(AccountManager.KEY_INTENT)) {
+						Intent intent = (Intent) authTokenBundle.get(AccountManager.KEY_INTENT);
+						startActivity(intent);
+					} else {
+
+						String authToken = authTokenBundle.get(AccountManager.KEY_AUTHTOKEN)
+								.toString();
+
+						mgr.invalidateAuthToken("com.google", authToken);
+
+						saveAuthCookie(mgr, acct);
+					}
+
+				} catch (AuthenticatorException e) {
+					Log.w(TAG, "Got AuthenticatorException " + e);
+					Log.w(TAG, Log.getStackTraceString(e));
+				} catch (IOException e) {
+					Log.w(TAG, "Got IOException " + Log.getStackTraceString(e));
+					Log.w(TAG, Log.getStackTraceString(e));
+				} catch (OperationCanceledException e) {
+					Log.w(TAG, "Got OperationCanceledException " + e);
+					Log.w(TAG, Log.getStackTraceString(e));
+				}
+			}
+		}, null);
+
 	}
 
 	/**
@@ -356,9 +338,7 @@ public class AccountService extends IntentService {
 			if (DEBUG) Log.d(TAG, "Cookie refreshed. Sending broadcast");
 
 			// Broadcast the change to receiver
-			Intent broadcast = new Intent(Keys.ACTION_COMPLETE);
-			LocalBroadcastManager manager = LocalBroadcastManager.getInstance(mContext);
-			manager.sendBroadcast(broadcast);
+			sendLocalBroadcast(Keys.ACTION_COMPLETE);
 		}
 
 	}
