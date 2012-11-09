@@ -20,14 +20,14 @@
  ******************************************************************************/
 package org.nof1trial.nof1.client;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.nof1trial.nof1.shared.ConfigProxy;
 import org.nof1trial.nof1.shared.DataProxy;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 /**
  * @author John Lawson
@@ -90,7 +90,7 @@ public class PatientData {
 					.getFormat(DateTimeFormat.PredefinedFormat.DATE_MEDIUM);
 
 			Date now = new Date();
-			now.setYear(startInt[2]);
+			now.setYear(startInt[2] - 1900);
 			now.setMonth(startInt[1]);
 			now.setDate(startInt[0]);
 
