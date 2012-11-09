@@ -278,14 +278,14 @@ public class Saver extends IntentService implements ConfigData.OnConfigRequestLi
 
 	@Override
 	public void onConfigUploadSuccess(ConfigProxy conf) {
-		if (DEBUG) Log.d(TAG, "Data saved successfully");
+		if (DEBUG) Log.d(TAG, "Config saved successfully");
 	}
 
 	@Override
 	public void onConfigUploadFailure(ServerFailure failure) {
 		Log.e(TAG, "Config not saved");
 
-		if ("Auth failure".equals(failure.getMessage())) {
+		if ("Auth failure".equals(failure.getMessage().trim())) {
 			ACRA.getErrorReporter().handleSilentException(new Throwable(failure.getMessage()));
 		}
 

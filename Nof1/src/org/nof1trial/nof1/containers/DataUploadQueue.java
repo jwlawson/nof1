@@ -88,7 +88,7 @@ public class DataUploadQueue implements Data.OnDataRequestListener {
 
 	public void onDataUploadFailure(Data data, ServerFailure error) {
 
-		if ("Auth Failure".equals(error.getMessage())) {
+		if ("Auth failure".equals(error.getMessage().trim())) {
 			ACRA.getErrorReporter().handleSilentException(new Throwable(error.getMessage()));
 		}
 

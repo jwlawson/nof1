@@ -45,14 +45,16 @@ public class ConfigData {
 		/**
 		 * Called when config uploaded successfully
 		 * 
-		 * @param conf Copy of the configProxy saved in the datastore
+		 * @param conf
+		 *            Copy of the configProxy saved in the datastore
 		 */
 		public void onConfigUploadSuccess(ConfigProxy conf);
 
 		/**
 		 * Called when config fails to upload. Could be auth failure, or other problem with server.
 		 * 
-		 * @param failure Wrapper containing information about the failure
+		 * @param failure
+		 *            Wrapper containing information about the failure
 		 */
 		public void onConfigUploadFailure(ServerFailure failure);
 	}
@@ -120,7 +122,8 @@ public class ConfigData {
 
 	private Calendar getEndDateCalendar() {
 		String[] arr = startDate.split(":");
-		int[] date = new int[] { Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Integer.parseInt(arr[2]) };
+		int[] date = new int[] { Integer.parseInt(arr[0]), Integer.parseInt(arr[1]),
+				Integer.parseInt(arr[2]) };
 		Calendar cal = Calendar.getInstance();
 		cal.set(date[2], date[1], date[0], 23, 59);
 		cal.add(Calendar.DAY_OF_MONTH, (int) (2 * periodLength * numberPeriods));
@@ -156,10 +159,30 @@ public class ConfigData {
 
 			conf.quesList = new ArrayList<String>();
 			for (int i = 0; ques.contains(Keys.QUES_TEXT + i); i++) {
-				conf.quesList.add(ques.getString(Keys.QUES_TEXT + i, ""));
+				String questionStr = ques.getString(Keys.QUES_TEXT + i, "")
+						+ getQuestionSuffix(ques, i);
+				conf.quesList.add(questionStr);
 			}
 
 			return conf;
+		}
+
+		private String getQuestionSuffix(SharedPreferences ques, int id) {
+			int type = ques.getInt(Keys.QUES_TYPE + id, 0);
+			String suffix = "";
+
+			switch (type) {
+			case Question.SCALE:
+				suffix = " [0 - 6]";
+				break;
+			case Question.CHECK:
+				suffix = " [0 - 1]";
+				break;
+			case Question.NUMBER:
+				break;
+			}
+			return suffix;
+
 		}
 
 		public ConfigData generateFromIntent(Intent intent) {
