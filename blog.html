@@ -3,13 +3,15 @@ layout: main
 title: Development blog
 ---
 
+# Development Blog
+
 During the development of the application I wrote an accompanying blog
 discussing the milestones of development.
 
 <ul>
 {% for post in site.posts %}
-<li><a href="{{ post.url }}">
-<small>{{ post.date | date: "%-d %B %Y" }}</small>{{ post.title}}</a>
+<li>
+<small>{{ post.date | date: "%-d %B %Y" }}</small> <a href="{{ site.url }}/{{ post.url }}">{{ post.title}}</a>
 {{ post.excerpt }}
 </li>
 {% endfor %}

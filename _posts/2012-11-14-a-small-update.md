@@ -3,8 +3,6 @@ layout: post
 title: A Small Update
 ---
 
-# A small update
-
 I finished work on this project at the end of September. At this point I had got
 a working website, the app was pretty much complete and could upload the patient
 data to our website so their doctor can view progress online. Since then I have
