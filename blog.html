@@ -1,0 +1,17 @@
+---
+layout: main
+title: Development blog
+---
+
+During the development of the application I wrote an accompanying blog
+discussing the milestones of development.
+
+<ul>
+{% for post in site.posts %}
+<li><a href="{{ post.url }}">
+<small>{{ post.date | date: "%-d %B %Y" }}</small>{{ post.title}}</a>
+{{ post.excerpt }}
+</li>
+{% endfor %}
+</ul>
+
