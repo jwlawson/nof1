@@ -8,10 +8,12 @@ title: Development blog
 During the development of the application I wrote an accompanying blog
 discussing the milestones of development.
 
+{{ page.path }}
+
 <ul>
 {% for post in site.posts %}
 <li>
-{{ post.date | date: "%-d %B %Y" }} &#8212; <a href="{{ site.url }}/{{ post.url }}">{{ post.title}}</a>
+{{ post.date | date: "%-d %B %Y" }} &#8212; <a href="/nof1/{{ post.url }}">{{ post.title}}</a>
 {{ post.excerpt }}
 </li>
 {% endfor %}
