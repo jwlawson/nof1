@@ -1,0 +1,4 @@
+permalink: /blog/:year/:month/:day/:title.html
+name: Nof1 trial app
+description: A proof of concept android app to help administer Nof1 trials
+
