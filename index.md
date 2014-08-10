@@ -12,7 +12,8 @@ information from the patient and display any data collected.
 **Support for this software ended in November 2012.**
 
 ### Aims
-The aims of the app are: 
+The aims of the app are:
+
 * To create a random treatment plan to send to the pharmacist
 * To allow the patient to easily collect data about their symptoms and quality of life
 * To present this data in an easy to understand way
