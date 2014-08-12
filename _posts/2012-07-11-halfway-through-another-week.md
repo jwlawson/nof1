@@ -16,7 +16,7 @@ inadvertently walk into it is crazy. And I'm fairly sure I managed to find most
 of them. 
 
 ![]({{ site.baseurl }}/assets/2012-07-11-1.png)
-![]({{ site.baseurl }/assets/2012-07-11-2.png)
+![]({{ site.baseurl }}/assets/2012-07-11-2.png)
 
 Today was much better, having finally got the hang of everything, just about. It
 is very satisfying going through old code (that is stuff from about a week ago)
