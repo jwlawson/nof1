@@ -1,0 +1,10 @@
+---
+layout: main
+title: static files
+---
+
+<ul>
+	{% for post in site.static_files %}
+	<li><a href="{{ post.path }}">{{ post.path }}</a></li>
+	{% endfor %}
+</ul>
