@@ -1,4 +1,5 @@
 name: Nof1 trial app
 description: Proof of concept app to administer Nof1 trials
 baseurl: /nof1
+include: [images, assets]
 
