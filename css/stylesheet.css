@@ -222,6 +222,13 @@ form {
   
 }
 
+ul.postlist a {
+}
+
+ul.postlist span {
+	font-size: 75%;
+}
+
 
 /* GENERAL ELEMENT TYPE STYLES */
 
