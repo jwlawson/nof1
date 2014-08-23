@@ -133,6 +133,11 @@ aside#sidebar p.repo-owner a {
   font-weight: bold;
 }
 
+aside#sidebar h2 {
+  font-family: 'Roboto Slab', 'Helvetica Neue', Helvetica, Arial, serif; 
+	font-size: 13px;
+}
+
 #downloads {
   margin-bottom: 40px;
 }
