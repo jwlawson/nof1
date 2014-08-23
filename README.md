@@ -11,6 +11,6 @@ Architect by Jason Long.
 
     All content is copyright John Lawson. All rights are reserved.
 
-		Files in css/ and images/ are based on the CC BY-SA licensed stylesheets and
-		images from Jason Long's Architect theme and so are also licensed under 
-		[CC BY-SA](http://creativecommons.org/licenses/by-sa/3.0/).
+    Files in css/ and images/ are based on the CC BY-SA licensed stylesheets and
+    images from Jason Long's Architect theme and so are also licensed under 
+    [CC BY-SA](http://creativecommons.org/licenses/by-sa/3.0/).
